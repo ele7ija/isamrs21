@@ -9,6 +9,6 @@ Projekat tima 21 iz predmeta ISA i MRS - letnji semestar 2020.
 |     Bojan Popržen    	| SW 16-2017 	| [```ele7ija```](github.com/ele7ija)    	|
 
 ### Smernice za kod
-> U fajlu GUIDELINES.md
+> U fajlu: [```GUIDELINES.md```](GUIDELINES.md)
 
 # Pokretanje projekta
