@@ -5,7 +5,7 @@ Projekat tima 21 iz predmeta ISA i MRS - letnji semestar 2020.
 |     Ime i prezime    	|   Indeks   	| github      	|
 |--------------------	|:----------:	|-------------:	|
 |      Milan Đurić     	| SW 12-2017 	| [```djuricmilan```](github.com/djuricmilan) 	|
-| Aleksandar Vujinović 	|            	| [```alekalekalek```](github.com/alekalekalek)|
+| Aleksandar Vujinović 	| SW 46-2017 	| [```alekalekalek```](github.com/alekalekalek)|
 |     Bojan Popržen    	| SW 16-2017 	| [```ele7ija```](github.com/ele7ija)    	|
 
 ### Smernice za kod
