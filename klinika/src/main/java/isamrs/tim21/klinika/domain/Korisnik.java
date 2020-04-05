@@ -1,6 +1,6 @@
 package isamrs.tim21.klinika.domain;
 
-public class Korisnik {
+public abstract class Korisnik {
 	protected Long id;
 	protected String email;
 	protected String sifra;
