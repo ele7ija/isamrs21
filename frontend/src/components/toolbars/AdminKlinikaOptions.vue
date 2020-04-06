@@ -17,6 +17,7 @@
         v-for="subItem in item.items"
         :key="subItem.title"
         class="clickable"
+        @click="navigate(subItem.componentName)"
       >
         <v-list-item-action>
           <v-icon class="indent-left">{{subItem.action}}</v-icon>
@@ -40,11 +41,17 @@ export default {
           items: [
             { 
               title: 'Tipovi pregleda',
-              action: 'mdi-hospital'
+              action: 'mdi-hospital',
+              componentName: 'tipovi_pregleda'
             }
           ]
         }
       ]
+    }
+  },
+  methods:{
+    navigate(componentName){
+      this.$router.push({name: componentName});
     }
   }
 }
