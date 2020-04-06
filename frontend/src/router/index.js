@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import template_component from '@/components/TemplateComponent';
+import home from '@/components/Home';
 
 //Plugins
 Vue.use(Router)
@@ -8,13 +8,13 @@ Vue.use(Router)
 export default new Router({
   routes : [
     {
-      path: '/template_component',
-      name: 'template_component',
-      component: template_component
+      path: '/home',
+      name: 'home',
+      component: home
     },
     {
       path: '',
-      redirect: '/template_component'
+      redirect: '/home'
     }
   ]
 });
