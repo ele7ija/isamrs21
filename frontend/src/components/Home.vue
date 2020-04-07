@@ -1,31 +1,32 @@
+<!-- Home page za neulog. korisnika -->
+
 <template>
   <div>
-    <OptionToolbar :drawer="drawer"/>
-    <v-app-bar
-      app
-      color="indigo"
-      dark
-    >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-toolbar-title>Klinika menadzer</v-toolbar-title>
-    </v-app-bar>
-    <v-content>
-      Bla Bla Bla
-    </v-content>
+    Sadrzaj dala Home.vue komponenta. Ovo je homepage za neulog. korisnika <br>
+    <v-btn to="/registracija">Registracija</v-btn> Ne radi jos<br> 
+    <v-btn 
+      @click.native='setGlobalLayout("pacijenti-layout")' 
+      to="/pacijenti">
+      Uloguj se kao pacijent
+    </v-btn> <br> 
+
+    <!-- ovde ne treba da bude /home vec home page za admina klinike -->
+    <v-btn 
+      @click.native='setGlobalLayout("admin-klinike-layout")' 
+      to="/home">Uloguj se kao admin klinike
+    </v-btn> <br>
   </div>
 </template>
 
 <script>
-import OptionToolbar from "./toolbars/OptionToolbar";
+import {mapMutations} from 'vuex'
+
 export default {
   name: "Home",
-  components: {
-    OptionToolbar
-  },
-  data: function(){
-    return {
-      drawer: false
-    }
+  methods: {
+    ...mapMutations([
+      'setGlobalLayout'
+    ])
   }
 }
 </script>
