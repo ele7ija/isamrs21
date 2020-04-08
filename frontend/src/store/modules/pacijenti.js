@@ -3,11 +3,15 @@ import pacijenti from '@/api/pacijenti'
 const state = {
   pacijenti: []
 }
-const getters = {}
+const getters = {
+  getPacijenti: (state) => {
+    return state.pacijenti;
+  }
+}
 const actions = {
   async loadPacijenti({commit}){
-    let response = await pacijenti.getAllKorisnici();
-    commit('setPacijenti', response.data);
+    let data = await pacijenti.getAllKorisnici();
+    commit('setPacijenti', data);
   }
 }
 const mutations = {

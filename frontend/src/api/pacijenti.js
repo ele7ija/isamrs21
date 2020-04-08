@@ -1,13 +1,8 @@
 import axios from 'axios';
 
 export default {
-    async getAllKorisnici() {
-        axios.get('http://localhost:8080/api/pacijent')
-        .then(function(response){
-            return response;
-        })
-        .catch(function(error){
-            console.log(error);
-        })
-    }
+  async getAllKorisnici() {
+    let response = await axios.get('http://localhost:8080/api/pacijenti')
+    return response.data;
+  }
 }

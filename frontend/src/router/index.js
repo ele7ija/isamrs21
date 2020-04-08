@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import home from '@/components/Home';
+import Login from '@/components/Login';
+import Registracija from '@/components/Registracija';
 import TipPregleda from "@/components/tipovi_pregleda/TipPregleda"
 import Pacijenti from "@/components/pacijenti/Pacijenti"
 //Plugins
@@ -9,13 +10,18 @@ Vue.use(Router)
 export default new Router({
   routes : [
     {
-      path: '/home',
-      name: 'home',
-      component: home
+      path: '/login',
+      name: 'login',
+      component: Login
     },
     {
       path: '',
-      redirect: '/home'
+      redirect: '/login'
+    },
+    {
+      path: '/registracija',
+      name: 'registracija',
+      component: Registracija  
     },
     {
       path: '/tipovi_pregleda',
