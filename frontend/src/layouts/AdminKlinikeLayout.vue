@@ -3,40 +3,9 @@
     <v-navigation-drawer
       v-model="drawer"
       app>
-      <v-list dense nav>
-        <v-list-group
-        v-for="item in items"
-        :key="item.title"
-        >
-        <template v-slot:activator>
-            <v-list-item-action>
-            <v-icon>{{item.action}}</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-            <v-list-item-title v-text="item.title"></v-list-item-title>
-            </v-list-item-content>
-        </template>
-          <v-list-item
-            v-for="subItem in item.items"
-            :key="subItem.title"
-            class="clickable"
-            @click="navigate(subItem.componentName)"
-          >
-              <v-list-item-action>
-              <v-icon class="indent-left">{{subItem.action}}</v-icon>
-              </v-list-item-action>             
-              <v-list-item-content>
-              <v-list-item-title v-text="subItem.title"></v-list-item-title>
-              </v-list-item-content>
-          </v-list-item>
-        </v-list-group>
-      </v-list>
       
-      <template v-slot:append>
-        <div class="pa-2">
-          <v-btn block dark>Logout</v-btn>
-        </div>
-      </template>
+      <OpcijeKorisnika :userType="userType"></OpcijeKorisnika>
+      
     </v-navigation-drawer>
       <v-app-bar
       app
@@ -53,28 +22,19 @@
 </template>
 
 <script>
+import OpcijeKorisnika from '../components/user_options/OpcijeKorisnika';
 export default {
   name: "AdminKlinikeLayout",
   components: {
+    OpcijeKorisnika
   },
   data: function(){
     return {
       drawer: false,
-      items: [
-        {
-          title: 'Klinika',
-          action: 'mdi-hospital-building',
-          items: [
-            { 
-              title: 'Tipovi pregleda',
-              action: 'mdi-hospital',
-              componentName: 'tipovi_pregleda'
-            }
-          ]
-        }
-      ]
+      userType: "adminKlinike"
     }
-  }
+  },
+  
 }
 </script>
 

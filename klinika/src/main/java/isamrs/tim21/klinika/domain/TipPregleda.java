@@ -8,6 +8,15 @@ public class TipPregleda {
 	private String opis;
 	private Long idKlinike;
 	private List<Long> idLekaraSpecijalista;
+	private Long idPredefinisaneStavkeCenovnika;
+
+	public Long getIdPredefinisaneStavkeCenovnika() {
+		return idPredefinisaneStavkeCenovnika;
+	}
+
+	public void setIdPredefinisaneStavkeCenovnika(Long idPredefinisaneStavkeCenovnika) {
+		this.idPredefinisaneStavkeCenovnika = idPredefinisaneStavkeCenovnika;
+	}
 
 	public String getNaziv() {
 		return naziv;

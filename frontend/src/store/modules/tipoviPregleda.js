@@ -1,5 +1,4 @@
-import axios from 'axios';
-
+import tipoviPregleda from '@/api/tipoviPregleda';
 const state = {
   klinika: null,
   tipoviPregleda: []
@@ -18,47 +17,35 @@ const getters = {
   }
 }
 const actions = {
-  setKlinika({commit}){
+  async loadTipoviPregleda({commit}){
     //dobavi kliniku preko api call-a ili iz drugog modula
-    commit('setKlinika', {'id': 1}); //za sada dummy klinika
-  },
+    commit('setCurrentKlinika', {'id': 1}); //za sada dummy klinika
 
-  async loadTipoviPregleda({state, commit}){
-    let response = await axios.get(
-      `http://localhost:8080/api/${state.klinika.id}`
-    );
-    commit('setTipoviPregleda', response.data);
+    let response = await tipoviPregleda.getAllTipoviPregleda(1); //state.klinike.id umesto 1 kada napravis klinike
+    commit('setTipoviPregleda', response);
   },
 
   async addTipPregleda({state, commit}, tipPregleda){
-    let response = await axios.post(
-      `http://localhost:8080/api/${state.klinika.id}`,
-      tipPregleda
-    );
-    commit('addTipPregleda', response.data);
+    let response = await tipoviPregleda.addTipPregleda(state.klinika.id, tipPregleda);
+    commit('addNewTipPregleda', response);
   },
 
   async updateTipPregleda({state, commit}, tipPregleda){
-    let response = await axios.put(
-      `http://localhost:8080/api/${state.klinika.id}/${tipPregleda.id}`,
-      tipPregleda
-    );
-    commit('updateTipPregleda', response.data);
+    let response = await tipoviPregleda.updateTipPregleda(state.klinika.id, tipPregleda);
+    commit('updateExistingTipPregleda', response);
   },
 
   async removeTipPregleda({state, commit}, idTipaPregleda){
-    let response = await axios.delete(
-      `http://localhost:8080/api/${state.klinika.id}/${idTipaPregleda}`,
-    );
-    commit('deleteTipPregleda', response.data);
+    let response = await tipoviPregleda.removeTipPregleda(state.klinika.id, idTipaPregleda);
+    commit('deleteTipPregleda', response);
   },
   
 }
 const mutations = {
-  setKlinika: (state, klinika) => state.klinika = klinika,
+  setCurrentKlinika: (state, klinika) => state.klinika = klinika,
   setTipoviPregleda: (state, tipoviPregleda) => state.tipoviPregleda = tipoviPregleda,
-  addTipPregleda: (state, tipPregleda) => state.tipoviPregleda.push(tipPregleda),
-  updateTipPregleda: (state, tipPregleda) => {
+  addNewTipPregleda: (state, tipPregleda) => state.tipoviPregleda.push(tipPregleda),
+  updateExistingTipPregleda: (state, tipPregleda) => {
     let toUpdate = state.tipoviPregleda.filter(x => x.id == tipPregleda.id);
     toUpdate.name = tipPregleda.name;
     toUpdate.description = tipPregleda.description;
