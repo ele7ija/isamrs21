@@ -1,23 +1,49 @@
 package isamrs.tim21.klinika.domain;
 
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+
+@Entity
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="type", discriminatorType=DiscriminatorType.STRING)
 public abstract class Korisnik {
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	protected Long id;
+	
+	@Column(name="email", nullable=false)
 	protected String email;
+	
+	@Column(name="sifra", nullable=false)
 	protected String sifra;
+	
+	@Column(name="ime", nullable=false)
 	protected String ime;
+	
+	@Column(name="prezime", nullable=false)
 	protected String prezime;
-	protected Long idZahtevaZaReg;
+	
+	//TODO: mapirati i ovo
+	//protected Long idZahtevaZaReg;
 	
 	public Korisnik(){}
 
-	public Korisnik(Long id, String email, String sifra, String ime, String prezime, Long idZahtevaZaReg) {
+	public Korisnik(Long id, String email, String sifra, String ime, String prezime) {
 		super();
 		this.id = id;
 		this.email = email;
 		this.sifra = sifra;
 		this.ime = ime;
 		this.prezime = prezime;
-		this.idZahtevaZaReg = idZahtevaZaReg;
 	}
 
 	public Long getId() {
@@ -59,14 +85,5 @@ public abstract class Korisnik {
 	public void setPrezime(String prezime) {
 		this.prezime = prezime;
 	}
-
-	public Long getIdZahtevaZaReg() {
-		return idZahtevaZaReg;
-	}
-
-	public void setIdZahtevaZaReg(Long idZahtevaZaReg) {
-		this.idZahtevaZaReg = idZahtevaZaReg;
-	}
-	
 	
 }

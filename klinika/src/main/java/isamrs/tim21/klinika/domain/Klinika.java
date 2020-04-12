@@ -2,54 +2,87 @@ package isamrs.tim21.klinika.domain;
 
 import java.util.List;
 
-public class Klinika extends MedicinskaUstanova{
-	private List<Long> idSala;
-	private List<Long> idTipovaPregleda;
-	private List<Long> idPregleda;
-	private List<Long> idMedicinskogOsoblja;
-	private List<Long> idAdministratoraKlinike;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity
+@Table(name="klinika")
+public class Klinika{
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Long id;
+	
+	@OneToMany(mappedBy="klinika", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	private List<Sala> sale;
+	
+	@OneToMany(mappedBy="klinika", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	private List<TipPregleda> tipoviPregleda;
+	
+	@OneToMany(mappedBy="klinika", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	private List<Pregled> pregledi;
+	
+	@OneToMany(mappedBy="klinika", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	private List<MedicinskoOsoblje> medicinskoOsoblje;
+	
+	@OneToMany(mappedBy="klinika", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	private List<AdministratorKlinike> administratoriKlinike;
 	
 	public Klinika(){}
 
-	public List<Long> getIdSala() {
-		return idSala;
+	public Long getId() {
+		return id;
 	}
 
-	public void setIdSala(List<Long> idSala) {
-		this.idSala = idSala;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public List<Long> getIdTipovaPregleda() {
-		return idTipovaPregleda;
+	public List<Sala> getSale() {
+		return sale;
 	}
 
-	public void setIdTipovaPregleda(List<Long> idTipovaPregleda) {
-		this.idTipovaPregleda = idTipovaPregleda;
+	public void setSale(List<Sala> sale) {
+		this.sale = sale;
 	}
 
-	public List<Long> getIdPregleda() {
-		return idPregleda;
+	public List<TipPregleda> getTipoviPregleda() {
+		return tipoviPregleda;
 	}
 
-	public void setIdPregleda(List<Long> idPregleda) {
-		this.idPregleda = idPregleda;
+	public void setTipoviPregleda(List<TipPregleda> tipoviPregleda) {
+		this.tipoviPregleda = tipoviPregleda;
 	}
 
-	public List<Long> getIdMedicinskogOsoblja() {
-		return idMedicinskogOsoblja;
+	public List<Pregled> getPregledi() {
+		return pregledi;
 	}
 
-	public void setIdMedicinskogOsoblja(List<Long> idMedicinskogOsoblja) {
-		this.idMedicinskogOsoblja = idMedicinskogOsoblja;
+	public void setPregledi(List<Pregled> pregledi) {
+		this.pregledi = pregledi;
 	}
 
-	public List<Long> getIdAdministratoraKlinike() {
-		return idAdministratoraKlinike;
+	public List<MedicinskoOsoblje> getMedicinskoOsoblje() {
+		return medicinskoOsoblje;
 	}
 
-	public void setIdAdministratoraKlinike(List<Long> idAdministratoraKlinike) {
-		this.idAdministratoraKlinike = idAdministratoraKlinike;
+	public void setMedicinskoOsoblje(List<MedicinskoOsoblje> medicinskoOsoblje) {
+		this.medicinskoOsoblje = medicinskoOsoblje;
 	}
-	
-	
+
+	public List<AdministratorKlinike> getAdministratoriKlinike() {
+		return administratoriKlinike;
+	}
+
+	public void setAdministratoriKlinike(List<AdministratorKlinike> administratoriKlinike) {
+		this.administratoriKlinike = administratoriKlinike;
+	}
 }

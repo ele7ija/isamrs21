@@ -1,52 +1,90 @@
 package isamrs.tim21.klinika.domain;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="pregled")
 public class Pregled {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private Long idTipaPregleda;
-	private Long idSale;
-	private Long idLekara;
-	private Long idPosete;
+	
+	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	private TipPregleda tipPregleda;
+	
+	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	private Sala sala;
+	
+	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	private Lekar lekar;
+	
+	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+	private Klinika klinika;
+
+	@OneToOne(mappedBy="pregled", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	private Poseta poseta;
 	
 	public Pregled(){}
-	
-	public Pregled(Long id, Long idTipaPregleda, Long idSale, Long idLekara, Long idPosete) {
-		super();
-		this.id = id;
-		this.idTipaPregleda = idTipaPregleda;
-		this.idSale = idSale;
-		this.idLekara = idLekara;
-		this.idPosete = idPosete;
+
+	public Klinika getKlinika() {
+		return klinika;
 	}
+
+	public void setKlinika(Klinika klinika) {
+		this.klinika = klinika;
+	}
+
+	
 	public Long getId() {
 		return id;
 	}
+
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Long getIdTipaPregleda() {
-		return idTipaPregleda;
+
+	public TipPregleda getTipPregleda() {
+		return tipPregleda;
 	}
-	public void setIdTipaPregleda(Long idTipaPregleda) {
-		this.idTipaPregleda = idTipaPregleda;
+
+	public void setTipPregleda(TipPregleda tipPregleda) {
+		this.tipPregleda = tipPregleda;
 	}
-	public Long getIdSale() {
-		return idSale;
+
+	public Sala getSala() {
+		return sala;
 	}
-	public void setIdSale(Long idSale) {
-		this.idSale = idSale;
+
+	public void setSala(Sala sala) {
+		this.sala = sala;
 	}
-	public Long getIdLekara() {
-		return idLekara;
+
+	public Lekar getLekar() {
+		return lekar;
 	}
-	public void setIdLekara(Long idLekara) {
-		this.idLekara = idLekara;
+
+	public void setLekar(Lekar lekar) {
+		this.lekar = lekar;
 	}
-	public Long getIdPosete() {
-		return idPosete;
+
+	public Poseta getPoseta() {
+		return poseta;
 	}
-	public void setIdPosete(Long idPosete) {
-		this.idPosete = idPosete;
+
+	public void setPoseta(Poseta poseta) {
+		this.poseta = poseta;
 	}
+	
+	
 	
 	
 }

@@ -1,42 +1,46 @@
 package isamrs.tim21.klinika.domain;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="poseta")
 public class Poseta {
+	
+	@Id
 	private Long id;
-	private Long idZdravstvenogKartona;
-	private Long idPregleda;
+	
+	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+	private ZdravstveniKarton zdravstveniKarton;
+	
+	@OneToOne(fetch=FetchType.LAZY)
+	@MapsId //znaci da je id pregleda u tabeli poseta i primarni i strani kljuc
+	private Pregled pregled;
 	
 	public Poseta(){}
 
-	public Poseta(Long id, Long idZdravstvenogKartona, Long idPregleda) {
-		super();
-		this.id = id;
-		this.idZdravstvenogKartona = idZdravstvenogKartona;
-		this.idPregleda = idPregleda;
+	public ZdravstveniKarton getZdravstveniKarton() {
+		return zdravstveniKarton;
 	}
 
-	public Long getId() {
-		return id;
+	public void setZdravstveniKarton(ZdravstveniKarton zdravstveniKarton) {
+		this.zdravstveniKarton = zdravstveniKarton;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public Pregled getPregled() {
+		return pregled;
 	}
 
-	public Long getIdZdravstvenogKartona() {
-		return idZdravstvenogKartona;
+	public void setPregled(Pregled pregled) {
+		this.pregled = pregled;
 	}
 
-	public void setIdZdravstvenogKartona(Long idZdravstvenogKartona) {
-		this.idZdravstvenogKartona = idZdravstvenogKartona;
-	}
-
-	public Long getIdPregleda() {
-		return idPregleda;
-	}
-
-	public void setIdPregleda(Long idPregleda) {
-		this.idPregleda = idPregleda;
-	}
 	
 	
 }

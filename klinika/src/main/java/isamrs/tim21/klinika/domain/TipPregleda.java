@@ -2,20 +2,50 @@ package isamrs.tim21.klinika.domain;
 
 import java.util.List;
 
-public class TipPregleda {
-	private Long id;
-	private String naziv;
-	private String opis;
-	private Long idKlinike;
-	private List<Long> idLekaraSpecijalista;
-	private Long idPredefinisaneStavkeCenovnika;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-	public Long getIdPredefinisaneStavkeCenovnika() {
-		return idPredefinisaneStavkeCenovnika;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity
+@Table(name="tip_pregleda")
+public class TipPregleda {
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Long id;
+	
+	@Column(name="naziv", nullable=false)
+	private String naziv;
+	
+	@Column(name="opis", nullable=false)
+	private String opis;
+	
+	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+	@JsonIgnore
+	private Klinika klinika;
+	
+	@ManyToMany
+	@JoinTable(name="specijalnost_lekara", joinColumns=@JoinColumn(name="id_tipa_pregleda", referencedColumnName="id"),
+	inverseJoinColumns=@JoinColumn(name="id_lekara", referencedColumnName="id"))
+	private List<Lekar> lekari;
+
+	public List<Lekar> getLekari() {
+		return lekari;
 	}
 
-	public void setIdPredefinisaneStavkeCenovnika(Long idPredefinisaneStavkeCenovnika) {
-		this.idPredefinisaneStavkeCenovnika = idPredefinisaneStavkeCenovnika;
+	public void setLekari(List<Lekar> lekari) {
+		this.lekari = lekari;
 	}
 
 	public String getNaziv() {
@@ -44,21 +74,15 @@ public class TipPregleda {
 		this.id = id;
 	}
 
-	public Long getIdKlinike() {
-		return idKlinike;
+	public Klinika getKlinika() {
+		return klinika;
 	}
 
-	public void setIdKlinike(Long idKlinike) {
-		this.idKlinike = idKlinike;
+	public void setKlinika(Klinika klinika) {
+		this.klinika = klinika;
 	}
 
-	public List<Long> getIdLekaraSpecijalista() {
-		return idLekaraSpecijalista;
-	}
-
-	public void setIdLekaraSpecijalista(List<Long> idLekaraSpecijalista) {
-		this.idLekaraSpecijalista = idLekaraSpecijalista;
-	}
+	
 	
 	
 }

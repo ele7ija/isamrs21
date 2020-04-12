@@ -16,17 +16,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.Klinika;
 import isamrs.tim21.klinika.domain.TipPregleda;
-import isamrs.tim21.klinika.repository.InMemoryKlinikaRepository;
-import isamrs.tim21.klinika.repository.InMemoryTipoviPregledaRepository;
+import isamrs.tim21.klinika.repository.KlinikaRepository;
+import isamrs.tim21.klinika.repository.TipPregledaRepository;
 
 @RestController
-@RequestMapping(path="/{idKlinike}")
+@RequestMapping(path="/tipPregleda/{idKlinike}")
 public class TipPregledaKontroler {
 	@Autowired
-	private InMemoryTipoviPregledaRepository tipoviPregledaRepository;
+	private TipPregledaRepository tipoviPregledaRepository;
 	
 	@Autowired
-	private InMemoryKlinikaRepository klinikaRepository;
+	private KlinikaRepository klinikaRepository;
 	
 	/*
 	 * TODO 1: Napraviti AROUND aspekt koji ce presresti svaku od ovih metoda i proveriti da li data klinika postoji u bazi podataka
@@ -45,18 +45,18 @@ public class TipPregledaKontroler {
 	
 	@GetMapping
 	public ResponseEntity<List<TipPregleda>> getAllTipoviPregleda(@PathVariable("idKlinike") Long idKlinike){
-		Klinika klinika =  klinikaRepository.findById(idKlinike); //ovo ce verovatno ici u aspekt
+		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
 			return new ResponseEntity<List<TipPregleda>>(HttpStatus.NOT_FOUND);
 		}else{
-			List<TipPregleda> retval = tipoviPregledaRepository.findByIdKlinike(idKlinike);
+			List<TipPregleda> retval = tipoviPregledaRepository.findAllByIdKlinike(klinika.getId());
 			return new ResponseEntity<List<TipPregleda>>(retval, HttpStatus.OK);
 		}
 	}
 	
 	@GetMapping(value="/{idTipaPregleda}")
 	public ResponseEntity<TipPregleda> getTipPregleda(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idTipaPregleda") Long idTipaPregleda){
-		Klinika klinika =  klinikaRepository.findById(idKlinike); //ovo ce verovatno ici u aspekt
+		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
 			return new ResponseEntity<TipPregleda>(HttpStatus.NOT_FOUND);
 		}else{
@@ -72,24 +72,25 @@ public class TipPregledaKontroler {
 	
 	@PostMapping
 	public ResponseEntity<TipPregleda> addTipPregleda(@PathVariable("idKlinike") Long idKlinike, @RequestBody TipPregleda tipPregledaToAdd){
-		Klinika klinika =  klinikaRepository.findById(idKlinike); //ovo ce verovatno ici u aspekt
+		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
 			return new ResponseEntity<TipPregleda>(HttpStatus.NOT_FOUND);
 		}else{
-			tipPregledaToAdd.setIdKlinike(idKlinike);
-			tipoviPregledaRepository.addTipPregleda(tipPregledaToAdd);
-			return new ResponseEntity<TipPregleda>(tipPregledaToAdd, HttpStatus.OK);
+			tipPregledaToAdd.setKlinika(klinika);
+			TipPregleda retval = tipoviPregledaRepository.save(tipPregledaToAdd);
+			return new ResponseEntity<TipPregleda>(retval, HttpStatus.OK);
 		}
 	}
 	
 	@PutMapping(value="/{idTipaPregleda}")
 	public ResponseEntity<TipPregleda> updateTipPregleda(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idTipaPregleda") Long idTipaPregleda, @RequestBody TipPregleda tipPregledaToChange){
-		Klinika klinika =  klinikaRepository.findById(idKlinike); //ovo ce verovatno ici u aspekt
+		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
 			return new ResponseEntity<TipPregleda>(HttpStatus.NOT_FOUND);
 		}else{
-			TipPregleda retval = tipoviPregledaRepository.updateTipPregleda(idTipaPregleda, tipPregledaToChange);
+			tipPregledaToChange.setId(idTipaPregleda);
+			TipPregleda retval = tipoviPregledaRepository.save(tipPregledaToChange);
 			if(retval == null){
 				return new ResponseEntity<TipPregleda>(retval, HttpStatus.NOT_FOUND);
 			}else{
@@ -101,12 +102,12 @@ public class TipPregledaKontroler {
 	
 	@DeleteMapping(value="/{idTipaPregleda}")
 	public ResponseEntity<Boolean> deleteTipPRegleda(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idTipaPregleda") Long idTipaPregleda){
-		Klinika klinika =  klinikaRepository.findById(idKlinike); //ovo ce verovatno ici u aspekt
+		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
 			return new ResponseEntity<Boolean>(HttpStatus.NOT_FOUND);
 		}else{
-			Boolean success = tipoviPregledaRepository.deleteTipPregleda(idTipaPregleda);
-			return new ResponseEntity<Boolean>(success, HttpStatus.OK);
+			tipoviPregledaRepository.deleteById(idTipaPregleda);
+			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 		}
 	}
 }
