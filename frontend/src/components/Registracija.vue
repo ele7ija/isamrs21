@@ -101,6 +101,7 @@
 
 <script>
 import { mapActions } from 'vuex';
+
 export default {
   name: 'Registracija',
   data: function() {
@@ -162,7 +163,7 @@ export default {
       this.$refs.loginForm.reset();
     },
     ...mapActions({
-      registrujKorisnika: 'korisnik/registrujKorisnika'
+      registrujKorisnika: 'korisnici/registrujKorisnika'
     }),
     registruj: function(){
       let korisnik = {
@@ -176,9 +177,7 @@ export default {
         email: this.email,
         sifra: this.lozinka
       }
-      console.log(korisnik)
-      // let feedback = this.registrujKorisnika();
-
+      this.registrujKorisnika(korisnik);
     }
   }
 }
