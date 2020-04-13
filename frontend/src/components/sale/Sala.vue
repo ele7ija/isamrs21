@@ -8,7 +8,7 @@
       >
       <template v-slot:top>
         <v-toolbar flat color="white">
-          <v-toolbar-title>Tipovi Pregleda</v-toolbar-title>
+          <v-toolbar-title>Sale</v-toolbar-title>
           <v-divider
             class="mx-4"
             inset
@@ -43,10 +43,7 @@
                 <v-container>
                   <v-row>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="newItem.naziv" label="Naziv"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="newItem.opis" label="Opis"></v-text-field>
+                      <v-text-field v-model="newItem.oznaka" label="Oznaka"></v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -83,22 +80,17 @@
 <script>
 import {mapGetters, mapActions} from 'vuex';
 export default {
-  name: "TipPregleda",
+  name: "Sala",
   data: function(){
     return {
       dialog: false,
       search: '',
       headers: [
         {
-          text: 'Naziv',
-          value: 'naziv',
+          text: 'Oznaka',
+          value: 'oznaka',
           sortable: true,
 
-        },
-        {
-          text: 'Opis',
-          value: 'opis',
-          sortable: false
         },
         { 
           text: 'Actions',
@@ -108,8 +100,7 @@ export default {
         }
       ],
       newItem: {
-        naziv: '',
-        opis: ''
+        oznaka: '',
       },
       update: false
     };
@@ -117,12 +108,12 @@ export default {
   computed: {
     ...mapGetters(
       {
-        getAll: 'tipoviPregleda/getTipoviPregleda',
-        get: 'tipoviPregleda/getTipPregleda'
+        getAll: 'sale/getSale',
+        get: 'sale/getSala'
       }
     ),
     formTitle: function(){
-       return this.update ? 'Izmena tipa pregleda': 'Dodavanje novog tipa prelgeda';
+       return this.update ? 'Izmena sale': 'Dodavanje nove sale';
     }
   },
   created(){
@@ -131,16 +122,15 @@ export default {
   methods: {
     ...mapActions(
       {
-        fetchData: 'tipoviPregleda/loadTipoviPregleda',
-        addTipPregleda: 'tipoviPregleda/addTipPregleda',
-        updateTipPregleda: 'tipoviPregleda/updateTipPregleda',
-        removeTipPregleda: 'tipoviPregleda/removeTipPregleda'
+        fetchData: 'sale/loadSale',
+        addSala: 'sale/addSala',
+        updateSala: 'sale/updateSala',
+        removeSala: 'sale/removeSala'
       }
     ),
     resetNewItem(){
       this.newItem = {
-        naziv: '',
-        opis: ''
+        oznaka: '',
       };
     },
     close(){
@@ -150,9 +140,9 @@ export default {
     },
     save(){
       if(this.update){
-        this.updateTipPregleda(this.newItem);
+        this.updateSala(this.newItem);
       }else{
-        this.addTipPregleda(this.newItem);
+        this.addSala(this.newItem);
       }
       this.close();
     },
@@ -162,7 +152,7 @@ export default {
       this.dialog = true;
     },
     deleteItem(item){
-      this.removeTipPregleda(item.id);
+      this.removeSala(item.id);
     }
   }
 }

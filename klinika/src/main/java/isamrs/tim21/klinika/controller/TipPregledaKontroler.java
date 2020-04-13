@@ -80,12 +80,12 @@ public class TipPregledaKontroler {
 			tipPregledaToChange.setId(idTipaPregleda);
 			tipPregledaToChange.setKlinika(klinika);
 			
-			TipPregleda retval = tipoviPregledaRepository.save(tipPregledaToChange);
-			if(retval == null){
-				return new ResponseEntity<TipPregleda>(retval, HttpStatus.NOT_FOUND);
-			}else{
-				return new ResponseEntity<TipPregleda>(retval, HttpStatus.OK);	
+			if(! tipoviPregledaRepository.findById(idTipaPregleda).isPresent()){
+				return new ResponseEntity<TipPregleda>(HttpStatus.NOT_FOUND);
 			}
+
+			TipPregleda retval = tipoviPregledaRepository.save(tipPregledaToChange);
+			return new ResponseEntity<TipPregleda>(retval, HttpStatus.OK);	
 			
 		}
 	}

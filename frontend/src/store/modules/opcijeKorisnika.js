@@ -7,8 +7,13 @@ const state = {
         items: [
           { 
             title: 'Tipovi pregleda',
-            action: 'mdi-hospital',
+            action: 'mdi-alpha-t',
             componentName: 'tipovi_pregleda'
+          },
+          {
+            title: 'Sale',
+            action: 'mdi-alpha-s',
+            componentName: 'sala'
           }
         ]
       }
