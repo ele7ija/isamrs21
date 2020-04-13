@@ -28,23 +28,8 @@ public class TipPregledaKontroler {
 	@Autowired
 	private KlinikaRepository klinikaRepository;
 	
-	/*
-	 * TODO 1: Napraviti AROUND aspekt koji ce presresti svaku od ovih metoda i proveriti da li data klinika postoji u bazi podataka
-	 * U slucaju da postoji, nastaviti sa pozivom REST endpointa
-	 * U slucaju da ne postoji, vratiti 404
-	 * Bitno -> pitanje je da li je ovo dobro jer cemo onda imati 2 ista upita u bazu za dobavljanje klinike u slucaju da ona postoji
-	 * (jednom u aspektu i drugi put u REST endpoint-u)
-	 */
-	
-	/*
-	 * TODO 2: 
-	 * Razmisliti kako dizajnirati JPA repository-e. Da li imati po jedan repository za klinike i tipove pregleda, 
-	 * ili samo jedan repository sa SQL JOIN operacijama koje cemo morati sami da pisemo kao Stringove
-	 * (jer JPA nece vrv znati automatski da ih napravi)
-	 */
-	
 	@GetMapping
-	public ResponseEntity<List<TipPregleda>> getAllTipoviPregleda(@PathVariable("idKlinike") Long idKlinike){
+	public Object getAllTipoviPregleda(@PathVariable("idKlinike") Long idKlinike){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
 			return new ResponseEntity<List<TipPregleda>>(HttpStatus.NOT_FOUND);
@@ -53,9 +38,9 @@ public class TipPregledaKontroler {
 			return new ResponseEntity<List<TipPregleda>>(retval, HttpStatus.OK);
 		}
 	}
-	
+
 	@GetMapping(value="/{idTipaPregleda}")
-	public ResponseEntity<TipPregleda> getTipPregleda(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idTipaPregleda") Long idTipaPregleda){
+	public Object getTipPregleda(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idTipaPregleda") Long idTipaPregleda){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
 			return new ResponseEntity<TipPregleda>(HttpStatus.NOT_FOUND);
@@ -71,25 +56,30 @@ public class TipPregledaKontroler {
 	}
 	
 	@PostMapping
-	public ResponseEntity<TipPregleda> addTipPregleda(@PathVariable("idKlinike") Long idKlinike, @RequestBody TipPregleda tipPregledaToAdd){
+	public Object addTipPregleda(@PathVariable("idKlinike") Long idKlinike, @RequestBody TipPregleda tipPregledaToAdd){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
 			return new ResponseEntity<TipPregleda>(HttpStatus.NOT_FOUND);
 		}else{
+			//POSTAVI JOS JEDNOM SVE PARAMETRE NA BEKU
 			tipPregledaToAdd.setKlinika(klinika);
+			
 			TipPregleda retval = tipoviPregledaRepository.save(tipPregledaToAdd);
 			return new ResponseEntity<TipPregleda>(retval, HttpStatus.OK);
 		}
 	}
 	
 	@PutMapping(value="/{idTipaPregleda}")
-	public ResponseEntity<TipPregleda> updateTipPregleda(@PathVariable("idKlinike") Long idKlinike, 
+	public Object updateTipPregleda(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idTipaPregleda") Long idTipaPregleda, @RequestBody TipPregleda tipPregledaToChange){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
 			return new ResponseEntity<TipPregleda>(HttpStatus.NOT_FOUND);
 		}else{
+			//POSTAVI JOS JEDNOM SVE PARAMETRE NA BEKU
 			tipPregledaToChange.setId(idTipaPregleda);
+			tipPregledaToChange.setKlinika(klinika);
+			
 			TipPregleda retval = tipoviPregledaRepository.save(tipPregledaToChange);
 			if(retval == null){
 				return new ResponseEntity<TipPregleda>(retval, HttpStatus.NOT_FOUND);
@@ -101,7 +91,7 @@ public class TipPregledaKontroler {
 	}
 	
 	@DeleteMapping(value="/{idTipaPregleda}")
-	public ResponseEntity<Boolean> deleteTipPRegleda(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idTipaPregleda") Long idTipaPregleda){
+	public Object deleteTipPregleda(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idTipaPregleda") Long idTipaPregleda){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
 			return new ResponseEntity<Boolean>(HttpStatus.NOT_FOUND);

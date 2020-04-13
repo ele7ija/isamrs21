@@ -15,7 +15,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFilter;
 
 @Entity
 @Table(name="tip_pregleda")
@@ -31,8 +31,8 @@ public class TipPregleda {
 	@Column(name="opis", nullable=false)
 	private String opis;
 	
-	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-	@JsonIgnore
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JsonFilter("tipPregleda_to_klinika_filter")
 	private Klinika klinika;
 	
 	@ManyToMany

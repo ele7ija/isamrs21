@@ -151,7 +151,7 @@ export default {
     },
     save(){
       if(this.update){
-        this.updateTipPregleda(this.item);
+        this.updateTipPregleda(this.newItem);
       }else{
         this.addTipPregleda(this.newItem);
       }

@@ -1,4 +1,5 @@
 import tipoviPregleda from '@/api/tipoviPregleda';
+//import klinike from '@/api/klinike';
 const state = {
   klinika: null,
   tipoviPregleda: []
@@ -14,14 +15,18 @@ const getters = {
     }else{
       return filtriraniTipoviPrelgeda[0];
     }
+  },
+  getKlinika: (state) => {
+    return state.klinika;
   }
+
 }
 const actions = {
   async loadTipoviPregleda({commit}){
-    //dobavi kliniku preko api call-a ili iz drugog modula
-    commit('setCurrentKlinika', {'id': 1}); //za sada dummy klinika
-
-    let response = await tipoviPregleda.getAllTipoviPregleda(1); //state.klinike.id umesto 1 kada napravis klinike
+    //let resp = await klinike.getKlinika(1); //za sada dummy klinika
+    //commit('setCurrentKlinika', resp.data);
+    commit('setCurrentKlinika', {"id":4});
+    let response = await tipoviPregleda.getAllTipoviPregleda(4);
     commit('setTipoviPregleda', response);
   },
 
@@ -36,8 +41,8 @@ const actions = {
   },
 
   async removeTipPregleda({state, commit}, idTipaPregleda){
-    let response = await tipoviPregleda.removeTipPregleda(state.klinika.id, idTipaPregleda);
-    commit('deleteTipPregleda', response);
+    await tipoviPregleda.removeTipPregleda(state.klinika.id, idTipaPregleda);
+    commit('deleteTipPregleda', idTipaPregleda);
   },
   
 }
@@ -46,12 +51,12 @@ const mutations = {
   setTipoviPregleda: (state, tipoviPregleda) => state.tipoviPregleda = tipoviPregleda,
   addNewTipPregleda: (state, tipPregleda) => state.tipoviPregleda.push(tipPregleda),
   updateExistingTipPregleda: (state, tipPregleda) => {
-    let toUpdate = state.tipoviPregleda.filter(x => x.id == tipPregleda.id);
-    toUpdate.name = tipPregleda.name;
-    toUpdate.description = tipPregleda.description;
+    let index = state.tipoviPregleda.findIndex(x => x.id == tipPregleda.id);
+    state.tipoviPregleda[index].naziv = tipPregleda.naziv;
+    state.tipoviPregleda[index].opis = tipPregleda.opis;
     //itd. za ostale atribute
   },
-  deleteTipPregleda: (state, tipPregleda) => state.tipoviPregleda = state.tipoviPregleda.filter(x => x.id != tipPregleda.id)
+  deleteTipPregleda: (state, idTipaPregleda) => state.tipoviPregleda = state.tipoviPregleda.filter(x => x.id != idTipaPregleda)
 
 }
 
