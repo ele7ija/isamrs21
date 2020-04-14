@@ -1,4 +1,5 @@
 package isamrs.tim21.klinika.aop;
+
 import java.util.List;
 
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -13,37 +14,37 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
-import isamrs.tim21.klinika.domain.TipPregleda;
+import isamrs.tim21.klinika.domain.Sala;
 
 @Component
 @Aspect
-public class TipPregledaKontrolerAspect {
-	@Pointcut("execution(* isamrs.tim21.klinika.controller.TipPregledaKontroler.getAllTipoviPregleda(..))")
+public class SalaKontrolerAspect {
+	@Pointcut("execution(* isamrs.tim21.klinika.controller.SalaKontroler.getAllSale(..))")
     public void getAll() {}
 	
-	@Pointcut("execution(* isamrs.tim21.klinika.controller.TipPregledaKontroler.getTipPregleda(..))"
-			+ " || execution(* isamrs.tim21.klinika.controller.TipPregledaKontroler.addTipPregleda(..))"
-			+ " || execution(* isamrs.tim21.klinika.controller.TipPregledaKontroler.updateTipPregleda(..))")
+	@Pointcut("execution(* isamrs.tim21.klinika.controller.SalaKontroler.getSala(..))"
+			+ " || execution(* isamrs.tim21.klinika.controller.SalaKontroler.addSala(..))"
+			+ " || execution(* isamrs.tim21.klinika.controller.SalaKontroler.updateSala(..))")
 	public void getOrPostOrPut() {}
 	
-	@Pointcut("execution(* isamrs.tim21.klinika.controller.TipPregledaKontroler.deleteTipPregleda(..))")
+	@Pointcut("execution(* isamrs.tim21.klinika.controller.SalaKontroler.deleteSala(..))")
 	public void delete() {}
 	
 	@SuppressWarnings("unchecked")
 	@Around("getAll()")
 	public Object aroundMethod1(ProceedingJoinPoint joinPoint) throws Throwable {
 		//EXECUTE CONTROLLER METHOD
-		ResponseEntity<List<TipPregleda>> interceptedResult = (ResponseEntity<List<TipPregleda>>)joinPoint.proceed();
+		ResponseEntity<List<Sala>> interceptedResult = (ResponseEntity<List<Sala>>)joinPoint.proceed();
 		if(interceptedResult.getStatusCode() != HttpStatus.OK){
 			return interceptedResult;
 		}
 		
 		//GET THE BEAN THAT NEEDS TO BE FILTERED
-		List<TipPregleda> responseBody = interceptedResult.getBody();
+		List<Sala> responseBody = interceptedResult.getBody();
 		
 		//SPECIFY FILTERS 
 		SimpleFilterProvider filterProvider = new SimpleFilterProvider();
-	    filterProvider.addFilter("tipPregleda_to_klinika_filter", SimpleBeanPropertyFilter.filterOutAllExcept("id"));
+	    filterProvider.addFilter("sala_to_klinika_filter", SimpleBeanPropertyFilter.filterOutAllExcept("id"));
 	     
 	    //FILTER BEAN AS STRING
 	    ObjectMapper mapper = new ObjectMapper();
@@ -57,17 +58,17 @@ public class TipPregledaKontrolerAspect {
 	@Around("getOrPostOrPut()")
 	public Object aroundMethod2(ProceedingJoinPoint joinPoint) throws Throwable {
 		//EXECUTE CONTROLLER METHOD
-		ResponseEntity<TipPregleda> interceptedResult = (ResponseEntity<TipPregleda>)joinPoint.proceed();
+		ResponseEntity<Sala> interceptedResult = (ResponseEntity<Sala>)joinPoint.proceed();
 		if(interceptedResult.getStatusCode() != HttpStatus.OK){
 			return interceptedResult;
 		}
 		
 		//GET THE BEAN THAT NEEDS TO BE FILTERED
-		TipPregleda responseBody = interceptedResult.getBody();
+		Sala responseBody = interceptedResult.getBody();
 		
 		//SPECIFY FILTERS 
 		SimpleFilterProvider filterProvider = new SimpleFilterProvider();
-	    filterProvider.addFilter("tipPregleda_to_klinika_filter", SimpleBeanPropertyFilter.filterOutAllExcept("id"));
+	    filterProvider.addFilter("sala_to_klinika_filter", SimpleBeanPropertyFilter.filterOutAllExcept("id"));
 	     
 	    //RETURN RESPONSE
 	    ObjectMapper mapper = new ObjectMapper();
@@ -101,3 +102,4 @@ public class TipPregledaKontrolerAspect {
 	    return filteredJson;
 	}
 }
+

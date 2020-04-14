@@ -1,4 +1,4 @@
-package isamrs.tim21.klinika.config;
+package isamrs.tim21.klinika.configuration;
 
 import org.springframework.context.annotation.Configuration;
 

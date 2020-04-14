@@ -3,6 +3,7 @@ package isamrs.tim21.klinika.domain;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+
 @Entity
 @Table(name="sala")
 public class Sala {
@@ -20,7 +23,19 @@ public class Sala {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
-	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	public String getOznaka() {
+		return oznaka;
+	}
+
+	public void setOznaka(String oznaka) {
+		this.oznaka = oznaka;
+	}
+
+	@Column(name="oznaka", nullable=false, unique=true)
+	private String oznaka;
+	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JsonFilter("sala_to_klinika_filter")
 	private Klinika klinika;
 	
 	@OneToMany(mappedBy="sala", fetch=FetchType.LAZY, cascade=CascadeType.ALL)

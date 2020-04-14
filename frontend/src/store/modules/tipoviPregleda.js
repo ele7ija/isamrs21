@@ -24,9 +24,10 @@ const getters = {
 const actions = {
   async loadTipoviPregleda({commit}){
     //let resp = await klinike.getKlinika(1); //za sada dummy klinika
-    //commit('setCurrentKlinika', resp.data);
-    commit('setCurrentKlinika', {"id":4});
-    let response = await tipoviPregleda.getAllTipoviPregleda(4);
+    //commit('setCurrentKlinika', resp);
+    commit('setCurrentKlinika', {'id': 1});
+
+    let response = await tipoviPregleda.getAllTipoviPregleda(1);
     commit('setTipoviPregleda', response);
   },
 
