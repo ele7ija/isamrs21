@@ -34,27 +34,29 @@
             <template v-slot:activator="{ on }">
               <v-btn color="primary" dark class="mb-2" v-on="on">Dodaj</v-btn>
             </template>
-            <v-card>
-              <v-card-title>
-                <span class="headline">{{formTitle}}</span>
-              </v-card-title>
-              <hr>
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="newItem.oznaka" label="Oznaka"></v-text-field>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
+            <v-form v-model="isFormValid">
+              <v-card>
+                <v-card-title>
+                  <span class="headline">{{formTitle}}</span>
+                </v-card-title>
+                <hr>
+                <v-card-text>
+                  <v-container>
+                    <v-row>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field v-model="newItem.oznaka" label="Oznaka" :rules="salaRules"></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
 
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-              </v-card-actions>
-            </v-card>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
+                  <v-btn color="blue darken-1" text @click="save" :disabled="!isFormValid">Save</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-form>
           </v-dialog>
         </v-toolbar>
       </template>
@@ -85,6 +87,7 @@ export default {
     return {
       dialog: false,
       search: '',
+      isFormValid: false,
       headers: [
         {
           text: 'Oznaka',
@@ -112,8 +115,21 @@ export default {
         get: 'sale/getSala'
       }
     ),
+    
     formTitle: function(){
        return this.update ? 'Izmena sale': 'Dodavanje nove sale';
+    },
+    
+    salaRules: function(){
+      const rules = [];
+      rules.push(v => !!v || "Oznaka ne sme ostati prazna");
+      if(this.update){
+        rules.push(v => this.getAll.findIndex(x => x.oznaka == v && x.id != this.newItem.id) == -1 || "Oznaka mora biti jedinstvena");
+      }else{
+        rules.push(v => this.getAll.findIndex(x => x.oznaka == v) == -1 || "Oznaka mora biti jedinstvena");
+      }
+      
+      return rules;
     }
   },
   created(){

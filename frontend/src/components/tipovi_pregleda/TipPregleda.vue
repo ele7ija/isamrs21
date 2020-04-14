@@ -39,24 +39,26 @@
                 <span class="headline">{{formTitle}}</span>
               </v-card-title>
               <hr>
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="newItem.naziv" label="Naziv"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="newItem.opis" label="Opis"></v-text-field>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
+              <v-form v-model="isFormValid">
+                <v-card-text>
+                  <v-container>
+                    <v-row>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field v-model="newItem.naziv" label="Naziv" :rules="nazivRules"></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field v-model="newItem.opis" label="Opis" :rules="opisRules"></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
 
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-              </v-card-actions>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
+                  <v-btn color="blue darken-1" text @click="save" :disabled="!isFormValid">Save</v-btn>
+                </v-card-actions>
+              </v-form>
             </v-card>
           </v-dialog>
         </v-toolbar>
@@ -88,6 +90,7 @@ export default {
     return {
       dialog: false,
       search: '',
+      isFormValid: false,
       headers: [
         {
           text: 'Naziv',
@@ -114,6 +117,7 @@ export default {
       update: false
     };
   },
+
   computed: {
     ...mapGetters(
       {
@@ -121,10 +125,35 @@ export default {
         get: 'tipoviPregleda/getTipPregleda'
       }
     ),
+
     formTitle: function(){
        return this.update ? 'Izmena tipa pregleda': 'Dodavanje novog tipa prelgeda';
+    },
+
+    nazivRules: function(){
+      const rules = [];
+      
+      const rule1 = v => !!v || 'Naziv ne sme ostati prazan';
+      rules.push(rule1);
+
+      let rule2 = null;
+      if(this.update){
+        rule2 = v => this.getAll.findIndex(x => x.naziv == v && x.id != this.newItem.id) == -1 || 'Naziv mora biti jedinstven';
+      }else{
+        rule2 = v => this.getAll.findIndex(x => x.naziv == v) == -1 || 'Naziv mora biti jedinstven';
+      }
+      rules.push(rule2);
+      return rules;
+    },
+
+    opisRules: function(){
+      const rules = [];
+      const rule1 = v => !!v || 'Opis ne sme ostati prazan';
+      rules.push(rule1);
+      return rules;
     }
   },
+
   created(){
     this.fetchData();
   },
@@ -137,17 +166,20 @@ export default {
         removeTipPregleda: 'tipoviPregleda/removeTipPregleda'
       }
     ),
+
     resetNewItem(){
       this.newItem = {
         naziv: '',
         opis: ''
       };
     },
+
     close(){
       this.resetNewItem();
       this.update = false;
       this.dialog = false;
     },
+
     save(){
       if(this.update){
         this.updateTipPregleda(this.newItem);
@@ -156,13 +188,29 @@ export default {
       }
       this.close();
     },
+
     editItem(item){
       this.update = true;
-      this.newItem = Object.assign({}, item);
+      this.newItem = Object.assign({}, item)
       this.dialog = true;
     },
+
     deleteItem(item){
       this.removeTipPregleda(item.id);
+    },
+
+    validateRules(){
+      for(let rule of this.nazivRules){
+        if(rule != true){ //mora ovako
+          return true;
+        }
+      }
+      for(let rule of this.opisRules){
+        if(rule != true){ //mora ovako
+          return true;
+        }
+      }
+      return false;
     }
   }
 }

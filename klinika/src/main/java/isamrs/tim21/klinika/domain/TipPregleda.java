@@ -25,7 +25,7 @@ public class TipPregleda {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(name="naziv", nullable=false)
+	@Column(name="naziv", nullable=false, unique=true)
 	private String naziv;
 	
 	@Column(name="opis", nullable=false)
