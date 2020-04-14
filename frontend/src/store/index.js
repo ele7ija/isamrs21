@@ -3,7 +3,8 @@ import Vue from 'vue';
 import tipoviPregleda from './modules/tipoviPregleda';
 import sale from './modules/sale';
 import pacijenti from './modules/pacijenti';
-import opcijeKorisnika from './modules/opcijeKorisnika'
+import opcijeKorisnika from './modules/opcijeKorisnika';
+import korisnici from './modules/korisnici';
 //Plugins
 Vue.use(Vuex);
 
@@ -12,16 +13,24 @@ export default new Vuex.Store({
     opcijeKorisnika,
     tipoviPregleda,
     sale,
-    pacijenti
+    pacijenti,
+    korisnici
+
   },
 
   // root store
   state: {
-    globalLayout: 'neulogovani-korisnik-layout'
+    // globalni layout se bavi app-barom i navigation-drawerom
+    globalLayout: 'neulogovani-korisnik-layout',
+    // id ulogovanog korisnika
+    korisnik: null
   },
   mutations: {
     setGlobalLayout (state, payload){
       state.globalLayout = payload;
+    },
+    setKorisnik (state, payload) {
+      state.korisnik = payload;
     }
   }
 })
