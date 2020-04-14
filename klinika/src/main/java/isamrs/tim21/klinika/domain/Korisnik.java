@@ -3,7 +3,6 @@ package isamrs.tim21.klinika.domain;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,15 +30,12 @@ public abstract class Korisnik {
 	
 	@Column(name="prezime", nullable=false)
 	protected String prezime;
-	
-	//TODO: mapirati i ovo
-	//protected Long idZahtevaZaReg;
+
 	
 	public Korisnik(){}
 
-	public Korisnik(Long id, String email, String sifra, String ime, String prezime) {
+	public Korisnik(String email, String sifra, String ime, String prezime) {
 		super();
-		this.id = id;
 		this.email = email;
 		this.sifra = sifra;
 		this.ime = ime;
@@ -48,10 +44,6 @@ public abstract class Korisnik {
 
 	public Long getId() {
 		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getEmail() {

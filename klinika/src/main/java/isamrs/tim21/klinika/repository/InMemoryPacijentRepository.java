@@ -15,8 +15,8 @@ public class InMemoryPacijentRepository {
 
 	public InMemoryPacijentRepository() {
 		pacijenti = new HashSet<Pacijent>();
-		pacijenti.add(new Pacijent(0L, "jane@doe.com", "janedoe", "Jane", "Doe"));
-		pacijenti.add(new Pacijent(1L, "john@doe.com", "johndoe", "John", "Doe"));
+		// pacijenti.add(new Pacijent(0L, "jane@doe.com", "janedoe", "Jane", "Doe"));
+		// pacijenti.add(new Pacijent(1L, "john@doe.com", "johndoe", "John", "Doe"));
 	}
 	
 	public Set<Pacijent> findAll() {
