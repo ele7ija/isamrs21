@@ -14,7 +14,7 @@
     </v-btn> <br> 
     <v-btn 
       @click.native='setGlobalLayout("admin-klinike-layout")' 
-      to="/login">Uloguj se kao admin klinike
+      to="/home/adminKlinike">Uloguj se kao admin klinike
     </v-btn> <br>
   </div>
 </template>

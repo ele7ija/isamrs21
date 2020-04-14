@@ -4,6 +4,11 @@ const state = {
       {
         title: 'Klinika',
         action: 'mdi-hospital-building',
+        dashboard_item: {
+          title: 'Dashboard',
+          action: 'mdi-view-dashboard',
+          path: "/home/adminKlinike"
+        },
         items: [
           { 
             title: 'Tipovi pregleda',

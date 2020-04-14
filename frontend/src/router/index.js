@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Login from '@/components/Login';
 import Registracija from '@/components/Registracija';
+import UserDashboard from "@/components/dashboards/UserDashboard";
 import TipPregleda from "@/components/tipovi_pregleda/TipPregleda";
 import Sala from "@/components/sale/Sala";
 import Pacijenti from "@/components/pacijenti/Pacijenti";
@@ -23,6 +24,12 @@ export default new Router({
       path: '/registracija',
       name: 'registracija',
       component: Registracija  
+    },
+    {
+      path: '/home/:userType',
+      name: 'home',
+      component: UserDashboard,
+      props: true
     },
     {
       path: '/tipovi_pregleda',

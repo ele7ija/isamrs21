@@ -13,10 +13,20 @@
           <v-list-item-title v-text="item.title"></v-list-item-title>
           </v-list-item-content>
       </template>
+      
+        <v-list-item
+          @click="navigateUrl(item.dashboard_item.path)">
+          <v-list-item-action>
+            <v-icon class="indent-left">{{item.dashboard_item.action}}</v-icon>
+            </v-list-item-action>             
+            <v-list-item-content>
+            <v-list-item-title v-text="item.dashboard_item.title"></v-list-item-title>
+            </v-list-item-content>
+        </v-list-item>
+
         <v-list-item
           v-for="subItem in item.items"
           :key="subItem.title"
-          class="clickable"
           @click="navigate(subItem.componentName)"
         >
             <v-list-item-action>
@@ -44,7 +54,10 @@ export default {
   }),
   methods: {
     navigate(componentName){
-      this.$router.push({name: componentName});
+      this.$router.push({name: componentName}).catch(err => {err});
+    },
+    navigateUrl(componentPath){
+      this.$router.push({path: componentPath}).catch(err => {err});
     }
   }
 }

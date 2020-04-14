@@ -33,7 +33,7 @@ export default {
       drawer: false,
       userType: "adminKlinike"
     }
-  },
+  }
   
 }
 </script>
