@@ -127,13 +127,13 @@ export default {
       ],
       adresa: '',
       adresaPravila: [
-        v => v.length <= 100 || 'Adresa ima najviše 100 karaktera'
+        v => (v && v.length <= 100) || 'Adresa ima najviše 100 karaktera'
 
       ],
       brojTelefona: '',
       brojTelefonaPravila: [
         v => !!v || 'Broj telefona je obavezan',
-        v => v.length <= 15 || 'Broj telefona ima najviše 15 karaktera'
+        v => (v && v.length <= 15) || 'Broj telefona ima najviše 15 karaktera'
       ],
       jbo: '',
       jboPravila: [
@@ -148,13 +148,13 @@ export default {
       prikaziLozinku: false,
       lozinkaPravila: [
         v => !!v || 'Lozinka je obavezna',
-        // v => v.length<=8 || 'Lozinka mora biti duza od 8 cifara',
+        // (v && v.length <= 8) || 'Lozinka mora biti duza od 8 cifara',
       ],
       ponovljenaLozinka: '',
       ponovljenaLozinkaPravila: [
         v => !!v || 'Lozinka je obavezna',
         v => v===this.lozinka || 'Lozinke moraju biti iste',
-        // v => v.length<=8 || 'Lozinka mora biti duza od 8 cifara',
+        // (v && v.length <= 8) || 'Lozinka mora biti duza od 8 cifara',
       ],
     }
   },

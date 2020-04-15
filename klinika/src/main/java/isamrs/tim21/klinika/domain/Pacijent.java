@@ -5,6 +5,7 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 import isamrs.tim21.klinika.dto.PacijentDTO;
@@ -28,10 +29,10 @@ public class Pacijent extends Korisnik{
 	@Column(name="jbo", nullable=false)
 	private String jbo;
 	
-	@OneToOne(mappedBy="pacijent", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@OneToOne(cascade=CascadeType.ALL)
 	private ZdravstveniKarton zdravstveniKarton;
 	
-	@OneToOne(mappedBy="pacijent", cascade=CascadeType.ALL)
+	@OneToOne(cascade=CascadeType.ALL)
 	private ZahtevZaRegistraciju zahtev;
 	
 	public Pacijent() {
