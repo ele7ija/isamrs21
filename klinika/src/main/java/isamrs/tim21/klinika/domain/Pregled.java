@@ -10,27 +10,37 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
+import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
+
 @Entity
 @Table(name="pregled")
-public class Pregled {
+public class Pregled implements IdentitySerializable{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@JsonSerialize(using=IdentitySerializer.class)
 	private TipPregleda tipPregleda;
 	
 	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@JsonSerialize(using=IdentitySerializer.class)
 	private Sala sala;
 	
 	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@JsonSerialize(using=IdentitySerializer.class)
 	private Lekar lekar;
 	
 	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+	@JsonSerialize(using=IdentitySerializer.class)
 	private Klinika klinika;
 
 	@OneToOne(mappedBy="pregled", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@JsonSerialize(using=IdentitySerializer.class)
 	private Poseta poseta;
 	
 	public Pregled(){}

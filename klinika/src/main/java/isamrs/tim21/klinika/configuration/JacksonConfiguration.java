@@ -7,7 +7,8 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 @Configuration
 public class JacksonConfiguration {
-	 public JacksonConfiguration(ObjectMapper objectMapper) { 
-		 objectMapper.setFilterProvider(new SimpleFilterProvider().setFailOnUnknownId(false)); 
+	 public JacksonConfiguration(ObjectMapper objectMapper) {
+		 SimpleFilterProvider provider =  new SimpleFilterProvider().setFailOnUnknownId(false);
+		 objectMapper.setFilterProvider(provider); 
 	 }
 }

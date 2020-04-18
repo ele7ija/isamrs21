@@ -13,11 +13,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import isamrs.tim21.klinika.jsonSerialize.IdentityListSerializer;
+import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
+import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
 
 @Entity
 @Table(name="sala")
-public class Sala {
+public class Sala implements IdentitySerializable{
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -35,10 +39,11 @@ public class Sala {
 	private String oznaka;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JsonFilter("sala_to_klinika_filter")
+	@JsonSerialize(using=IdentitySerializer.class)
 	private Klinika klinika;
 	
 	@OneToMany(mappedBy="sala", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@JsonSerialize(using=IdentityListSerializer.class)
 	private List<Pregled> pregledi;
 	
 	public Sala(){}

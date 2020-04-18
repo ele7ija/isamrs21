@@ -29,7 +29,7 @@ public class SalaKontroler {
 	private KlinikaRepository klinikaRepository;
 	
 	@GetMapping
-	public Object getAllSale(@PathVariable("idKlinike") Long idKlinike){
+	public ResponseEntity<List<Sala>> getAllSale(@PathVariable("idKlinike") Long idKlinike){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
 			return new ResponseEntity<List<Sala>>(HttpStatus.NOT_FOUND);
@@ -40,7 +40,7 @@ public class SalaKontroler {
 	}
 
 	@GetMapping(value="/{idSale}")
-	public Object getSala(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idSale") Long idSale){
+	public ResponseEntity<Sala> getSala(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idSale") Long idSale){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
 			return new ResponseEntity<Sala>(HttpStatus.NOT_FOUND);
@@ -56,13 +56,14 @@ public class SalaKontroler {
 	}
 	
 	@PostMapping
-	public Object addSala(@PathVariable("idKlinike") Long idKlinike, @RequestBody Sala salaToAdd){
+	public ResponseEntity<Sala> addSala(@PathVariable("idKlinike") Long idKlinike, @RequestBody Sala salaToAdd){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
 			return new ResponseEntity<Sala>(HttpStatus.NOT_FOUND);
 		}else{
 			//POSTAVI JOS JEDNOM SVE PARAMETRE NA BEKU
 			salaToAdd.setKlinika(klinika);
+			salaToAdd.setId(null);
 			
 			Sala retval = salaRepository.save(salaToAdd);
 			return new ResponseEntity<Sala>(retval, HttpStatus.OK);
@@ -70,27 +71,27 @@ public class SalaKontroler {
 	}
 	
 	@PutMapping(value="/{idSale}")
-	public Object updateSala(@PathVariable("idKlinike") Long idKlinike, 
-			@PathVariable("idSale") Long idSale, @RequestBody Sala tipSaleToChange){
+	public ResponseEntity<Sala> updateSala(@PathVariable("idKlinike") Long idKlinike, 
+			@PathVariable("idSale") Long idSale, @RequestBody Sala salaToChange){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
 			return new ResponseEntity<Sala>(HttpStatus.NOT_FOUND);
 		}else{
 			//POSTAVI JOS JEDNOM SVE PARAMETRE NA BEKU
-			tipSaleToChange.setId(idSale);
-			tipSaleToChange.setKlinika(klinika);
+			salaToChange.setId(idSale);
+			salaToChange.setKlinika(klinika);
 			
-			Sala retval = salaRepository.save(tipSaleToChange);
 			if(! salaRepository.findById(idSale).isPresent()){
 				return new ResponseEntity<Sala>(HttpStatus.NOT_FOUND);
 			}
+			Sala retval = salaRepository.save(salaToChange);
 			return new ResponseEntity<Sala>(retval, HttpStatus.OK);	
 			
 		}
 	}
 	
 	@DeleteMapping(value="/{idSale}")
-	public Object deleteSala(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idSale") Long idSale){
+	public ResponseEntity<Boolean> deleteSala(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idSale") Long idSale){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
 			return new ResponseEntity<Boolean>(HttpStatus.NOT_FOUND);

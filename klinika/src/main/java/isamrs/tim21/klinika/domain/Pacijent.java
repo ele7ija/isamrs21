@@ -8,7 +8,10 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import isamrs.tim21.klinika.dto.PacijentDTO;
+import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
 
 @Entity
 @DiscriminatorValue(value="PA")

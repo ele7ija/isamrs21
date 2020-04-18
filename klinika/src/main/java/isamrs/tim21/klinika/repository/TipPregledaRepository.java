@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import isamrs.tim21.klinika.domain.TipPregleda;
 
+@Repository
 public interface TipPregledaRepository extends JpaRepository<TipPregleda, Long> {
 	@Query("SELECT t FROM TipPregleda t "
 			+ "WHERE t.klinika.id = :idKlinike")

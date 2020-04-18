@@ -14,10 +14,12 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
+
 
 @Entity
 @Table(name="zahtev_za_registraciju")
-public class ZahtevZaRegistraciju {
+public class ZahtevZaRegistraciju implements IdentitySerializable{
 	@Id
 	private Long id;
 	
