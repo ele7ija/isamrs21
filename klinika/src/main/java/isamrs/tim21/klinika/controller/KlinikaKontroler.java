@@ -42,6 +42,7 @@ public class KlinikaKontroler {
 	
 	@PostMapping
 	public ResponseEntity<Klinika> addKlinika(@RequestBody Klinika klinikaToadd){
+		klinikaToadd.setId(null);
 		Klinika retval = klinikaRepository.save(klinikaToadd);
 		return new ResponseEntity<Klinika>(retval, HttpStatus.OK);
 	}
@@ -49,6 +50,9 @@ public class KlinikaKontroler {
 	@PutMapping(value="/{idKlinike}")
 	public ResponseEntity<Klinika> updateTipPregleda(@PathVariable("idKlinike") Long idKlinike, @RequestBody Klinika klinikaToChange){
 		klinikaToChange.setId(idKlinike);
+		if(! klinikaRepository.findById(idKlinike).isPresent()){
+			return new ResponseEntity<Klinika>(HttpStatus.NOT_FOUND);
+		}
 		Klinika retval = klinikaRepository.save(klinikaToChange);
 		return new ResponseEntity<Klinika>(retval, HttpStatus.OK);
 	}

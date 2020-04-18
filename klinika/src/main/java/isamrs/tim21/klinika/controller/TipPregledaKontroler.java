@@ -29,7 +29,7 @@ public class TipPregledaKontroler {
 	private KlinikaRepository klinikaRepository;
 	
 	@GetMapping
-	public Object getAllTipoviPregleda(@PathVariable("idKlinike") Long idKlinike){
+	public ResponseEntity<List<TipPregleda>> getAllTipoviPregleda(@PathVariable("idKlinike") Long idKlinike){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
 			return new ResponseEntity<List<TipPregleda>>(HttpStatus.NOT_FOUND);
@@ -40,7 +40,7 @@ public class TipPregledaKontroler {
 	}
 
 	@GetMapping(value="/{idTipaPregleda}")
-	public Object getTipPregleda(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idTipaPregleda") Long idTipaPregleda){
+	public ResponseEntity<TipPregleda> getTipPregleda(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idTipaPregleda") Long idTipaPregleda){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
 			return new ResponseEntity<TipPregleda>(HttpStatus.NOT_FOUND);
@@ -56,13 +56,14 @@ public class TipPregledaKontroler {
 	}
 	
 	@PostMapping
-	public Object addTipPregleda(@PathVariable("idKlinike") Long idKlinike, @RequestBody TipPregleda tipPregledaToAdd){
+	public ResponseEntity<TipPregleda> addTipPregleda(@PathVariable("idKlinike") Long idKlinike, @RequestBody TipPregleda tipPregledaToAdd){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
 			return new ResponseEntity<TipPregleda>(HttpStatus.NOT_FOUND);
 		}else{
 			//POSTAVI JOS JEDNOM SVE PARAMETRE NA BEKU
 			tipPregledaToAdd.setKlinika(klinika);
+			tipPregledaToAdd.setId(null);
 			
 			TipPregleda retval = tipoviPregledaRepository.save(tipPregledaToAdd);
 			return new ResponseEntity<TipPregleda>(retval, HttpStatus.OK);
@@ -70,7 +71,7 @@ public class TipPregledaKontroler {
 	}
 	
 	@PutMapping(value="/{idTipaPregleda}")
-	public Object updateTipPregleda(@PathVariable("idKlinike") Long idKlinike, 
+	public ResponseEntity<TipPregleda> updateTipPregleda(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idTipaPregleda") Long idTipaPregleda, @RequestBody TipPregleda tipPregledaToChange){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
@@ -91,7 +92,7 @@ public class TipPregledaKontroler {
 	}
 	
 	@DeleteMapping(value="/{idTipaPregleda}")
-	public Object deleteTipPregleda(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idTipaPregleda") Long idTipaPregleda){
+	public ResponseEntity<Boolean> deleteTipPregleda(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idTipaPregleda") Long idTipaPregleda){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
 			return new ResponseEntity<Boolean>(HttpStatus.NOT_FOUND);

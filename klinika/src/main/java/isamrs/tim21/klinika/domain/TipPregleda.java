@@ -15,11 +15,14 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
+import isamrs.tim21.klinika.jsonSerialize.IdentityListSerializer;
+import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
 
 @Entity
 @Table(name="tip_pregleda")
-public class TipPregleda {
+public class TipPregleda implements IdentitySerializable{
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -32,12 +35,13 @@ public class TipPregleda {
 	private String opis;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JsonFilter("tipPregleda_to_klinika_filter")
+	@JsonSerialize(using=IdentitySerializer.class)
 	private Klinika klinika;
 	
 	@ManyToMany
 	@JoinTable(name="specijalnost_lekara", joinColumns=@JoinColumn(name="id_tipa_pregleda", referencedColumnName="id"),
 	inverseJoinColumns=@JoinColumn(name="id_lekara", referencedColumnName="id"))
+	@JsonSerialize(using=IdentityListSerializer.class)
 	private List<Lekar> lekari;
 
 	public List<Lekar> getLekari() {
