@@ -1,5 +1,8 @@
 package isamrs.tim21.klinika.domain;
 
+import java.util.Collection;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -7,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+
+import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -17,6 +22,11 @@ import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
 @DiscriminatorValue(value="PA")
 public class Pacijent extends Korisnik{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2382011214168297692L;
+
 	@Column(name="drzava", nullable=false)
 	private String drzava;
 	
@@ -110,6 +120,5 @@ public class Pacijent extends Korisnik{
 	public void setZahtevZaReg(ZahtevZaRegistraciju zahtev) {
 		this.zahtev = zahtev;
 	}
-	
-	
 }
+	
