@@ -9,7 +9,9 @@ const state = {
   registrovanKorisnik: null, // Ako bude trebao neki ispis
 }
 
-const getters = {}
+const getters = {
+  getKorisnik: (state) => {return state.korisnik}
+}
 
 const actions = {
   // ne radi jos uvek nista

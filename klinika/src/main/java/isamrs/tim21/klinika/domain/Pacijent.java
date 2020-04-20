@@ -63,6 +63,7 @@ public class Pacijent extends Korisnik{
 		this.adresa = noviPacijentDTO.adresa;
 		this.brojTelefona = noviPacijentDTO.brojTelefona;
 		this.jbo = noviPacijentDTO.jbo;
+		// this.getAuthorities().add("pacijent");
 	}
 
 	public ZdravstveniKarton getZdravstveniKarton() {

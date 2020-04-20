@@ -58,9 +58,10 @@ public class AutentifikacijaController {
 		Korisnik user = (Korisnik) authentication.getPrincipal();
 		String jwt = tokenUtils.generateToken(user.getUsername());
 		int expiresIn = tokenUtils.getExpiredIn();
+		String role = user.getAuthorities().get(0).getName();
 
 		// Vrati token kao odgovor na uspesnu autentifikaciju
-		return ResponseEntity.ok(new KorisnikTokenState(jwt, expiresIn));
+		return ResponseEntity.ok(new KorisnikTokenState(jwt, expiresIn, role));
 	}
 		
 	@PostMapping(path = "/registracija", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -70,21 +71,22 @@ public class AutentifikacijaController {
 	}
 	
 	// U slucaju isteka vazenja JWT tokena, endpoint koji se poziva da se token osvezi
-		@PostMapping(value = "/refresh")
-		public ResponseEntity<KorisnikTokenState> refreshAuthenticationToken(HttpServletRequest request) {
+	@PostMapping(value = "/refresh")
+	public ResponseEntity<KorisnikTokenState> refreshAuthenticationToken(HttpServletRequest request) {
 
-			String token = tokenUtils.getToken(request);
-			String username = this.tokenUtils.getUsernameFromToken(token);
-			Korisnik user = (Korisnik) this.userDetailsService.loadUserByUsername(username);
+		String token = tokenUtils.getToken(request);
+		String username = this.tokenUtils.getUsernameFromToken(token);
+		Korisnik user = (Korisnik) this.userDetailsService.loadUserByUsername(username);
 
-			if (this.tokenUtils.canTokenBeRefreshed(token, user.getPoslednjaPromenaSifre())) {
-				String refreshedToken = tokenUtils.refreshToken(token);
-				int expiresIn = tokenUtils.getExpiredIn();
+		if (this.tokenUtils.canTokenBeRefreshed(token, user.getPoslednjaPromenaSifre())) {
+			String refreshedToken = tokenUtils.refreshToken(token);
+			int expiresIn = tokenUtils.getExpiredIn();
+			String role = user.getAuthorities().get(0).getName();
 
-				return ResponseEntity.ok(new KorisnikTokenState(refreshedToken, expiresIn));
-			} else {
-				KorisnikTokenState userTokenState = new KorisnikTokenState();
-				return ResponseEntity.badRequest().body(userTokenState);
-			}
+			return ResponseEntity.ok(new KorisnikTokenState(refreshedToken, expiresIn, role));
+		} else {
+			KorisnikTokenState userTokenState = new KorisnikTokenState();
+			return ResponseEntity.badRequest().body(userTokenState);
 		}
+	}
 }

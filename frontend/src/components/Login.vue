@@ -28,11 +28,30 @@
             Login
           </v-card-title>
           <v-card-text>
-          <v-form ref="loginForm">
-            <v-text-field type="text" placeholder="username" v-model="username" prepend-icon="person" :rules="inputRules" ></v-text-field>
-            <v-text-field type="password" placeholder="password" v-model="password" prepend-icon="lock" :rules="inputRules"></v-text-field>
+          <v-form 
+            ref="loginForm">
+            <v-text-field 
+              type="text" 
+              placeholder="email" 
+              v-model="email" 
+              prepend-icon="person" 
+              :rules="inputRules"
+              @keydown.enter="loginuj({
+                username: email, 
+                password: password})">
+            </v-text-field>
+            <v-text-field 
+              type="password" 
+              placeholder="password" 
+              v-model="password" 
+              prepend-icon="lock" 
+              :rules="inputRules"
+              @keydown.enter="loginuj({
+                username: email, 
+                password: password})">
+            </v-text-field>
             <v-btn @click="loginuj({
-              username: username, 
+              username: email, 
               password: password})">
                 Login
             </v-btn>
@@ -55,7 +74,7 @@ export default {
       inputRules: [
         v => (v && v.length > 0) || 'Please fill out this field'
       ],
-      username: null,
+      email: null,
       password: null
     }
   },
