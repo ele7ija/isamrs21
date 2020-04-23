@@ -1,5 +1,6 @@
 package isamrs.tim21.klinika.domain;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -8,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+
+import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -42,5 +45,38 @@ public class Lekar extends MedicinskoOsoblje{
 		this.pregledi = pregledi;
 	}
 	
-	
+	@Override
+	public List<Authority> getAuthorities() {
+		return getAuthorities();
+	}
+
+	@Override
+	public String getPassword() {
+		return getPassword();
+	}
+
+	@Override
+	public String getUsername() {
+		return getUsername();
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
 }

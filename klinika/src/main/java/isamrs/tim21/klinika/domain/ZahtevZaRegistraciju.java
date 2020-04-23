@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,7 +21,6 @@ import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
 @Table(name="zahtev_za_registraciju")
 public class ZahtevZaRegistraciju implements IdentitySerializable{
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
 	@Column(name="datumPodnosenja")
@@ -29,11 +29,11 @@ public class ZahtevZaRegistraciju implements IdentitySerializable{
 	@Column(name="datumOdobrenja")
 	private Timestamp datumOdobrenja;
 	
-	@OneToOne(cascade=CascadeType.ALL)
+	@OneToOne(fetch=FetchType.EAGER)
 	@MapsId
 	private Pacijent pacijent;
 	
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	private AdministratorCentra adminOdobrio;
 
 	public Long getId() {

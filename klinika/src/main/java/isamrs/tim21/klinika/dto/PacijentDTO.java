@@ -27,4 +27,8 @@ public class PacijentDTO {
 		this.brojTelefona = brojTelefona;
 		this.jbo = jbo;
 	}
+
+	public String getSifra() {
+		return sifra;
+	}
 }

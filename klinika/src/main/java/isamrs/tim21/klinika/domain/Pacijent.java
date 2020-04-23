@@ -1,11 +1,17 @@
 package isamrs.tim21.klinika.domain;
 
+import java.util.Collection;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+
+import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -16,6 +22,11 @@ import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
 @DiscriminatorValue(value="PA")
 public class Pacijent extends Korisnik{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2382011214168297692L;
+
 	@Column(name="drzava", nullable=false)
 	private String drzava;
 	
@@ -31,10 +42,10 @@ public class Pacijent extends Korisnik{
 	@Column(name="jbo", nullable=false)
 	private String jbo;
 	
-	@OneToOne(mappedBy="pacijent", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@OneToOne(cascade=CascadeType.ALL)
 	private ZdravstveniKarton zdravstveniKarton;
 	
-	@OneToOne(mappedBy="pacijent", cascade=CascadeType.ALL)
+	@OneToOne(cascade=CascadeType.ALL)
 	private ZahtevZaRegistraciju zahtev;
 	
 	public Pacijent() {
@@ -52,6 +63,7 @@ public class Pacijent extends Korisnik{
 		this.adresa = noviPacijentDTO.adresa;
 		this.brojTelefona = noviPacijentDTO.brojTelefona;
 		this.jbo = noviPacijentDTO.jbo;
+		// this.getAuthorities().add("pacijent");
 	}
 
 	public ZdravstveniKarton getZdravstveniKarton() {
@@ -109,6 +121,5 @@ public class Pacijent extends Korisnik{
 	public void setZahtevZaReg(ZahtevZaRegistraciju zahtev) {
 		this.zahtev = zahtev;
 	}
-	
-	
 }
+	

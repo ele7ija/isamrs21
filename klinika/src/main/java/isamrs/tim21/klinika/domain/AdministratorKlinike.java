@@ -1,11 +1,16 @@
 package isamrs.tim21.klinika.domain;
 
+import java.util.Collection;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -15,6 +20,11 @@ import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
 @DiscriminatorValue(value="AK")
 public class AdministratorKlinike extends Korisnik{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6508036954142630963L;
+
 	@ManyToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
 	@JsonSerialize(using=IdentitySerializer.class)
 	private Klinika klinika;
@@ -25,6 +35,41 @@ public class AdministratorKlinike extends Korisnik{
 
 	public void setKlinika(Klinika klinika) {
 		this.klinika = klinika;
+	}
+
+	@Override
+	public List<Authority> getAuthorities() {
+		return getAuthorities();
+	}
+
+	@Override
+	public String getPassword() {
+		return getPassword();
+	}
+
+	@Override
+	public String getUsername() {
+		return getUsername();
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
 	}
 
 	
