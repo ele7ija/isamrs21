@@ -59,6 +59,9 @@ export default {
     cursor: pointer;
     display: table;
   }
+  .option:hover{
+    background-color: #80dfdf;
+  }
 
   .component-icon{
     position: absolute;
