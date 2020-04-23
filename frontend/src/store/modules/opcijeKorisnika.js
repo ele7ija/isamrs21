@@ -1,6 +1,6 @@
 const state = {
   optionDict: {
-    'adminKlinike': [
+    'admin-klinike': [
       {
         title: 'Klinika',
         action: 'mdi-hospital-building',

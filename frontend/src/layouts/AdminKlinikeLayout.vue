@@ -1,10 +1,10 @@
 <template>
-  <v-app>
+  <v-app v-if="userType.role != null">
     <v-navigation-drawer
       v-model="drawer"
       app>
       
-      <OpcijeKorisnika :userType="userType"></OpcijeKorisnika>
+      <OpcijeKorisnika :userType="userType.role"></OpcijeKorisnika>
       
     </v-navigation-drawer>
       <v-app-bar
@@ -16,13 +16,14 @@
         <v-toolbar-title>Klinika menadzer</v-toolbar-title>
       </v-app-bar>
     <v-content>
-      <router-view></router-view>
+      <router-view :userType="userType.role"></router-view>
     </v-content>
   </v-app>
 </template>
 
 <script>
 import OpcijeKorisnika from '../components/user_options/OpcijeKorisnika';
+import {mapGetters} from 'vuex';
 export default {
   name: "AdminKlinikeLayout",
   components: {
@@ -31,9 +32,11 @@ export default {
   data: function(){
     return {
       drawer: false,
-      userType: "adminKlinike"
     }
-  }
+  },
+  computed: mapGetters({
+    'userType': 'korisnici/getKorisnik'
+  })
   
 }
 </script>

@@ -27,7 +27,10 @@ const actions = {
     let data = await korisnikAPI.loginujKorisnika(korisnik);
     commit('setKorisnik', data);
     commit('setGlobalLayout', `${data.role}-layout`, {root:true});
-    router.push(`home/${data.role}`);
+    router.push(`home`);
+  },
+  reset({commit}){
+    commit('resetKorisnik');
   }
 }
 
@@ -36,6 +39,7 @@ const mutations = {
     state.registrovanKorisnik = korisnik,
   setKorisnik: (state, korisnik) =>
     state.korisnik = korisnik,
+  resetKorisnik: (state) => state.korisnik = null //celokupan logout
 }
 
 export default{

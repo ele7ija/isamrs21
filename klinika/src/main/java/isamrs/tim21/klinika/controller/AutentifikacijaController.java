@@ -46,7 +46,7 @@ public class AutentifikacijaController {
 	@PostMapping("/login")
 	public ResponseEntity<KorisnikTokenState> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest,
 			HttpServletResponse response) {
-
+	
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
 						authenticationRequest.getPassword()));

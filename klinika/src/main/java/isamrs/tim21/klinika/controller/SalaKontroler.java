@@ -57,7 +57,7 @@ public class SalaKontroler {
 	}
 	
 	@PostMapping
-	@PreAuthorize("hasRole('admin_klinike')")
+	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<Sala> addSala(@PathVariable("idKlinike") Long idKlinike, @RequestBody Sala salaToAdd){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
@@ -73,7 +73,7 @@ public class SalaKontroler {
 	}
 	
 	@PutMapping(value="/{idSale}")
-	@PreAuthorize("hasRole('admin_klinike')")
+	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<Sala> updateSala(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idSale") Long idSale, @RequestBody Sala salaToChange){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
@@ -94,7 +94,7 @@ public class SalaKontroler {
 	}
 	
 	@DeleteMapping(value="/{idSale}")
-	@PreAuthorize("hasRole('admin_klinike')")
+	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<Boolean> deleteSala(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idSale") Long idSale){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){

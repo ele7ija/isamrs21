@@ -1,32 +1,41 @@
 import axios from 'axios';
+import util from './util';
 
 export default{
   async getAllSale(idKlinike) {
+    let options = util.prepareOptions();
     let response = await axios.get(
-      `http://localhost:8080/api/sala/${idKlinike}`
+      `${process.env.VUE_APP_BACKEND_ROOT}/sala/${idKlinike}`,
+      options
     );
     return response.data;
   },
   
   async addSala(idKlinike, sala){
+    let options = util.prepareOptions();
     let response = await axios.post(
-      `http://localhost:8080/api/sala/${idKlinike}`,
-      sala
+      `${process.env.VUE_APP_BACKEND_ROOT}/sala/${idKlinike}`,
+      sala,
+      options
     );
     return response.data;
   },
 
   async updateSala(idKlinike, sala){
+    let options = util.prepareOptions();
     let response = await axios.put(
-      `http://localhost:8080/api/sala/${idKlinike}/${sala.id}`,
-      sala
+      `${process.env.VUE_APP_BACKEND_ROOT}/sala/${idKlinike}/${sala.id}`,
+      sala,
+      options
     );
     return response.data;
   },
 
   async removeSala(idKlinike, idSale){
+    let options = util.prepareOptions();
     let response = await axios.delete(
-      `http://localhost:8080/api/sala/${idKlinike}/${idSale}`,
+      `${process.env.VUE_APP_BACKEND_ROOT}/sala/${idKlinike}/${idSale}`,
+      options
     );
     return response.data;
   },

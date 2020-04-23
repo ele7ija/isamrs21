@@ -57,7 +57,7 @@ public class TipPregledaKontroler {
 	}
 	
 	@PostMapping
-	@PreAuthorize("hasRole('admin_klinike')")
+	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<TipPregleda> addTipPregleda(@PathVariable("idKlinike") Long idKlinike, @RequestBody TipPregleda tipPregledaToAdd){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
@@ -73,7 +73,7 @@ public class TipPregledaKontroler {
 	}
 	
 	@PutMapping(value="/{idTipaPregleda}")
-	@PreAuthorize("hasRole('admin_klinike')")
+	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<TipPregleda> updateTipPregleda(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idTipaPregleda") Long idTipaPregleda, @RequestBody TipPregleda tipPregledaToChange){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
@@ -95,7 +95,7 @@ public class TipPregledaKontroler {
 	}
 	
 	@DeleteMapping(value="/{idTipaPregleda}")
-	@PreAuthorize("hasRole('admin_klinike')")
+	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<Boolean> deleteTipPregleda(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idTipaPregleda") Long idTipaPregleda){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){

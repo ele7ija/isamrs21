@@ -42,7 +42,7 @@ public class KlinikaKontroler {
 	}
 	
 	@PostMapping
-	@PreAuthorize("hasRole('admin_klinickog_centra')")
+	@PreAuthorize("hasAuthority('admin-klinickog-centra')")
 	public ResponseEntity<Klinika> addKlinika(@RequestBody Klinika klinikaToadd){
 		klinikaToadd.setId(null);
 		Klinika retval = klinikaRepository.save(klinikaToadd);
@@ -50,8 +50,8 @@ public class KlinikaKontroler {
 	}
 	
 	@PutMapping(value="/{idKlinike}")
-	@PreAuthorize("hasRole('admin_klinike')")
-	public ResponseEntity<Klinika> updateTipPregleda(@PathVariable("idKlinike") Long idKlinike, @RequestBody Klinika klinikaToChange){
+	@PreAuthorize("hasAuthority('admin-klinike')")
+	public ResponseEntity<Klinika> updateKlinika(@PathVariable("idKlinike") Long idKlinike, @RequestBody Klinika klinikaToChange){
 		klinikaToChange.setId(idKlinike);
 		if(! klinikaRepository.findById(idKlinike).isPresent()){
 			return new ResponseEntity<Klinika>(HttpStatus.NOT_FOUND);
@@ -61,7 +61,7 @@ public class KlinikaKontroler {
 	}
 	
 	@DeleteMapping(value="/{idKlinike}")
-	@PreAuthorize("hasRole('admin_klinike')")
+	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<Boolean> deleteKlinika(@PathVariable("idKlinike") Long idKlinike){
 		klinikaRepository.deleteById(idKlinike);
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);

@@ -36,10 +36,9 @@ let router = new Router({
       }
     },
     {
-      path: '/home/:userType',
+      path: '/home',
       name: 'home',
       component: UserDashboard,
-      props: true,
       meta: {
         authen: true,
         author: ''
@@ -51,7 +50,7 @@ let router = new Router({
       component: TipPregleda,
       meta: {
         authen: true,
-        author: 'admin_klinike'
+        author: 'admin-klinike'
       },
     },
     {
@@ -60,7 +59,7 @@ let router = new Router({
       component: Sala,
       meta: {
         authen: true,
-        author: 'admin_klinike'
+        author: 'admin-klinike'
       },
     },
     {
@@ -86,17 +85,9 @@ router.beforeEach((to, from, next) => {
       return;
     }
     // AUTHORIZATION CHECK
-    // An authority given by prop
-    if (to.meta.author === ''){
-      if (korisnik.role !== to.params.userType) {
-        next(`/home/${korisnik.role}`);
-        return;
-      }
-      next();
-    }
     // A certain authority
-    else if (korisnik.role !== to.meta.author) {
-      next(`/home/${korisnik.role}`);
+    if (korisnik.role !== to.meta.author && to.meta.author != '') {
+      next(`/home`);
       return;
     }    
     else{
@@ -106,7 +97,7 @@ router.beforeEach((to, from, next) => {
   }
   else{
     if (korisnik !== null) {
-      next(`/home/${korisnik.role}`)
+      next(`/home`)
       return;
     }
     next();

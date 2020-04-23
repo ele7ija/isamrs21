@@ -20,9 +20,7 @@ export default new Vuex.Store({
   },
 
   plugins: [
-    createPersistedState({
-      paths: ['korisnici'],
-    }),
+    createPersistedState(),
   ],
 
   // root store
@@ -35,5 +33,8 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    reset({commit}){
+      commit('setGlobalLayout', 'neulogovani-korisnik-layout');
+    }
   }
 })

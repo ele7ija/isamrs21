@@ -1,29 +1,38 @@
 import axios from 'axios';
+import util from './util';
 
 export default{
   async getAllTipoviPregleda(idKlinike) {
+    let options = util.prepareOptions();
     let response = await axios.get(
-      `http://localhost:8080/api/tipPregleda/${idKlinike}`
+      `${process.env.VUE_APP_BACKEND_ROOT}/tipPregleda/${idKlinike}`,
+      options
     );
     return response.data;
   },
   async addTipPregleda(idKlinike, tipPregleda){
+    let options = util.prepareOptions();
     let response = await axios.post(
-      `http://localhost:8080/api/tipPregleda/${idKlinike}`,
-      tipPregleda
+      `${process.env.VUE_APP_BACKEND_ROOT}/tipPregleda/${idKlinike}`,
+      tipPregleda,
+      options
     );
     return response.data;
   },
   async updateTipPregleda(idKlinike, tipPregleda){
+    let options = util.prepareOptions();
     let response = await axios.put(
-      `http://localhost:8080/api/tipPregleda/${idKlinike}/${tipPregleda.id}`,
-      tipPregleda
+      `${process.env.VUE_APP_BACKEND_ROOT}/tipPregleda/${idKlinike}/${tipPregleda.id}`,
+      tipPregleda,
+      options
     );
     return response.data;
   },
   async removeTipPregleda(idKlinike, idTipaPregleda){
+    let options = util.prepareOptions();
     let response = await axios.delete(
-      `http://localhost:8080/api/tipPregleda/${idKlinike}/${idTipaPregleda}`,
+      `${process.env.VUE_APP_BACKEND_ROOT}/tipPregleda/${idKlinike}/${idTipaPregleda}`,
+      options
     );
     return response.data;
   },
