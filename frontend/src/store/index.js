@@ -5,6 +5,7 @@ import sale from './modules/sale';
 import pacijenti from './modules/pacijenti';
 import opcijeKorisnika from './modules/opcijeKorisnika';
 import korisnici from './modules/korisnici';
+import createPersistedState from 'vuex-persistedstate'
 
 //Plugins
 Vue.use(Vuex);
@@ -17,6 +18,12 @@ export default new Vuex.Store({
     pacijenti,
     korisnici
   },
+
+  plugins: [
+    createPersistedState({
+      paths: ['korisnici'],
+    }),
+  ],
 
   // root store
   state: {

@@ -40,7 +40,7 @@ public abstract class Korisnik implements IdentitySerializable, UserDetails {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	protected Long id;
 	
-	@Column(name="email", nullable=false)
+	@Column(name="email", nullable=false, unique=true)
 	protected String email;
 	
 	@JsonIgnore
