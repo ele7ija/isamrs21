@@ -35,6 +35,9 @@ public class PacijentService {
 		p.setEnabled(true);
 		
 		Authority auth = autentifikacijaServis.findByName("pacijent");
+		if (auth == null) {
+			throw new RuntimeException("Pacijent Authority not found");
+		}
 		// u primeru se registruju samo obicni korisnici i u skladu sa tim im se i dodeljuje samo rola USER
 		p.getAuthorities().add(auth);
 		

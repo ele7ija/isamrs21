@@ -22,6 +22,29 @@ const state = {
           }
         ]
       }
+    ],
+    'pacijent': [
+      {
+        title: 'Pacijent',
+        action: 'mdi-hospital-building',
+        dashboard_item: {
+          title: 'Dashboard',
+          action: 'mdi-view-dashboard',
+          path: "/home/adminKlinike"
+        },
+        items: [
+          { 
+            title: 'Profil',
+            action: 'mdi-alpha-t',
+            componentName: 'profil'
+          },
+          {
+            title: 'Pacijenti',
+            action: 'mdi-alpha-s',
+            componentName: 'pacijenti'
+          }
+        ]
+      }
     ]
   }
 }

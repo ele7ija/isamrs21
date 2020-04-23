@@ -32,27 +32,30 @@
             ref="loginForm">
             <v-text-field 
               type="text" 
-              placeholder="email" 
+              label="E-mail" 
               v-model="email" 
               prepend-icon="person" 
               :rules="inputRules"
               @keydown.enter="loginuj({
                 username: email, 
-                password: password})">
+                password: password})"
+              outlined>
             </v-text-field>
             <v-text-field 
               type="password" 
-              placeholder="password" 
+              label="Password" 
               v-model="password" 
               prepend-icon="lock" 
               :rules="inputRules"
               @keydown.enter="loginuj({
                 username: email, 
-                password: password})">
+                password: password})"
+              outlined>
             </v-text-field>
             <v-btn @click="loginuj({
               username: email, 
-              password: password})">
+              password: password})"
+              color='success'>
                 Login
             </v-btn>
           </v-form>
