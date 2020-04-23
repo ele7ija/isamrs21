@@ -26,11 +26,8 @@ const actions = {
   async loginKorisnik({commit}, korisnik) {
     let data = await korisnikAPI.loginujKorisnika(korisnik);
     commit('setKorisnik', data);
-    // TODO
-    //if (data.role === 'pacijent') {
-      commit('setGlobalLayout', 'pacijenti-layout', {root:true});
-      router.push('pacijenti')
-    //}
+    commit('setGlobalLayout', `${data.role}-layout`, {root:true});
+    router.push(`home/${data.role}`);
   }
 }
 

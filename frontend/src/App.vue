@@ -20,7 +20,7 @@ export default {
   components: {
     'admin-klinike-layout': AdminKlinikeLayout,
     'neulogovani-korisnik-layout': NeulogovanKorisnikLayout,
-    'pacijenti-layout': PacijentiLayout
+    'pacijent-layout': PacijentiLayout
     // Mesto za nove layoute
   }
 }
