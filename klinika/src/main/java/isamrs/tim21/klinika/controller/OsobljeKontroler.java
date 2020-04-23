@@ -8,6 +8,7 @@ import javax.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -62,6 +63,7 @@ public class OsobljeKontroler {
 	}
 	
 	@PostMapping
+	@PreAuthorize("hasRole('admin_klinike')")
 	public ResponseEntity<MedicinskoOsoblje> addOsoblje(@PathVariable("idKlinike") Long idKlinike, @RequestBody MedicinskoOsoblje osobljeToAdd){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
@@ -77,6 +79,7 @@ public class OsobljeKontroler {
 	}
 	
 	@PutMapping(value="/{idOsoblja}")
+	@PreAuthorize("hasRole('admin_klinike')")
 	public ResponseEntity<MedicinskoOsoblje> updateOsoblje(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idOsoblja") Long idOsoblja, @RequestBody MedicinskoOsoblje osobljeToChange){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
@@ -97,6 +100,7 @@ public class OsobljeKontroler {
 	}
 	
 	@DeleteMapping(value="/{idOsoblja}")
+	@PreAuthorize("hasRole('admin_klinike')")
 	public ResponseEntity<Boolean> deleteOsoblje(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idOsoblja") Long idOsoblja){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,6 +42,7 @@ public class KlinikaKontroler {
 	}
 	
 	@PostMapping
+	@PreAuthorize("hasRole('admin_klinickog_centra')")
 	public ResponseEntity<Klinika> addKlinika(@RequestBody Klinika klinikaToadd){
 		klinikaToadd.setId(null);
 		Klinika retval = klinikaRepository.save(klinikaToadd);
@@ -48,6 +50,7 @@ public class KlinikaKontroler {
 	}
 	
 	@PutMapping(value="/{idKlinike}")
+	@PreAuthorize("hasRole('admin_klinike')")
 	public ResponseEntity<Klinika> updateTipPregleda(@PathVariable("idKlinike") Long idKlinike, @RequestBody Klinika klinikaToChange){
 		klinikaToChange.setId(idKlinike);
 		if(! klinikaRepository.findById(idKlinike).isPresent()){
@@ -58,6 +61,7 @@ public class KlinikaKontroler {
 	}
 	
 	@DeleteMapping(value="/{idKlinike}")
+	@PreAuthorize("hasRole('admin_klinike')")
 	public ResponseEntity<Boolean> deleteKlinika(@PathVariable("idKlinike") Long idKlinike){
 		klinikaRepository.deleteById(idKlinike);
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);

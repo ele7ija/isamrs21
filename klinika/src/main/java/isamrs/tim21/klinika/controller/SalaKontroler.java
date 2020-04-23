@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,6 +57,7 @@ public class SalaKontroler {
 	}
 	
 	@PostMapping
+	@PreAuthorize("hasRole('admin_klinike')")
 	public ResponseEntity<Sala> addSala(@PathVariable("idKlinike") Long idKlinike, @RequestBody Sala salaToAdd){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
@@ -71,6 +73,7 @@ public class SalaKontroler {
 	}
 	
 	@PutMapping(value="/{idSale}")
+	@PreAuthorize("hasRole('admin_klinike')")
 	public ResponseEntity<Sala> updateSala(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idSale") Long idSale, @RequestBody Sala salaToChange){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
@@ -91,6 +94,7 @@ public class SalaKontroler {
 	}
 	
 	@DeleteMapping(value="/{idSale}")
+	@PreAuthorize("hasRole('admin_klinike')")
 	public ResponseEntity<Boolean> deleteSala(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idSale") Long idSale){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
