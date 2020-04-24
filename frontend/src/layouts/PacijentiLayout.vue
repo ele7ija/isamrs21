@@ -1,21 +1,44 @@
 <template>
-  <v-app>
+  <v-app v-if="userType != null">
+     <v-navigation-drawer
+      v-model="drawer"
+      app>
+      <OpcijeKorisnika :userType="userType.role"></OpcijeKorisnika>
+    </v-navigation-drawer>
     <v-app-bar
       app
-      color="indigo"
+      color="primary"
       dark
     >
-      <v-toolbar-title>Pacijenti layout</v-toolbar-title>
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      <v-toolbar-title>
+        Klinika - Pacijent dashboard
+      </v-toolbar-title>
     </v-app-bar>
     <v-content>
-      <router-view></router-view>
+      <router-view :userType='userType.role'></router-view>
     </v-content>
   </v-app>
 </template>
 
 <script>
+import {mapGetters} from 'vuex';
+import OpcijeKorisnika from '@/components/user_options/OpcijeKorisnika';
+
+
 export default {
-  name: 'PacijentiLayout'
+  name: 'PacijentiLayout',
+  components: {
+    OpcijeKorisnika
+  },
+  data: function(){
+    return {
+      drawer: false,
+    }
+  },
+  computed: mapGetters({
+    'userType': 'korisnici/getKorisnik'
+  })
 }
 </script>
 

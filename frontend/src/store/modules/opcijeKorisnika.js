@@ -31,23 +31,38 @@ const state = {
     'pacijent': [
       {
         title: 'Pacijent',
-        action: 'mdi-hospital-building',
+        action: 'mdi-account',
         dashboard_item: {
           title: 'Dashboard',
           action: 'mdi-view-dashboard',
           path: "/home/adminKlinike"
         },
         items: [
-          { 
-            title: 'Profil',
-            action: 'mdi-alpha-t',
-            componentName: 'profil'
-          },
           {
             title: 'Pacijenti',
-            action: 'mdi-alpha-s',
+            action: 'mdi-account-circle-outline',
             componentName: 'pacijenti'
-          }
+          },
+          { 
+            title: 'Klinike',
+            action: 'mdi-hospital-building',
+            componentName: 'pacijent-klinike'
+          },
+          { 
+            title: 'Istorija',
+            action: 'mdi-history',
+            componentName: 'pacijent-istorija'
+          },
+          { 
+            title: 'Zdravstveni karton',
+            action: 'mdi-bottle-tonic-plus',
+            componentName: 'pacijent-zdravstveni-karton'
+          },
+          { 
+            title: 'Profil',
+            action: 'mdi-account-cog',
+            componentName: 'pacijent-profil'
+          },
         ]
       }
     ]

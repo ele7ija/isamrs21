@@ -21,6 +21,11 @@ import isamrs.tim21.klinika.jsonSerialize.IdentityListSerializer;
 @DiscriminatorValue(value="LE")
 public class Lekar extends MedicinskoOsoblje{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4362887523765862539L;
+
 	@ManyToMany(mappedBy="lekari")
 	@JsonSerialize(using=IdentityListSerializer.class)
 	private List<TipPregleda> tipovi_pregleda;
