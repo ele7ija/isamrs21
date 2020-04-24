@@ -25,9 +25,10 @@ import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
 import isamrs.tim21.klinika.domain.Pregled;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.repository.OsobljeRepository;
+import isamrs.tim21.klinika.services.OsobljeService;
 
 @RestController
-@RequestMapping(name="/medicinskaOsoba/{idKlinike}")
+@RequestMapping(path="/medicinskaOsoba/{idKlinike}")
 public class OsobljeKontroler {
 	@Autowired
 	private KlinikaRepository klinikaRepository;
@@ -35,8 +36,11 @@ public class OsobljeKontroler {
 	@Autowired
 	private OsobljeRepository osobljeRepository;
 	
+	@Autowired
+	private OsobljeService osobljeService;
+	
 	@GetMapping
-	public ResponseEntity<List<MedicinskoOsoblje>> getAllOsoblje(@PathParam("idKlinike") Long idKlinike){
+	public ResponseEntity<List<MedicinskoOsoblje>> getAllOsoblje(@PathVariable("idKlinike") Long idKlinike){
 		Klinika klinika = klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
 			return new ResponseEntity<List<MedicinskoOsoblje>>(HttpStatus.NOT_FOUND);
@@ -48,7 +52,7 @@ public class OsobljeKontroler {
 	}
 	
 	@GetMapping(path="/{idOsoblja}")
-	public ResponseEntity<MedicinskoOsoblje> getOsoblje(@PathParam("idKlinike") Long idKlinike, @PathParam("idOsoblja") Long idOsoblja){
+	public ResponseEntity<MedicinskoOsoblje> getOsoblje(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idOsoblja") Long idOsoblja){
 		Klinika klinika = klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
 			return new ResponseEntity<MedicinskoOsoblje>(HttpStatus.NOT_FOUND);
@@ -65,16 +69,15 @@ public class OsobljeKontroler {
 	@PostMapping
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<MedicinskoOsoblje> addOsoblje(@PathVariable("idKlinike") Long idKlinike, @RequestBody MedicinskoOsoblje osobljeToAdd){
+		System.out.println(osobljeToAdd.getEmail() + " " + osobljeToAdd.getIme() + " " + osobljeToAdd.getPrezime());
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
 			return new ResponseEntity<MedicinskoOsoblje>(HttpStatus.NOT_FOUND);
 		}else{
 			//POSTAVI JOS JEDNOM SVE PARAMETRE NA BEKU
-			osobljeToAdd.setKlinika(klinika);
 			osobljeToAdd.setId(null);
-			
-			MedicinskoOsoblje retval = osobljeRepository.save(osobljeToAdd);
-			return new ResponseEntity<MedicinskoOsoblje>(retval, HttpStatus.OK);
+			osobljeToAdd.setKlinika(klinika);
+			return new ResponseEntity<MedicinskoOsoblje>(osobljeService.save(osobljeToAdd), HttpStatus.OK);
 		}
 	}
 	
@@ -89,12 +92,10 @@ public class OsobljeKontroler {
 			//POSTAVI JOS JEDNOM SVE PARAMETRE NA BEKU
 			osobljeToChange.setId(idOsoblja);
 			osobljeToChange.setKlinika(klinika);
-			
 			if(! osobljeRepository.findById(idOsoblja).isPresent()){
 				return new ResponseEntity<MedicinskoOsoblje>(HttpStatus.NOT_FOUND);
 			}
-			MedicinskoOsoblje retval = osobljeRepository.save(osobljeToChange);
-			return new ResponseEntity<MedicinskoOsoblje>(retval, HttpStatus.OK);	
+			return new ResponseEntity<MedicinskoOsoblje>(osobljeService.save(osobljeToChange), HttpStatus.OK);	
 			
 		}
 	}

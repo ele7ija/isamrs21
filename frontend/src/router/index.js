@@ -5,6 +5,7 @@ import Registracija from '@/components/Registracija';
 import UserDashboard from "@/components/dashboards/UserDashboard";
 import TipPregleda from "@/components/tipovi_pregleda/TipPregleda";
 import Sala from "@/components/sale/Sala";
+import Osoblje from "@/components/osoblje/Osoblje";
 import Pacijenti from "@/components/pacijenti/Pacijenti";
 import store from '@/store/index';
 //Plugins
@@ -57,6 +58,15 @@ let router = new Router({
       path: '/sale',
       name: 'sala',
       component: Sala,
+      meta: {
+        authen: true,
+        author: 'admin-klinike'
+      },
+    },
+    {
+      path: '/osoblje',
+      name: 'osoblje',
+      component: Osoblje,
       meta: {
         authen: true,
         author: 'admin-klinike'

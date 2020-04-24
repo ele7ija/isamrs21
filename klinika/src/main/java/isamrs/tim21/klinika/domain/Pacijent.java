@@ -27,7 +27,7 @@ public class Pacijent extends Korisnik{
 	 */
 	private static final long serialVersionUID = 2382011214168297692L;
 
-	@Column(name="drzava", nullable=false)
+	@Column(name="drzava")
 	private String drzava;
 	
 	@Column(name="grad")
@@ -36,10 +36,10 @@ public class Pacijent extends Korisnik{
 	@Column(name="adresa")
 	private String adresa;
 	
-	@Column(name="brojTelefona", nullable=false)
+	@Column(name="brojTelefona")
 	private String brojTelefona;
 	
-	@Column(name="jbo", nullable=false)
+	@Column(name="jbo")
 	private String jbo;
 	
 	@OneToOne(cascade=CascadeType.ALL)

@@ -5,12 +5,14 @@ import router from '@/router';
 
 
 const state = {
+  korisnici: [],
   korisnik: null, // {user_token, email, role}
   registrovanKorisnik: null, // Ako bude trebao neki ispis
 }
 
 const getters = {
-  getKorisnik: (state) => {return state.korisnik}
+  getKorisnik: (state) => {return state.korisnik},
+  getKorisnici: (state) => {return state.korisnici}
 }
 
 const actions = {
@@ -19,6 +21,11 @@ const actions = {
     let data = await korisnikAPI.getUlogovanKorisnik();
     commit('setKorisnik', data)
   },
+  async fetchAllKorisnici({commit}){
+    let data = await korisnikAPI.fetchAllKorisnici();
+    commit('setKorisnici', data)
+  },
+
   async registrujKorisnika({commit}, korisnik) {
     let data = await korisnikAPI.registrujKorisnika(korisnik)
     commit('setRegistrovanKorisnik', data)
@@ -39,7 +46,8 @@ const mutations = {
     state.registrovanKorisnik = korisnik,
   setKorisnik: (state, korisnik) =>
     state.korisnik = korisnik,
-  resetKorisnik: (state) => state.korisnik = null //celokupan logout
+  resetKorisnik: (state) => state.korisnik = null, //celokupan logout
+  setKorisnici: (state, korisnici) => state.korisnici = korisnici
 }
 
 export default{

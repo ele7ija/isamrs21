@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container fluid  class="pa-3 ma-5">
+    <v-container fluid class="pl-5 pr-5 mt-4">
       <div
         :key="optionGroup.title" v-for="optionGroup in options(userType)">
         <div>

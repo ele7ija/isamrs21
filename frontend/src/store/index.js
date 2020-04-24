@@ -5,6 +5,7 @@ import sale from './modules/sale';
 import pacijenti from './modules/pacijenti';
 import opcijeKorisnika from './modules/opcijeKorisnika';
 import korisnici from './modules/korisnici';
+import osoblje from './modules/osoblje';
 import createPersistedState from 'vuex-persistedstate'
 
 //Plugins
@@ -16,7 +17,8 @@ export default new Vuex.Store({
     tipoviPregleda,
     sale,
     pacijenti,
-    korisnici
+    korisnici,
+    osoblje
   },
 
   plugins: [

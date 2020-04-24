@@ -21,8 +21,6 @@ import javax.persistence.ManyToMany;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
 
 @Entity
@@ -43,7 +41,6 @@ public abstract class Korisnik implements IdentitySerializable, UserDetails {
 	@Column(name="email", nullable=false, unique=true)
 	protected String email;
 	
-	@JsonIgnore
 	@Column(name="sifra", nullable=false)
 	protected String sifra;
 	

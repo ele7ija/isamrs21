@@ -6,12 +6,18 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
 
-
 @Entity
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "pozicija")
+@JsonSubTypes({
+    @JsonSubTypes.Type(value=Lekar.class, name = "lekar"),
+    @JsonSubTypes.Type(value=MedicinskaSestra.class, name = "medicinska sestra")
+})
 public abstract class MedicinskoOsoblje extends Korisnik{
 	
 	public RadniKalendar getRadniKalendar() {
@@ -26,7 +32,7 @@ public abstract class MedicinskoOsoblje extends Korisnik{
 	@JsonSerialize(using=IdentitySerializer.class)
 	private Klinika klinika;
 
-	@OneToOne(mappedBy="medicinskoOsoblje", fetch=FetchType.EAGER)
+	@OneToOne(mappedBy="medicinskoOsoblje", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	@JsonSerialize(using=IdentitySerializer.class)
 	private RadniKalendar radniKalendar;
 	

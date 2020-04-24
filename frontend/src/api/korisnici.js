@@ -1,4 +1,5 @@
 import axios from 'axios';
+import util from './util';
 
 export default {
   async registrujKorisnika(korisnik) {
@@ -13,6 +14,15 @@ export default {
     let response = await axios.post(
       `${process.env.VUE_APP_BACKEND_ROOT}/auth/login`,
       loginData
+    )
+    return response.data;
+  },
+
+  async fetchAllKorisnici(){
+    let options = util.prepareOptions();
+    let response = await axios.get(
+      `${process.env.VUE_APP_BACKEND_ROOT}/korisnici`,
+      options
     )
     return response.data;
   }

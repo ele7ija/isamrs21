@@ -19,7 +19,12 @@ const state = {
             title: 'Sale',
             action: 'mdi-alpha-s',
             componentName: 'sala'
-          }
+          },
+          {
+            title: 'Osoblje',
+            action: 'mdi-alpha-o',
+            componentName: 'osoblje'
+          },
         ]
       }
     ],
