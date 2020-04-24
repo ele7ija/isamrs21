@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Login from '@/components/Login';
 import Registracija from '@/components/Registracija';
+import ONama from '@/components/ONama';
 import UserDashboard from "@/components/dashboards/UserDashboard";
 import TipPregleda from "@/components/tipovi_pregleda/TipPregleda";
 import Sala from "@/components/sale/Sala";
@@ -12,6 +13,7 @@ Vue.use(Router)
 
 let router = new Router({
   routes : [
+    // Zajednicke rute
     {
       path: '/login',
       name: 'login',
@@ -36,6 +38,14 @@ let router = new Router({
       }
     },
     {
+      path: '/o-nama',
+      name: 'o-nama',
+      component: ONama,
+      meta: {
+        authen: false
+      }
+    },
+    {
       path: '/home',
       name: 'home',
       component: UserDashboard,
@@ -44,6 +54,7 @@ let router = new Router({
         author: ''
       },
     },
+    // Admin klinike
     {
       path: '/tipovi_pregleda',
       name: 'tipovi_pregleda',
@@ -62,6 +73,7 @@ let router = new Router({
         author: 'admin-klinike'
       },
     },
+    // Pacijent
     {
       path: '/pacijenti',
       name: 'pacijenti',
@@ -70,7 +82,44 @@ let router = new Router({
         authen: true,
         author: 'pacijent'
       },
-    }
+    },
+    {
+      path: '/pacijent/klinike',
+      name: 'pacijent-klinike',
+      component: Pacijenti,
+      meta: {
+        authen: true,
+        author: 'pacijent'
+      },
+    },
+    {
+      path: '/pacijent/istorija',
+      name: 'pacijent-istorija',
+      component: Pacijenti,
+      meta: {
+        authen: true,
+        author: 'pacijent'
+      },
+    },
+    {
+      path: '/pacijent/zdravstveni-karton',
+      name: 'pacijent-zdravstveni-karton',
+      component: Pacijenti,
+      meta: {
+        authen: true,
+        author: 'pacijent'
+      },
+    },
+    {
+      path: '/pacijent/profil',
+      name: 'pacijent-profil',
+      component: Pacijenti,
+      meta: {
+        authen: true,
+        author: 'pacijent'
+      },
+    },
+
   ]
 });
 
