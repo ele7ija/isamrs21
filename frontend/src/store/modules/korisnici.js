@@ -1,5 +1,6 @@
 /* Deo store-a vezan za operacije sa neautentifikovanim
-  korisnikom - login i registracija. */
+  korisnikom - login i registracija. 
+  Ali i za dobavljanje svih korisnika cele aplikacije*/
 import korisnikAPI from '@/api/korisnici'
 import router from '@/router';
 
@@ -30,10 +31,10 @@ const actions = {
     let data = await korisnikAPI.registrujKorisnika(korisnik)
     commit('setRegistrovanKorisnik', data)
   },
-  async loginKorisnik({commit}, korisnik) {
+  async loginKorisnik({commit, dispatch}, korisnik) {
     let data = await korisnikAPI.loginujKorisnika(korisnik);
     commit('setKorisnik', data);
-    commit('setGlobalLayout', `${data.role}-layout`, {root:true});
+    dispatch('layout/setLayout', `${data.role}-layout`, {root:true});
     router.push(`home`);
   },
   reset({commit}){

@@ -62,7 +62,7 @@ export default {
   methods: {
     ...mapActions({
       'resetKorisnik': 'korisnici/reset',
-      'resetAppLayout': 'reset'
+      'resetAppLayout': 'layout/reset'
     }),
     navigate(componentName){
       this.$router.push({name: componentName}).catch(err => {err});

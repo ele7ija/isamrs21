@@ -7,16 +7,12 @@
 <script>
 import AdminKlinikeLayout from '@/layouts/AdminKlinikeLayout';
 import NeulogovanKorisnikLayout from '@/layouts/NeulogovanKorisnikLayout';
-import {mapState} from 'vuex';
+import {mapGetters} from 'vuex';
 import PacijentiLayout from '@/layouts/PacijentiLayout.vue';
 
 export default {
   name: 'App',
-  computed: {
-    ...mapState([
-      ['globalLayout']
-    ])
-  },
+  computed: mapGetters({globalLayout: 'layout/getGlobalLayout'}),
   components: {
     'admin-klinike-layout': AdminKlinikeLayout,
     'neulogovani-korisnik-layout': NeulogovanKorisnikLayout,

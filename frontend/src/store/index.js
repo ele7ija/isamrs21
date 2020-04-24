@@ -6,6 +6,7 @@ import pacijenti from './modules/pacijenti';
 import opcijeKorisnika from './modules/opcijeKorisnika';
 import korisnici from './modules/korisnici';
 import osoblje from './modules/osoblje';
+import layout from './modules/layout';
 import createPersistedState from 'vuex-persistedstate'
 
 //Plugins
@@ -18,25 +19,14 @@ export default new Vuex.Store({
     sale,
     pacijenti,
     korisnici,
-    osoblje
+    osoblje,
+    layout
   },
 
   plugins: [
-    createPersistedState(),
-  ],
+    createPersistedState({
+      paths: ['korisnici', 'layout']
+    }),
+  ]
 
-  // root store
-  state: {
-    globalLayout: 'neulogovani-korisnik-layout',
-  },
-  mutations: {
-    setGlobalLayout (state, payload){
-      state.globalLayout = payload;
-    }
-  },
-  actions: {
-    reset({commit}){
-      commit('setGlobalLayout', 'neulogovani-korisnik-layout');
-    }
-  }
 })
