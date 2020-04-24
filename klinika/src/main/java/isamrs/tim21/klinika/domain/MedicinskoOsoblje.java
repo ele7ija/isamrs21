@@ -28,7 +28,7 @@ public abstract class MedicinskoOsoblje extends Korisnik{
 		this.radniKalendar = radniKalendar;
 	}
 
-	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JsonSerialize(using=IdentitySerializer.class)
 	private Klinika klinika;
 

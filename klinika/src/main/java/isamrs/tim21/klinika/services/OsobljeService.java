@@ -32,7 +32,6 @@ public class OsobljeService {
 		if(osobljeToSave instanceof Lekar){
 			authority = authorityRepository.findByName("lekar");
 			Lekar l = (Lekar) osobljeToSave;
-			System.out.println(l.getTipovi_pregleda().get(0).getId());
 		}else{
 			authority = authorityRepository.findByName("medicinska-sestra");
 		}

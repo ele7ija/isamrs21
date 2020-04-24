@@ -101,7 +101,7 @@ public class OsobljeKontroler {
 	}
 	
 	@DeleteMapping(value="/{idOsoblja}")
-	@PreAuthorize("hasRole('admin-klinike')")
+	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<Boolean> deleteOsoblje(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idOsoblja") Long idOsoblja){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
