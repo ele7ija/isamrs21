@@ -25,5 +25,22 @@ export default {
       options
     )
     return response.data;
+  },
+
+  refresh_token(){
+    let korisnik = util._getKorsinik();
+    return new Promise((resolve, reject) => {
+      axios
+        .post(
+          `${process.env.VUE_APP_BACKEND_ROOT}/auth/login`,
+          korisnik,
+        )
+        .then(response => {
+          resolve(response);
+        })
+        .catch(error => {
+          reject(error);
+        })
+    });
   }
 }

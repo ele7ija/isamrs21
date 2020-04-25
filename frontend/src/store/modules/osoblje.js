@@ -31,9 +31,11 @@ const actions = {
     commit('setMedicinskoOsoblje', response);
   },
 
-  async addMedicinskaOsoba({state, commit}, osoba){
+  async addMedicinskaOsoba({state, commit, dispatch}, osoba){
     let response = await osoblje.addMedicinskaOsoba(state.klinika.id, osoba);
     commit('addNewMedicinskaOsoba', response);
+    dispatch('korisnici/addKorisnik', response, {root: true});
+    console.log(response.id);
   },
 
   async updateMedicinskaOsoba({state, commit}, osoba){
@@ -41,9 +43,11 @@ const actions = {
     commit('updateExistingMedicinskaOsoba', response);
   },
 
-  async removeMedicinskaOsoba({state, commit}, idOsobe){
+  async removeMedicinskaOsoba({state, commit, dispatch}, idOsobe){
     await osoblje.removeMedicinskaOsoba(state.klinika.id, idOsobe);
     commit('deleteMedicinskaOsoba', idOsobe);
+    console.log(idOsobe);
+    dispatch('korisnici/removeKorisnik', idOsobe, {root: true});
   },
   
 }

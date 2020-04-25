@@ -4,14 +4,15 @@
 import korisnikAPI from '@/api/korisnici'
 import router from '@/router';
 
-
 const state = {
   korisnici: [],
   korisnik: null, // {user_token, email, role}
+  _korisnik: {}, // {email, password} - jer ne radi refresh za sada pa radimo ponovan login nakon isteka tokena
   registrovanKorisnik: null, // Ako bude trebao neki ispis
 }
 
 const getters = {
+  _getKorsinik: (state) => { return state._korisnik; },
   getKorisnik: (state) => {return state.korisnik},
   getKorisnici: (state) => {return state.korisnici}
 }
@@ -33,13 +34,27 @@ const actions = {
   },
   async loginKorisnik({commit, dispatch}, korisnik) {
     let data = await korisnikAPI.loginujKorisnika(korisnik);
+    commit('_setKorisnik', korisnik);
     commit('setKorisnik', data);
     dispatch('layout/setLayout', `${data.role}-layout`, {root:true});
     router.push(`home`);
   },
+
+  refresh_token(){
+    return korisnikAPI.refresh_token();
+  }, 
+
   reset({commit}){
     commit('resetKorisnik');
-  }
+  },
+
+  removeKorisnik({commit}, korisnikId){
+    commit('_removeKorisnik', korisnikId)
+  },
+
+  addKorisnik({commit}, korisnik){
+    commit('_addKorisnik', korisnik)
+  },
 }
 
 const mutations = {
@@ -47,8 +62,16 @@ const mutations = {
     state.registrovanKorisnik = korisnik,
   setKorisnik: (state, korisnik) =>
     state.korisnik = korisnik,
-  resetKorisnik: (state) => state.korisnik = null, //celokupan logout
-  setKorisnici: (state, korisnici) => state.korisnici = korisnici
+  _setKorisnik: (state, korisnik) => {
+    state._korisnik = korisnik;
+  },
+  resetKorisnik: (state) => {
+    state._korisnik = {};
+    state.korisnik = null; //celokupan logout
+  },
+  setKorisnici: (state, korisnici) => state.korisnici = korisnici,
+  _removeKorisnik: (state, korisnikId) => state.korisnici = state.korisnici.filter(x => x.id != korisnikId),
+  _addKorisnik: (state, korisnik) => state.korisnici.push(korisnik)
 }
 
 export default{
