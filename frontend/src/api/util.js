@@ -8,5 +8,9 @@ export default{
         "Authorization": `Bearer ${korisnik.accessToken}`
       }
     };
+  },
+
+  _getKorsinik(){
+    return store.getters['korisnici/_getKorsinik'];
   }
 }

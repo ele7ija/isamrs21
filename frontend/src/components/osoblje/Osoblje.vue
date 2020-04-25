@@ -72,7 +72,7 @@
                       <v-col cols="12" sm="6" md="4">
                         <v-select
                           v-model="newItem.pozicija"
-                          :items="['lekar', 'medicinska sestra']"
+                          :items="['lekar', 'sestra']"
                           label="Pozicija"
                           chips
                           hint="Koja je pozicija novog zaposlenog?"
@@ -261,6 +261,7 @@ export default {
 
     save(){
       this.newItem.klinika = {id: 1};
+      this.newItem.pozicija = this.newItem.pozicija == 'sestra' ? 'medicinska sestra' : 'lekar';
       this.addMedicinskaOsoba(this.newItem);
       this.close();
     },
