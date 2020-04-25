@@ -236,7 +236,7 @@ export default {
         fetchData: 'osoblje/loadMedicinskoOsoblje',
         fetchAllKorisnici: 'korisnici/fetchAllKorisnici',
         addMedicinskaOsoba: 'osoblje/addMedicinskaOsoba',
-        removeMedicinskaOsoba: 'osoblje/removeMedicinskaOsoba'
+        removeMedicinskaOsoba: 'osoblje/removeMedicinskaOsoba',
       }
     ),
 

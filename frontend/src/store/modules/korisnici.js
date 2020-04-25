@@ -46,7 +46,15 @@ const actions = {
 
   reset({commit}){
     commit('resetKorisnik');
-  }
+  },
+
+  removeKorisnik({commit}, korisnikId){
+    commit('_removeKorisnik', korisnikId)
+  },
+
+  addKorisnik({commit}, korisnik){
+    commit('_addKorisnik', korisnik)
+  },
 }
 
 const mutations = {
@@ -61,7 +69,9 @@ const mutations = {
     state._korisnik = {};
     state.korisnik = null; //celokupan logout
   },
-  setKorisnici: (state, korisnici) => state.korisnici = korisnici
+  setKorisnici: (state, korisnici) => state.korisnici = korisnici,
+  _removeKorisnik: (state, korisnikId) => state.korisnici = state.korisnici.filter(x => x.id != korisnikId),
+  _addKorisnik: (state, korisnik) => state.korisnici.push(korisnik)
 }
 
 export default{
