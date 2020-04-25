@@ -128,7 +128,7 @@ public class OsobljeKontroler {
 	private boolean imaAktivniPregled(Lekar lekar) {
 		Date datum = new Date();
 		for(Pregled p: lekar.getPregledi()){
-			if(p.getPoseta().getKrajPregleda().after(datum)){
+			if(p.getKrajPregleda().after(datum)){
 				return true;
 			}
 		}

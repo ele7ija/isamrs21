@@ -3,6 +3,7 @@ package isamrs.tim21.klinika.domain;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -25,15 +26,15 @@ public class Poseta implements IdentitySerializable{
 	@Id
 	private Long id;
 	
+	@Column(name="bolest")
+	private String bolest;
+	
+	@Column(name="opis")
+	private String opis;
+	
 	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
 	@JsonSerialize(using=IdentitySerializer.class)
 	private ZdravstveniKarton zdravstveniKarton;
-	
-	@Temporal(TemporalType.DATE)
-	private Date pocetakPregleda;
-	
-	@Temporal(TemporalType.DATE)
-	private Date krajPregleda;
 	
 	@OneToOne(fetch=FetchType.LAZY)
 	@MapsId //znaci da je id pregleda u tabeli poseta i primarni i strani kljuc
@@ -66,22 +67,21 @@ public class Poseta implements IdentitySerializable{
 		this.id = id;
 	}
 
-	public Date getPocetakPregleda() {
-		return pocetakPregleda;
+	public String getBolest() {
+		return bolest;
 	}
 
-	public void setPocetakPregleda(Date pocetakPregleda) {
-		this.pocetakPregleda = pocetakPregleda;
+	public void setBolest(String bolest) {
+		this.bolest = bolest;
 	}
 
-	public Date getKrajPregleda() {
-		return krajPregleda;
+	public String getOpis() {
+		return opis;
 	}
 
-	public void setKrajPregleda(Date krajPregleda) {
-		this.krajPregleda = krajPregleda;
+	public void setOpis(String opis) {
+		this.opis = opis;
 	}
-
 
 	
 	

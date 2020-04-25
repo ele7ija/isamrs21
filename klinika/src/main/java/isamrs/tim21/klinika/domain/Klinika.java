@@ -3,6 +3,7 @@ package isamrs.tim21.klinika.domain;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -23,6 +24,12 @@ public class Klinika implements IdentitySerializable{
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
+	
+	@Column(name="naziv")
+	private String naziv;
+	
+	@Column(name="adresa")
+	private String adresa;
 	
 	@OneToMany(mappedBy="klinika", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JsonSerialize(using=IdentityListSerializer.class)
@@ -93,4 +100,22 @@ public class Klinika implements IdentitySerializable{
 	public void setAdministratoriKlinike(List<AdministratorKlinike> administratoriKlinike) {
 		this.administratoriKlinike = administratoriKlinike;
 	}
+
+	public String getNaziv() {
+		return naziv;
+	}
+
+	public void setNaziv(String naziv) {
+		this.naziv = naziv;
+	}
+
+	public String getAdresa() {
+		return adresa;
+	}
+
+	public void setAdresa(String adresa) {
+		this.adresa = adresa;
+	}
+	
+	
 }
