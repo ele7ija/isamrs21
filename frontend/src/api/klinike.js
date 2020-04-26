@@ -48,4 +48,13 @@ export default{
     );
     return response.data;
   },
+
+  async fetchKlinikaAdmina(){
+    let options = util.prepareOptions();
+    let response = await axios.get(
+      `${process.env.VUE_APP_BACKEND_ROOT}/klinika/klinikaUlogovanogKorisnika`,
+      options
+    );
+    return response.data;
+  }
 }

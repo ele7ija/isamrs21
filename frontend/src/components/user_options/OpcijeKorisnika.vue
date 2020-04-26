@@ -2,42 +2,46 @@
   <div>
      <v-layout column fill-height>
       <v-list dense nav>
-        <v-list-group
+        <span
           v-for="item in options(userType)"
-          :key="item.title"
-        >
-        <template v-slot:activator>
-            <v-list-item-action>
-            <v-icon>{{item.action}}</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-            <v-list-item-title v-text="item.title"></v-list-item-title>
-            </v-list-item-content>
-        </template>
-        
-          <v-list-item
-            @click="navigateUrl(item.dashboard_item.path)">
-            <v-list-item-action>
-              <v-icon>{{item.dashboard_item.action}}</v-icon>
-              </v-list-item-action>             
-              <v-list-item-content>
-              <v-list-item-title v-text="item.dashboard_item.title"></v-list-item-title>
-              </v-list-item-content>
-          </v-list-item>
-
-          <v-list-item
-            v-for="subItem in item.items"
-            :key="subItem.title"
-            @click="navigate(subItem.componentName)"
+          :key="item.title">
+          <v-list-group
+            v-if="item.items.length!=0"
           >
-              <v-list-item-action>
-              <v-icon >{{subItem.action}}</v-icon>
-              </v-list-item-action>             
-              <v-list-item-content>
-              <v-list-item-title v-text="subItem.title"></v-list-item-title>
-              </v-list-item-content>
-          </v-list-item>
-        </v-list-group>
+            <template v-slot:activator>
+                <v-list-item-action>
+                <v-icon>{{item.action}}</v-icon>
+                </v-list-item-action>
+                <v-list-item-content>
+                <v-list-item-title v-text="item.title"></v-list-item-title>
+                </v-list-item-content>
+            </template>
+          
+            <v-list-item
+              v-for="subItem in item.items"
+              :key="subItem.title"
+              @click="navigate(subItem.componentName)"
+            >
+                <v-list-item-action>
+                <v-icon >{{subItem.action}}</v-icon>
+                </v-list-item-action>             
+                <v-list-item-content>
+                <v-list-item-title v-text="subItem.title"></v-list-item-title>
+                </v-list-item-content>
+            </v-list-item>
+          </v-list-group>
+          <v-list-item
+              v-if="item.items.length==0"
+              @click="navigate(item.componentName)"
+            >
+                <v-list-item-action>
+                <v-icon >{{item.action}}</v-icon>
+                </v-list-item-action>             
+                <v-list-item-content>
+                <v-list-item-title v-text="item.title"></v-list-item-title>
+                </v-list-item-content>
+            </v-list-item>
+        </span>
       </v-list>
       <v-btn
         color="error"
@@ -62,7 +66,8 @@ export default {
   methods: {
     ...mapActions({
       'resetKorisnik': 'korisnici/reset',
-      'resetAppLayout': 'layout/reset'
+      'resetAppLayout': 'layout/reset',
+      'resetKlinike': 'klinike/resetKlinike'
     }),
     navigate(componentName){
       this.$router.push({name: componentName}).catch(err => {err});
@@ -73,6 +78,7 @@ export default {
     logout(){
       this.resetKorisnik();
       this.resetAppLayout();
+      this.resetKlinike();
       this.$router.push({name: 'login'});
     }
   }

@@ -8,6 +8,7 @@ import pregledi from './modules/pregledi';
 import opcijeKorisnika from './modules/opcijeKorisnika';
 import korisnici from './modules/korisnici';
 import osoblje from './modules/osoblje';
+import cenovnici from './modules/cenovnici';
 import layout from './modules/layout';
 import createPersistedState from 'vuex-persistedstate'
 
@@ -24,12 +25,13 @@ export default new Vuex.Store({
     pregledi,
     korisnici,
     osoblje,
+    cenovnici,
     layout
   },
 
   plugins: [
     createPersistedState({
-      paths: ['korisnici', 'layout']
+      paths: ['korisnici', 'layout', 'klinike']
     }),
   ]
 

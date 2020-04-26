@@ -228,12 +228,14 @@ export default {
 
   created(){
     this.fetchData();
+    this.fetchTipoviTregleda();
     this.fetchAllKorisnici();
   },
   methods: {
     ...mapActions(
       {
         fetchData: 'osoblje/loadMedicinskoOsoblje',
+        fetchTipoviTregleda: 'tipoviPregleda/loadTipoviPregleda',
         fetchAllKorisnici: 'korisnici/fetchAllKorisnici',
         addMedicinskaOsoba: 'osoblje/addMedicinskaOsoba',
         removeMedicinskaOsoba: 'osoblje/removeMedicinskaOsoba',

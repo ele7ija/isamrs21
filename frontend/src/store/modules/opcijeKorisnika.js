@@ -2,13 +2,20 @@ const state = {
   optionDict: {
     'admin-klinike': [
       {
+        title: 'Dashboard',
+        action: 'mdi-view-dashboard',
+        componentName: "home",
+        items: []
+      },
+      { 
+        title: 'Moj profil',
+        action: 'mdi-account-circle-outline',
+        componentName: 'tipovi_pregleda',
+        items: []
+      },
+      {
         title: 'Klinika',
         action: 'mdi-hospital-building',
-        dashboard_item: {
-          title: 'Dashboard',
-          action: 'mdi-view-dashboard',
-          path: "/home/adminKlinike"
-        },
         items: [
           { 
             title: 'Tipovi pregleda',
@@ -27,16 +34,18 @@ const state = {
           },
         ]
       }
+      
     ],
     'pacijent': [
       {
+        title: 'Dashboard',
+        action: 'mdi-view-dashboard',
+        componentName: "home",
+        items: []
+      },
+      {
         title: 'Pacijent',
         action: 'mdi-account',
-        dashboard_item: {
-          title: 'Dashboard',
-          action: 'mdi-view-dashboard',
-          path: "/home/adminKlinike"
-        },
         items: [
           {
             title: 'Pacijenti',

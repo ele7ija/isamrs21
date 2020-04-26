@@ -1,9 +1,9 @@
 <template>
   <div>
-    <v-container fluid class="pl-5 pr-5 mt-4">
+    <v-container fluid class="pl-5 pr-5">
       <div
         :key="optionGroup.title" v-for="optionGroup in options(userType)">
-        <div>
+        <div v-if="optionGroup.items.length!=0">
           <p class="text-center display-2">{{optionGroup.title}}</p>
           <template>
             <v-divider></v-divider>

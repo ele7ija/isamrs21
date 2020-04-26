@@ -2,6 +2,8 @@ package isamrs.tim21.klinika.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.Klinika;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
+import isamrs.tim21.klinika.services.KlinikaService;
 
 @RestController
 @RequestMapping(path="/klinika")
@@ -25,10 +28,22 @@ public class KlinikaKontroler {
 	@Autowired
 	private KlinikaRepository klinikaRepository;
 	
+	@Autowired KlinikaService klinikaService;
+	
 	@GetMapping
 	public ResponseEntity<List<Klinika>> getAllKlinike(){	
 		List<Klinika> retval = klinikaRepository.findAll();
 		return new ResponseEntity<List<Klinika>>(retval, HttpStatus.OK);
+	}
+	
+	@GetMapping(value="/klinikaUlogovanogKorisnika")
+	@PreAuthorize("hasAuthority('admin-klinike')")
+	public ResponseEntity<Klinika> getKlinikaUlogovanogKorisnika(HttpServletRequest request){	
+		Klinika retval = klinikaService.findKlinikaUlogovanog(request);
+		if(retval == null){
+			return new ResponseEntity<Klinika>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<Klinika>(retval, HttpStatus.OK);
 	}
 	
 	@GetMapping(value="/{idKlinike}")

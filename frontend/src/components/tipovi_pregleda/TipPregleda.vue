@@ -49,6 +49,16 @@
                       <v-col cols="12" sm="6" md="4">
                         <v-text-field v-model="newItem.opis" label="Opis" :rules="opisRules"></v-text-field>
                       </v-col>
+                      <v-col cols="12" sm="6" md="4" v-if="_cenovnici.length != 0">
+                        <v-select
+                          v-model="newItem.cenovnik"
+                          :items="_cenovnici"
+                          label="Cenovnik"
+                          chips
+                          hint="Odaberite definisanu tarifu"
+                          persistent-hint
+                        ></v-select>
+                      </v-col>
                     </v-row>
                   </v-container>
                 </v-card-text>
@@ -112,7 +122,8 @@ export default {
       ],
       newItem: {
         naziv: '',
-        opis: ''
+        opis: '',
+        cenovnik: null
       },
       update: false
     };
@@ -122,7 +133,8 @@ export default {
     ...mapGetters(
       {
         getAll: 'tipoviPregleda/getTipoviPregleda',
-        get: 'tipoviPregleda/getTipPregleda'
+        get: 'tipoviPregleda/getTipPregleda',
+        cenovnici: 'cenovnici/getCenovnici'
       }
     ),
 
@@ -151,16 +163,27 @@ export default {
       const rule1 = v => !!v || 'Opis ne sme ostati prazan';
       rules.push(rule1);
       return rules;
+    },
+
+    _cenovnici(){
+      return this.cenovnici.map(x => {
+        return{
+          text: `${x.naziv}, cena ${x.iznosUDinarima} dinara`,
+          value: x
+        };
+      });
     }
   },
 
   created(){
     this.fetchData();
+    this.fecthCenovnici();
   },
   methods: {
     ...mapActions(
       {
         fetchData: 'tipoviPregleda/loadTipoviPregleda',
+        fecthCenovnici: 'cenovnici/loadCenovnici',
         addTipPregleda: 'tipoviPregleda/addTipPregleda',
         updateTipPregleda: 'tipoviPregleda/updateTipPregleda',
         removeTipPregleda: 'tipoviPregleda/removeTipPregleda'
@@ -170,7 +193,8 @@ export default {
     resetNewItem(){
       this.newItem = {
         naziv: '',
-        opis: ''
+        opis: '',
+        cenovnik: null
       };
     },
 
@@ -192,6 +216,8 @@ export default {
     editItem(item){
       this.update = true;
       this.newItem = Object.assign({}, item)
+      if(item.cenovnik != null)
+        this.newItem.cenovnik = JSON.parse(JSON.stringify(item.cenovnik))
       this.dialog = true;
     },
 

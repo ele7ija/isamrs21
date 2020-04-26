@@ -1,5 +1,6 @@
 import tipoviPregleda from '@/api/tipoviPregleda';
 //import klinike from '@/api/klinike';
+
 const state = {
   klinika: null,
   tipoviPregleda: []
@@ -22,12 +23,12 @@ const getters = {
 
 }
 const actions = {
-  async loadTipoviPregleda({commit}){
-    //let resp = await klinike.getKlinika(1); //za sada dummy klinika
-    //commit('setCurrentKlinika', resp);
-    commit('setCurrentKlinika', {'id': 1});
+  async loadTipoviPregleda({commit, rootGetters}){
+    //let resp = await klinike.fetchKlinikaAdmina();
+    let resp = rootGetters['klinike/getKlinikaAdmina'];
+    commit('setCurrentKlinika', resp);
 
-    let response = await tipoviPregleda.getAllTipoviPregleda(1);
+    let response = await tipoviPregleda.getAllTipoviPregleda(resp.id);
     commit('setTipoviPregleda', response);
   },
 
