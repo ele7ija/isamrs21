@@ -47,9 +47,13 @@ public class Klinika implements IdentitySerializable{
 	@JsonSerialize(using=IdentityListSerializer.class)
 	private List<MedicinskoOsoblje> medicinskoOsoblje;
 	
-	@OneToMany(mappedBy="klinika", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@OneToMany(mappedBy="klinikaAdmina", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JsonSerialize(using=IdentityListSerializer.class)
 	private List<AdministratorKlinike> administratoriKlinike;
+	
+	@OneToMany(mappedBy="klinika", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@JsonSerialize(using=IdentityListSerializer.class)
+	private List<Cenovnik> cenovnici;
 	
 	public Klinika(){}
 
@@ -115,6 +119,14 @@ public class Klinika implements IdentitySerializable{
 
 	public void setAdresa(String adresa) {
 		this.adresa = adresa;
+	}
+
+	public List<Cenovnik> getCenovnici() {
+		return cenovnici;
+	}
+
+	public void setCenovnici(List<Cenovnik> cenovnici) {
+		this.cenovnici = cenovnici;
 	}
 	
 	

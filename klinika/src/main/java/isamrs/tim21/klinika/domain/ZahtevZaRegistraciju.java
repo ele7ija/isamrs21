@@ -33,7 +33,7 @@ public class ZahtevZaRegistraciju implements IdentitySerializable{
 	@MapsId
 	private Pacijent pacijent;
 	
-	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@ManyToOne(fetch=FetchType.EAGER)
 	private AdministratorCentra adminOdobrio;
 
 	public Long getId() {

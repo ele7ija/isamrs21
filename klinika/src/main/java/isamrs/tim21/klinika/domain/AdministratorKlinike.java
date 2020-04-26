@@ -7,6 +7,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -25,16 +26,17 @@ public class AdministratorKlinike extends Korisnik{
 	 */
 	private static final long serialVersionUID = 6508036954142630963L;
 
-	@ManyToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name="klinika_admina_id")
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JsonSerialize(using=IdentitySerializer.class)
-	private Klinika klinika;
+	private Klinika klinikaAdmina;
 
-	public Klinika getKlinika() {
-		return klinika;
+	public Klinika getKlinikaAdmina() {
+		return klinikaAdmina;
 	}
 
-	public void setKlinika(Klinika klinika) {
-		this.klinika = klinika;
+	public void setKlinikaAdmina(Klinika klinikaAdmina) {
+		this.klinikaAdmina = klinikaAdmina;
 	}
 	
 }

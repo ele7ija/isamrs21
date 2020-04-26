@@ -38,11 +38,15 @@ public class TipPregleda implements IdentitySerializable{
 	@JsonSerialize(using=IdentitySerializer.class)
 	private Klinika klinika;
 	
-	@ManyToMany
+	@ManyToMany(cascade=CascadeType.ALL)
 	@JoinTable(name="specijalnost_lekara", joinColumns=@JoinColumn(name="id_tipa_pregleda", referencedColumnName="id"),
 	inverseJoinColumns=@JoinColumn(name="id_lekara", referencedColumnName="id"))
 	@JsonSerialize(using=IdentityListSerializer.class)
 	private List<Lekar> lekari;
+	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JsonSerialize(using=IdentityListSerializer.class)
+	private Cenovnik cenovnik;
 
 	public List<Lekar> getLekari() {
 		return lekari;
@@ -84,6 +88,14 @@ public class TipPregleda implements IdentitySerializable{
 
 	public void setKlinika(Klinika klinika) {
 		this.klinika = klinika;
+	}
+
+	public Cenovnik getCenovnik() {
+		return cenovnik;
+	}
+
+	public void setCenovnik(Cenovnik cenovnik) {
+		this.cenovnik = cenovnik;
 	}
 
 	

@@ -2,6 +2,7 @@ package isamrs.tim21.klinika.domain;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -32,7 +33,7 @@ public class RadniKalendar implements IdentitySerializable{
 	@JsonSerialize(using=IdentitySerializer.class)
 	private MedicinskoOsoblje medicinskoOsoblje;
 	
-	@OneToMany(mappedBy="radniKalendar", fetch=FetchType.LAZY)
+	@OneToMany(mappedBy="radniKalendar", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JsonSerialize(using=IdentityListSerializer.class)
 	private List<ZahtevZaGodisnji> zahteviZaGodisnjiOdmor;
 	

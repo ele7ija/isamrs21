@@ -26,4 +26,5 @@ public class KorisnikKontroler {
 		List<Korisnik> osoblje = korisnikRepository.findAll();
 		return new ResponseEntity<List<Korisnik>>(osoblje, HttpStatus.OK);
 	}
+	
 }

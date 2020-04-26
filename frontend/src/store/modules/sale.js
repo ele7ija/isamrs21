@@ -27,12 +27,12 @@ const getters = {
 }
 
 const actions = {
-  async loadSale({commit}){
-    //let resp = await klinike.getKlinika(1); //za sada dummy klinika
-    //commit('setCurrentKlinika', resp);
-    commit('setCurrentKlinika', {'id': 1});
+  async loadSale({commit, rootGetters}){
+    //let resp = await klinike.fetchKlinikaAdmina();
+    let resp = rootGetters['klinike/getKlinikaAdmina'];
+    commit('setCurrentKlinika', resp);
 
-    let response = await sale.getAllSale(1);
+    let response = await sale.getAllSale(resp.id);
     commit('setSale', response);
   },
 

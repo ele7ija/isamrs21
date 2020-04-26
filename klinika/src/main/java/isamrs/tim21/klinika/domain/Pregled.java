@@ -41,19 +41,19 @@ public class Pregled implements IdentitySerializable{
 	@Temporal(TemporalType.DATE)
 	private Date krajPregleda;
 	
-	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@ManyToOne(fetch=FetchType.EAGER)
 	//@JsonSerialize(using=IdentitySerializer.class)
 	private TipPregleda tipPregleda;
 	
-	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@ManyToOne(fetch=FetchType.EAGER)
 	//@JsonSerialize(using=IdentitySerializer.class)
 	private Sala sala;
 	
-	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@ManyToOne(fetch=FetchType.EAGER)
 	//@JsonSerialize(using=IdentitySerializer.class)
 	private Lekar lekar;
 	
-	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+	@ManyToOne(cascade=CascadeType.ALL)
 	@JsonSerialize(using=IdentitySerializer.class)
 	private Klinika klinika;
 

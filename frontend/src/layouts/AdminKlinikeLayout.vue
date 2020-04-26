@@ -23,7 +23,7 @@
 
 <script>
 import OpcijeKorisnika from '../components/user_options/OpcijeKorisnika';
-import {mapGetters} from 'vuex';
+import {mapGetters, mapActions} from 'vuex';
 export default {
   name: "AdminKlinikeLayout",
   components: {
@@ -35,8 +35,16 @@ export default {
     }
   },
   computed: mapGetters({
-    'userType': 'korisnici/getKorisnik'
-  })
+    'userType': 'korisnici/getKorisnik',
+  }),
+  methods: {
+    ...mapActions({
+      fetchKlinikaUlogovanogKorisnika: 'klinike/fetchKlinikaUlogovanogKorisnika'
+    })
+  },
+  created(){
+    this.fetchKlinikaUlogovanogKorisnika();
+  }
   
 }
 </script>
