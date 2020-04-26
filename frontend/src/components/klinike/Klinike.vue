@@ -1,14 +1,33 @@
 <template>
   <v-container fluid>
     <v-row justify="center">
+      <v-col lg='3' md='3' sm='6'>
+        <v-card outlined>
+          <v-card-title>
+            Pronađi pregled
+          </v-card-title>
+          <v-card-text>
+            <v-select
+              v-model='chosenSort'
+              :items='availableSorts'
+              label='Sortiraj po'>
+              <template v-slot:selection="{ item }">
+                <v-chip color='primary'>
+                  <span>{{ item }}</span>
+                </v-chip>
+              </template>
+            </v-select>
+          </v-card-text>
+        </v-card>
+      </v-col>
       <v-col lg=8 md=8 sm=12>
         <v-card outlined>
           <v-card-title>
             Klinike
           </v-card-title>
           <v-card-subtitle>
-            Na ovom mestu možete videti sve klinike koje
-            pripadaju našem kliničkom centru.
+            Na ovom mestu možete odabrati kliniku u kojoj ćete
+            imati traženi pregled. 
           </v-card-subtitle>
           <v-card-text>
             <v-container fluid>
@@ -25,22 +44,6 @@
               </v-row>
             </v-container>
             
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col lg='3' md='3' sm='6'>
-        <v-card outlined>
-          <v-card-text>
-            <v-select
-              v-model='chosenSort'
-              :items='availableSorts'
-              label='Sortiraj po'>
-              <template v-slot:selection="{ item }">
-                <v-chip color='orange'>
-                  <span>{{ item }}</span>
-                </v-chip>
-              </template>
-            </v-select>
           </v-card-text>
         </v-card>
       </v-col>
@@ -90,7 +93,6 @@ export default {
   },
   created() {
     this.loadKlinike();
-    console.log(this.klinike);
   }
 }
 </script>

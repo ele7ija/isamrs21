@@ -7,7 +7,7 @@
         <v-col>
           <v-card outlined>
             <v-card-title>
-              Pregledi klinike: {{klinika.naziv}}
+              Pregledi klinike: "{{klinika.naziv}}"
             </v-card-title>
             <v-card-text>
               <v-data-table

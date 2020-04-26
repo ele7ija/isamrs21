@@ -14,8 +14,8 @@ insert into korisnik (type, email, sifra, ime, prezime, broj_telefona, drzava, g
 insert into user_authority values(1,3);
 insert into user_authority values(2,1);
 
-insert into klinika (id, naziv, adresa) values(1, 'Klinika Dimitrije Banjac', 'Zmaj Ognjena Vuka 1, Novi Sad, Srbija');
-insert into klinika (id, naziv, adresa) values(2, 'Klinika Dejan Cirjakovic', 'Zmaja od Nocaja 2, Beograd, Srbija');
+insert into klinika (id, naziv, adresa) values(1, 'Dimitrije Banjac', 'Zmaj Ognjena Vuka 1, Novi Sad, Srbija');
+insert into klinika (id, naziv, adresa) values(2, 'Dejan Cirjakovic', 'Zmaja od Nocaja 2, Beograd, Srbija');
 
 insert into sala (oznaka, klinika_id) values ('Glavna operaciona', 1);
 insert into sala (oznaka, klinika_id) values ('Sporedna operaciona', 1);

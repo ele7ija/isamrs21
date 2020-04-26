@@ -9,6 +9,7 @@ import Sala from "@/components/sale/Sala";
 import Osoblje from "@/components/osoblje/Osoblje";
 import Pacijenti from "@/components/pacijenti/Pacijenti";
 import Klinike from '@/components/klinike/Klinike';
+import KlinikaPage from '@/components/klinike/KlinikaPage';
 import store from '@/store/index';
 //Plugins
 Vue.use(Router)
@@ -130,7 +131,16 @@ let router = new Router({
         author: 'pacijent'
       },
     },
-
+    {
+      path: '/pacijent/klinika/:klinikaId',
+      name: 'pacijent-klinika',
+      component: KlinikaPage,
+      props: true,
+      meta: {
+        authen: true,
+        author: 'pacijent'
+      }
+    }
   ]
 });
 
