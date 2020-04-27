@@ -10,6 +10,7 @@ import Osoblje from "@/components/osoblje/Osoblje";
 import Pacijenti from "@/components/pacijenti/Pacijenti";
 import Klinike from '@/components/klinike/Klinike';
 import KlinikaPage from '@/components/klinike/KlinikaPage';
+import KlinikaAdmin from '@/components/klinike/KlinikaAdmin';
 import store from '@/store/index';
 //Plugins
 Vue.use(Router)
@@ -71,6 +72,15 @@ let router = new Router({
       path: '/sale',
       name: 'sala',
       component: Sala,
+      meta: {
+        authen: true,
+        author: 'admin-klinike'
+      },
+    },
+    {
+      path: '/klinika',
+      name: 'klinika_admin',
+      component: KlinikaAdmin,
       meta: {
         authen: true,
         author: 'admin-klinike'

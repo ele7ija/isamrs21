@@ -20,13 +20,7 @@ insert into user_authority values(1,3);
 insert into user_authority values(4,3);
 insert into user_authority values(5,3);
 insert into user_authority values(2,1);
-<<<<<<< HEAD
-
-insert into klinika (id, naziv, adresa) values(1, 'Dimitrije Banjac', 'Zmaj Ognjena Vuka 1, Novi Sad, Srbija');
-insert into klinika (id, naziv, adresa) values(2, 'Dejan Cirjakovic', 'Zmaja od Nocaja 2, Beograd, Srbija');
-=======
 insert into user_authority values(3,4);
->>>>>>> 8e952964e0b9c47307e91393dbe0c2dd20520c98
 
 insert into sala (oznaka, klinika_id) values ('Glavna operaciona', 1);
 insert into sala (oznaka, klinika_id) values ('Sporedna operaciona', 1);

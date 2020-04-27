@@ -17,9 +17,18 @@ const getters = {
       return filtriraneOsobe[0];
     }
   },
+  getPozicija: (state) => (id) => {
+    let filtriraneOsobe = state.medicinskoOsoblje.filter(x => x.id == id);
+    if(filtriraneOsobe.length == 0){
+      return null;
+    }else{
+      return filtriraneOsobe[0].pozicija;
+    }
+  },
+
   getKlinika: (state) => {
     return state.klinika;
-  }
+  },
 
 }
 const actions = {

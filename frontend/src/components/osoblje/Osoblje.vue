@@ -79,7 +79,7 @@
                           persistent-hint
                         ></v-select>
                       </v-col>
-                      <v-col cols="12" sm="6" md="4" v-if="newItem.pozicija == 'lekar' && tipoviPregleda.length != 0">
+                      <v-col cols="12" sm="12" md="12" v-if="newItem.pozicija == 'lekar' && tipoviPregleda.length != 0">
                         <v-select
                           v-model="newItem.tipovi_pregleda"
                           :items="_tipoviPregleda"
@@ -272,19 +272,7 @@ export default {
       this.removeMedicinskaOsoba(item.id);
     },
 
-    validateRules(){
-      for(let rule of this.emailRules){
-        if(rule != true){ //mora ovako
-          return true;
-        }
-      }
-      for(let rule of this.notEmptyRule){
-        if(rule != true){ //mora ovako
-          return true;
-        }
-      }
-      return false;
-    }
+    
   }
 }
 </script>

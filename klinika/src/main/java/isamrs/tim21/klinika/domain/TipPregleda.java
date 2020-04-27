@@ -45,7 +45,7 @@ public class TipPregleda implements IdentitySerializable{
 	private List<Lekar> lekari;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JsonSerialize(using=IdentityListSerializer.class)
+	@JsonSerialize(using=IdentitySerializer.class)
 	private Cenovnik cenovnik;
 
 	public List<Lekar> getLekari() {

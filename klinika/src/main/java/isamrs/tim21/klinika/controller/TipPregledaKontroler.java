@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.Klinika;
 import isamrs.tim21.klinika.domain.TipPregleda;
+import isamrs.tim21.klinika.repository.CenovnikRepository;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.repository.TipPregledaRepository;
 
@@ -25,6 +26,9 @@ import isamrs.tim21.klinika.repository.TipPregledaRepository;
 public class TipPregledaKontroler {
 	@Autowired
 	private TipPregledaRepository tipoviPregledaRepository;
+	
+	@Autowired
+	private CenovnikRepository cenovnikRepository;
 	
 	@Autowired
 	private KlinikaRepository klinikaRepository;
@@ -66,7 +70,6 @@ public class TipPregledaKontroler {
 			//POSTAVI JOS JEDNOM SVE PARAMETRE NA BEKU
 			tipPregledaToAdd.setKlinika(klinika);
 			tipPregledaToAdd.setId(null);
-			
 			TipPregleda retval = tipoviPregledaRepository.save(tipPregledaToAdd);
 			return new ResponseEntity<TipPregleda>(retval, HttpStatus.OK);
 		}

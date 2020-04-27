@@ -19,4 +19,8 @@ public interface TipPregledaRepository extends JpaRepository<TipPregleda, Long> 
 			+ "WHERE t.klinika.id = :idKlinike "
 			+ "AND t.id = :idTipaPregleda")
 	public TipPregleda findByIdKlinikeAndIdTipaPregleda(@Param("idKlinike") long idKlinike, @Param("idTipaPregleda") long idTipaPregleda);
+
+	@Query("SELECT t FROM TipPregleda t "
+			+ "WHERE t.cenovnik.id = :idCenovnika")
+	public List<TipPregleda> findByIdCenovnika(@Param("idCenovnika") Long idCenovnika);
 }

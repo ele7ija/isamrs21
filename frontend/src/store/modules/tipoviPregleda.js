@@ -56,9 +56,14 @@ const mutations = {
     let index = state.tipoviPregleda.findIndex(x => x.id == tipPregleda.id);
     state.tipoviPregleda[index].naziv = tipPregleda.naziv;
     state.tipoviPregleda[index].opis = tipPregleda.opis;
+    state.tipoviPregleda[index].cenovnik = tipPregleda.cenovnik;
     //itd. za ostale atribute
   },
-  deleteTipPregleda: (state, idTipaPregleda) => state.tipoviPregleda = state.tipoviPregleda.filter(x => x.id != idTipaPregleda)
+  deleteTipPregleda: (state, idTipaPregleda) => state.tipoviPregleda = state.tipoviPregleda.filter(x => x.id != idTipaPregleda),
+  setCenovnikOfTipPregleda: (state, {tipPregleda, idCenovnika}) => {
+    let index = state.tipoviPregleda.findIndex(x => x.id == tipPregleda.id);
+    state.tipoviPregleda[index].cenovnik = {id: idCenovnika};
+  }
 
 }
 

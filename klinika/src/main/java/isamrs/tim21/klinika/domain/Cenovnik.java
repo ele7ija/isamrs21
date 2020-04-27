@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import isamrs.tim21.klinika.jsonSerialize.IdentityListSerializer;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
+import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
 
 @Entity
 @Table(name="cenovnik")
@@ -43,6 +44,7 @@ public class Cenovnik implements IdentitySerializable{
 	private List<TipPregleda> tipoviPregleda;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
+	@JsonSerialize(using=IdentitySerializer.class)
 	private Klinika klinika;
 	
 	public Long getId() {

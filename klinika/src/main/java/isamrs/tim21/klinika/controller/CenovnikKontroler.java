@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.Cenovnik;
 import isamrs.tim21.klinika.domain.Klinika;
+import isamrs.tim21.klinika.domain.TipPregleda;
 import isamrs.tim21.klinika.repository.CenovnikRepository;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
+import isamrs.tim21.klinika.repository.TipPregledaRepository;
 
 
 @RestController
@@ -26,6 +28,9 @@ import isamrs.tim21.klinika.repository.KlinikaRepository;
 public class CenovnikKontroler {
 	@Autowired
 	private CenovnikRepository cenovnikRepository;
+	
+	@Autowired
+	private TipPregledaRepository tipPregledaRepository;
 	
 	@Autowired
 	private KlinikaRepository klinikaRepository;
@@ -67,7 +72,11 @@ public class CenovnikKontroler {
 			//POSTAVI JOS JEDNOM SVE PARAMETRE NA BEKU
 			cenovnikToAdd.setKlinika(klinika);
 			cenovnikToAdd.setId(null);
-			
+			for(int i = 0; i < cenovnikToAdd.getTipoviPregleda().size(); i++){
+				TipPregleda tp = tipPregledaRepository.findById(cenovnikToAdd.getTipoviPregleda().get(i).getId()).get();
+				tp.setCenovnik(cenovnikToAdd);
+				cenovnikToAdd.getTipoviPregleda().set(i, tp);
+			}
 			Cenovnik retval = cenovnikRepository.save(cenovnikToAdd);
 			return new ResponseEntity<Cenovnik>(retval, HttpStatus.OK);
 		}
@@ -84,11 +93,14 @@ public class CenovnikKontroler {
 			//POSTAVI JOS JEDNOM SVE PARAMETRE NA BEKU
 			cenovnikToChange.setId(idCenovnika);
 			cenovnikToChange.setKlinika(klinika);
-			
+			for(int i = 0; i < cenovnikToChange.getTipoviPregleda().size(); i++){
+				TipPregleda tp = tipPregledaRepository.findById(cenovnikToChange.getTipoviPregleda().get(i).getId()).get();
+				tp.setCenovnik(cenovnikToChange);
+				cenovnikToChange.getTipoviPregleda().set(i, tp);
+			}
 			if(! cenovnikRepository.findById(idCenovnika).isPresent()){
 				return new ResponseEntity<Cenovnik>(HttpStatus.NOT_FOUND);
 			}
-
 			Cenovnik retval = cenovnikRepository.save(cenovnikToChange);
 			return new ResponseEntity<Cenovnik>(retval, HttpStatus.OK);	
 			
@@ -102,6 +114,9 @@ public class CenovnikKontroler {
 		if(klinika == null){
 			return new ResponseEntity<Boolean>(HttpStatus.NOT_FOUND);
 		}else{
+			if(tipPregledaRepository.findByIdCenovnika(idCenovnika).size() != 0){
+				return new ResponseEntity<Boolean>(HttpStatus.FORBIDDEN);
+			}
 			cenovnikRepository.deleteById(idCenovnika);
 			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 		}
