@@ -2,23 +2,8 @@
   <v-container fluid>
     <v-row justify="center">
       <v-col lg='3' md='3' sm='6'>
-        <v-card outlined>
-          <v-card-title>
-            Pronađi pregled
-          </v-card-title>
-          <v-card-text>
-            <v-select
-              v-model='chosenSort'
-              :items='availableSorts'
-              label='Sortiraj po'>
-              <template v-slot:selection="{ item }">
-                <v-chip color='primary'>
-                  <span>{{ item }}</span>
-                </v-chip>
-              </template>
-            </v-select>
-          </v-card-text>
-        </v-card>
+        <PretragaKlinika>
+        </PretragaKlinika>
       </v-col>
       <v-col lg=8 md=8 sm=12>
         <v-card outlined>
@@ -33,7 +18,7 @@
             <v-container fluid>
               <v-row>
                 <v-col 
-                  v-for='klinika in sortedKlinike'
+                  v-for='klinika in klinike'
                   :key='klinika.id'
                   lg=4
                   md=6
@@ -52,44 +37,31 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import KlinikaCard from './KlinikaCard';
+import PretragaKlinika from './PretragaKlinika';
 export default {
   name: 'Klinike',
   components: {
-    KlinikaCard
+    KlinikaCard,
+    PretragaKlinika
   },
   data: function() {
     return {
-      chosenSort: 'id',
-      availableSorts: ['id'],
-      headers: [
-        {
-          text: 'ID',
-          value: 'id'
-        }
-      ]
     }
   },
   computed: {
-    ...mapState('klinike', [
-      'klinike'
-    ]),
-    sortedKlinike: function() {
-      return this.sortByKey(this.klinike, this.chosenSort);
-    },
+    klinike: function(){ 
+      return this.getPretrazeneKlinike();
+    }
   },
   methods: {
     ...mapActions('klinike', [
       'loadKlinike'
     ]),
-    sortByKey(array, key){
-      return array.sort(function(a, b)
-      {
-        var x = a[key]; var y = b[key];
-        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-      });
-    }
+    ...mapGetters('klinike', [
+      'getPretrazeneKlinike'
+    ]),
   },
   created() {
     this.loadKlinike();
