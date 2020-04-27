@@ -8,9 +8,9 @@ import TipPregleda from "@/components/tipovi_pregleda/TipPregleda";
 import Sala from "@/components/sale/Sala";
 import Osoblje from "@/components/osoblje/Osoblje";
 import Pacijenti from "@/components/pacijenti/Pacijenti";
-import Klinike from '@/components/klinike/Klinike';
-import KlinikaPage from '@/components/klinike/KlinikaPage';
 import KlinikaAdmin from '@/components/klinike/KlinikaAdmin';
+import Klinike from '@/components/pacijenti/klinike/Klinike';
+import KlinikaPage from '@/components/pacijenti/klinike/KlinikaPage';
 import store from '@/store/index';
 //Plugins
 Vue.use(Router)
