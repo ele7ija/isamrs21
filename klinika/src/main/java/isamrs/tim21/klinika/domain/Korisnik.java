@@ -56,7 +56,7 @@ public abstract class Korisnik implements IdentitySerializable, UserDetails {
 	@Column(name = "poslednja_promena_sifre")
     private java.sql.Timestamp poslednjaPromenaSifre;
 	
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "user_authority",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))

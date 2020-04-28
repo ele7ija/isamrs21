@@ -63,6 +63,16 @@ const mutations = {
   setCenovnikOfTipPregleda: (state, {tipPregleda, idCenovnika}) => {
     let index = state.tipoviPregleda.findIndex(x => x.id == tipPregleda.id);
     state.tipoviPregleda[index].cenovnik = {id: idCenovnika};
+  },
+  removeSpecijalista: (state, {idLekara, idTipaPregleda}) => {
+    let tipPregleda = state.tipoviPregleda.filter( x=> x.id == idTipaPregleda)[0];
+    tipPregleda.lekari = tipPregleda.lekari.filter(x => x.id != idLekara);
+  },
+  addSpecijalista: (state, {idLekara, idTipovaPregleda}) => {
+    let temp = state.tipoviPregleda.filter(x => idTipovaPregleda.filter(y => y == x.id).length != 0);
+    for(let elem of temp){
+      elem.lekari.push({id: idLekara});
+    }
   }
 
 }

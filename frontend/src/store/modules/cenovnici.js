@@ -43,8 +43,12 @@ const actions = {
   },
 
   async removeCenovnik({state, commit}, idCenovnika){
-    await cenovnici.removeCenovnik(state.klinika.id, idCenovnika);
-    commit('deleteCenovnik', idCenovnika);
+    let retval = await cenovnici.removeCenovnik(state.klinika.id, idCenovnika);
+    if(retval)
+      commit('deleteCenovnik', idCenovnika);
+    else{
+      return Promise.reject("Nije moguce obrisati stavku cenovnika za koju postoji definisan tip pregleda");
+    }
   },
   
 }
@@ -59,7 +63,9 @@ const mutations = {
     state.cenovnici[index].tipoviPregleda = cenovnik.tipoviPregleda;
     //itd. za ostale atribute
   },
-  deleteCenovnik: (state, idCenovnika) => state.cenovnici = state.cenovnici.filter(x => x.id != idCenovnika)
+  deleteCenovnik: (state, idCenovnika) => {
+    state.cenovnici = state.cenovnici.filter(x => x.id != idCenovnika);
+  }
 
 }
 

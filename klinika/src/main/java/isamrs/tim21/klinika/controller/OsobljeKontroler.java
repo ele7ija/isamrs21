@@ -23,6 +23,7 @@ import isamrs.tim21.klinika.domain.Lekar;
 import isamrs.tim21.klinika.domain.MedicinskaSestra;
 import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
 import isamrs.tim21.klinika.domain.Pregled;
+import isamrs.tim21.klinika.domain.TipPregleda;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.repository.OsobljeRepository;
 import isamrs.tim21.klinika.services.OsobljeService;
@@ -100,6 +101,32 @@ public class OsobljeKontroler {
 		}
 	}
 	
+	@PutMapping(value="/specijalnosti/{idOsoblja}")
+	@PreAuthorize("hasAuthority('admin-klinike')")
+	public ResponseEntity<MedicinskoOsoblje> addSpecijalnostOsoblja(@PathVariable("idKlinike") Long idKlinike, 
+			@PathVariable("idOsoblja") Long idOsoblja, @RequestBody List<Long> idTipovaPregleda){
+		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
+		if(klinika == null){
+			return new ResponseEntity<MedicinskoOsoblje>(HttpStatus.NOT_FOUND);
+		}else{
+			return osobljeService.addSpecijalnostOsoblja(idOsoblja, idTipovaPregleda);	
+			
+		}
+	}
+	
+	@DeleteMapping(value="/specijalnosti/{idOsoblja}/{idTipaPregleda}")
+	@PreAuthorize("hasAuthority('admin-klinike')")
+	public ResponseEntity<MedicinskoOsoblje> deleteSpecijalnostOsoblja(@PathVariable("idKlinike") Long idKlinike, 
+			@PathVariable("idOsoblja") Long idOsoblja, @PathVariable("idTipaPregleda") Long idTipaPregleda){
+		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
+		if(klinika == null){
+			return new ResponseEntity<MedicinskoOsoblje>(HttpStatus.NOT_FOUND);
+		}else{
+			return osobljeService.deleteSpecijalnostOsoblja(idOsoblja, idTipaPregleda);	
+			
+		}
+	}
+	
 	@DeleteMapping(value="/{idOsoblja}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<Boolean> deleteOsoblje(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idOsoblja") Long idOsoblja){
@@ -114,9 +141,13 @@ public class OsobljeKontroler {
 			}
 			else if(osobaToDelete instanceof Lekar){
 				//UKOLIKO JE OSOBA LEKAR, PROVERI DA LI POSTOJI PREGLED KOJI JE AKTUELAN
-				Lekar lekar = (Lekar) osobaToDelete;
-				if(imaAktivniPregled(lekar)){
+				Lekar lekar = (Lekar) osobljeRepository.findById(idOsoblja).get();
+				/*if(imaAktivniPregled(lekar)){
 					return new ResponseEntity<Boolean>(false, HttpStatus.FORBIDDEN); //za sad ovako
+				}*/
+				
+				for(TipPregleda tp : lekar.getTipovi_pregleda()){
+					tp.getLekari().remove(lekar); //mora posto je tip pregleda vlasnik veze
 				}
 				osobljeRepository.deleteById(idOsoblja);
 				return new ResponseEntity<Boolean>(true, HttpStatus.OK);

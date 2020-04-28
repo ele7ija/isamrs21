@@ -7,6 +7,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
@@ -15,6 +17,7 @@ import org.springframework.security.core.GrantedAuthority;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import isamrs.tim21.klinika.jsonSerialize.IdentityListSerializer;
+import isamrs.tim21.klinika.jsonSerialize.TipPregledaListSerializer;
 
 
 @Entity
@@ -26,8 +29,8 @@ public class Lekar extends MedicinskoOsoblje{
 	 */
 	private static final long serialVersionUID = 4362887523765862539L;
 
-	@ManyToMany(mappedBy="lekari")
-	@JsonSerialize(using=IdentityListSerializer.class)
+	@ManyToMany(cascade=CascadeType.MERGE, mappedBy="lekari")
+	@JsonSerialize(using=TipPregledaListSerializer.class)
 	private List<TipPregleda> tipovi_pregleda;
 	
 	@OneToMany(mappedBy="lekar", cascade=CascadeType.ALL, fetch=FetchType.LAZY)

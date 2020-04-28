@@ -82,12 +82,18 @@
       </template>
       <template v-slot:expanded-item="{ headers, item }">
         <td :colspan="headers.length">
-          Tipovi pregleda pod ovom stavkom cenovnika:
-          <div
-            v-for="tip in item.tipoviPregleda"
-            :key="tip.id"
-            
-          >{{tip.id}}</div>
+          <p class="text-center mt-2 mb-n4 pb-n4">Tipovi pregleda pod ovom stavkom cenovnika</p>
+          <br>
+          <span
+            v-for="tip in tipoviPregleda"
+            :key="tip.id">
+            <v-chip
+              class="ma-2"
+              v-if="item.tipoviPregleda.find(x => x.id == tip.id)"
+            >
+              {{tip.naziv}}
+            </v-chip>
+          </span>
         </td>
       </template>
       <template v-slot:item.actions="{ item }">
@@ -100,13 +106,29 @@
         </v-icon>
         <v-icon
           small
+          class="mr-2"
           @click="deleteItem(item)"
-          :disabled="item.tipoviPregleda.length != 0"
         >
           mdi-delete
         </v-icon>
       </template>
     </v-data-table>
+    
+    
+    <v-snackbar
+      v-model="snackbar"
+      :timeout="snackbarTimeout"
+      color="red darken-3"
+    >
+      {{ snackbarText }}
+      <v-btn
+        color="grey darken-3"
+        text
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
   </div>
 </template>
 
@@ -116,6 +138,9 @@ export default {
   name: "Cenovnici",
   data: function(){
     return {
+      snackbar: false,
+      snackbarTimeout: 3000,
+      snackbarText: null,
       update: false,
       dialog: false,
       search: '',
@@ -213,6 +238,7 @@ export default {
     },
 
     save(){
+      this.newItem.tipoviPregleda = this.newItem.tipoviPregleda.map(x => {return {id: x.id}});
       if(this.update){
         this.updateCenovnik(this.newItem);
       }else{
@@ -228,13 +254,20 @@ export default {
       this.update = true;
       this.newItem = Object.assign({}, item);
       this.newItem.tipoviPregleda = this.newItem.tipoviPregleda.map(x => {
-          return this.tipoviPregleda.filter(i => i.id == x.id)[0];
+          return{
+            text: x.naziv,
+            value: x
+          };
       });
+      
       this.dialog = true;
     },
 
     deleteItem(item){
-      this.removeCenovnik(item.id);
+      this.removeCenovnik(item.id).then(null, (error) => {
+        this.snackbarText = error;
+        this.snackbar = true;
+      });
     },
 
     validateRules(){

@@ -115,7 +115,7 @@ public class CenovnikKontroler {
 			return new ResponseEntity<Boolean>(HttpStatus.NOT_FOUND);
 		}else{
 			if(tipPregledaRepository.findByIdCenovnika(idCenovnika).size() != 0){
-				return new ResponseEntity<Boolean>(HttpStatus.FORBIDDEN);
+				return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 			}
 			cenovnikRepository.deleteById(idCenovnika);
 			return new ResponseEntity<Boolean>(true, HttpStatus.OK);

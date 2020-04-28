@@ -43,10 +43,10 @@
                 <v-card-text>
                   <v-container>
                     <v-row>
-                      <v-col cols="12" sm="6" md="4">
+                      <v-col cols="12" sm="6" md="6">
                         <v-text-field v-model="newItem.naziv" label="Naziv" :rules="nazivRules"></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="6" md="4">
+                      <v-col cols="12" sm="6" md="6">
                         <v-text-field v-model="newItem.opis" label="Opis" :rules="opisRules"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="12" md="12" v-if="cenovnici.length != 0">
@@ -134,7 +134,8 @@ export default {
       newItem: {
         naziv: '',
         opis: '',
-        cenovnik: null
+        cenovnik: null,
+        lekari: []
       },
       update: false
     };
@@ -188,6 +189,7 @@ export default {
               id: element.id,
               naziv: element.naziv,
               opis: element.opis,
+              lekari: element.lekari,
               cenovnik: this.cenovnici[indeks], //ZA BEKEND
               stavkaCenovnika: this.cenovnici[indeks].naziv, //ZA PRIKAZ
               iznosUDinarima: this.cenovnici[indeks].iznosUDinarima //ZA PRIKAZ
@@ -244,8 +246,14 @@ export default {
 
     editItem(item){
       this.update = true;
-      this.newItem = Object.assign({}, item)
+      this.newItem = JSON.parse(JSON.stringify(item));
       this.newItem.cenovnik = item.cenovnik ? this.cenovnici.filter(x => x.id == item.cenovnik.id)[0]: null;
+      this.newItem.lekari = this.newItem.lekari.map(x => {
+        return {
+          id: x.id,
+          pozicija: 'lekar'
+        };
+      });
       this.dialog = true;
     },
 

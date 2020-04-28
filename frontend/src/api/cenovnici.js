@@ -30,10 +30,12 @@ export default{
   },
   async removeCenovnik(idKlinike, idCenovnika){
     let options = util.prepareOptions();
-    let {data} = await axios.delete(
+    let response = await axios.delete(
       `${process.env.VUE_APP_BACKEND_ROOT}/cenovnik/${idKlinike}/${idCenovnika}`,
       options
     );
-    return data;
+    return response.data;
+    
+    
   }
 }
