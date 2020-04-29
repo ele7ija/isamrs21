@@ -46,7 +46,7 @@ public class PregledService {
 		 */
 		
 		pregled.setId(idPregleda);
-		if(!pregledRepository.findById(idPregleda).isPresent()){
+		if(pregledRepository.findByIdKlinikeAndIdPregleda(klinika.getId(), idPregleda) == null){
 			return null;
 		}
 		pregled.setKlinika(klinika);
