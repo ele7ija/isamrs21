@@ -1,5 +1,6 @@
 package isamrs.tim21.klinika.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.Klinika;
+import isamrs.tim21.klinika.domain.Lekar;
 import isamrs.tim21.klinika.domain.TipPregleda;
+import isamrs.tim21.klinika.repository.CenovnikRepository;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.repository.TipPregledaRepository;
 
@@ -25,6 +28,9 @@ import isamrs.tim21.klinika.repository.TipPregledaRepository;
 public class TipPregledaKontroler {
 	@Autowired
 	private TipPregledaRepository tipoviPregledaRepository;
+	
+	@Autowired
+	private CenovnikRepository cenovnikRepository;
 	
 	@Autowired
 	private KlinikaRepository klinikaRepository;
@@ -66,7 +72,8 @@ public class TipPregledaKontroler {
 			//POSTAVI JOS JEDNOM SVE PARAMETRE NA BEKU
 			tipPregledaToAdd.setKlinika(klinika);
 			tipPregledaToAdd.setId(null);
-			
+			ArrayList<Lekar> lekari = new ArrayList<Lekar>();
+			tipPregledaToAdd.setLekari(lekari);
 			TipPregleda retval = tipoviPregledaRepository.save(tipPregledaToAdd);
 			return new ResponseEntity<TipPregleda>(retval, HttpStatus.OK);
 		}
@@ -84,10 +91,11 @@ public class TipPregledaKontroler {
 			tipPregledaToChange.setId(idTipaPregleda);
 			tipPregledaToChange.setKlinika(klinika);
 			
-			if(! tipoviPregledaRepository.findById(idTipaPregleda).isPresent()){
+			TipPregleda tipPregleda = tipoviPregledaRepository.findById(idTipaPregleda).orElse(null);
+			if(tipPregleda == null){
 				return new ResponseEntity<TipPregleda>(HttpStatus.NOT_FOUND);
 			}
-
+			tipPregledaToChange.setLekari(tipPregleda.getLekari()); //ovo se ne menja kroz api call
 			TipPregleda retval = tipoviPregledaRepository.save(tipPregledaToChange);
 			return new ResponseEntity<TipPregleda>(retval, HttpStatus.OK);	
 			

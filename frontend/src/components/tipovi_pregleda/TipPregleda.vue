@@ -2,7 +2,7 @@
   <div>
     <v-data-table
       :headers="headers"
-      :items="getAll"
+      :items="_tipoviPregleda"
       :search="search"
       class="elevation-1"
       >
@@ -43,19 +43,20 @@
                 <v-card-text>
                   <v-container>
                     <v-row>
-                      <v-col cols="12" sm="6" md="4">
+                      <v-col cols="12" sm="6" md="6">
                         <v-text-field v-model="newItem.naziv" label="Naziv" :rules="nazivRules"></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="6" md="4">
+                      <v-col cols="12" sm="6" md="6">
                         <v-text-field v-model="newItem.opis" label="Opis" :rules="opisRules"></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="6" md="4" v-if="_cenovnici.length != 0">
+                      <v-col cols="12" sm="12" md="12" v-if="cenovnici.length != 0">
                         <v-select
                           v-model="newItem.cenovnik"
                           :items="_cenovnici"
                           label="Cenovnik"
                           chips
-                          hint="Odaberite definisanu tarifu"
+                          deletable-chips
+                          hint="Odaberite predefinisanu stavku cenovnika"
                           persistent-hint
                         ></v-select>
                       </v-col>
@@ -113,6 +114,16 @@ export default {
           value: 'opis',
           sortable: false
         },
+        {
+          text: 'Stavka cenovnika',
+          value: 'stavkaCenovnika',
+          sortable: true
+        },
+        {
+          text: 'Dinarski iznos',
+          value: 'iznosUDinarima',
+          sortable: true
+        },
         { 
           text: 'Actions',
           value: 'actions',
@@ -123,7 +134,8 @@ export default {
       newItem: {
         naziv: '',
         opis: '',
-        cenovnik: null
+        cenovnik: null,
+        lekari: []
       },
       update: false
     };
@@ -164,20 +176,38 @@ export default {
       rules.push(rule1);
       return rules;
     },
-
     _cenovnici(){
-      return this.cenovnici.map(x => {
-        return{
-          text: `${x.naziv}, cena ${x.iznosUDinarima} dinara`,
-          value: x
-        };
-      });
+      return this.cenovnici.map(x => { return {text: `${x.naziv}, ${x.iznosUDinarima} din`, value: x}; })
+    },
+    _tipoviPregleda(){
+      let retval = [];
+      for(let element of this.getAll){
+        if(element.cenovnik != null){
+          let indeks = this.cenovnici.findIndex(x => x.id == element.cenovnik.id);
+          if(indeks != -1){
+            retval.push({
+              id: element.id,
+              naziv: element.naziv,
+              opis: element.opis,
+              lekari: element.lekari,
+              cenovnik: this.cenovnici[indeks], //ZA BEKEND
+              stavkaCenovnika: this.cenovnici[indeks].naziv, //ZA PRIKAZ
+              iznosUDinarima: this.cenovnici[indeks].iznosUDinarima //ZA PRIKAZ
+            });
+          }
+        }else{
+          retval.push(element);
+        }
+      }
+      return retval;
     }
+
+    
   },
 
   created(){
-    this.fetchData();
     this.fecthCenovnici();
+    this.fetchData();
   },
   methods: {
     ...mapActions(
@@ -205,6 +235,7 @@ export default {
     },
 
     save(){
+      this.newItem.cenovnik = this.newItem.cenovnik ? {id: this.newItem.cenovnik.id} : null;
       if(this.update){
         this.updateTipPregleda(this.newItem);
       }else{
@@ -215,9 +246,14 @@ export default {
 
     editItem(item){
       this.update = true;
-      this.newItem = Object.assign({}, item)
-      if(item.cenovnik != null)
-        this.newItem.cenovnik = JSON.parse(JSON.stringify(item.cenovnik))
+      this.newItem = JSON.parse(JSON.stringify(item));
+      this.newItem.cenovnik = item.cenovnik ? this.cenovnici.filter(x => x.id == item.cenovnik.id)[0]: null;
+      this.newItem.lekari = this.newItem.lekari.map(x => {
+        return {
+          id: x.id,
+          pozicija: 'lekar'
+        };
+      });
       this.dialog = true;
     },
 

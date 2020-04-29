@@ -57,6 +57,10 @@ const actions = {
     let data = await klinikeAPI.fetchKlinikaAdmina();
     commit('setKlinikaAdmina', data);
   },
+  async setKlinikaUlogovanogKorisnika({commit}, klinika){
+    let data = await klinikeAPI.updateKlinika(klinika);
+    commit('setKlinikaAdmina', data);
+  },
   resetKlinike({commit}){
     commit('reset');
   }

@@ -9,7 +9,7 @@ const getters = {
   getCenovnici: (state) => {
     return state.cenovnici;
   },
-  getgetCenovnik: (state) => (id) => {
+  getCenovnik: (state) => (id) => {
     let filtriraniCenovnici = state.cenovnici.filter(x => x.id == id);
     if(filtriraniCenovnici.length == 0){
       return null;
@@ -43,8 +43,12 @@ const actions = {
   },
 
   async removeCenovnik({state, commit}, idCenovnika){
-    await cenovnici.removeCenovnik(state.klinika.id, idCenovnika);
-    commit('deleteCenovnik', idCenovnika);
+    let retval = await cenovnici.removeCenovnik(state.klinika.id, idCenovnika);
+    if(retval)
+      commit('deleteCenovnik', idCenovnika);
+    else{
+      return Promise.reject("Nije moguce obrisati stavku cenovnika za koju postoji definisan tip pregleda");
+    }
   },
   
 }
@@ -54,11 +58,14 @@ const mutations = {
   addNewCenovnik: (state, cenovnik) => state.cenovnici.push(cenovnik),
   updateExistingCenovnik: (state, cenovnik) => {
     let index = state.cenovnici.findIndex(x => x.id == cenovnik.id);
-    state.tipoviPregleda[index].naziv = cenovnik.naziv;
-    state.tipoviPregleda[index].iznosUDinarima = cenovnik.iznosUDinarima;
+    state.cenovnici[index].naziv = cenovnik.naziv;
+    state.cenovnici[index].iznosUDinarima = cenovnik.iznosUDinarima;
+    state.cenovnici[index].tipoviPregleda = cenovnik.tipoviPregleda;
     //itd. za ostale atribute
   },
-  deleteCenovnik: (state, idCenovnika) => state.cenovnici = state.cenovnici.filter(x => x.id != idCenovnika)
+  deleteCenovnik: (state, idCenovnika) => {
+    state.cenovnici = state.cenovnici.filter(x => x.id != idCenovnika);
+  }
 
 }
 

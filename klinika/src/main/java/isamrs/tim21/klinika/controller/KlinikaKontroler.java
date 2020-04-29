@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.Klinika;
+import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
+import isamrs.tim21.klinika.repository.OsobljeRepository;
 import isamrs.tim21.klinika.services.KlinikaService;
 
 @RestController
@@ -27,6 +29,9 @@ public class KlinikaKontroler {
 	
 	@Autowired
 	private KlinikaRepository klinikaRepository;
+	
+	@Autowired
+	private OsobljeRepository osobljeRepository;
 	
 	@Autowired KlinikaService klinikaService;
 	
@@ -67,10 +72,20 @@ public class KlinikaKontroler {
 	@PutMapping(value="/{idKlinike}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<Klinika> updateKlinika(@PathVariable("idKlinike") Long idKlinike, @RequestBody Klinika klinikaToChange){
+		//menjamo samo naziv i adresu
 		klinikaToChange.setId(idKlinike);
-		if(! klinikaRepository.findById(idKlinike).isPresent()){
+		Klinika exKlinika = klinikaRepository.findById(idKlinike).orElse(null);
+		if(exKlinika == null){
 			return new ResponseEntity<Klinika>(HttpStatus.NOT_FOUND);
-		}
+		}	
+		
+		klinikaToChange.setCenovnici(exKlinika.getCenovnici());
+		klinikaToChange.setSale(exKlinika.getSale());
+		klinikaToChange.setTipoviPregleda(exKlinika.getTipoviPregleda());
+		klinikaToChange.setPregledi(exKlinika.getPregledi());
+		klinikaToChange.setMedicinskoOsoblje(exKlinika.getMedicinskoOsoblje());
+		klinikaToChange.setAdministratoriKlinike(exKlinika.getAdministratoriKlinike());
+		
 		Klinika retval = klinikaRepository.save(klinikaToChange);
 		return new ResponseEntity<Klinika>(retval, HttpStatus.OK);
 	}

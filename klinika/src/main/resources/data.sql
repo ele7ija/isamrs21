@@ -22,7 +22,6 @@ insert into user_authority values(5,3);
 insert into user_authority values(2,1);
 insert into user_authority values(3,4);
 
-
 insert into sala (oznaka, klinika_id) values ('Glavna operaciona', 1);
 insert into sala (oznaka, klinika_id) values ('Sporedna operaciona', 1);
 insert into sala (oznaka, klinika_id) values ('Opsta', 2);

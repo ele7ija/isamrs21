@@ -8,6 +8,7 @@ import TipPregleda from "@/components/tipovi_pregleda/TipPregleda";
 import Sala from "@/components/sale/Sala";
 import Osoblje from "@/components/osoblje/Osoblje";
 import Pacijenti from "@/components/pacijenti/Pacijenti";
+import KlinikaAdmin from '@/components/klinike/KlinikaAdmin';
 import Klinike from '@/components/pacijenti/klinike/Klinike';
 import KlinikaPage from '@/components/pacijenti/klinike/KlinikaPage';
 import store from '@/store/index';
@@ -71,6 +72,15 @@ let router = new Router({
       path: '/sale',
       name: 'sala',
       component: Sala,
+      meta: {
+        authen: true,
+        author: 'admin-klinike'
+      },
+    },
+    {
+      path: '/klinika',
+      name: 'klinika_admin',
+      component: KlinikaAdmin,
       meta: {
         authen: true,
         author: 'admin-klinike'

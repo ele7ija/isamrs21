@@ -53,7 +53,7 @@ public class Pregled implements IdentitySerializable{
 	//@JsonSerialize(using=IdentitySerializer.class)
 	private Lekar lekar;
 	
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JsonSerialize(using=IdentitySerializer.class)
 	private Klinika klinika;
 

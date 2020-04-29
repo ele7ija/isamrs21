@@ -9,7 +9,7 @@ const state = {
       },
       { 
         title: 'Moj profil',
-        action: 'mdi-account-circle-outline',
+        action: 'mdi-account',
         componentName: 'tipovi_pregleda',
         items: []
       },
@@ -17,6 +17,11 @@ const state = {
         title: 'Klinika',
         action: 'mdi-hospital-building',
         items: [
+          { 
+            title: 'Profil klinike',
+            action: 'mdi-account-cog',
+            componentName: 'klinika_admin',
+          },
           { 
             title: 'Tipovi pregleda',
             action: 'mdi-alpha-t',
