@@ -15,7 +15,12 @@ const state = {
       rastuce: true
     }
   ],
-  sortiranja: []
+  sortiranja: [],
+  // Pregled za rez
+  odabranaKlinika: null,
+  odabraniPregled: null,
+  kreiranaPoseta: null,
+  posete: []
 }
 const internalMethods = {
   sortByKey(array, key){
@@ -63,6 +68,14 @@ const actions = {
   },
   resetKlinike({commit}){
     commit('reset');
+  },
+  async kreirajPosetu({commit}, obj) {
+    let data = await klinikeAPI.kreirajPosetu(obj);
+    commit('setKreiranaPoseta', data);
+  },
+  async dobaviSvePosete({commit}) {
+    let data = await klinikeAPI.dobaviSvePosete();
+    commit('setPosete', data);
   }
 }
 const mutations = {
@@ -77,7 +90,15 @@ const mutations = {
   setKrajnjiDatum: (state, datum) => state.krajnjiDatum = datum,
   setTipPregleda: (state, tip) => state.tipPregleda = tip,
   setSortiranja: (state, sortiranja) => 
-    state.sortiranja = sortiranja
+    state.sortiranja = sortiranja,
+  setOdabraniPregled: (state, pregled) => 
+    state.odabraniPregled = pregled,
+  setOdabranaKlinika: (state, klinika) => 
+    state.odabranaKlinika = klinika,
+  setKreiranaPoseta: (state, poseta) => 
+    state.kreiranaPoseta = poseta,
+  setPosete: (state, posete) => 
+    state.posete = posete
 }
 
 export default{

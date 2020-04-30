@@ -5,9 +5,20 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 export default {
   name: 'KlinikaPage',
-  props: ['klinikaId']
+  props: ['klinikaId'],
+  methods: {
+    ...mapMutations('klinike', [
+      'setOdabranaKlinika'
+    ]),
+  },
+  created() {
+    // todo
+    // pronadji kliniku
+    // this.setOdabranaKlinika()
+  }
 }
 </script>
 

@@ -40,7 +40,7 @@
 
 <script>
 import PreglediDialog from './PreglediDialog'
-import {mapState, mapActions} from 'vuex';
+import {mapState, mapActions, mapMutations} from 'vuex';
 
 export default {
   name: 'KlinikaCard',
@@ -62,7 +62,11 @@ export default {
     ...mapActions('pregledi', [
       'loadAllPregledi'
     ]),
+    ...mapMutations('klinike', [
+      'setOdabranaKlinika'
+    ]),
     dialogStartup() {
+      this.setOdabranaKlinika(this.klinika);
       this.loadAllPregledi(this.klinika.id);
       this.dialog = true;
     }

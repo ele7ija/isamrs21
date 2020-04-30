@@ -11,6 +11,9 @@ import Pacijenti from "@/components/pacijenti/Pacijenti";
 import KlinikaAdmin from '@/components/klinike/KlinikaAdmin';
 import Klinike from '@/components/pacijenti/klinike/Klinike';
 import KlinikaPage from '@/components/pacijenti/klinike/KlinikaPage';
+import RezervacijaPregleda from '@/components/pacijenti/klinike/RezervacijaPregleda';
+import Istorija from '@/components/pacijenti/klinike/Istorija';
+
 import store from '@/store/index';
 //Plugins
 Vue.use(Router)
@@ -117,7 +120,7 @@ let router = new Router({
     {
       path: '/pacijent/istorija',
       name: 'pacijent-istorija',
-      component: Pacijenti,
+      component: Istorija,
       meta: {
         authen: true,
         author: 'pacijent'
@@ -146,6 +149,15 @@ let router = new Router({
       name: 'pacijent-klinika',
       component: KlinikaPage,
       props: true,
+      meta: {
+        authen: true,
+        author: 'pacijent'
+      }
+    },
+    {
+      path: '/pacijent/rezervacija-pregleda',
+      name: 'rezervacija-pregleda',
+      component: RezervacijaPregleda,
       meta: {
         authen: true,
         author: 'pacijent'

@@ -62,6 +62,7 @@ export default {
     ...mapGetters('klinike', [
       'getPretrazeneKlinike'
     ]),
+    
   },
   created() {
     this.loadKlinike();
