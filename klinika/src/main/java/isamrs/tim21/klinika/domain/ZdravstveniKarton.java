@@ -23,7 +23,7 @@ public class ZdravstveniKarton implements IdentitySerializable{
 	@MapsId //znaci da je id pacijenta u tabeli zdravstvenog kartona i primarni i strani kljuc
 	private Pacijent pacijent;
 	
-	@OneToMany(mappedBy="zdravstveniKarton", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	@OneToMany(mappedBy="zdravstveniKarton", cascade=CascadeType.ALL)
 	private List<Poseta> posete;
 
 	public Long getId() {

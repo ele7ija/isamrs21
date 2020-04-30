@@ -1,8 +1,10 @@
 package isamrs.tim21.klinika.domain;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -35,10 +37,12 @@ public class Pregled implements IdentitySerializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Temporal(TemporalType.DATE)
+	@Column(name="pocetak_pregleda")
+    @Temporal(TemporalType.TIMESTAMP)
 	private Date pocetakPregleda;
 	
-	@Temporal(TemporalType.DATE)
+	@Column(name="kraj_pregleda")
+    @Temporal(TemporalType.TIMESTAMP)
 	private Date krajPregleda;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
@@ -127,8 +131,7 @@ public class Pregled implements IdentitySerializable{
 	public void setKrajPregleda(Date krajPregleda) {
 		this.krajPregleda = krajPregleda;
 	}
-	
-	
+
 	
 	
 	

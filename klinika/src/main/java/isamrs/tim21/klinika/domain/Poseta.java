@@ -6,6 +6,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
@@ -24,6 +26,7 @@ import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
 public class Poseta implements IdentitySerializable{
 	
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
 	@Column(name="bolest")
@@ -36,9 +39,7 @@ public class Poseta implements IdentitySerializable{
 	@JsonSerialize(using=IdentitySerializer.class)
 	private ZdravstveniKarton zdravstveniKarton;
 	
-	@OneToOne(fetch=FetchType.LAZY)
-	@MapsId //znaci da je id pregleda u tabeli poseta i primarni i strani kljuc
-	@JsonSerialize(using=IdentitySerializer.class)
+	@OneToOne(fetch=FetchType.EAGER)
 	private Pregled pregled;
 	
 	public Poseta(){}
