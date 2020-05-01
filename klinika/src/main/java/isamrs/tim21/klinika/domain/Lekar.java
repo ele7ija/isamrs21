@@ -17,6 +17,7 @@ import org.springframework.security.core.GrantedAuthority;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import isamrs.tim21.klinika.jsonSerialize.IdentityListSerializer;
+import isamrs.tim21.klinika.jsonSerialize.PregledListSerializer;
 import isamrs.tim21.klinika.jsonSerialize.TipPregledaListSerializer;
 
 
@@ -34,7 +35,7 @@ public class Lekar extends MedicinskoOsoblje{
 	private List<TipPregleda> tipovi_pregleda;
 	
 	@OneToMany(mappedBy="lekar", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
-	@JsonSerialize(using=IdentityListSerializer.class)
+	@JsonSerialize(using=PregledListSerializer.class)
 	private List<Pregled> pregledi;
 	
 	public List<TipPregleda> getTipovi_pregleda() {

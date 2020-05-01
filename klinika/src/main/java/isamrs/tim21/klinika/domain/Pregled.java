@@ -3,6 +3,7 @@ package isamrs.tim21.klinika.domain;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -34,11 +35,25 @@ public class Pregled implements IdentitySerializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	@Temporal(TemporalType.DATE)
+
+	@Temporal(TemporalType.TIMESTAMP )
 	private Date pocetakPregleda;
 	
-	@Temporal(TemporalType.DATE)
+	/*
+	 * Pri definisanju slobodnog pregleda
+	 * cena pregleda se preuzima iz odabranog tipa pregleda
+	 * adminu klinike se ponudi da definise popust na cenu 
+	 */
+	@Column(nullable=false)
+	private Long cena;
+
+	@Column
+	private Double popust;
+	
+	@Column(nullable=false)
+	private Double konacnaCena;
+	
+	@Temporal(TemporalType.TIMESTAMP )
 	private Date krajPregleda;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
@@ -58,7 +73,6 @@ public class Pregled implements IdentitySerializable{
 	private Klinika klinika;
 
 	@OneToOne(mappedBy="pregled", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-	@JsonSerialize(using=IdentitySerializer.class)
 	private Poseta poseta;
 	
 	public Pregled(){}
@@ -126,6 +140,38 @@ public class Pregled implements IdentitySerializable{
 
 	public void setKrajPregleda(Date krajPregleda) {
 		this.krajPregleda = krajPregleda;
+	}
+	
+	public Long getCena() {
+		return cena;
+	}
+
+	public void setCena(Long cena) {
+		this.cena = cena;
+	}
+
+	public Double getPopust() {
+		return popust;
+	}
+
+	public void setPopust(Double popust) {
+		this.popust = popust;
+	}
+
+	public Double getKonacnaCena() {
+		return konacnaCena;
+	}
+
+	public void setKonacnaCena(Double konacnaCena) {
+		this.konacnaCena = konacnaCena;
+	}
+
+	public boolean intersects(Pregled pregled) {
+		if(pocetakPregleda.after(pregled.getPocetakPregleda()) && pocetakPregleda.before(pregled.getKrajPregleda()))
+			return true;
+		if(pregled.getPocetakPregleda().after(pocetakPregleda) && pregled.getPocetakPregleda().before(krajPregleda))
+			return true;
+		return false;
 	}
 	
 	

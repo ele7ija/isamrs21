@@ -9,7 +9,9 @@ import opcijeKorisnika from './modules/opcijeKorisnika';
 import korisnici from './modules/korisnici';
 import osoblje from './modules/osoblje';
 import cenovnici from './modules/cenovnici';
+import preglediAdmin from './modules/preglediAdmin';
 import layout from './modules/layout';
+import pregledDialog from './modules/pregledDialog';
 import createPersistedState from 'vuex-persistedstate'
 
 //Plugins
@@ -26,7 +28,9 @@ export default new Vuex.Store({
     korisnici,
     osoblje,
     cenovnici,
-    layout
+    preglediAdmin,
+    layout,
+    pregledDialog
   },
 
   plugins: [

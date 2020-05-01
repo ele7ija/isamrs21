@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import isamrs.tim21.klinika.jsonSerialize.IdentityListSerializer;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
+import isamrs.tim21.klinika.jsonSerialize.PregledListSerializer;
 
 @Entity
 @Table(name="sala")
@@ -43,7 +44,7 @@ public class Sala implements IdentitySerializable{
 	private Klinika klinika;
 	
 	@OneToMany(mappedBy="sala", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-	@JsonSerialize(using=IdentityListSerializer.class)
+	@JsonSerialize(using=PregledListSerializer.class)
 	private List<Pregled> pregledi;
 	
 	public Sala(){}

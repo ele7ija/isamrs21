@@ -17,6 +17,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
+import isamrs.tim21.klinika.jsonSerialize.CenovnikSerializer;
 import isamrs.tim21.klinika.jsonSerialize.IdentityListSerializer;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
 
@@ -44,8 +45,9 @@ public class TipPregleda implements IdentitySerializable{
 	@JsonSerialize(using=IdentityListSerializer.class)
 	private List<Lekar> lekari;
 	
+	@JoinColumn(nullable=false)
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JsonSerialize(using=IdentitySerializer.class)
+	@JsonSerialize(using=CenovnikSerializer.class)
 	private Cenovnik cenovnik;
 
 	public List<Lekar> getLekari() {
@@ -96,6 +98,31 @@ public class TipPregleda implements IdentitySerializable{
 
 	public void setCenovnik(Cenovnik cenovnik) {
 		this.cenovnik = cenovnik;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TipPregleda other = (TipPregleda) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
 	}
 
 	

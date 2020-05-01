@@ -8,14 +8,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import isamrs.tim21.klinika.domain.Klinika;
+import isamrs.tim21.klinika.domain.Lekar;
+import isamrs.tim21.klinika.domain.MedicinskaSestra;
+import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
 import isamrs.tim21.klinika.domain.Pregled;
+import isamrs.tim21.klinika.domain.Sala;
+import isamrs.tim21.klinika.dto.CustomResponse;
+import isamrs.tim21.klinika.repository.OsobljeRepository;
 import isamrs.tim21.klinika.repository.PregledRepository;
+import isamrs.tim21.klinika.repository.SalaRepository;
+import isamrs.tim21.klinika.repository.TipPregledaRepository;
 
 @Service
 public class PregledService {
 
 	@Autowired
 	PregledRepository pregledRepository;
+	
+	@Autowired
+	SalaRepository salaRepository;
+	
+	@Autowired
+	TipPregledaRepository tipPregledaRepository;
+	
+	@Autowired
+	OsobljeRepository osobljeRepository;
 
 	public List<Pregled> findAll(Long idKlinike) {
 		return pregledRepository.findAllByIdKlinike(idKlinike);
@@ -25,32 +42,25 @@ public class PregledService {
 		return pregledRepository.findByIdKlinikeAndIdPregleda(idKlinike, idPregleda); 
 	}
 
-	public Pregled add(Klinika klinika, Pregled pregled) {
+	public CustomResponse<Pregled> add(Klinika klinika, Pregled pregled) {
 		pregled.setId(null);
 		pregled.setKlinika(klinika);
-		/* GOMILA VALIDACIJA:
-		 * Da li je trazena sala zauzeta?
-		 * Da li je lekar slobodan u to vreme?
-		 * Da li je lekar specijalizovan za dati tip pregleda?
-		 * Da li su svi entiteti unutar iste klinike kao i pregled koji se dodaje?
-		 */
-		return pregledRepository.save(pregled);
+		return validateAll(klinika, pregled);
+		
 	}
 
-	public Pregled update(Klinika klinika, Pregled pregled, Long idPregleda) {
-		/* GOMILA VALIDACIJA:
-		 * Da li je trazena sala zauzeta?
-		 * Da li je lekar slobodan u to vreme?
-		 * Da li je lekar specijalizovan za dati tip pregleda?
-		 * Da li su svi entiteti unutar iste klinike kao i pregled koji se dodaje?
-		 */
-		
+	public CustomResponse<Pregled> update(Klinika klinika, Pregled pregled, Long idPregleda) {
 		pregled.setId(idPregleda);
+		
+		/* VALIDACIJE: */		
+		/* Da li trazeni pregled postoji*/
 		if(pregledRepository.findByIdKlinikeAndIdPregleda(klinika.getId(), idPregleda) == null){
-			return null;
+			return new CustomResponse<Pregled>(null, false,
+					"Greska: Trazeni pregled nije pronadjen u klinici");
 		}
 		pregled.setKlinika(klinika);
-		return pregledRepository.save(pregled);
+		return validateAll(klinika, pregled);
+		
 	}
 	
 	@Transactional
@@ -60,5 +70,56 @@ public class PregledService {
 		return numberOfRemovals == 1;
 	}
 	
+	private CustomResponse<Pregled> validateAll(Klinika klinika, Pregled pregled) {
+		/* VALIDACIJE: */
+		/* Da li su svi entiteti unutar iste klinike kao i pregled koji se dodaje? ODRADJENO UNUTAR OSTALIH METODA*/
+
+		/* Da li je trazena sala zauzeta i da li uopste postoji? */
+		if(!validateSala(klinika, pregled)){
+			return new CustomResponse<Pregled>(null, false,
+					"Greska: Trazena sala nije slobodna za uneti vremenski interval trajanja pregleda");
+		}
+		
+		/* Da li je lekar slobodan u to vreme? */
+		/* Da li je lekar specijalizovan za dati tip pregleda? */
+		if(!validateOsoblje(klinika, pregled)){
+			return new CustomResponse<Pregled>(null, false,
+					"Greska: Lekar ne moze da izvrsi ovaj pregled. "
+					+ "Proverite da li je lekar zauzet u datom vremenskom intervalu, kao i da li je uopste specijalizovan za dati tip pregleda.");
+		}
+		
+		return new CustomResponse<Pregled>(pregledRepository.save(pregled), true, "OK"); 
+	}
 	
+	private boolean validateSala(Klinika klinika, Pregled pregled) {
+		Sala sala = salaRepository.findByIdKlinikeAndIdSale(klinika.getId(), pregled.getSala().getId());
+		if(sala == null){
+			return false;
+		}
+		for(Pregled p : sala.getPregledi()){
+			if(p.getId() == pregled.getId())
+				continue;
+			if(p.intersects(pregled)){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean validateOsoblje(Klinika klinika, Pregled pregled) {
+		MedicinskoOsoblje osoblje = osobljeRepository.findByIdKlinikeAndById(klinika.getId(), pregled.getLekar().getId());
+		if(osoblje == null || osoblje instanceof MedicinskaSestra)
+			return false;
+		Lekar lekar = (Lekar) osoblje;
+		for(Pregled p : lekar.getPregledi()){
+			if(p.getId() == pregled.getId())
+				continue;
+			if(p.intersects(pregled)){
+				return false;
+			}
+		}
+		if(!lekar.getTipovi_pregleda().contains(pregled.getTipPregleda()))
+			return false;
+		return true;
+	}
 }

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.Klinika;
 import isamrs.tim21.klinika.domain.Pregled;
+import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.repository.PregledRepository;
 import isamrs.tim21.klinika.services.PregledService;
@@ -51,25 +52,32 @@ public class PregledKontroler {
 	
 	@PostMapping
 	@PreAuthorize("hasAuthority('admin-klinike')")
-	public ResponseEntity<Pregled> add(@PathVariable("idKlinike") Long idKlinike, @RequestBody Pregled pregled){
+	public ResponseEntity<CustomResponse<Pregled>> add(@PathVariable("idKlinike") Long idKlinike, @RequestBody Pregled pregled){
 		Klinika klinika = klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
-			return new ResponseEntity<Pregled>(HttpStatus.NOT_FOUND);
+			CustomResponse<Pregled> customResponse = new CustomResponse<Pregled>(null, false,
+					"Greska: Trazena klinika ne postoji");
+			return new ResponseEntity<CustomResponse<Pregled>>(customResponse, HttpStatus.NOT_FOUND);
 		}else{
-			return new ResponseEntity<Pregled>(pregledService.add(klinika, pregled), HttpStatus.OK);
+			CustomResponse<Pregled> customResponse = pregledService.add(klinika, pregled);
+			HttpStatus statusCode = customResponse.isSuccess() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+			return new ResponseEntity<CustomResponse<Pregled>>(customResponse, statusCode);
 		}
 	}
 	
 	@PutMapping(value="/{idPregleda}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
-	public ResponseEntity<Pregled> update(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idPregleda") Long idPregleda,
+	public ResponseEntity<CustomResponse<Pregled>> update(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idPregleda") Long idPregleda,
 			@RequestBody Pregled pregled){
 		Klinika klinika = klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
-			return new ResponseEntity<Pregled>(HttpStatus.NOT_FOUND);
+			CustomResponse<Pregled> customResponse = new CustomResponse<Pregled>(null, false,
+					"Greska: Trazena klinika ne postoji");
+			return new ResponseEntity<CustomResponse<Pregled>>(customResponse, HttpStatus.NOT_FOUND);
 		}else{
-			Pregled promenjeniPregled = pregledService.update(klinika, pregled, idPregleda);
-			return new ResponseEntity<Pregled>(promenjeniPregled, promenjeniPregled == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
+			CustomResponse<Pregled> customResponse = pregledService.update(klinika, pregled, idPregleda);
+			HttpStatus statusCode = customResponse.isSuccess() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+			return new ResponseEntity<CustomResponse<Pregled>>(customResponse, statusCode);
 		}
 	}
 	

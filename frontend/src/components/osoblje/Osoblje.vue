@@ -125,7 +125,6 @@
                       {{tip.naziv}}
                     </v-chip>
                   </span>
-                  <v-divider class="mb-2"></v-divider>
                   <v-container>
                     <v-row>
                       <v-col cols="12" md="8">

@@ -33,7 +33,6 @@ public class Poseta implements IdentitySerializable{
 	private String opis;
 	
 	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-	@JsonSerialize(using=IdentitySerializer.class)
 	private ZdravstveniKarton zdravstveniKarton;
 	
 	@OneToOne(fetch=FetchType.LAZY)

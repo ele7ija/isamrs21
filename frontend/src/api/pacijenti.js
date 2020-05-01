@@ -9,5 +9,5 @@ export default {
       `${process.env.VUE_APP_BACKEND_ROOT}/pacijenti/all`,
       options)
     return response.data;
-  },
+  }
 }

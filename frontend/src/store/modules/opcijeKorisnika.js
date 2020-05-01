@@ -37,6 +37,11 @@ const state = {
             action: 'mdi-alpha-o',
             componentName: 'osoblje'
           },
+          {
+            title: 'Pregledi',
+            action: 'mdi-alpha-p',
+            componentName: 'pregledi_admin'
+          },
         ]
       }
       

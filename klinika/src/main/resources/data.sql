@@ -26,8 +26,10 @@ insert into sala (oznaka, klinika_id) values ('Glavna operaciona', 1);
 insert into sala (oznaka, klinika_id) values ('Sporedna operaciona', 1);
 insert into sala (oznaka, klinika_id) values ('Opsta', 2);
 
-insert into tip_pregleda (naziv, opis, klinika_id) values ('Operacija srca', 'Operacija na otvorenom srcu', 1);
-insert into tip_pregleda (naziv, opis, klinika_id) values ('Operacija kuka', 'Operacija kuka miofacijalna embrionalna gonoreja', 1);
-insert into tip_pregleda (naziv, opis, klinika_id) values ('Pregled kicme', 'Opsti pregled kicme', 2);
+insert into cenovnik(id, iznosUDinarima, naziv, klinika_id) values(1, 1000, "Stavka 1", 1);
 
-insert into pregled (klinika_id, lekar_id, sala_id, tip_pregleda_id) values (1, 3, 1, 1);
+insert into tip_pregleda (naziv, opis, klinika_id, cenovnik_id) values ('Operacija srca', 'Operacija na otvorenom srcu', 1, 1);
+insert into tip_pregleda (naziv, opis, klinika_id, cenovnik_id) values ('Operacija kuka', 'Operacija kuka miofacijalna embrionalna gonoreja', 1, 1);
+insert into tip_pregleda (naziv, opis, klinika_id, cenovnik_id) values ('Pregled kicme', 'Opsti pregled kicme', 2, 1);
+
+insert into pregled (pocetak_pregleda, kraj_pregleda, klinika_id, lekar_id, sala_id, tip_pregleda_id) values ("2017-11-15 15:30:14.332", "2017-11-15 15:35:14.332", 1, 3, 1, 1);

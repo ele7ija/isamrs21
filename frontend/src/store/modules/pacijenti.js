@@ -12,7 +12,7 @@ const actions = {
   async loadPacijenti({commit}){
     let data = await pacijenti.getAllKorisnici();
     commit('setPacijenti', data);
-  }
+  },
 }
 const mutations = {
   setPacijenti: (state, _pacijenti) => 

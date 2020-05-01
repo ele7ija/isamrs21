@@ -5,8 +5,10 @@ import router from './router';
 import App from './App.vue';
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import axios from 'axios';
-
+import DatetimePicker from 'vuetify-datetime-picker';
 Vue.config.productionTip = false
+
+Vue.use(DatetimePicker);
 
 function createAxiosResponseInterceptor() {
   const interceptor = axios.interceptors.response.use(

@@ -11,7 +11,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
+import isamrs.tim21.klinika.jsonSerialize.KorisnikSerializer;
 
 @Entity
 @Table(name="zdravstveni_karton")
@@ -21,6 +24,7 @@ public class ZdravstveniKarton implements IdentitySerializable{
 	
 	@OneToOne(fetch=FetchType.EAGER)
 	@MapsId //znaci da je id pacijenta u tabeli zdravstvenog kartona i primarni i strani kljuc
+	@JsonSerialize(using=KorisnikSerializer.class)
 	private Pacijent pacijent;
 	
 	@OneToMany(mappedBy="zdravstveniKarton", cascade=CascadeType.ALL, fetch=FetchType.LAZY)

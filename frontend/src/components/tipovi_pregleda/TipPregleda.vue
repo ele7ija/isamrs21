@@ -49,15 +49,16 @@
                       <v-col cols="12" sm="6" md="6">
                         <v-text-field v-model="newItem.opis" label="Opis" :rules="opisRules"></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="12" md="12" v-if="cenovnici.length != 0">
+                      <v-col cols="12" sm="12" md="12">
                         <v-select
                           v-model="newItem.cenovnik"
                           :items="_cenovnici"
-                          label="Cenovnik"
+                          :label="cenovnici.length != 0 ? 'Cenovnik' : 'Cenovnik (ne postoji definisana nijedna stavka)'"
                           chips
                           deletable-chips
                           hint="Odaberite predefinisanu stavku cenovnika"
                           persistent-hint
+                          :rules="cenovnikRules"
                         ></v-select>
                       </v-col>
                     </v-row>
@@ -173,6 +174,13 @@ export default {
     opisRules: function(){
       const rules = [];
       const rule1 = v => !!v || 'Opis ne sme ostati prazan';
+      rules.push(rule1);
+      return rules;
+    },
+
+    cenovnikRules: function(){
+      const rules = [];
+      const rule1 = v => !!v || 'Cenovnik ne sme ostati prazan';
       rules.push(rule1);
       return rules;
     },
