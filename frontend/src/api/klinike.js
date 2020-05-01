@@ -56,5 +56,25 @@ export default{
       options
     );
     return response.data;
+  },
+  
+  async kreirajPosetu(obj) {
+    console.log('nesto')
+    let options = util.prepareOptions();
+    let response = await axios.post(
+      `${process.env.VUE_APP_BACKEND_ROOT}/posete/pacijent`,
+      obj,
+      options
+    );
+    return response.data;
+  },
+
+  async dobaviSvePosete() {
+    let options = util.prepareOptions();
+    let response = await axios.get(
+      `${process.env.VUE_APP_BACKEND_ROOT}/posete`,
+      options
+    );
+    return response.data;
   }
 }

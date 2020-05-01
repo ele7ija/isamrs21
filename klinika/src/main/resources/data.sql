@@ -4,8 +4,8 @@ insert into authority values(3, 'admin-klinike');
 insert into authority values(4, 'lekar');
 insert into authority values(5, 'medicinska-sestra');
 
-insert into klinika (id, naziv, adresa) values(1, 'Klinika Dimitrije Banjac', 'Zmaj Ognjena Vuka 1, Novi Sad, Srbija');
-insert into klinika (id, naziv, adresa) values(2, 'Klinika Dejan Cirjakovic', 'Zmaja od Nocaja 2, Beograd, Srbija');
+insert into klinika (id, naziv, adresa) values(1, 'Dimitrije Banjac', 'Zmaj Ognjena Vuka 1, Novi Sad, Srbija');
+insert into klinika (id, naziv, adresa) values(2, 'Dejan Cirjakovic', 'Zmaja od Nocaja 2, Beograd, Srbija');
 
 -- Administratori klinike
 insert into korisnik (type, klinika_admina_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled) values ('AK', 1, 'admin.admin@yahoo.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'admin_klinike', 'admin_klinike', '1', 'Serbia', 'Novi Sad', 1, 1, 0x01);
@@ -32,4 +32,5 @@ insert into tip_pregleda (naziv, opis, klinika_id, cenovnik_id) values ('Operaci
 insert into tip_pregleda (naziv, opis, klinika_id, cenovnik_id) values ('Operacija kuka', 'Operacija kuka miofacijalna embrionalna gonoreja', 1, 1);
 insert into tip_pregleda (naziv, opis, klinika_id, cenovnik_id) values ('Pregled kicme', 'Opsti pregled kicme', 2, 1);
 
-insert into pregled (pocetak_pregleda, kraj_pregleda, klinika_id, lekar_id, sala_id, tip_pregleda_id) values ("2017-11-15 15:30:14.332", "2017-11-15 15:35:14.332", 1, 3, 1, 1);
+insert into pregled (klinika_id, lekar_id, sala_id, tip_pregleda_id, pocetak_pregleda, kraj_pregleda) values (1, 3, 1, 1, STR_TO_DATE('28/04/2020 12:00:00','%d/%m/%Y %H:%i:%s'), STR_TO_DATE('28/04/2020 13:00:00','%d/%m/%Y %H:%i:%s'));
+insert into pregled (klinika_id, lekar_id, sala_id, tip_pregleda_id, pocetak_pregleda, kraj_pregleda) values (1, 3, 1, 1, STR_TO_DATE('01/05/2020 12:00:00','%d/%m/%Y %H:%i:%s'), STR_TO_DATE('01/05/2020 13:00:00','%d/%m/%Y %H:%i:%s'));

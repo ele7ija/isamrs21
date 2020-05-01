@@ -1,5 +1,6 @@
 package isamrs.tim21.klinika.domain;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -35,9 +36,6 @@ public class Pregled implements IdentitySerializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
-	@Temporal(TemporalType.TIMESTAMP )
-	private Date pocetakPregleda;
 	
 	/*
 	 * Pri definisanju slobodnog pregleda
@@ -52,8 +50,13 @@ public class Pregled implements IdentitySerializable{
 	
 	@Column(nullable=false)
 	private Double konacnaCena;
+		
+	@Column(name="pocetak_pregleda")
+    @Temporal(TemporalType.TIMESTAMP)
+	private Date pocetakPregleda;
 	
-	@Temporal(TemporalType.TIMESTAMP )
+	@Column(name="kraj_pregleda")
+    @Temporal(TemporalType.TIMESTAMP)
 	private Date krajPregleda;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
@@ -173,9 +176,5 @@ public class Pregled implements IdentitySerializable{
 			return true;
 		return false;
 	}
-	
-	
-	
-	
 	
 }

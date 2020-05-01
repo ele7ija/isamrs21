@@ -27,7 +27,7 @@ public class ZdravstveniKarton implements IdentitySerializable{
 	@JsonSerialize(using=KorisnikSerializer.class)
 	private Pacijent pacijent;
 	
-	@OneToMany(mappedBy="zdravstveniKarton", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	@OneToMany(mappedBy="zdravstveniKarton", cascade=CascadeType.ALL)
 	private List<Poseta> posete;
 
 	public Long getId() {
