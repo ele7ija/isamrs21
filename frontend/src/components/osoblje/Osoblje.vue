@@ -107,54 +107,61 @@
       </template>
       <template v-slot:expanded-item="{ headers, item }">
         <td :colspan="headers.length">
-          <v-container fluid>
+          <v-container fluid v-if="item.pozicija == 'lekar'">
             <v-row justify="space-between">
               <v-col cols="12" md="4">
-                <v-card v-if="item.pozicija=='lekar'">
+                <v-card>
                   <v-card-title>Specijalnosti za: {{ item.ime }} {{ item.prezime }}</v-card-title>
                   <v-divider class="mt-n2 mb-2"></v-divider>
-                  <span
-                    v-for="tip in item.tipovi_pregleda"
-                    :key="tip.id">
-                    <v-chip
-                      class="ma-2"
-                      color="primary"
-                      close
-                      @click:close="removeFromSpecijalnost(item, tip)"
-                    >
-                      {{tip.naziv}}
-                    </v-chip>
-                  </span>
-                  <v-container>
-                    <v-row>
-                      <v-col cols="12" md="8">
-                        <v-select
-                          v-model="specijalnostiZaDodati"
-                          :items="_slobodniTipoviPregleda({lekar: item, tipoviPregleda: tipoviPregleda})"
-                          label="Specijalnosti"
-                          multiple
-                          chips
-                          deletable-chips
-                          hint="Koje su nove specijalnosti lekara?"
-                          persistent-hint
-                        ></v-select>
-                      </v-col>
-                      <v-col cols="12" md="2">
-                        <v-btn 
-                          color="blue darken-1"
-                           class="mt-6"
-                          :disabled="specijalnostiZaDodati.length == 0"
-                          @click="addSpecijalnosti(item, specijalnostiZaDodati)">
-                          Dodaj
-                        </v-btn>
-                      </v-col>
-                    </v-row>
-                  </v-container>
+                  <v-card-text>
+                    <span
+                      v-for="tip in item.tipovi_pregleda"
+                      :key="tip.id">
+                      <v-chip
+                        class="ma-2"
+                        color="primary"
+                        close
+                        @click:close="removeFromSpecijalnost(item, tip)"
+                      >
+                        {{tip.naziv}}
+                      </v-chip>
+                    </span>
+                    <v-container fluid>
+                      <v-row>
+                        <v-col cols="12" md="8">
+                          <v-select
+                            v-model="specijalnostiZaDodati"
+                            :items="_slobodniTipoviPregleda({lekar: item, tipoviPregleda: tipoviPregleda})"
+                            label="Specijalnosti"
+                            multiple
+                            chips
+                            deletable-chips
+                            hint="Koje su nove specijalnosti lekara?"
+                            persistent-hint
+                          ></v-select>
+                        </v-col>
+                        <v-col cols="12" md="2">
+                          <v-btn 
+                            color="blue darken-1"
+                              class="mt-6"
+                            :disabled="specijalnostiZaDodati.length == 0"
+                            @click="addSpecijalnosti(item, specijalnostiZaDodati)">
+                            Dodaj
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
                 </v-card>
               </v-col>
               <v-col cols="12" md="8">
-                <span v-if="item.pozicija == 'lekar'">Ovde ide nova kartica sa podacima o pregledima (nadolazecim i obavljenim)</span>
-                <span v-if="item.pozicija == 'medicinska sestra'">Ovde idu neki podaci za medicinsku sestru</span>
+                <v-card>
+                  <v-card-title>Prelgedi za: {{ item.ime }} {{ item.prezime }}</v-card-title>
+                  <v-divider class="mt-n2 mb-2"></v-divider>
+                  <v-card-text>
+                    <PreglediLekar :idLekara="item.id"></PreglediLekar>
+                  </v-card-text>
+                </v-card>
               </v-col>
             </v-row>
           </v-container>
@@ -174,8 +181,12 @@
 
 <script>
 import {mapGetters, mapActions} from 'vuex';
+import PreglediLekar from './PreglediLekar';
 export default {
   name: "Osoblje",
+  components: {
+    PreglediLekar
+  },
   data: function(){
     return {
       dialog: false,

@@ -51,20 +51,7 @@
                         <v-text-field v-model="newItem.naziv" label="Naziv" :rules="notEmptyRule('Naziv')"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="6">
-                        <v-text-field type="number" v-model="newItem.iznosUDinarima" label="Iznos u dinarima" :rules="notEmptyRule('Iznos u dinarima')"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="12" md="12" v-if="_tipoviPregleda.length != 0">
-                        <v-select
-                          v-model="newItem.tipoviPregleda"
-                          :items="_tipoviPregleda"
-                          label="Tipovi pregleda"
-                          multiple
-                          chips
-                          deletable-chips
-                          :hint="update ? 'Tipovi pregleda mogu se odabrati samo pri dodavanju nove stavke cenovnika': 'Izaberite neki od SLOBODNIH tipova pregleda pod ovom stavkom.'"
-                          persistent-hint
-                          :disabled="update"
-                        ></v-select>
+                        <v-text-field type="number" v-model="newItem.iznosUDinarima" label="Iznos u dinarima" :rules="notEmptyRule('Iznos u dinarima')" :min="1"></v-text-field>
                       </v-col>
                     </v-row> 
                   </v-container>
@@ -184,18 +171,6 @@ export default {
         tipoviPregleda: 'tipoviPregleda/getTipoviPregleda'
       },
     ),
-    _tipoviPregleda(){
-      let filtered = [
-        ...this.newItem.tipoviPregleda,
-        ...this.tipoviPregleda.filter(x => x.cenovnik == null)
-      ];
-      return filtered.map(x => {
-        return{
-          text: x.naziv,
-          value: x
-        };
-      });
-    },
 
     formTitle: function(){
        return this.update ? 'Izmena stavke cenovnika': 'Dodavanje nove stavke cenovnika';
@@ -238,25 +213,20 @@ export default {
     },
 
     save(){
-      this.newItem.tipoviPregleda = this.newItem.tipoviPregleda.map(x => {return {id: x.id}});
       if(this.update){
         this.updateCenovnik(this.newItem);
       }else{
         this.addCenovnik(this.newItem);
       }
-      for(let tipPregleda of this.newItem.tipoviPregleda)
-        this.$store.commit('tipoviPregleda/setCenovnikOfTipPregleda', {tipPregleda: tipPregleda, idCenovnika: this.newItem.id })
       this.close();
     },
 
     editItem(item){
-      this.force_recompute += 1;
       this.update = true;
       this.newItem = Object.assign({}, item);
       this.newItem.tipoviPregleda = this.newItem.tipoviPregleda.map(x => {
           return{
-            text: x.naziv,
-            value: x
+            id: x.id,
           };
       });
       
@@ -268,14 +238,6 @@ export default {
         this.snackbarText = error;
         this.snackbar = true;
       });
-    },
-
-    validateRules(){
-      for(let rule of this.notEmptyRule){
-        if(rule != true){ //mora ovako
-          return true;
-        }
-      }
     }
   }
 }
