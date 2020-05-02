@@ -1,5 +1,6 @@
 package isamrs.tim21.klinika.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.Klinika;
+import isamrs.tim21.klinika.domain.Pregled;
 import isamrs.tim21.klinika.domain.Sala;
 import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
@@ -71,7 +73,7 @@ public class SalaKontroler {
 			//POSTAVI JOS JEDNOM SVE PARAMETRE NA BEKU
 			salaToAdd.setKlinika(klinika);
 			salaToAdd.setId(null);
-			
+			salaToAdd.setPregledi(new ArrayList<Pregled>());
 			Sala retval = salaRepository.save(salaToAdd);
 			return new ResponseEntity<Sala>(retval, HttpStatus.OK);
 		}
@@ -89,9 +91,11 @@ public class SalaKontroler {
 			salaToChange.setId(idSale);
 			salaToChange.setKlinika(klinika);
 			
-			if(! salaRepository.findById(idSale).isPresent()){
+			Sala sala = salaRepository.findById(idSale).orElse(null);
+			if(sala == null){
 				return new ResponseEntity<Sala>(HttpStatus.NOT_FOUND);
 			}
+			salaToChange.setPregledi(sala.getPregledi());
 			Sala retval = salaRepository.save(salaToChange);
 			return new ResponseEntity<Sala>(retval, HttpStatus.OK);	
 			
