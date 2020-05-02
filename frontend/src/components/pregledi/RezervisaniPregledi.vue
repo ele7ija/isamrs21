@@ -29,7 +29,7 @@
 
 <script>
 export default {
-  name: "PreglediAdmin",
+  name: "RezervisaniPregledi",
   props: ["data"],
   data: function(){
     return {
@@ -62,8 +62,8 @@ export default {
           sortable: true
         },
         { 
-          text: 'Cena',
-          value: 'cena',
+          text: 'Cena sa popustom',
+          value: 'konacnaCena',
           sortable: true
         },
         { 
