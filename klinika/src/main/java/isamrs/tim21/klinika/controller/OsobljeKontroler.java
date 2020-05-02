@@ -124,7 +124,8 @@ public class OsobljeKontroler {
 			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(new CustomResponse<MedicinskoOsoblje>(null, false, "Greska. Klinika ne postoji"), HttpStatus.NOT_FOUND);
 		}else{
 			CustomResponse<MedicinskoOsoblje> customResponse = osobljeService.deleteSpecijalnostOsoblja(idOsoblja, idTipaPregleda);
-			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(customResponse, customResponse.isSuccess() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+			//HttpStatus status = customResponse.isSuccess() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(customResponse, HttpStatus.OK);
 		}
 	}
 	
@@ -136,8 +137,8 @@ public class OsobljeKontroler {
 			return new ResponseEntity<CustomResponse<Boolean>>(new CustomResponse<Boolean>(false, false, "Greska. Klinika ne postoji"), HttpStatus.NOT_FOUND);
 		}else{
 			CustomResponse<Boolean> customResponse = osobljeService.delete(idKlinike, idOsoblja);
-			HttpStatus status = customResponse.isSuccess() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
-			return new ResponseEntity<CustomResponse<Boolean>>(customResponse, status);
+			//HttpStatus status = customResponse.isSuccess() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+			return new ResponseEntity<CustomResponse<Boolean>>(customResponse, HttpStatus.OK);
 		}
 	}
 	

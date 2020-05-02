@@ -42,9 +42,19 @@ const actions = {
     commit('updateExistingTipPregleda', response);
   },
 
-  async removeTipPregleda({state, commit}, idTipaPregleda){
-    await tipoviPregleda.removeTipPregleda(state.klinika.id, idTipaPregleda);
-    commit('deleteTipPregleda', idTipaPregleda);
+  async removeTipPregleda({state, commit, dispatch}, idTipaPregleda){
+    return new Promise((resolve, reject) => {
+      tipoviPregleda.removeTipPregleda(state.klinika.id, idTipaPregleda)
+      .then(({data: {success, message}}) => {
+        if(success){
+          commit('deleteTipPregleda', idTipaPregleda);
+          dispatch("cenovnici/loadCenovnici", {}, {root: true});
+          resolve(message);
+        }else{
+          reject(message);
+        }
+      }); 
+    });
   },
   
 }

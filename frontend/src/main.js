@@ -47,7 +47,6 @@ function createAxiosResponseInterceptor() {
             return Promise.reject(error);
           }).finally(createAxiosResponseInterceptor);
       }
-      
     }
   );
 }

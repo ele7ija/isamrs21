@@ -43,12 +43,17 @@ const actions = {
   },
 
   async removeCenovnik({state, commit}, idCenovnika){
-    let retval = await cenovnici.removeCenovnik(state.klinika.id, idCenovnika);
-    if(retval)
-      commit('deleteCenovnik', idCenovnika);
-    else{
-      return Promise.reject("Nije moguce obrisati stavku cenovnika za koju postoji definisan tip pregleda");
-    }
+    return new Promise((resolve, reject) => {
+      cenovnici.removeCenovnik(state.klinika.id, idCenovnika)
+      .then(({data}) => {
+        if(data){
+          commit('deleteCenovnik', idCenovnika);
+          resolve("OK");
+        }else{
+          reject("Nije moguce obrisati stavku cenovnika za koju postoji definisan tip pregleda");
+        }
+      });
+    });
   },
   
 }

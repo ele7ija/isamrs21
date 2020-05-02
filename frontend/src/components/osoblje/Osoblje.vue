@@ -176,6 +176,20 @@
         </v-icon>
       </template>
     </v-data-table>
+    <v-snackbar
+      v-model="snackbar"
+      :timeout="snackbarTimeout"
+      color="red darken-3"
+    >
+      {{ snackbarText }}
+      <v-btn
+        color="grey darken-3"
+        text
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
   </div>
 </template>
 
@@ -189,6 +203,9 @@ export default {
   },
   data: function(){
     return {
+      snackbar: false,
+      snackbarTimeout: 3000,
+      snackbarText: null,
       dialog: false,
       search: '',
       isFormValid: false,
@@ -355,7 +372,10 @@ export default {
     },
 
     deleteItem(item){
-      this.removeMedicinskaOsoba(item.id);
+      this.removeMedicinskaOsoba(item.id).then(null, (error) => {
+        this.snackbarText = error;
+        this.snackbar = true;
+      });
     },
 
     addSpecijalnosti(lekar, tipoviPregleda){
@@ -368,7 +388,10 @@ export default {
     removeFromSpecijalnost(lekar, tipPregleda){
       let idLekara = lekar.id;
       let idTipaPregleda = tipPregleda.id;
-      this.removeSpecijalnostiMedicinskaOsoba({idLekara, idTipaPregleda});
+      this.removeSpecijalnostiMedicinskaOsoba({idLekara, idTipaPregleda}).then(null, (error) => {
+        this.snackbarText = error;
+        this.snackbar = true;
+      });
     }
     
   }

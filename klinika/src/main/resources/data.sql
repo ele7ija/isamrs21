@@ -30,7 +30,8 @@ insert into cenovnik(id, iznosUDinarima, naziv, klinika_id) values(1, 1000, "Sta
 
 insert into tip_pregleda (naziv, opis, klinika_id, cenovnik_id) values ('Operacija srca', 'Operacija na otvorenom srcu', 1, 1);
 insert into tip_pregleda (naziv, opis, klinika_id, cenovnik_id) values ('Operacija kuka', 'Operacija kuka miofacijalna embrionalna gonoreja', 1, 1);
-insert into tip_pregleda (naziv, opis, klinika_id, cenovnik_id) values ('Pregled kicme', 'Opsti pregled kicme', 2, 1);
+
+insert into specijalnost_lekara values(1, 3);
 
 insert into pregled (klinika_id, lekar_id, sala_id, tip_pregleda_id, pocetak_pregleda, kraj_pregleda, cena, popust, konacna_cena) values (1, 3, 1, 1, STR_TO_DATE('28/04/2020 12:00:00','%d/%m/%Y %H:%i:%s'), STR_TO_DATE('28/04/2020 13:00:00','%d/%m/%Y %H:%i:%s'), 1000, 0, 1000);
 insert into pregled (klinika_id, lekar_id, sala_id, tip_pregleda_id, pocetak_pregleda, kraj_pregleda, cena, popust, konacna_cena) values (1, 3, 1, 1, STR_TO_DATE('01/05/2020 12:00:00','%d/%m/%Y %H:%i:%s'), STR_TO_DATE('01/05/2020 13:00:00','%d/%m/%Y %H:%i:%s'), 1000, 0, 1000);
