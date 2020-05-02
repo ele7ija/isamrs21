@@ -40,9 +40,9 @@ export default {
             lekar: `${osoblje.ime} ${osoblje.prezime}`,
             tipPregleda: tipPregleda.naziv,
             sala: sala.oznaka,
-            cena: x.cena,
+            cena: parseInt(x.cena, 10),
             popust: x.popust,
-            konacnaCena: x.konacnaCena,
+            konacnaCena: parseInt(x.konacnaCena, 10),
             poseta: x.poseta //potrebno za dalju filtraciju slobodnih i rezervisanih pregleda
           };
           if(retval.poseta != null){

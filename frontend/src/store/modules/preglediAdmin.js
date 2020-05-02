@@ -39,9 +39,11 @@ const actions = {
   },
 
   async removePregled({state, commit}, pregled){
-    let success = await pregledi.deletePregled(state.klinika.id, pregled.id);
+    let {success, message} = await pregledi.deletePregled(state.klinika.id, pregled.id);
     if(success){
       commit('removePregled', pregled);
+    }else{
+      return Promise.reject(message);
     }
   }
 };
