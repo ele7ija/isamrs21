@@ -54,7 +54,7 @@
                     v-bind:is="step.componentName"
                     @changeStatus="changeStatus"
                     @previousStep="decrement"
-                    @reset="reset"
+                    @add="add"
                     :index="step.index - 1"
                     :currentIndex="stepIndex - 1"
                   ></component>
@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import {mapActions} from 'vuex';
+import {mapGetters, mapActions} from 'vuex';
 import DatePicker from './DatePicker';
 import TabelaTipovaPregleda from './TabelaTipovaPregleda';
 import TabelaLekara from './TabelaLekara';
@@ -135,8 +135,8 @@ export default {
           sortable: true
         },
         { 
-          text: 'Cena',
-          value: 'cena',
+          text: 'Cena sa popustom',
+          value: 'konacnaCena',
           sortable: true
         },
         { 
@@ -202,6 +202,17 @@ export default {
     };
   },
   computed: {
+    ...mapGetters({
+      pocetak: "pregledDialog/getPocetak",
+      kraj: "pregledDialog/getKraj",
+      lekar: "pregledDialog/getLekar",
+      sala: "pregledDialog/getSala",
+      tipPregleda: "pregledDialog/getTipPregleda",
+      cena: "pregledDialog/getCena",
+      popust: "pregledDialog/getPopust",
+      konacnaCena: "pregledDialog/getKonacnaCena",
+      klinika: "klinike/getKlinikaAdmina"
+    }),
     formTitle: function(){
        return this.update ? 'Izmena pregleda': 'Dodavanje novog pregleda';
     }
@@ -217,6 +228,22 @@ export default {
     },
     deleteItem(pregled){
       return pregled;
+    },
+    add(){
+      let obj = {
+        pocetakPregleda: this.pocetak,
+        krajPregleda: this.kraj,
+        cena: this.cena,
+        popust: this.popust,
+        konacnaCena: this.konacnaCena,
+        sala: { id: this.sala.id },
+        lekar: { id: this.lekar.id, pozicija: 'lekar' },
+        tipPregleda: { id: this.tipPregleda.id },
+        klinika: { id: this.klinika.id },
+        poseta: null
+      };
+      this.addPregled(obj);
+      this.reset();
     },
     reset(){
       this.dialog = false;

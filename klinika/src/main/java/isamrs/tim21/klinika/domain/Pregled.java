@@ -170,9 +170,11 @@ public class Pregled implements IdentitySerializable{
 	}
 
 	public boolean intersects(Pregled pregled) {
-		if(pocetakPregleda.after(pregled.getPocetakPregleda()) && pocetakPregleda.before(pregled.getKrajPregleda()))
+		if((pocetakPregleda.after(pregled.getPocetakPregleda()) || pocetakPregleda.equals(pregled.getPocetakPregleda())) && 
+			pocetakPregleda.before(pregled.getKrajPregleda()) || pocetakPregleda.equals(pregled.getKrajPregleda()))
 			return true;
-		if(pregled.getPocetakPregleda().after(pocetakPregleda) && pregled.getPocetakPregleda().before(krajPregleda))
+		if((pregled.getPocetakPregleda().after(pocetakPregleda) || pregled.getPocetakPregleda().equals(pocetakPregleda)) && 
+			pregled.getPocetakPregleda().before(krajPregleda) || pregled.getPocetakPregleda().equals(krajPregleda))
 			return true;
 		return false;
 	}

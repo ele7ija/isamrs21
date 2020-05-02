@@ -27,26 +27,34 @@ export default {
       saleKlinike: 'sale/getSale'
     }),
     _preglediMapped: function(){
-      return this.preglediKlinike.map(x => {
-        let osoblje = this.osobljeKlinike.filter(y => y.id == x.lekar.id)[0];
-        let tipPregleda = this.tipoviPregledaKlinike.filter(y => y.id == x.tipPregleda.id)[0];
-        let sala = this.saleKlinike.filter(y => y.id == x.sala.id)[0];
-        let retval = {
-          id: x.id,
-          datum: new Date(x.pocetakPregleda).toLocaleDateString(),
-          pocetak: new Date(x.pocetakPregleda).toLocaleTimeString(),
-          kraj: new Date(x.krajPregleda).toLocaleTimeString(),
-          lekar: `${osoblje.ime} ${osoblje.prezime}`,
-          tipPregleda: tipPregleda.naziv,
-          sala: sala.oznaka,
-          cena: x.cena,
-          poseta: x.poseta //potrebno za dalju filtraciju slobodnih i rezervisanih pregleda
-        };
-        if(retval.poseta != null){
-          retval.pacijent = `${x.poseta.zdravstveniKarton.pacijent.ime} ${x.poseta.zdravstveniKarton.pacijent.prezime}`
-        }
-        return retval;
-      });
+      try{
+        return this.preglediKlinike.map(x => {
+          let osoblje = this.osobljeKlinike.filter(y => y.id == x.lekar.id)[0];
+          let tipPregleda = this.tipoviPregledaKlinike.filter(y => y.id == x.tipPregleda.id)[0];
+          let sala = this.saleKlinike.filter(y => y.id == x.sala.id)[0];
+          let retval = {
+            id: x.id,
+            datum: new Date(x.pocetakPregleda).toLocaleDateString(),
+            pocetak: new Date(x.pocetakPregleda).toLocaleTimeString(),
+            kraj: new Date(x.krajPregleda).toLocaleTimeString(),
+            lekar: `${osoblje.ime} ${osoblje.prezime}`,
+            tipPregleda: tipPregleda.naziv,
+            sala: sala.oznaka,
+            cena: x.cena,
+            popust: x.popust,
+            konacnaCena: x.konacnaCena,
+            poseta: x.poseta //potrebno za dalju filtraciju slobodnih i rezervisanih pregleda
+          };
+          if(retval.poseta != null){
+            retval.pacijent = `${x.poseta.zdravstveniKarton.pacijent.ime} ${x.poseta.zdravstveniKarton.pacijent.prezime}`
+          }
+          return retval;
+        });
+      }catch{
+        console.log("Ups");
+        return [];
+      }
+     
     },
     _slobodniPregledi: function(){
       return this._preglediMapped.filter(x => x.poseta == null);
@@ -68,7 +76,6 @@ export default {
       fetchOsobljeKlinike: 'osoblje/loadMedicinskoOsoblje',
       fetchSaleKlinike: 'sale/loadSale',
       fetchTipoviPregledaKlinike: 'tipoviPregleda/loadTipoviPregleda',
-      fetchPacijenti: 'pacijenti/loadTipoviPregleda',
     }),
   }
 

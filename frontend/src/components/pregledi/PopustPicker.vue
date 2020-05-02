@@ -56,10 +56,7 @@ export default {
       this.$store.commit("pregledDialog/setCena", this.osnovnaCena);
       this.$store.commit("pregledDialog/setPopust", this.popust);
       this.$store.commit("pregledDialog/setKonacnaCena", this.ukupnaCena);
-
-      //TODO emituj akciju na bek
-
-      this.$emit('reset'); //zatvori dijalog
+      this.$emit('add'); //zatvori dijalog
     },
     previous(){
       this.$emit('previousStep');

@@ -16,10 +16,14 @@ const actions = {
     commit('setPreglediKlinike', response);
   },
 
-  async addPregled({state, commit}, pregled){
+  async addPregled({state, commit, dispatch}, pregled){
     let {result, success, message} = await pregledi.addPregled(state.klinika.id, pregled);
     if(success){
       commit('addNewPregled', result);
+      //azuriraj podatek za lekara, sale i tipovePregleda
+      dispatch('osoblje/loadMedicinskoOsoblje', {}, {root: true});
+      dispatch('sale/loadSale', {}, {root: true});
+      dispatch('tipoviPregleda/loadTipoviPregleda', {}, {root: true});
     }else{
       return Promise.reject(message);
     }

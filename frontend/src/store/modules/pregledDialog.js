@@ -12,7 +12,12 @@ const state = {
 const getters = {
   getPocetak: (state) => state.pocetak,
   getKraj: (state) => state.kraj,
-  getTipPregleda: (state) => state.tipPregleda
+  getTipPregleda: (state) => state.tipPregleda,
+  getLekar: (state) => state.lekar,
+  getSala: (state) => state.sala,
+  getCena: (state) => state.cena,
+  getPopust: (state) => state.popust,
+  getKonacnaCena: (state) => state.konacnaCena
 };
 
 const actions = {};
