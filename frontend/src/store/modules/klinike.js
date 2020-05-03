@@ -27,7 +27,8 @@ const state = {
   odabranaKlinika: null,
   odabraniPregled: null,
   kreiranaPoseta: null,
-  posete: []
+  posete: [],
+  nerealizovanePosete: []
 }
 const internalMethods = {
   sortByKey(array, key){
@@ -113,6 +114,10 @@ const actions = {
     let data = await klinikeAPI.dobaviSvePosete();
     commit('setPosete', data);
   },
+  async dobaviNerealizovanePosete({commit}) {
+    let data = await klinikeAPI.dobaviNerealizovanePosete();
+    commit('setNerealizovanePosete', data);
+  },
   async loadAllPregledi({commit, state}){
     for (let klinika of state.klinike){
       let data = await preglediAPI.getAllPregledi(klinika.id);
@@ -162,7 +167,9 @@ const mutations = {
     state.posete = posete,
   setPregledi: (state, pregledi) => state.pregledi = pregledi,
   setPreglediKlinike: (state, obj) =>
-    state.pregledi[obj.id] = obj.data
+    state.pregledi[obj.id] = obj.data,
+  setNerealizovanePosete: (state, data) =>
+    state.nerealizovanePosete = data
 }
 
 export default{

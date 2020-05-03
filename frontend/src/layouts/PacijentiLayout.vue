@@ -12,17 +12,19 @@
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title>
-        Klinika - Pacijent dashboard
+        Klinika 'Asdf'
       </v-toolbar-title>
+      
     </v-app-bar>
     <v-content>
       <router-view :userType='userType.role'></router-view>
     </v-content>
+
   </v-app>
 </template>
 
 <script>
-import {mapGetters} from 'vuex';
+import {mapGetters, mapActions, mapState} from 'vuex';
 import OpcijeKorisnika from '@/components/user_options/OpcijeKorisnika';
 
 
@@ -36,9 +38,22 @@ export default {
       drawer: false,
     }
   },
-  computed: mapGetters({
-    'userType': 'korisnici/getKorisnik'
-  })
+  computed: {
+    ...mapGetters({
+      'userType': 'korisnici/getKorisnik'
+    }),
+    ...mapState('klinike', [
+      'nerealizovanePosete'
+    ])
+  },
+  methods: {
+    ...mapActions('klinike', [
+      'dobaviNerealizovanePosete'
+    ]),
+  },
+  created() {
+    this.dobaviNerealizovanePosete();
+  }
 }
 </script>
 

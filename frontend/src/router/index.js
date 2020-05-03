@@ -14,6 +14,7 @@ import Klinike from '@/components/pacijenti/klinike/Klinike';
 import KlinikaPage from '@/components/pacijenti/klinike/KlinikaPage';
 import RezervacijaPregleda from '@/components/pacijenti/klinike/RezervacijaPregleda';
 import Istorija from '@/components/pacijenti/klinike/Istorija';
+import PacijentiHomePage from '@/components/pacijenti/PacijentiHomePage';
 
 import store from '@/store/index';
 //Plugins
@@ -57,6 +58,15 @@ let router = new Router({
       path: '/home',
       name: 'home',
       component: UserDashboard,
+      meta: {
+        authen: true,
+        author: ''
+      },
+    },
+    {
+      path: '/pacijent/home',
+      name: 'pacijent-home',
+      component: PacijentiHomePage,
       meta: {
         authen: true,
         author: ''
@@ -193,12 +203,22 @@ router.beforeEach((to, from, next) => {
       return;
     }    
     else{
+      // Moralo zbog rezervisanih pregleda
+      if (korisnik.role === 'pacijent' && to.path==='/home') {
+        next('/pacijent/home');
+        return;
+      }
       next();
       return;
     }
   }
   else{
     if (korisnik !== null) {
+      // Moralo zbog rezervisanih pregleda
+      if (korisnik.role === 'pacijent') {
+        next('/pacijent/home');
+        return;
+      }
       next(`/home`)
       return;
     }
