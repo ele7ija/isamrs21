@@ -31,6 +31,18 @@ public class Klinika implements IdentitySerializable{
 	@Column(name="adresa")
 	private String adresa;
 	
+	@Column(name="grad")
+	private String grad;
+	
+	@Column(name="drzava")
+	private String drzava;
+	
+	@Column(name="slika", length=1000)
+	private String slika;
+	
+	@Column(name="opis", length=3000)
+	private String opis;
+	
 	@OneToMany(mappedBy="klinika", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JsonSerialize(using=IdentityListSerializer.class)
 	private List<Sala> sale;
@@ -127,6 +139,38 @@ public class Klinika implements IdentitySerializable{
 
 	public void setCenovnici(List<Cenovnik> cenovnici) {
 		this.cenovnici = cenovnici;
+	}
+
+	public String getGrad() {
+		return grad;
+	}
+
+	public void setGrad(String grad) {
+		this.grad = grad;
+	}
+
+	public String getDrzava() {
+		return drzava;
+	}
+
+	public void setDrzava(String drzava) {
+		this.drzava = drzava;
+	}
+
+	public String getOpis() {
+		return opis;
+	}
+
+	public void setOpis(String opis) {
+		this.opis = opis;
+	}
+
+	public String getSlika() {
+		return slika;
+	}
+
+	public void setSlika(String slika) {
+		this.slika = slika;
 	}
 	
 	

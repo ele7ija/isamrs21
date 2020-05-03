@@ -4,7 +4,7 @@
       Pretraga pregleda
     </v-card-title>
     <v-card-subtitle>
-      Pretražite vreme, mesto i tip pregleda koji želite da obavite.
+      Pretražite vreme, i tip pregleda koji želite da obavite u ovoj klinici
     </v-card-subtitle>
     <v-card-text>
       <v-list subheader>
@@ -69,53 +69,13 @@
         </v-list-item>
       </v-list>
     </v-card-text>
-    <v-divider></v-divider>
-    <v-card-text>
-      <v-list subheader>
-        <v-subheader>
-          Sortiranja
-        </v-subheader>
-        <v-list-item v-if='sortiranjeKlinika!=null'>
-          <v-list-item-action>
-            <v-btn icon @click='izbrisiSort' color='primary'>
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-text-field 
-              disabled 
-              solo 
-              outlined
-              v-model='sortiranjeKlinika.naziv'>
-            </v-text-field>
-          </v-list-item-content>
-            <v-switch 
-              v-model='sortiranjeKlinika.rastuce' 
-              label='ASC'
-              class='pl-4 overline'>
-            </v-switch>
-          
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-content>
-            <v-select outlined
-              v-model='iOdabranSort'
-              :items='internalDostupnaSortiranja'
-              label='Odaberi sortiranje'
-              @input="dodajSort"
-              >
-            </v-select>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-card-text>
   </v-card>
 </template>
 
 <script>
 import { mapMutations, mapState } from 'vuex';
 export default {
-  name: 'PretragaKlinika',
+  name: 'PretragaKlinike',
   data: function() {
     return {
       iOdabranSort: '',
@@ -171,25 +131,6 @@ export default {
       }
       return retval;
     },
-    // internalSortiranja: {
-    //   get: function() {
-    //     let retval = [];
-    //     for (let sortiranje of this.sortiranja) {
-    //       retval.push(sortiranje.naziv);
-    //     }
-    //     return retval;
-    //   },
-    //   set: function(value) {
-    //     let retval = [];
-    //     console.log(value)
-    //     for (let sortiranjeNaziv of value) {
-    //       let sortiranje = this.dostupnaSortiranja.filter(
-    //         (obj) => obj.naziv === sortiranjeNaziv);
-    //       retval.push(sortiranje[0]);
-    //     }
-    //     this.setSortiranja(retval);
-    //   }
-    // }
   },
   methods: {
     ...mapMutations('klinike', [
@@ -213,7 +154,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   .v-messages {
     display: none;
   }

@@ -122,4 +122,8 @@ public class PregledService {
 			return false;
 		return true;
 	}
+
+	public List<Pregled> findSlobodni(Long idKlinike) {
+		return pregledRepository.findAllSlobodniByIdKlinike(idKlinike);
+	}
 }

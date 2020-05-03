@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
@@ -76,6 +77,7 @@ public class Pregled implements IdentitySerializable{
 	private Klinika klinika;
 
 	@OneToOne(mappedBy="pregled", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@JsonSerialize(using=IdentitySerializer.class)
 	private Poseta poseta;
 	
 	public Pregled(){}

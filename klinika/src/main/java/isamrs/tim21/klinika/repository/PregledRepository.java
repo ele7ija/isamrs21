@@ -26,4 +26,9 @@ public interface PregledRepository extends JpaRepository<Pregled, Long> {
 			+ "WHERE p.klinika.id = :idKlinike "
 			+ "AND p.id = :idPregleda")
 	int deleteByIdAndKlinikaId(@Param("idKlinike") Long idKlinike, @Param("idPregleda") Long idPregleda);
+
+	@Query("SELECT p FROM Pregled p "
+			+ "WHERE p.klinika.id = :idKlinike "
+			+ "AND p.poseta = null")
+	List<Pregled> findAllSlobodniByIdKlinike(@Param("idKlinike") Long idKlinike);
 }

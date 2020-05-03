@@ -1,8 +1,10 @@
 import klinikeAPI from '@/api/klinike';
-
+import preglediAPI from '@/api/pregledi'
 
 const state = {
+  // Main data
   klinike: [],
+  pregledi: {},
   klinikaAdmina: null,
   // Pretraga i sortiranje klinika
   pocetniDatum: null,
@@ -10,12 +12,17 @@ const state = {
   tipPregleda: null,
   dostupnaSortiranja: [
     {
-      naziv: 'ID',
-      atr: 'id',
+      naziv: 'Naziv',
+      atr: 'naziv',
+      rastuce: true
+    },
+    {
+      naziv: 'Adresa',
+      atr: 'adresa',
       rastuce: true
     }
   ],
-  sortiranja: [],
+  sortiranjeKlinika: null,
   // Pregled za rez
   odabranaKlinika: null,
   odabraniPregled: null,
@@ -24,6 +31,10 @@ const state = {
 }
 const internalMethods = {
   sortByKey(array, key){
+    if (key == null) {
+      return array;
+    }
+
     return array.sort(function(a, b)
     {
       var x = a[key.atr]; var y = b[key.atr];
@@ -35,22 +46,47 @@ const internalMethods = {
       }
     });
   },
-  sortByKeys(array, keys) {
-    let new_arr = array;
-    for (let key of keys) {
-      new_arr = this.sortByKey(new_arr, key);
-    }
-    return new_arr;
-  }
+  // sortByKeys(array, keys) {
+  //   let new_arr = array;
+  //   for (let key of keys) {
+  //     new_arr = this.sortByKey(new_arr, key);
+  //   }
+  //   return new_arr;
+  // }
 }
 const getters = {
   getKlinikaAdmina: (state) => state.klinikaAdmina,
   /** Primenjuje pretrage i sortiranja nad klinikama */
-  getPretrazeneKlinike: (state) => {
-    return internalMethods.sortByKeys(
-      state.klinike,
-      state.sortiranja 
+  pretrazeneKlinike: (state, getters) => {
+    let retval = [];
+    for (let klinika of state.klinike) {
+      let pretrazeniPregledi = getters.getPretrazeniPregledi(klinika.id);
+      if (pretrazeniPregledi.length !== 0) {
+        retval.push(klinika);
+      }
+    }
+    return internalMethods.sortByKey(
+      retval,
+      state.sortiranjeKlinika
     )
+  },
+  getPretrazeniPregledi: (state) => (klinikaId) => {
+    let postojeci = state.pregledi[klinikaId];
+    let novi = postojeci.filter((x) => {
+      let dp = new Date(x.pocetakPregleda);
+      let pd = new Date(state.pocetniDatum);
+      if (state.pocetniDatum != null && dp < pd){
+        return false;
+      }
+      let dk = new Date(x.krajPregleda);
+      let kd = new Date(state.krajnjiDatum);
+      kd.setHours(23); kd.setMinutes(59)
+      if (state.krajnjiDatum != null && dk > kd){
+        return false;
+      }
+      return true;
+    })
+    return novi;
   }
 }
 const actions = {
@@ -76,6 +112,31 @@ const actions = {
   async dobaviSvePosete({commit}) {
     let data = await klinikeAPI.dobaviSvePosete();
     commit('setPosete', data);
+  },
+  async loadAllPregledi({commit, state}){
+    for (let klinika of state.klinike){
+      let data = await preglediAPI.getAllPregledi(klinika.id);
+      commit('setPreglediKlinike', {id: klinika.id, data: data})
+    }
+  },
+  async loadPregledi({commit}, klinikaId) {
+    let data = await preglediAPI.getAllPregledi(klinikaId);
+      commit('setPreglediKlinike', {id: klinikaId, data: data})
+  },
+  async dobaviPodatkeKlinike({dispatch}) {
+    // dobavi klinike
+    // dobavi preglede
+    await dispatch('loadKlinike');
+    await dispatch('loadAllPregledi');
+  },
+  async loadKlinika({commit}, klinikaId){
+    let data = await klinikeAPI.getKlinika(klinikaId);
+    commit('setKlinike', [data]);
+  },
+  async dobaviPodatkeKlinikaPage({commit, state, dispatch}, klinikaId) {
+    await dispatch('loadKlinika', klinikaId);
+    commit('setOdabranaKlinika', state.klinike[0]);
+    await dispatch('loadPregledi', klinikaId);
   }
 }
 const mutations = {
@@ -89,8 +150,8 @@ const mutations = {
   setPocetniDatum: (state, datum) => state.pocetniDatum = datum,
   setKrajnjiDatum: (state, datum) => state.krajnjiDatum = datum,
   setTipPregleda: (state, tip) => state.tipPregleda = tip,
-  setSortiranja: (state, sortiranja) => 
-    state.sortiranja = sortiranja,
+  setSortiranjeKlinika: (state, sortiranje) => 
+    state.sortiranjeKlinika = sortiranje,
   setOdabraniPregled: (state, pregled) => 
     state.odabraniPregled = pregled,
   setOdabranaKlinika: (state, klinika) => 
@@ -98,7 +159,10 @@ const mutations = {
   setKreiranaPoseta: (state, poseta) => 
     state.kreiranaPoseta = poseta,
   setPosete: (state, posete) => 
-    state.posete = posete
+    state.posete = posete,
+  setPregledi: (state, pregledi) => state.pregledi = pregledi,
+  setPreglediKlinike: (state, obj) =>
+    state.pregledi[obj.id] = obj.data
 }
 
 export default{
