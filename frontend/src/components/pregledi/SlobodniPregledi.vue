@@ -42,7 +42,7 @@
                 v-for="step in stepperData"
                 :key="step.index"
               >
-                <v-stepper-step :complete="stepIndex > 1" :step="step.index" :editable="step.index < stepIndex">
+                <v-stepper-step :complete="stepIndex > step.index" :step="step.index" :editable="step.index <= stepIndex">
                   {{step.title}}
                   <small>{{step.subtitle}}</small>
                 </v-stepper-step>
@@ -57,6 +57,7 @@
                     @add="add"
                     :index="step.index - 1"
                     :currentIndex="stepIndex - 1"
+                    :key="step.unique"
                   ></component>
                   <v-btn v-if="stepIndex < stepperData.length" color="primary" @click="stepIndex += 1" :disabled="!stepperData[step.index-1].done">Next step</v-btn>
                   <v-btn v-if="stepIndex > 1 && stepIndex < stepperData.length" text @click="stepIndex -= 1">Previous step</v-btn>
@@ -69,13 +70,6 @@
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-icon
-        small
-        class="mr-2"
-        @click="editItem(item)"
-      >
-        mdi-pencil
-      </v-icon>
       <v-icon
         small
         @click="deleteItem(item)"
@@ -112,17 +106,17 @@ export default {
         {
           text: 'Datum',
           value: 'datum',
-          sortable: true
+          sortable: false
         },
         { 
           text: 'Pocetak',
           value: 'pocetak',
-          sortable: true
+          sortable: false
         },
         { 
           text: 'Kraj',
           value: 'kraj',
-          sortable: true
+          sortable: false
         },
         { 
           text: 'Lekar',
@@ -168,35 +162,40 @@ export default {
           subtitle: "Izbor vremena pregleda ce uticati na kasniji izbor lekara i sala pregleda",
           index: 1,
           componentName: "DatePicker",
-          done: false
+          done: false,
+          unique: 1
         },
         {
           title: "Izaberite tip pregleda",
           subtitle: "Mozete izabrati samo tip pregleda unutar vase klinike. Izbor tipa pregleda ce uticati na kasniji izbor lekara",
           index: 2,
           componentName: "TabelaTipovaPregleda",
-          done: false
+          done: false,
+          unique: 3
         },
         {
           title: "Izaberite lekara specijalistu",
           subtitle: "Mozete izabrati samo lekara unutar vase klinike. Lekar mora biti specijalizovan za prethodno odabrani tip pregleda i mora biti slobodan za odabranu satnicu",
           index: 3,
           componentName: "TabelaLekara",
-          done: false
+          done: false,
+          unique: 5
         },
         {
           title: "Izaberite salu",
           subtitle: "Mozete izabrati samo salu unutar vase klinike. Sala mora biti slobodna za odabranu satnicu",
           index: 4,
           componentName: "TabelaSala",
-          done: false
+          done: false,
+          unique: 7
         },
         {
           title: "Odaberite popust",
           subtitle: "Trenutna cena je preuzeta iz stavke cenovnika odabranog tipa pregleda. Imate mogucnost da definisete popust",
           index: 5,
           componentName: "PopustPicker",
-          done: true
+          done: true,
+          unique: 9
         }
       ]
     };
@@ -211,7 +210,10 @@ export default {
       cena: "pregledDialog/getCena",
       popust: "pregledDialog/getPopust",
       konacnaCena: "pregledDialog/getKonacnaCena",
-      klinika: "klinike/getKlinikaAdmina"
+      klinika: "klinike/getKlinikaAdmina",
+      osobljeKlinike: 'osoblje/getMedicinskoOsoblje',
+      tipoviPregledaKlinike: 'tipoviPregleda/getTipoviPregleda',
+      saleKlinike: 'sale/getSale'
     }),
     formTitle: function(){
        return this.update ? 'Izmena pregleda': 'Dodavanje novog pregleda';
@@ -223,14 +225,12 @@ export default {
       updatePregled: 'preglediAdmin/updatePregled',
       removePregled: 'preglediAdmin/removePregled'
     }),
-    editItem(pregled){
-      return pregled;
-    },
     deleteItem(pregled){
-      return pregled;
+      let obj = { id: pregled.id };
+      this.removePregled(obj);
     },
     add(){
-      let obj = {
+      this.newItem = {
         pocetakPregleda: this.pocetak,
         krajPregleda: this.kraj,
         cena: this.cena,
@@ -242,12 +242,15 @@ export default {
         klinika: { id: this.klinika.id },
         poseta: null
       };
-      this.addPregled(obj);
+      this.addPregled(this.newItem);
       this.reset();
     },
     reset(){
       this.dialog = false;
       this.stepIndex = 1;
+      for(let step of this.stepperData){
+        step.unique += 1;
+      }
     },
     changeStatus({index, done}){
       this.stepperData[index].done = done;

@@ -93,7 +93,8 @@ public class PregledKontroler {
 	
 	@DeleteMapping(value="/{idPregleda}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
-	public ResponseEntity<Boolean> delete(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idPregleda") Long idPregleda){
-		return new ResponseEntity<Boolean>(pregledService.delete(idKlinike, idPregleda), HttpStatus.OK);
+	public ResponseEntity<CustomResponse<Boolean>> delete(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idPregleda") Long idPregleda){
+		CustomResponse<Boolean> customResponse = pregledService.delete(idKlinike, idPregleda);
+		return new ResponseEntity<CustomResponse<Boolean>>(customResponse, customResponse.isSuccess() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
 	}
 }

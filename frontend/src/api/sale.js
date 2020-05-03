@@ -31,12 +31,11 @@ export default{
     return response.data;
   },
 
-  async removeSala(idKlinike, idSale){
+  removeSala(idKlinike, idSale){
     let options = util.prepareOptions();
-    let response = await axios.delete(
+    return axios.delete(
       `${process.env.VUE_APP_BACKEND_ROOT}/sala/${idKlinike}/${idSale}`,
       options
     );
-    return response.data;
   },
 }

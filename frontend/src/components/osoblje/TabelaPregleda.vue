@@ -7,7 +7,7 @@
     >
     <template v-slot:top>
       <v-toolbar flat color="blue lighten-3">
-        <v-toolbar-title>Rezervisani pregledi unutar klinike</v-toolbar-title>
+        <v-toolbar-title>{{title}}</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -29,8 +29,8 @@
 
 <script>
 export default {
-  name: "RezervisaniPregledi",
-  props: ["data"],
+  name: "TabelaLekara",
+  props: ["data", "title"],
   data: function(){
     return {
       search: '',
@@ -54,7 +54,7 @@ export default {
         { 
           text: 'Lekar',
           value: 'lekar',
-          sortable: true
+          sortable: false
         },
         { 
           text: 'Tip Pregleda',

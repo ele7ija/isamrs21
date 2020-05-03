@@ -15,6 +15,7 @@ import isamrs.tim21.klinika.domain.Pregled;
 import isamrs.tim21.klinika.domain.Sala;
 import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.repository.OsobljeRepository;
+import isamrs.tim21.klinika.repository.PosetaRepository;
 import isamrs.tim21.klinika.repository.PregledRepository;
 import isamrs.tim21.klinika.repository.SalaRepository;
 import isamrs.tim21.klinika.repository.TipPregledaRepository;
@@ -33,6 +34,9 @@ public class PregledService {
 	
 	@Autowired
 	OsobljeRepository osobljeRepository;
+	
+	@Autowired
+	PosetaRepository posetaRepository;
 
 	public List<Pregled> findAll(Long idKlinike) {
 		return pregledRepository.findAllByIdKlinike(idKlinike);
@@ -64,10 +68,15 @@ public class PregledService {
 	}
 	
 	@Transactional
-	public Boolean delete(Long idKlinike, Long idPregleda) {
+	public CustomResponse<Boolean> delete(Long idKlinike, Long idPregleda) {
+		if(posetaRepository.findById(idPregleda).isPresent()){
+			return new CustomResponse<Boolean>(false, false, "Greska: Pregled je rezervisan. Ne mozete ga obrisati.");
+		}
 		int numberOfRemovals = pregledRepository.deleteByIdAndKlinikaId(idKlinike, idPregleda);
-		System.out.println(numberOfRemovals);
-		return numberOfRemovals == 1;
+		if(numberOfRemovals == 1){
+			return new CustomResponse<Boolean>(true, true, "OK.");
+		}
+		return new CustomResponse<Boolean>(false, false, "Greska: Pregled nije pronadjen");
 	}
 	
 	private CustomResponse<Pregled> validateAll(Klinika klinika, Pregled pregled) {
