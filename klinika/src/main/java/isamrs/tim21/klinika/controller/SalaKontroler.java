@@ -1,5 +1,6 @@
 package isamrs.tim21.klinika.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.Klinika;
+import isamrs.tim21.klinika.domain.Pregled;
 import isamrs.tim21.klinika.domain.Sala;
+import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.repository.SalaRepository;
+import isamrs.tim21.klinika.services.SalaService;
 
 @RestController
 @RequestMapping(path="/sala/{idKlinike}")
@@ -28,6 +32,9 @@ public class SalaKontroler {
 	
 	@Autowired
 	private KlinikaRepository klinikaRepository;
+	
+	@Autowired
+	private SalaService salaService;
 	
 	@GetMapping
 	public ResponseEntity<List<Sala>> getAllSale(@PathVariable("idKlinike") Long idKlinike){
@@ -66,7 +73,7 @@ public class SalaKontroler {
 			//POSTAVI JOS JEDNOM SVE PARAMETRE NA BEKU
 			salaToAdd.setKlinika(klinika);
 			salaToAdd.setId(null);
-			
+			salaToAdd.setPregledi(new ArrayList<Pregled>());
 			Sala retval = salaRepository.save(salaToAdd);
 			return new ResponseEntity<Sala>(retval, HttpStatus.OK);
 		}
@@ -84,9 +91,11 @@ public class SalaKontroler {
 			salaToChange.setId(idSale);
 			salaToChange.setKlinika(klinika);
 			
-			if(! salaRepository.findById(idSale).isPresent()){
+			Sala sala = salaRepository.findById(idSale).orElse(null);
+			if(sala == null){
 				return new ResponseEntity<Sala>(HttpStatus.NOT_FOUND);
 			}
+			salaToChange.setPregledi(sala.getPregledi());
 			Sala retval = salaRepository.save(salaToChange);
 			return new ResponseEntity<Sala>(retval, HttpStatus.OK);	
 			
@@ -95,13 +104,14 @@ public class SalaKontroler {
 	
 	@DeleteMapping(value="/{idSale}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
-	public ResponseEntity<Boolean> deleteSala(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idSale") Long idSale){
+	public ResponseEntity<CustomResponse<Boolean>> deleteSala(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idSale") Long idSale){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
-			return new ResponseEntity<Boolean>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<CustomResponse<Boolean>>(new CustomResponse<Boolean>(false, false, "Greska. Klinika ne postoji"), HttpStatus.NOT_FOUND);
 		}else{
-			salaRepository.deleteById(idSale);
-			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+			CustomResponse<Boolean> customResponse = salaService.delete(idKlinike, idSale);
+			//HttpStatus status = customResponse.isSuccess() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+			return new ResponseEntity<CustomResponse<Boolean>>(customResponse, HttpStatus.OK);
 		}
 	}
 }

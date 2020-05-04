@@ -12,14 +12,14 @@
             <v-card-text>
               <v-data-table
                 :headers='headers'
-                :items='pregledi'>
+                :items='pregledi'
+                >
                 <template v-slot:item="row">
                   <tr>
-                    <td>{{row.item.id}}</td>
                     <td>{{row.item.tipPregleda.naziv}}</td>
                     <td>{{row.item.lekar.ime}}&nbsp;{{row.item.lekar.prezime}}</td>
                     <td>{{row.item.sala.oznaka}}</td>
-                    <td>{{new Date(row.item.pocetakPregleda).getTime() | utcToFormat}}</td>
+                    <td>{{formatDate(row.item.pocetakPregleda)}}</td>
                     <td>{{formatDate(row.item.krajPregleda)}}</td>
                     <td>
                       <v-btn 
@@ -41,33 +41,33 @@
 </template>
 
 <script>
-import {mapMutations} from 'vuex';
+import {mapMutations, mapGetters} from 'vuex';
 
 export default {
   name: 'PreglediDialog',
-  props: ['dialog', 'pregledi', 'klinika'],
+  props: ['dialog', 'klinika'],
   data: function(){
     return {
       headers: [
         {
-          text: 'ID',
-          value: 'id'
-        },
-        {
           text: 'Tip pregleda',
-          value: 'tip pregleda'
+          value: 'tip pregleda',
+          sortable: true
         },
         {
           text: 'Lekar',
-          value: 'lekar'
+          value: 'lekar',
+          sortable: true
         },
         {
           text: 'Sala',
-          value: 'sala'
+          value: 'sala',
+          sortable: true
         },
         {
           text: 'Početak',
-          value: 'pocetak'
+          value: 'pocetak',
+          sortable: true
         },
         {
           text: 'Kraj',
@@ -84,6 +84,12 @@ export default {
       set: function(val) {
         this.$emit('update-dialog', val)
       }
+    },
+    ...mapGetters('klinike', [
+      'getPretrazeniPregledi'
+    ]),
+    pregledi: function() {
+      return this.getPretrazeniPregledi(this.klinika.id)
     }
   },
   methods: {
@@ -96,9 +102,32 @@ export default {
     formatDate: function(date) {
       let d = new Date(date);
       return ("0" + d.getDate()).slice(-2) + '.' +
-        ("0" + d.getMonth()).slice(-2) + '.' +
+        ("0" + (d.getMonth()+1)).slice(-2) + '.' +
         d.getFullYear() + '. ' +
         d.getHours() + ':' + ('0' + d.getMinutes()).slice(-2);
+    },
+    customSort: function(items, index, isDesc) {
+      console.log(items, index, isDesc)
+      items.sort((a, b) => {
+          if (index[0]=='pocetak') {
+            if (!isDesc[0]) {
+                return new Date(b[index]) - new Date(a[index]);
+            } else {
+                return new Date(a[index]) - new Date(b[index]);
+            }
+          }
+          else {
+            if(typeof a[index] !== 'undefined'){
+              if (!isDesc[0]) {
+                 return a[index].toString().toLowerCase().localeCompare(b[index].toLowerCase());
+              }
+              else {
+                  return b[index].toString().toLowerCase().localeCompare(a[index].toLowerCase());
+              }
+            }
+          }
+      });
+      return items;
     }
   },
   filters: {

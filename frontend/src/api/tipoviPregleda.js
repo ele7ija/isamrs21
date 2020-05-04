@@ -28,12 +28,12 @@ export default{
     );
     return data;
   },
-  async removeTipPregleda(idKlinike, idTipaPregleda){
+  
+  removeTipPregleda(idKlinike, idTipaPregleda){
     let options = util.prepareOptions();
-    let {data} = await axios.delete(
+    return axios.delete(
       `${process.env.VUE_APP_BACKEND_ROOT}/tipPregleda/${idKlinike}/${idTipaPregleda}`,
       options
     );
-    return data;
   }
 }

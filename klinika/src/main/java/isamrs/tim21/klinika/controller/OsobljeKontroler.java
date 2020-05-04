@@ -24,6 +24,7 @@ import isamrs.tim21.klinika.domain.MedicinskaSestra;
 import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
 import isamrs.tim21.klinika.domain.Pregled;
 import isamrs.tim21.klinika.domain.TipPregleda;
+import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.repository.OsobljeRepository;
 import isamrs.tim21.klinika.services.OsobljeService;
@@ -116,54 +117,29 @@ public class OsobljeKontroler {
 	
 	@DeleteMapping(value="/specijalnosti/{idOsoblja}/{idTipaPregleda}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
-	public ResponseEntity<MedicinskoOsoblje> deleteSpecijalnostOsoblja(@PathVariable("idKlinike") Long idKlinike, 
+	public ResponseEntity<CustomResponse<MedicinskoOsoblje>> deleteSpecijalnostOsoblja(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idOsoblja") Long idOsoblja, @PathVariable("idTipaPregleda") Long idTipaPregleda){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
-			return new ResponseEntity<MedicinskoOsoblje>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(new CustomResponse<MedicinskoOsoblje>(null, false, "Greska. Klinika ne postoji"), HttpStatus.NOT_FOUND);
 		}else{
-			return osobljeService.deleteSpecijalnostOsoblja(idOsoblja, idTipaPregleda);	
-			
+			CustomResponse<MedicinskoOsoblje> customResponse = osobljeService.deleteSpecijalnostOsoblja(idOsoblja, idTipaPregleda);
+			//HttpStatus status = customResponse.isSuccess() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(customResponse, HttpStatus.OK);
 		}
 	}
 	
 	@DeleteMapping(value="/{idOsoblja}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
-	public ResponseEntity<Boolean> deleteOsoblje(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idOsoblja") Long idOsoblja){
+	public ResponseEntity<CustomResponse<Boolean>> deleteOsoblje(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idOsoblja") Long idOsoblja){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
-			return new ResponseEntity<Boolean>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<CustomResponse<Boolean>>(new CustomResponse<Boolean>(false, false, "Greska. Klinika ne postoji"), HttpStatus.NOT_FOUND);
 		}else{
-			MedicinskoOsoblje osobaToDelete = osobljeRepository.findById(idOsoblja).get();
-			if(osobaToDelete instanceof MedicinskaSestra){
-				osobljeRepository.deleteById(idOsoblja);
-				return new ResponseEntity<Boolean>(true, HttpStatus.OK);	
-			}
-			else if(osobaToDelete instanceof Lekar){
-				//UKOLIKO JE OSOBA LEKAR, PROVERI DA LI POSTOJI PREGLED KOJI JE AKTUELAN
-				Lekar lekar = (Lekar) osobljeRepository.findById(idOsoblja).get();
-				/*if(imaAktivniPregled(lekar)){
-					return new ResponseEntity<Boolean>(false, HttpStatus.FORBIDDEN); //za sad ovako
-				}*/
-				
-				for(TipPregleda tp : lekar.getTipovi_pregleda()){
-					tp.getLekari().remove(lekar); //mora posto je tip pregleda vlasnik veze
-				}
-				osobljeRepository.deleteById(idOsoblja);
-				return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-			}
-			return new ResponseEntity<Boolean>(false, HttpStatus.NOT_FOUND);
+			CustomResponse<Boolean> customResponse = osobljeService.delete(idKlinike, idOsoblja);
+			//HttpStatus status = customResponse.isSuccess() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+			return new ResponseEntity<CustomResponse<Boolean>>(customResponse, HttpStatus.OK);
 		}
-	}
-
-	private boolean imaAktivniPregled(Lekar lekar) {
-		Date datum = new Date();
-		for(Pregled p: lekar.getPregledi()){
-			if(p.getKrajPregleda().after(datum)){
-				return true;
-			}
-		}
-		return false;
 	}
 	
 }

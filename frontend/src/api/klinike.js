@@ -76,5 +76,14 @@ export default{
       options
     );
     return response.data;
+  },
+
+  async dobaviNerealizovanePosete() {
+    let options = util.prepareOptions();
+    let response = await axios.get(
+      `${process.env.VUE_APP_BACKEND_ROOT}/posete/nerealizovane`,
+      options
+    );
+    return response.data;
   }
 }

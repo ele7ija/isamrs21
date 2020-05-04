@@ -47,8 +47,18 @@ const actions = {
   },
 
   async removeSala({state, commit}, idSale){
-    await sale.removeSala(state.klinika.id, idSale);
-    commit('deleteSala', idSale);
+    return new Promise((resolve, reject) => {
+      sale.removeSala(state.klinika.id, idSale)
+      .then(({ data: { success, message }}) => {
+        if(success){
+          commit('deleteSala', idSale);
+          resolve(message);
+        }else{
+          reject(message);
+        }
+      });
+    });
+    
   },
   
 }

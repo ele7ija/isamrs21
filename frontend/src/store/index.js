@@ -4,7 +4,6 @@ import tipoviPregleda from './modules/tipoviPregleda';
 import sale from './modules/sale';
 import pacijenti from './modules/pacijenti';
 import klinike from './modules/klinike';
-import pregledi from './modules/pregledi';
 import opcijeKorisnika from './modules/opcijeKorisnika';
 import korisnici from './modules/korisnici';
 import osoblje from './modules/osoblje';
@@ -24,7 +23,6 @@ export default new Vuex.Store({
     sale,
     pacijenti,
     klinike,
-    pregledi,
     korisnici,
     osoblje,
     cenovnici,

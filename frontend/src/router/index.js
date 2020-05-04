@@ -19,6 +19,7 @@ import AdminiKlinickogCentra from '@/components/admin_klinickog_centra/AdminiKli
 import AdminiKlinike from '@/components/admin_klinickog_centra/AdminiKlinike'
 import KlinikeFromAdminCentra from '@/components/admin_klinickog_centra/Klinike'
 
+import PacijentiHomePage from '@/components/pacijenti/PacijentiHomePage';
 
 import store from '@/store/index';
 
@@ -63,6 +64,15 @@ let router = new Router({
       path: '/home',
       name: 'home',
       component: UserDashboard,
+      meta: {
+        authen: true,
+        author: ''
+      },
+    },
+    {
+      path: '/pacijent/home',
+      name: 'pacijent-home',
+      component: PacijentiHomePage,
       meta: {
         authen: true,
         author: ''
@@ -229,12 +239,22 @@ router.beforeEach((to, from, next) => {
       return;
     }    
     else{
+      // Moralo zbog rezervisanih pregleda
+      if (korisnik.role === 'pacijent' && to.path==='/home') {
+        next('/pacijent/home');
+        return;
+      }
       next();
       return;
     }
   }
   else{
     if (korisnik !== null) {
+      // Moralo zbog rezervisanih pregleda
+      if (korisnik.role === 'pacijent') {
+        next('/pacijent/home');
+        return;
+      }
       next(`/home`)
       return;
     }

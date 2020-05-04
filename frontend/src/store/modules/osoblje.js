@@ -54,9 +54,18 @@ const actions = {
   },
 
   async removeSpecijalnostiMedicinskaOsoba({state, commit}, {idLekara, idTipaPregleda}){
-    await osoblje.removeSpecijalnostiMedicinskaOsoba(state.klinika.id, {idLekara, idTipaPregleda});
-    commit('removeSpecijalnost', {idLekara, idTipaPregleda});
-    commit('tipoviPregleda/removeSpecijalista', {idLekara, idTipaPregleda}, {root: true})
+    return new Promise((resolve, reject) => {
+      osoblje.removeSpecijalnostiMedicinskaOsoba(state.klinika.id, {idLekara, idTipaPregleda})
+      .then(({data: {success, message}}) => {
+        if(success){
+          commit('removeSpecijalnost', {idLekara, idTipaPregleda});
+          commit('tipoviPregleda/removeSpecijalista', {idLekara, idTipaPregleda}, {root: true})
+          resolve(message);
+        }else{
+          reject(message);
+        }
+      });
+    });    
   },
 
   async addSpecijalnostiMedicinskaOsoba({state, commit}, {idLekara, idTipovaPregleda}){
@@ -68,10 +77,19 @@ const actions = {
   },
 
   async removeMedicinskaOsoba({state, commit, dispatch}, idOsobe){
-    await osoblje.removeMedicinskaOsoba(state.klinika.id, idOsobe);
-    commit('deleteMedicinskaOsoba', idOsobe);
-    console.log(idOsobe);
-    dispatch('korisnici/removeKorisnik', idOsobe, {root: true});
+    return new Promise((resolve, reject) => {
+      osoblje.removeMedicinskaOsoba(state.klinika.id, idOsobe)
+      .then(({data:{success, message}}) => {
+        if(success){
+          commit('deleteMedicinskaOsoba', idOsobe);
+          dispatch('korisnici/removeKorisnik', idOsobe, {root: true});
+          resolve(message);
+        }else{
+          reject(message);
+        }
+      });
+    });
+    
   },
   
 }

@@ -43,6 +43,16 @@ public class PregledKontroler {
 		return new ResponseEntity<List<Pregled>>(pregledi, HttpStatus.OK);
 	}
 	
+	@GetMapping(value="/slobodni")
+	@PreAuthorize("hasAnyAuthority('pacijent', 'lekar', 'admin-klinike')")
+	public ResponseEntity<List<Pregled>> getSlobodni(@PathVariable("idKlinike") Long idKlinike){
+		if(!klinikaRepository.findById(idKlinike).isPresent()){
+			return new ResponseEntity<List<Pregled>>(HttpStatus.NOT_FOUND);
+		}
+		List<Pregled> pregledi = pregledService.findSlobodni(idKlinike);
+		return new ResponseEntity<List<Pregled>>(pregledi, HttpStatus.OK);
+	}
+	
 	@GetMapping(value="/{idPregleda}")
 	@PreAuthorize("hasAnyAuthority('pacijent', 'lekar', 'admin-klinike')")
 	public ResponseEntity<Pregled> get(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idPregleda") Long idPregleda){
@@ -83,7 +93,8 @@ public class PregledKontroler {
 	
 	@DeleteMapping(value="/{idPregleda}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
-	public ResponseEntity<Boolean> delete(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idPregleda") Long idPregleda){
-		return new ResponseEntity<Boolean>(pregledService.delete(idKlinike, idPregleda), HttpStatus.OK);
+	public ResponseEntity<CustomResponse<Boolean>> delete(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idPregleda") Long idPregleda){
+		CustomResponse<Boolean> customResponse = pregledService.delete(idKlinike, idPregleda);
+		return new ResponseEntity<CustomResponse<Boolean>>(customResponse, customResponse.isSuccess() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
 	}
 }

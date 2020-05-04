@@ -12,7 +12,7 @@
           </v-card-title>
           <v-card-subtitle>
             Na ovom mestu možete odabrati kliniku u kojoj ćete
-            imati traženi pregled. 
+            obaviti traženi pregled. 
           </v-card-subtitle>
           <v-card-text>
             <v-container fluid>
@@ -51,21 +51,21 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('klinike', [
+      'pretrazeneKlinike',
+    ]),
     klinike: function(){ 
-      return this.getPretrazeneKlinike();
-    }
+      return this.pretrazeneKlinike;
+    },
   },
   methods: {
     ...mapActions('klinike', [
-      'loadKlinike'
-    ]),
-    ...mapGetters('klinike', [
-      'getPretrazeneKlinike'
+      'dobaviPodatkeKlinike'
     ]),
     
   },
   created() {
-    this.loadKlinike();
+    this.dobaviPodatkeKlinike();
   }
 }
 </script>

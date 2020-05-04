@@ -28,14 +28,11 @@ export default{
     );
     return data;
   },
-  async removeCenovnik(idKlinike, idCenovnika){
+  removeCenovnik(idKlinike, idCenovnika){
     let options = util.prepareOptions();
-    let response = await axios.delete(
+    return axios.delete(
       `${process.env.VUE_APP_BACKEND_ROOT}/cenovnik/${idKlinike}/${idCenovnika}`,
       options
-    );
-    return response.data;
-    
-    
+    );  
   }
 }

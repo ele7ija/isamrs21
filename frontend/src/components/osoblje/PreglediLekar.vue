@@ -1,9 +1,9 @@
 <template>
   <div>
     <v-container fluid>
-      <div class="ml-5 mr-5">
-        <SlobodniPregledi :data="_slobodniPregledi" class="mt-5"></SlobodniPregledi>
-        <RezervisaniPregledi :data="_rezervisaniPregledi" class="mt-10"></RezervisaniPregledi>
+      <div class="ml-2 mr-2">
+        <TabelaPregleda :data="_slobodniPregledi" :title="'Slobodni pregledi lekara'" class="mt-n2"></TabelaPregleda>
+        <TabelaPregleda :data="_rezervisaniPregledi" :title="'Rezervisani pregledi lekara'" class="mt-7"></TabelaPregleda>
       </div>
     </v-container>
   </div>
@@ -11,13 +11,12 @@
 
 <script>
 import {mapGetters, mapActions} from 'vuex';
-import RezervisaniPregledi from "@/components/pregledi/RezervisaniPregledi";
-import SlobodniPregledi from "@/components/pregledi/SlobodniPregledi";
+import TabelaPregleda from "./TabelaPregleda";
 export default {
-  name: "PreglediMain",
+  name: "PreglediLekar",
+  props: ["idLekara"],
   components: {
-    SlobodniPregledi,
-    RezervisaniPregledi
+    TabelaPregleda
   },
   computed: {
     ...mapGetters({
@@ -28,7 +27,7 @@ export default {
     }),
     _preglediMapped: function(){
       try{
-        return this.preglediKlinike.map(x => {
+        let temp = this.preglediKlinike.map(x => {
           let osoblje = this.osobljeKlinike.filter(y => y.id == x.lekar.id)[0];
           let tipPregleda = this.tipoviPregledaKlinike.filter(y => y.id == x.tipPregleda.id)[0];
           let sala = this.saleKlinike.filter(y => y.id == x.sala.id)[0];
@@ -38,6 +37,7 @@ export default {
             pocetak: new Date(x.pocetakPregleda).toLocaleTimeString(),
             kraj: new Date(x.krajPregleda).toLocaleTimeString(),
             lekar: `${osoblje.ime} ${osoblje.prezime}`,
+            lekarId: osoblje.id,
             tipPregleda: tipPregleda.naziv,
             sala: sala.oznaka,
             cena: parseInt(x.cena, 10),
@@ -50,6 +50,7 @@ export default {
           }
           return retval;
         });
+        return temp.filter(x => x.lekarId == this.idLekara);
       }catch{
         console.log("Ups");
         return [];
@@ -65,17 +66,13 @@ export default {
 
   },
   created(){
-    this.fetchOsobljeKlinike();
     this.fetchSaleKlinike();
-    this.fetchTipoviPregledaKlinike();
     this.fetchPreglediKlinike();
   },
   methods: {
     ...mapActions({
       fetchPreglediKlinike: 'preglediAdmin/fetchPreglediKlinike',
-      fetchOsobljeKlinike: 'osoblje/loadMedicinskoOsoblje',
       fetchSaleKlinike: 'sale/loadSale',
-      fetchTipoviPregledaKlinike: 'tipoviPregleda/loadTipoviPregleda',
     }),
   }
 
