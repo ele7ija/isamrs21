@@ -7,6 +7,9 @@ insert into authority values(5, 'medicinska-sestra');
 insert into klinika (id, naziv, adresa) values(1, 'Dimitrije Banjac', 'Zmaj Ognjena Vuka 1, Novi Sad, Srbija');
 insert into klinika (id, naziv, adresa) values(2, 'Dejan Cirjakovic', 'Zmaja od Nocaja 2, Beograd, Srbija');
 
+-- Administratori klinickog centra
+insert into korisnik (type, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled) values ('AC', 'admincentra@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'admin', 'admin', '1', 'Serbia', 'Novi Sad', 1, 6, 0x01);
+
 -- Administratori klinike
 insert into korisnik (type, klinika_admina_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled) values ('AK', 1, 'admin.admin@yahoo.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'admin_klinike', 'admin_klinike', '1', 'Serbia', 'Novi Sad', 1, 1, 0x01);
 insert into korisnik (type, klinika_admina_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled) values ('AK', 2, 'admin2.admin2@yahoo.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'admin_klinike', 'admin_klinike', '1', 'Serbia', 'Novi Sad', 1, 4, 0x01);
@@ -21,6 +24,7 @@ insert into user_authority values(4,3);
 insert into user_authority values(5,3);
 insert into user_authority values(2,1);
 insert into user_authority values(3,4);
+insert into user_authority values(6,2);
 
 insert into sala (oznaka, klinika_id) values ('Glavna operaciona', 1);
 insert into sala (oznaka, klinika_id) values ('Sporedna operaciona', 1);

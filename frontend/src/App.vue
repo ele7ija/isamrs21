@@ -9,6 +9,7 @@ import AdminKlinikeLayout from '@/layouts/AdminKlinikeLayout';
 import NeulogovanKorisnikLayout from '@/layouts/NeulogovanKorisnikLayout';
 import {mapGetters} from 'vuex';
 import PacijentiLayout from '@/layouts/PacijentiLayout.vue';
+import AdminKlinickogCentraLayout from '@/layouts/AdminKlinickogCentraLayout.vue';
 
 export default {
   name: 'App',
@@ -16,7 +17,8 @@ export default {
   components: {
     'admin-klinike-layout': AdminKlinikeLayout,
     'neulogovani-korisnik-layout': NeulogovanKorisnikLayout,
-    'pacijent-layout': PacijentiLayout
+    'pacijent-layout': PacijentiLayout,
+    'admin-klinickog-centra-layout': AdminKlinickogCentraLayout,
     // Mesto za nove layoute
   }
 }

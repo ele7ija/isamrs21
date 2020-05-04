@@ -51,6 +51,10 @@ const getters = {
       state.klinike,
       state.sortiranja 
     )
+  },
+
+  getKlinike(state){
+    return state.klinike;
   }
 }
 const actions = {

@@ -14,8 +14,14 @@ import Klinike from '@/components/pacijenti/klinike/Klinike';
 import KlinikaPage from '@/components/pacijenti/klinike/KlinikaPage';
 import RezervacijaPregleda from '@/components/pacijenti/klinike/RezervacijaPregleda';
 import Istorija from '@/components/pacijenti/klinike/Istorija';
+//admin klinickog centra
+import AdminiKlinickogCentra from '@/components/admin_klinickog_centra/AdminiKlinickogCentra'
+import AdminiKlinike from '@/components/admin_klinickog_centra/AdminiKlinike'
+import KlinikeFromAdminCentra from '@/components/admin_klinickog_centra/Klinike'
+
 
 import store from '@/store/index';
+
 //Plugins
 Vue.use(Router)
 
@@ -172,7 +178,37 @@ let router = new Router({
         authen: true,
         author: 'pacijent'
       }
-    }
+    },
+
+    //Admin klinickog centra
+    {
+      path: '/admini_klinickog_centra',
+      name: 'admini_klinickog_centra',
+      component: AdminiKlinickogCentra,
+      meta: {
+        authen: true,
+        author: 'admin-klinickog-centra'
+      },
+    },
+    {
+      path: '/admini_klinika',
+      name: 'admini_klinika',
+      component: AdminiKlinike,
+      meta: {
+        authen: true,
+        author: 'admin-klinickog-centra'
+      },
+    },
+    {
+      path: '/klinike',
+      name: 'klinike_from_admin_centra',
+      component: KlinikeFromAdminCentra,
+      meta: {
+        authen: true,
+        author: 'admin-klinickog-centra'
+      },
+    },
+    
   ]
 });
 
