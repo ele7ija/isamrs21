@@ -27,6 +27,7 @@ const state = {
   odabranaKlinika: null,
   odabraniPregled: null,
   kreiranaPoseta: null,
+  kreiranUpit: null,
   posete: [],
   nerealizovanePosete: []
 }
@@ -142,6 +143,10 @@ const actions = {
     await dispatch('loadKlinika', klinikaId);
     commit('setOdabranaKlinika', state.klinike[0]);
     await dispatch('loadPregledi', klinikaId);
+  },
+  async kreirajUpit({commit}, obj) {
+    let data = await klinikeAPI.kreirajUpit(obj);
+    commit('setUpit', data)
   }
 }
 const mutations = {
@@ -169,7 +174,9 @@ const mutations = {
   setPreglediKlinike: (state, obj) =>
     state.pregledi[obj.id] = obj.data,
   setNerealizovanePosete: (state, data) =>
-    state.nerealizovanePosete = data
+    state.nerealizovanePosete = data,
+  setUpit: (state, upit) =>
+    state.kreiranUpit = upit
 }
 
 export default{

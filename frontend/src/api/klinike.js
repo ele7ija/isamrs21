@@ -85,5 +85,15 @@ export default{
       options
     );
     return response.data;
+  },
+
+  async kreirajUpit(obj) {
+    let options = util.prepareOptions();
+    let response = await axios.post(
+      `${process.env.VUE_APP_BACKEND_ROOT}/upit`,
+      obj,
+      options
+    );
+    return response.data;
   }
 }
