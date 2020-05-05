@@ -187,5 +187,14 @@ public class Pregled implements IdentitySerializable{
 			return true;
 		return false;
 	}
+
+	public List<UpitZaPregled> getUpiti() {
+		return upiti;
+	}
+
+	public void setUpiti(List<UpitZaPregled> upiti) {
+		this.upiti = upiti;
+	}
+	
 	
 }

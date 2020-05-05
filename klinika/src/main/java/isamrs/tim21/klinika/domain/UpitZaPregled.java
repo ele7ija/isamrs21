@@ -26,8 +26,7 @@ import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
  * Pacijent pravi UpitZaPregled kada zeli da rezervise pregled.
  * Ovaj upit potom admin klinike treba da odobri. Postupak odobravanja
  * upita podrazumeva: postavljanje atributa odobren na true; pronalazak
- * unapred definisanog ili kreiranje novog {@link Pregled}-a; kreiranje
- * nove Posete i uvezivanja Pregleda i Posete.  
+ * unapred definisanog ili kreiranje novog {@link Pregled}-a
  * */
 @Entity
 @Table(name="upit_za_pregled")
@@ -90,6 +89,8 @@ public class UpitZaPregled implements IdentitySerializable {
 		potvrdjen = u.getPotvrdjen();
 		pocetakPregleda = u.getPocetakPregleda();
 		krajPregleda = u.getKrajPregleda();
+		adminObradio = false;
+		pacijentObradio = false;
 	}
 
 	@Override

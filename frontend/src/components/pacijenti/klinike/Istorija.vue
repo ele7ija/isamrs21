@@ -19,6 +19,7 @@
             <template
               v-for='(upit, index) in nepotvrdjeniUpiti'>
               <v-list-item
+                
                 :key='upit.id'
                 two-line>
                 <v-list-item-content class='pt-0'>
@@ -97,6 +98,7 @@
                 <template
                   v-for='(upit, index) in neodobreniUpiti'>
                   <v-list-item
+                    class='pb-2 pt-1'
                     :key='upit.id' 
                     two-line="">
                     <v-list-item-content class='pt-0'>
