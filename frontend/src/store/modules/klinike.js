@@ -9,7 +9,7 @@ const state = {
   // Pretraga i sortiranje klinika
   pocetniDatum: null,
   krajnjiDatum: null,
-  tipPregleda: null,
+  odabraniTipPregleda: null,
   dostupnaSortiranja: [
     {
       naziv: 'Naziv',
@@ -29,10 +29,12 @@ const state = {
   kreiranaPoseta: null,
   posete: [],
   nerealizovanePosete: [],
+  tipPregleda: null,
   // Upiti
   kreiranUpit: null,
   neodobreniUpiti: [],
-  nepotvrdjeniUpiti: []
+  nepotvrdjeniUpiti: [],
+  potvrdjenUpit: null
 }
 const internalMethods = {
   sortByKey(array, key){
@@ -89,9 +91,27 @@ const getters = {
       if (state.krajnjiDatum != null && dk > kd){
         return false;
       }
+      if(state.odabraniTipPregleda != null && 
+        x.tipPregleda.id !== state.odabraniTipPregleda.id){
+        return false;
+      }
       return true;
     })
     return novi;
+  },
+  dostupniTipoviPregleda: (state) => {
+    let myset = new Set();
+    let retval = [];
+    for (let klinika of state.klinike) {
+      for (let pregled of state.pregledi[klinika.id]) {
+        if (!myset.has(pregled.tipPregleda.naziv)) {
+          retval.push(pregled.tipPregleda);
+          myset.add(pregled.tipPregleda.naziv)
+        }
+        
+      }
+    }
+    return retval;
   }
 }
 const actions = {
@@ -158,6 +178,10 @@ const actions = {
   async dobaviNeodobreneUpite({commit}) {
     let data = await klinikeAPI.dobaviNeodobreneUpite();
     commit('setNeodobreniUpiti', data);
+  },
+  async potvrdiUpit({commit}, upitId){
+    let data = await klinikeAPI.potvrdiUpit(upitId);
+    commit('setPotvrdjenUpit', data);
   }
 }
 const mutations = {
@@ -192,6 +216,10 @@ const mutations = {
     state.nepotvrdjeniUpiti = upiti,
   setNeodobreniUpiti: (state, upiti) =>
     state.neodobreniUpiti = upiti,
+  setPotvrdjenUpit: (state, upit) => 
+    state.potvrdjenUpit = upit,
+  setOdabraniTipPregleda: (state, tip) =>
+    state.odabraniTipPregleda = tip
 }
 
 export default{
