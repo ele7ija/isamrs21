@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,10 +53,24 @@ public class UpitZaPregledController {
 		return new ResponseEntity<UpitZaPregled>(u2, HttpStatus.OK);
 	}
 	
+	@GetMapping(value="/neodobreni/{email}")
+	@PreAuthorize("hasAuthority('pacijent')")
+	public ResponseEntity<List<UpitZaPregled>> izlistajNeodobreneUpite(@PathVariable("email") String email) {
+		List<UpitZaPregled> l = upitZaPregledRepository.findNeodobreniByEmail(email);
+		return new ResponseEntity<List<UpitZaPregled>>(l, HttpStatus.OK);
+	}
+	
 	@GetMapping(value="/neodobreni")
 	@PreAuthorize("hasAuthority('pacijent')")
 	public ResponseEntity<List<UpitZaPregled>> izlistajNeodobreneUpite() {
 		List<UpitZaPregled> l = upitZaPregledRepository.findNeodobreni();
+		return new ResponseEntity<List<UpitZaPregled>>(l, HttpStatus.OK);
+	}
+	
+	@GetMapping(value="/nepotvrdjeni/{email}")
+	@PreAuthorize("hasAuthority('pacijent')")
+	public ResponseEntity<List<UpitZaPregled>> izlistajNepotvrdjeneUpite(@PathVariable("email") String email) {
+		List<UpitZaPregled> l = upitZaPregledRepository.findNepotvrdjeniByEmail(email);
 		return new ResponseEntity<List<UpitZaPregled>>(l, HttpStatus.OK);
 	}
 	
@@ -63,6 +79,15 @@ public class UpitZaPregledController {
 	public ResponseEntity<List<UpitZaPregled>> izlistajNepotvrdjeneUpite() {
 		List<UpitZaPregled> l = upitZaPregledRepository.findNepotvrdjeni();
 		return new ResponseEntity<List<UpitZaPregled>>(l, HttpStatus.OK);
+	}
+	
+	@PutMapping(value="/potvrdi/{id}")
+	@PreAuthorize("hasAuthority('pacijent')")
+	public ResponseEntity<UpitZaPregled> potvrdi(@PathVariable("id") Long id) {
+		UpitZaPregled u = upitZaPregledRepository.findById(id).get();
+		u.setPotvrdjen(true);
+		upitZaPregledRepository.save(u);
+		return new ResponseEntity<UpitZaPregled>(u, HttpStatus.OK);
 	}
 	
 	// Put mapping za odobravanje/potvrdu upita.

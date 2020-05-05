@@ -27,9 +27,12 @@ const state = {
   odabranaKlinika: null,
   odabraniPregled: null,
   kreiranaPoseta: null,
-  kreiranUpit: null,
   posete: [],
-  nerealizovanePosete: []
+  nerealizovanePosete: [],
+  // Upiti
+  kreiranUpit: null,
+  neodobreniUpiti: [],
+  nepotvrdjeniUpiti: []
 }
 const internalMethods = {
   sortByKey(array, key){
@@ -147,6 +150,14 @@ const actions = {
   async kreirajUpit({commit}, obj) {
     let data = await klinikeAPI.kreirajUpit(obj);
     commit('setUpit', data)
+  },
+  async dobaviNepotvrdjeneUpite({commit}) {
+    let data = await klinikeAPI.dobaviNepotvrdjeneUpite();
+    commit('setNepotvrdjeniUpiti', data);
+  },
+  async dobaviNeodobreneUpite({commit}) {
+    let data = await klinikeAPI.dobaviNeodobreneUpite();
+    commit('setNeodobreniUpiti', data);
   }
 }
 const mutations = {
@@ -176,7 +187,11 @@ const mutations = {
   setNerealizovanePosete: (state, data) =>
     state.nerealizovanePosete = data,
   setUpit: (state, upit) =>
-    state.kreiranUpit = upit
+    state.kreiranUpit = upit,
+  setNepotvrdjeniUpiti: (state, upiti) =>
+    state.nepotvrdjeniUpiti = upiti,
+  setNeodobreniUpiti: (state, upiti) =>
+    state.neodobreniUpiti = upiti,
 }
 
 export default{

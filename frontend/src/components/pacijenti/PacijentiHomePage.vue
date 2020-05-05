@@ -6,46 +6,138 @@
             </UserDashboard>
           </v-col>
           <v-col cols=3>
-            <v-card outlined>
-            <v-app-bar 
-              color='primary' dark>
-              <v-toolbar-title>
-                Rezervisani pregledi
-              </v-toolbar-title>
-            </v-app-bar>
-            <v-list v-if='nerealizovanePosete.length != 0'>
-              <template
-                v-for='(poseta, index) in nerealizovanePosete'>
-                <v-list-item
-                  :key='poseta.id' 
-                  two-line>
-                  <v-list-item-content class='pt-0'>
-                  <v-list-item-title>
-                    {{poseta.pregled.tipPregleda.naziv}}
-                  </v-list-item-title>
-                  <v-list-item-subtitle>
-                    {{formatDate(poseta.pregled.pocetakPregleda)}} - 
-                    {{formatDateTime(poseta.pregled.krajPregleda)}}
-                  </v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-divider
-                  :key='poseta.id + "d"'
-                  v-if='index!=nerealizovanePosete.length-1'>
-                </v-divider>
-              </template>
-            </v-list>
-            <v-list 
-              v-if='nerealizovanePosete.length==0'>
-              <v-list-item>
-                <v-list-item-content class='pt-0'>
-                <v-list-item-title>
-                  Nema rezervisanih pregleda
-                </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-            </v-card>
+            <v-row>
+              <v-col>
+                <v-card outlined>
+                <v-app-bar 
+                  color='primary' dark>
+                  <v-toolbar-title>
+                    Rezervisani pregledi
+                  </v-toolbar-title>
+                </v-app-bar>
+                <v-list v-if='nerealizovanePosete.length != 0'>
+                  <template
+                    v-for='(poseta, index) in nerealizovanePosete'>
+                    <v-list-item
+                      :key='poseta.id' 
+                      two-line>
+                      <v-list-item-content class='pt-0'>
+                      <v-list-item-title>
+                        {{poseta.pregled.tipPregleda.naziv}}
+                      </v-list-item-title>
+                      <v-list-item-subtitle>
+                        {{formatDate(poseta.pregled.pocetakPregleda)}} - 
+                        {{formatDateTime(poseta.pregled.krajPregleda)}}
+                      </v-list-item-subtitle>
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-divider
+                      :key='poseta.id + "d"'
+                      v-if='index!=nerealizovanePosete.length-1'>
+                    </v-divider>
+                  </template>
+                </v-list>
+                <v-list 
+                  v-if='nerealizovanePosete.length==0'>
+                  <v-list-item>
+                    <v-list-item-content class='pt-0'>
+                    <v-list-item-title>
+                      Nema rezervisanih pregleda
+                    </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+                </v-card>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-card outlined>
+                  <v-app-bar 
+                    color='primary' dark>
+                    <v-toolbar-title>
+                      Neodobreni upiti
+                    </v-toolbar-title>
+                  </v-app-bar>
+                  <v-list v-if='neodobreniUpiti.length != 0'>
+                    <template
+                      v-for='(upit, index) in neodobreniUpiti'>
+                      <v-list-item
+                        :key='upit.id' 
+                        two-line>
+                        <v-list-item-content class='pt-0'>
+                        <v-list-item-title>
+                          {{upit.tipPregleda.naziv}}
+                        </v-list-item-title>
+                        <v-list-item-subtitle>
+                          {{formatDate(upit.pocetakPregleda)}} - 
+                          {{formatDateTime(upit.krajPregleda)}}
+                        </v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-list-item>
+                      <v-divider
+                        :key='upit.id + "d"'
+                        v-if='index!=neodobreniUpiti.length-1'>
+                      </v-divider>
+                    </template>
+                  </v-list>
+                  <v-list 
+                    v-if='neodobreniUpiti.length==0'>
+                    <v-list-item>
+                      <v-list-item-content class='pt-0'>
+                      <v-list-item-title>
+                        Nema neodobrenih upita
+                      </v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </v-list>
+                </v-card>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-card outlined>
+                <v-app-bar 
+                  color='primary' dark>
+                  <v-toolbar-title>
+                    Nepotvrdjeni upiti
+                  </v-toolbar-title>
+                </v-app-bar>
+                <v-list v-if='nepotvrdjeniUpiti.length != 0'>
+                  <template
+                    v-for='(upit, index) in nepotvrdjeniUpiti'>
+                    <v-list-item
+                      :key='upit.id' 
+                      two-line>
+                      <v-list-item-content class='pt-0'>
+                      <v-list-item-title>
+                        {{upit.tipPregleda.naziv}}
+                      </v-list-item-title>
+                      <v-list-item-subtitle>
+                        {{formatDate(upit.pocetakPregleda)}} - 
+                        {{formatDateTime(upit.krajPregleda)}}
+                      </v-list-item-subtitle>
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-divider
+                      :key='upit.id + "d"'
+                      v-if='index!=nepotvrdjeniUpiti.length-1'>
+                    </v-divider>
+                  </template>
+                </v-list>
+                <v-list 
+                  v-if='nepotvrdjeniUpiti.length==0'>
+                  <v-list-item>
+                    <v-list-item-content class='pt-0'>
+                    <v-list-item-title>
+                      Nema nepotvrdjenih upita
+                    </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-card>
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
       </v-container>
@@ -64,12 +156,16 @@ export default {
   },
   computed: {
     ...mapState('klinike', [
-      'nerealizovanePosete'
+      'nerealizovanePosete',
+      'neodobreniUpiti',
+      'nepotvrdjeniUpiti'
     ])
   },
   methods: {
     ...mapActions('klinike', [
-      'dobaviNerealizovanePosete'
+      'dobaviNerealizovanePosete',
+      'dobaviNeodobreneUpite',
+      'dobaviNepotvrdjeneUpite'
     ]),
     formatDate: function(date) {
       let d = new Date(date);
@@ -84,6 +180,8 @@ export default {
     },
   },
   created() {
+    this.dobaviNeodobreneUpite();
+    this.dobaviNepotvrdjeneUpite();
     this.dobaviNerealizovanePosete();
   }
 }

@@ -73,7 +73,7 @@ public class Pregled implements IdentitySerializable{
 	private Lekar lekar;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JsonSerialize(using=IdentitySerializer.class)
+	//@JsonSerialize(using=IdentitySerializer.class)
 	private Klinika klinika;
 
 	@OneToOne(mappedBy="pregled", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
