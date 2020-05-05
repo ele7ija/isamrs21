@@ -44,6 +44,14 @@ public class UpitZaPregled implements IdentitySerializable {
 	@Column(name="potvrdjen")
 	private Boolean potvrdjen;
 	
+	/** Da li ga je admin obradio (bitno sa stanovišta uzastopnih upita za isti pregled, ili brisanja slobodnog termina pregleda)*/
+	@Column(name="adminObradio")
+	private Boolean adminObradio;
+	
+	/** Da li ga je admin obradio (bitno sa stanovišta brisanja slobodnog termina pregleda)*/
+	@Column(name="pacijentObradio")
+	private Boolean pacijentObradio;
+	
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "izmenjeni_id", referencedColumnName = "id")
 	private UpitZaPregled izmenjeniPregled;
@@ -73,6 +81,10 @@ public class UpitZaPregled implements IdentitySerializable {
 	@JsonSerialize(using=IdentitySerializer.class)
 	private Pacijent pacijent;
 
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JsonSerialize(using=IdentitySerializer.class)
+	private Pregled unapredDefinisaniPregled;
+	
 	public UpitZaPregled(UpitZaPregledDTO u) {
 		odobren = u.getOdobren();
 		potvrdjen = u.getPotvrdjen();
@@ -173,6 +185,30 @@ public class UpitZaPregled implements IdentitySerializable {
 
 	public void setPacijent(Pacijent pacijent) {
 		this.pacijent = pacijent;
+	}
+
+	public Boolean getAdminObradio() {
+		return adminObradio;
+	}
+
+	public void setAdminObradio(Boolean adminObradio) {
+		this.adminObradio = adminObradio;
+	}
+
+	public Boolean getPacijentObradio() {
+		return pacijentObradio;
+	}
+
+	public void setPacijentObradio(Boolean pacijentObradio) {
+		this.pacijentObradio = pacijentObradio;
+	}
+
+	public Pregled getUnapredDefinisaniPregled() {
+		return unapredDefinisaniPregled;
+	}
+
+	public void setUnapredDefinisaniPregled(Pregled unapredDefinisaniPregled) {
+		this.unapredDefinisaniPregled = unapredDefinisaniPregled;
 	}
 	
 	

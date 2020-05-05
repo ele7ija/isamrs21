@@ -25,6 +25,16 @@
                   :rules="notEmptyRule"
                   label="Adresa klinike"
                 ></v-text-field>
+                <v-text-field
+                  v-model="temp_klinika.grad"
+                  :rules="notEmptyRule"
+                  label="Grad klinike"
+                ></v-text-field>
+                <v-text-field
+                  v-model="temp_klinika.drzava"
+                  :rules="notEmptyRule"
+                  label="Drzava klinike"
+                ></v-text-field>
                 <v-btn
                   :disabled="!isFormValid"
                   color="success"

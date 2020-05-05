@@ -20,7 +20,7 @@ const state = {
           { 
             title: 'Profil klinike',
             action: 'mdi-account-cog',
-            componentName: 'klinika_admin',
+            componentName: 'klinika_admin'
           },
           { 
             title: 'Tipovi pregleda',
@@ -41,6 +41,11 @@ const state = {
             title: 'Pregledi',
             action: 'mdi-alpha-p',
             componentName: 'pregledi_admin'
+          },
+          {
+            title: 'Upiti za preglede',
+            action: 'mdi-alpha-u',
+            componentName: 'upiti_pregledi_admin'
           },
         ]
       }
