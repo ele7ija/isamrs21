@@ -21,6 +21,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import isamrs.tim21.klinika.dto.UpitZaPregledDTO;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
+import isamrs.tim21.klinika.jsonSerialize.KorisnikSerializer;
+import isamrs.tim21.klinika.services.PacijentService;
 
 /** 
  * Pacijent pravi UpitZaPregled kada zeli da rezervise pregled.
@@ -77,11 +79,10 @@ public class UpitZaPregled implements IdentitySerializable {
 	private Klinika klinika;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JsonSerialize(using=IdentitySerializer.class)
+	@JsonSerialize(using=KorisnikSerializer.class)
 	private Pacijent pacijent;
 
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JsonSerialize(using=IdentitySerializer.class)
 	private Pregled unapredDefinisaniPregled;
 	
 	public UpitZaPregled(UpitZaPregledDTO u) {
