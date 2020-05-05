@@ -6,6 +6,20 @@
         <TabelaObradjenihUpita :all="_obradjeniUpiti" class="mt-5" @deleteItem="deleteItem"></TabelaObradjenihUpita>
       </div>
     </v-container>
+    <v-snackbar
+      v-model="snackbar"
+      :timeout="snackbarTimeout"
+      color="red darken-3"
+    >
+      {{ snackbarText }}
+      <v-btn
+        color="grey darken-3"
+        text
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
   </div>
 </template>
 
@@ -15,13 +29,22 @@ import TabelaNeobradjenihUpita from './TabelaNeobradjenihUpita';
 import TabelaObradjenihUpita from './TabelaObradjenihUpita';
 export default {
   name: "UpitiPreglediAdmin",
+  data: function(){
+    return {
+      snackbar: false,
+      snackbarTimeout: 3000,
+      snackbarText: null
+    };
+  },
   components: {
     TabelaNeobradjenihUpita,
     TabelaObradjenihUpita
   },
+  
   computed:{
     ...mapGetters({
-      upiti: "upitiPreglediAdmin/getUpiti"
+      upiti: "upitiPreglediAdmin/getUpiti",
+      noviPregled: "preglediAdmin/getNoviPregled"
     }),
     _neobradjeniUpiti: function(){
       let temp = this.upiti.filter(x => !x.adminObradio);
@@ -34,8 +57,8 @@ export default {
           kraj: new Date(x.krajPregleda).toLocaleTimeString(),
           lekar: `${x.lekar.ime} ${x.lekar.prezime}`,
           tipPregleda: x.tipPregleda.naziv,
-          sala: x.pregled ? x.pregled.sala.oznaka : null,
-          pregled: x.pregled
+          sala: x.unapredDefinisaniPregled ? x.unapredDefinisaniPregled.sala.oznaka : null,
+          pregled: x.unapredDefinisaniPregled
         };
       });
     },
@@ -50,43 +73,73 @@ export default {
           kraj: new Date(x.krajPregleda).toLocaleTimeString(),
           lekar: `${x.lekar.ime} ${x.lekar.prezime}`,
           tipPregleda: x.tipPregleda.naziv,
-          sala: x.pregled ? x.pregled.sala.oznaka : null,
-          pregled: x.pregled
+          sala: x.unapredDefinisaniPregled ? x.unapredDefinisaniPregled.sala.oznaka : null,
+          pregled: x.unapredDefinisaniPregled,
+          odobren: x.odobren,
+          pacijentObradio: x.pacijentObradio,
+          potvrdjen: x.potvrdjen
         };
       });
     }
+
   },
   created(){
+    this.fetchPregledi();
     this.fetchUpiti();
   },
   methods: {
     ...mapActions({
       fetchUpiti: "upitiPreglediAdmin/loadUpiti",
+      fetchPregledi: "preglediAdmin/fetchPreglediKlinike",
       obradiAdmin: "upitiPreglediAdmin/obradiAdmin",
+      deleteUpit: "upitiPreglediAdmin/deleteUpit"
     }),
     accept(item){
       //SAMO za UPIT ZA UNAPRED DEFINISAN PREGLED
       let updatedItem = this.upiti.filter(x => x.id == item.id)[0];
-      updatedItem.adminObradio = true;
-      updatedItem.odobren = true;
+      let obj = {
+        id: updatedItem.id,
+        adminObradio: true,
+        odobren: true,
+        unapredDefinisaniPregled: {
+          id: updatedItem.unapredDefinisaniPregled ? updatedItem.unapredDefinisaniPregled.id : this.noviPregled.id
+        }
+      }
 
       //PUT zahtev za accept
-      this.obradiAdmin(updatedItem);
+      this.obradiAdmin(obj);
+      this.refreshTables();
     },
     reject(item){
       //SAMO za UPIT ZA UNAPRED DEFINISAN PREGLED
       let updatedItem = this.upiti.filter(x => x.id == item.id)[0];
-      updatedItem.adminObradio = true;
-      updatedItem.odobren = false;
+      let obj = {
+        id: updatedItem.id,
+        adminObradio: true,
+        odobren: false,
+        unapredDefinisaniPregled: {
+          id: updatedItem.unapredDefinisaniPregled ? updatedItem.unapredDefinisaniPregled.id : this.noviPregled.id
+        }
+      }
 
       //PUT zahtev za reject
-      this.obradiAdmin(updatedItem);
+      this.obradiAdmin(obj);
+      this.refreshTables();
     },
     deleteItem(item){
       //TODO: brisanje upita na serveru(samo ako je pacijent obradio upit)
       //voditi racuna da se obrise i originalni upit ukoliko je item zapravo izmenjeniUpit
-      return item;
+      this.deleteUpit(item.id).then(null, (error) => {
+        this.snackbarText = error;
+        this.snackbar = true;
+      });
+    },
+
+    refreshTables(){
+      this._neobradjeniUpiti;
+      this._obradjeniUpiti
     }
+
   }
 }
 </script>

@@ -27,5 +27,12 @@ export default{
       options
     );
     return data;
+  },
+  deleteUpit(idKlinike, idUpita){
+    let options = util.prepareOptions();
+    return axios.delete(
+      `${process.env.VUE_APP_BACKEND_ROOT}/upit/${idKlinike}/${idUpita}`,
+      options
+    );
   }
 }

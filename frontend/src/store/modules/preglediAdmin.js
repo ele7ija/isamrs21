@@ -2,10 +2,12 @@ import pregledi from '@/api/pregledi';
 
 const state = {
   klinika: null,
-  preglediKlinike: [] 
+  preglediKlinike: [],
+  noviPregled: null //PREGLED KOJI PRAVI ADMIN KLINIKE PRI OBRADI UPITA ZA CUSTOM PREGLEDOM
 };
 const getters = {
-  getPreglediKlinike: (state) => state.preglediKlinike
+  getPreglediKlinike: (state) => state.preglediKlinike,
+  getNoviPregled: (state) => state.noviPregled
 };
 const actions = {
   async fetchPreglediKlinike({commit, rootGetters}){

@@ -4,6 +4,10 @@
       :headers="headers"
       :items="all"
       :search="search"
+      :single-expand="singleExpand"
+      :expanded.sync="expanded"
+      item-key="id"
+      show-expand
       class="elevation-1"
       >
       <template v-slot:top>
@@ -51,6 +55,15 @@
           mdi-pencil
         </v-icon>
       </template>
+      <template v-slot:expanded-item="{ headers, item }">
+        <td :colspan="headers.length">
+          <p class="text-center mt-2 mb-n4 pb-n4">Jos neki podaci o ovom pregledu</p>
+          <br>
+          Cena: {{item.pregled.cena}} <br>
+          Popust: {{item.pregled.popust}} <br>
+          KonacnaCena: {{item.pregled.konacnaCena}} <br>
+        </td>
+      </template>
     </v-data-table>
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
@@ -75,6 +88,8 @@ export default {
     return {
       search: '',
       dialog: false,
+      expanded: [],
+      singleExpand: true,
       headers: [
         {
           text: 'Pacijent',
@@ -116,6 +131,10 @@ export default {
           text: 'Akcije',
           value: 'actions',
           sortable: false,
+        },
+        {
+          text: 'Detalji',
+          value: 'data-table-expand'
         }
       ],
       editableItem: {

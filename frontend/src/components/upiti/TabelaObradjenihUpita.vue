@@ -10,6 +10,45 @@
       show-expand
       class="elevation-1"
       >
+      <template v-slot:item="{ item, expand, isExpanded }">
+        <tr :class="{
+              'red lighten-3': (item.pacijentObradio && (!item.odobren || !item.potvrdjen)),
+              'green lighten-3': (item.pacijentObradio && (item.odobren && item.potvrdjen)),
+              'yellow lighten-3': !item.pacijentObradio
+              }">
+          <td>{{item.pacijent}}</td>
+          <td>{{item.datum}}</td>
+          <td>{{item.pocetak}}</td>
+          <td>{{item.kraj}}</td>
+          <td>{{item.lekar}}</td>
+          <td>{{item.tipPregleda}}</td>
+          <td>{{item.sala}}</td>
+          <td>
+            <v-icon
+              small
+              class="mr-2"
+              v-if="item.pregled!=null"
+              @click="deleteItem(item)"
+            >
+              mdi-delete
+            </v-icon>
+          </td>
+          <td>
+            <v-icon @click="expand(!isExpanded)">mdi-chevron-down</v-icon>
+          </td>
+        </tr>
+      </template>
+      <template v-slot:expanded-item="{ headers, item }">
+        <td :colspan="headers.length">
+          <p class="text-center mt-2 mb-n4 pb-n4">Jos neki podaci o ovom pregledu</p>
+          <br>
+          Cena: {{item.pregled.cena}} <br>
+          Popust: {{item.pregled.popust}} <br>
+          KonacnaCena: {{item.pregled.konacnaCena}} <br>
+          Obradjen od strane pacijenta (preduslov za brisanje ovog upita): {{item.pacijentObradio}} <br>
+        </td>
+      </template>
+
       <template v-slot:top>
         <v-toolbar flat color="blue lighten-3">
           <v-toolbar-title>Obradjeni upiti za preglede</v-toolbar-title>
@@ -28,26 +67,6 @@
             hide-details
           ></v-text-field>
         </v-toolbar>
-      </template>
-      <template v-slot:item.actions="{ item }">
-        <v-icon
-          small
-          class="mr-2"
-          v-if="item.pregled!=null"
-          @click="deleteItem(item)"
-        >
-          mdi-delete
-        </v-icon>
-      </template>
-      <template v-slot:expanded-item="{ headers, item }">
-        <td :colspan="headers.length">
-          <p class="text-center mt-2 mb-n4 pb-n4">Jos neki podaci o ovom pregledu</p>
-          <br>
-          Cena: {{item.pregled.cena}}
-          Popust: {{item.pregled.popust}}
-          KonacnaCena: {{item.pregled.konacnaCena}}
-          Obradjen od strane pacijenta (preduslov za brisanje ovog upita): {{item.pacijentObradio}}
-        </td>
       </template>
     </v-data-table>
   </div>

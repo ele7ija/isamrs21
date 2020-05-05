@@ -121,6 +121,7 @@ export default{
     let options = util.prepareOptions();
     let response = await axios.put(
       `${process.env.VUE_APP_BACKEND_ROOT}/upit/potvrdi/${id}`,
+      {}, //obavezno prvo body da ne bi header bio protumacen kao body
       options
     );
     return response.data;
