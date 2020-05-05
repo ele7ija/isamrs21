@@ -11,6 +11,7 @@ import cenovnici from './modules/cenovnici';
 import preglediAdmin from './modules/preglediAdmin';
 import layout from './modules/layout';
 import pregledDialog from './modules/pregledDialog';
+import upitiPreglediAdmin from './modules/upitiPreglediAdmin';
 import createPersistedState from 'vuex-persistedstate'
 
 //Plugins
@@ -28,7 +29,8 @@ export default new Vuex.Store({
     cenovnici,
     preglediAdmin,
     layout,
-    pregledDialog
+    pregledDialog,
+    upitiPreglediAdmin
   },
 
   plugins: [

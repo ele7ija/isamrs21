@@ -178,6 +178,16 @@ public class Pregled implements IdentitySerializable{
 		this.konacnaCena = konacnaCena;
 	}
 
+	
+	
+	public List<UpitZaPregled> getUpiti() {
+		return upiti;
+	}
+
+	public void setUpiti(List<UpitZaPregled> upiti) {
+		this.upiti = upiti;
+	}
+
 	public boolean intersects(Pregled pregled) {
 		if((pocetakPregleda.after(pregled.getPocetakPregleda()) || pocetakPregleda.equals(pregled.getPocetakPregleda())) && 
 			pocetakPregleda.before(pregled.getKrajPregleda()) || pocetakPregleda.equals(pregled.getKrajPregleda()))

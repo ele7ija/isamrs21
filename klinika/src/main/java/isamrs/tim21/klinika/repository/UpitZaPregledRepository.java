@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import isamrs.tim21.klinika.domain.UpitZaPregled;
@@ -18,5 +19,9 @@ public interface UpitZaPregledRepository extends JpaRepository<UpitZaPregled, Lo
 	@Query("SELECT u FROM UpitZaPregled u "
 			+ "WHERE u.potvrdjen = false")
 	List<UpitZaPregled> findNepotvrdjeni();
+
+	@Query("SELECT u FROM UpitZaPregled u "
+			+ "WHERE u.klinika.id = :idKlinike")
+	List<UpitZaPregled> findAllByIdKlinike(@Param("idKlinike") long idKlinike);
 
 }
