@@ -38,7 +38,7 @@
 <!-- forma za unos ili izmenu unutar dialoga-->
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ on }">
-              <v-btn color="primary" dark class="mb-2" v-on="on">Dodaj</v-btn>
+              <v-btn color="primary"  class="mb-2" v-on="on">Dodaj</v-btn>
             </template>
             <v-form v-model="isFormValid">
               <v-card>
@@ -225,15 +225,21 @@ export default {
     ...mapActions(
       {
         fetchData: 'klinike/loadKlinike',
-        // addSala: 'sale/addSala',
-        // updateSala: 'sale/updateSala',
+        addKlinika: 'klinike/addKlinika',
+        updateKlinika: 'klinike/updateKlinikaFromAdminCentra',
         // removeSala: 'sale/removeSala'
       }
     ),
+
+
     resetNewItem(){
       this.newItem = {
         naziv: '',
-      };
+        adresa: '',
+        grad: '',
+        drzava: '',
+        opis: '',
+      }
     },
     close(){
       this.resetNewItem();
@@ -242,15 +248,26 @@ export default {
     },
     save(){
       if(this.update){
-        this.updateSala(this.newItem);
+        
+        this.updateKlinika(this.newItem);
       }else{
-        this.addSala(this.newItem);
+        //adding klinika
+        this.addKlinika(this.newItem);
       }
       this.close();
     },
     editItem(item){
       this.update = true;
-      this.newItem = Object.assign({}, item);
+      
+      //this.newItem = Object.assign({}, item);
+      this.newItem = {
+        id: item.id,
+        naziv: item.naziv,
+        adresa: item.adresa,
+        grad: item.grad,
+        drzava: item.drzava,
+        opis: item.opis,
+      }
       this.dialog = true;
     },
     deleteItem(item){
