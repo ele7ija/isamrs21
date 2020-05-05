@@ -2,6 +2,7 @@ package isamrs.tim21.klinika.domain;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -21,6 +23,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
+import isamrs.tim21.klinika.jsonSerialize.UpitZaPregledListSerializer;
 
 /**
  * Pregled je entitet koji nije vezan za slucaj konkretnog pacijenta.
@@ -79,6 +82,10 @@ public class Pregled implements IdentitySerializable{
 	@OneToOne(mappedBy="pregled", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	@JsonSerialize(using=IdentitySerializer.class)
 	private Poseta poseta;
+	
+	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="unapredDefinisaniPregled")
+	@JsonSerialize(using=UpitZaPregledListSerializer.class)
+	private List<UpitZaPregled> upiti;
 	
 	public Pregled(){}
 
