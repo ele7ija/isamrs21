@@ -125,5 +125,15 @@ export default{
       options
     );
     return response.data;
+  },
+
+  async odustaniUpit(id) {
+    let options = util.prepareOptions();
+    let response = await axios.put(
+      `${process.env.VUE_APP_BACKEND_ROOT}/upit/odustani/${id}`,
+      {}, //obavezno prvo body da ne bi header bio protumacen kao body
+      options
+    );
+    return response.data;
   }
 }

@@ -45,6 +45,9 @@ public class UpitZaPregled implements IdentitySerializable {
 	@Column(name="potvrdjen")
 	private Boolean potvrdjen;
 	
+	@Column(name="opis")
+	private String opis;
+	
 	/** Da li ga je admin obradio (bitno sa stanovišta uzastopnih upita za isti pregled, ili brisanja slobodnog termina pregleda)*/
 	@Column(name="adminObradio")
 	private Boolean adminObradio;
@@ -212,6 +215,15 @@ public class UpitZaPregled implements IdentitySerializable {
 	public void setUnapredDefinisaniPregled(Pregled unapredDefinisaniPregled) {
 		this.unapredDefinisaniPregled = unapredDefinisaniPregled;
 	}
+
+	public String getOpis() {
+		return opis;
+	}
+
+	public void setOpis(String opis) {
+		this.opis = opis;
+	}
+	
 	
 	
 }

@@ -28,6 +28,7 @@ import isamrs.tim21.klinika.repository.KorisniciRepository;
 import isamrs.tim21.klinika.repository.PregledRepository;
 import isamrs.tim21.klinika.repository.TipPregledaRepository;
 import isamrs.tim21.klinika.repository.UpitZaPregledRepository;
+import isamrs.tim21.klinika.services.PosetaService;
 import isamrs.tim21.klinika.services.UpitZaPregledeService;
 
 @RestController
@@ -50,6 +51,9 @@ public class UpitZaPregledController {
 	
 	@Autowired
 	PregledRepository pregledRepository;
+	
+	@Autowired
+	PosetaService posetaService;
 		
 	/** Pacijent ili lekar dodaje upit */
 	@PostMapping
@@ -104,6 +108,17 @@ public class UpitZaPregledController {
 	public ResponseEntity<UpitZaPregled> potvrdi(@PathVariable("id") Long id) {
 		UpitZaPregled u = upitZaPregledRepository.findById(id).get();
 		u.setPotvrdjen(true);
+		u.setPacijentObradio(true);
+		upitZaPregledRepository.save(u);
+		posetaService.kreirajNovuPosetu(u);
+		return new ResponseEntity<UpitZaPregled>(u, HttpStatus.OK);
+	}
+	
+	@PutMapping(value="/odustani/{id}")
+	@PreAuthorize("hasAuthority('pacijent')")
+	public ResponseEntity<UpitZaPregled> odustani(@PathVariable("id") Long id) {
+		UpitZaPregled u = upitZaPregledRepository.findById(id).get();
+		u.setPotvrdjen(false);
 		u.setPacijentObradio(true);
 		upitZaPregledRepository.save(u);
 		return new ResponseEntity<UpitZaPregled>(u, HttpStatus.OK);

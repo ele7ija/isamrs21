@@ -145,7 +145,11 @@ public class PregledService {
 		for (Pregled p : retval) {
 			boolean flag = false;
 			for (UpitZaPregled u : p.getUpiti()) {
-				if (u.getOdobren()==true) {
+				if (u.getPotvrdjen()) {
+					flag = true;
+					break;
+				}
+				else if (u.getOdobren() && !u.getPacijentObradio()) {
 					flag = true;
 					break;
 				}

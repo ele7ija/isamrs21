@@ -75,7 +75,7 @@ public class Pregled implements IdentitySerializable{
 	//@JsonSerialize(using=IdentitySerializer.class)
 	private Lekar lekar;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
 	//@JsonSerialize(using=IdentitySerializer.class)
 	private Klinika klinika;
 
@@ -176,16 +176,6 @@ public class Pregled implements IdentitySerializable{
 
 	public void setKonacnaCena(Double konacnaCena) {
 		this.konacnaCena = konacnaCena;
-	}
-
-	
-	
-	public List<UpitZaPregled> getUpiti() {
-		return upiti;
-	}
-
-	public void setUpiti(List<UpitZaPregled> upiti) {
-		this.upiti = upiti;
 	}
 
 	public boolean intersects(Pregled pregled) {

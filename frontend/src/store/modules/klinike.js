@@ -182,6 +182,10 @@ const actions = {
   async potvrdiUpit({commit}, upitId){
     let data = await klinikeAPI.potvrdiUpit(upitId);
     commit('setPotvrdjenUpit', data);
+  },
+  async odustaniUpit({commit}, upitId){
+    let data = await klinikeAPI.odustaniUpit(upitId);
+    commit('setPotvrdjenUpit', data);
   }
 }
 const mutations = {

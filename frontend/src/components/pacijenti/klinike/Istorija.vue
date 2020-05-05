@@ -139,14 +139,92 @@
       <!-- Posete -->
       <v-col :cols=6>
         <v-row>
-          
+          <v-col>
+            <v-card outlined>
+              <v-app-bar 
+                color='black' dark>
+                <v-toolbar-title>
+                  Posete klinikama
+                </v-toolbar-title>
+                <v-spacer></v-spacer>
+              </v-app-bar>
+              <v-list 
+                v-if='posete.length != 0'
+                subheader>
+                <v-subheader>Buduće</v-subheader>
+                <template
+                  v-for='(poseta, index) in posete'>
+                  <v-list-item
+                    class='pb-2 pt-1'
+                    :key='poseta.id' 
+                    two-line=""
+                    v-if='!posetaProsla(poseta)'>
+                    <v-list-item-content class='pt-0'>
+                    <v-list-item-title>
+                      {{poseta.pregled.tipPregleda.naziv}}
+                    </v-list-item-title>
+                    <v-list-item-subtitle>
+                      {{formatDate(poseta.pregled.pocetakPregleda)}} - 
+                      {{formatDateTime(poseta.pregled.krajPregleda)}}
+                    </v-list-item-subtitle>
+                    <v-list-item-subtitle>
+                      {{poseta.pregled.klinika.adresa}}, 
+                      {{poseta.pregled.klinika.grad}},
+                      {{poseta.pregled.klinika.drzava}}
+                    </v-list-item-subtitle>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-divider
+                    :key='poseta.id + "d"'
+                    v-if='index!=
+                    !posetaProsla(poseta)'>
+                  </v-divider>
+                </template>
+                <v-subheader>Prošle</v-subheader>
+                <template
+                  v-for='(poseta, index) in posete'>
+                  <v-list-item
+                    class='pb-2 pt-1'
+                    :key='poseta.id' 
+                    two-line=""
+                    v-if='posetaProsla(poseta)'>
+                    <v-list-item-content class='pt-0'>
+                    <v-list-item-title>
+                      {{poseta.pregled.tipPregleda.naziv}}
+                    </v-list-item-title>
+                    <v-list-item-subtitle>
+                      {{formatDate(poseta.pregled.pocetakPregleda)}} - 
+                      {{formatDateTime(poseta.pregled.krajPregleda)}}
+                    </v-list-item-subtitle>
+                    <v-list-item-subtitle>
+                      {{poseta.pregled.klinika.adresa}}, 
+                      {{poseta.pregled.klinika.grad}},
+                      {{poseta.pregled.klinika.drzava}}
+                    </v-list-item-subtitle>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-divider
+                    :key='poseta.id + "d"'
+                    v-if='index!=posete.length-1 &&
+                    posetaProsla(poseta)'>
+                  </v-divider>
+                </template>
+              </v-list>
+              <v-list 
+                v-if='posete.length==0'>
+                <v-list-item>
+                  <v-list-item-content class='pt-0'>
+                  <v-list-item-title>
+                    Nema poseta
+                  </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-card>
+          </v-col>
         </v-row>
       </v-col>
     </v-row>
-    <div v-for='poseta in posete'
-      :key='poseta.id'>
-      {{poseta.id}}
-    </div>
   </v-container>
 </template>
 
@@ -165,13 +243,14 @@ export default {
       'dobaviSvePosete',
       'dobaviNeodobreneUpite',
       'dobaviNepotvrdjeneUpite',
-      'potvrdiUpit'
+      'potvrdiUpit',
+      'odustaniUpit'
     ]),
     potvrdi: function(upitId) {
       this.potvrdiUpit(upitId);
     },
     odustani: function(upitId) {
-      console.log('Odustani: ' + upitId)
+      this.odustaniUpit(upitId)
     },
     formatDate: function(date) {
       let d = new Date(date);
@@ -184,6 +263,11 @@ export default {
       let d = new Date(date);
       return d.getHours() + ':' + ('0' + d.getMinutes()).slice(-2);
     },
+    posetaProsla: function(poseta) {
+      let date = new Date(poseta.pregled.pocetakPregleda);
+      let danas = new Date();
+      return date < danas;
+    }
   },
   created() {
     this.dobaviSvePosete();
