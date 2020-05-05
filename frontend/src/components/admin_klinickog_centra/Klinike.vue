@@ -5,6 +5,9 @@
       :items="getAll"
       :search="search"
       class="elevation-1"
+      :single-expand="true"
+      item-key="id"
+      show-expand
       >
       <template v-slot:top>
         <v-toolbar flat color="white">
@@ -15,6 +18,7 @@
             vertical
           ></v-divider>
           <v-spacer></v-spacer>
+          
 <!-- search bar  -->
           <v-text-field
             v-model="search"
@@ -43,12 +47,51 @@
                   <span class="headline">{{formTitle}}</span>
                 </v-card-title>
                 <hr>
+
                 <!-- elementi -->
                 <v-card-text>
                   <v-container>                      
-                        <v-text-field v-model="newItem.naziv" label="naziv klinike" :rules="klinikaRules"></v-text-field>
+                    <v-text-field 
+                    label="naziv" 
+                    v-model="newItem.naziv" 
+                    :rules="nazivRule"
+                    required
+                    ></v-text-field>
+                    
+                    <v-text-field
+                    label="adresa"
+                    v-model="newItem.adresa"
+                    :rules="adresaRule"
+                    required
+                    ></v-text-field>
+
+                    <v-text-field
+                    label="grad"
+                    v-model="newItem.grad"
+                    :rules="gradRule"
+                    required
+                    ></v-text-field>
+
+
+                    <v-text-field
+                    label="drzava"
+                    v-model="newItem.drzava"
+                    :rules="drzavaRule"
+                    required
+                    ></v-text-field>
+
+
+                    <v-text-field
+                    label="opis"
+                    v-model="newItem.opis"
+                    >
+                    <v-switch></v-switch>
+                    
+                    </v-text-field>
+
                   </v-container>
                 </v-card-text>
+                
                 
                 <!-- akcije -->
                 <v-card-actions>
@@ -62,6 +105,12 @@
         </v-toolbar>
       </template>
 
+<!-- opis klinike ide na expand -->
+      <template v-slot:expanded-item="{ headers, item }">
+        <td :colspan="headers.length" style="padding:15px " class="grey--text ">
+        {{item.opis}} 
+        </td>
+      </template>
 
 <!-- akcije edit and delete -->
       <template v-slot:item.actions="{ item }">
@@ -71,7 +120,7 @@
         <v-icon small @click="deleteItem(item)">
           mdi-delete
         </v-icon>
-      </template>
+      </template> 
     </v-data-table>
   </div>
 </template>
@@ -85,13 +134,31 @@ export default {
     return {
       dialog: false,
       search: '',
-      isFormValid: false,
+      isFormValid: true,
       headers: [
         {
           text: 'Naziv',
           value: 'naziv',
           sortable: true,
-
+        },
+        {
+          text: 'Adresa',
+          value: 'adresa',
+          sortable: true,
+        },
+        {
+          text: 'Grad',
+          value: 'grad',
+          sortable: true,
+        },
+        {
+          text: 'Drzava',
+          value: 'drzava',
+          sortable: true,
+        },
+        {
+          text: 'opis',
+          value: 'data-table-expand',
         },
         { 
           text: 'Actions',
@@ -101,25 +168,35 @@ export default {
         }
       ],
 
-      tempItems: [
-        {
-          naziv: 1,
-        },
-        {
-          naziv: 2
-        },
-        {
-          naziv: 3
-        },
-        {
-          naziv: 4
-        },
-      ],
-      
       newItem: {
         naziv: '',
+        adresa: '',
+        grad: '',
+        drzava: '',
+        opis: '',
       },
-      update: false
+      update: false,
+
+      //rules
+      nazivRule: [
+        v => !!v || 'Naziv je obavezan',
+        v => (v && v.length <= 50) || 'Naziv ima najviše 50 karaktera'
+      ],
+      adresaRule: [
+        v => !!v || 'Adresa je obavezna',
+        v => (v && v.length <= 50) || 'Adresa ima najviše 50 karaktera'
+      ],
+      gradRule: [
+        v => !!v || 'Grad je obavezan',
+        v => (v && v.length <= 50) || 'Grad ima najviše 50 karaktera'
+      ],
+      // drzava je ostavljeno za autocomplete
+      drzave: ['Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Anguilla', 'Antigua &amp; Barbuda', 'Argentina', 'Armenia', 'Aruba', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bermuda', 'Bhutan', 'Bolivia', 'Bosnia &amp; Herzegovina', 'Botswana', 'Brazil', 'British Virgin Islands', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cambodia', 'Cameroon', 'Cape Verde', 'Cayman Islands', 'Chad', 'Chile', 'China', 'Colombia', 'Congo', 'Cook Islands', 'Costa Rica', 'Cote D Ivoire', 'Croatia', 'Cruise Ship', 'Cuba', 'Cyprus', 'Czech Republic', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Ecuador', 'Egypt', 'El Salvador', 'Equatorial Guinea', 'Estonia', 'Ethiopia', 'Falkland Islands', 'Faroe Islands', 'Fiji', 'Finland', 'France', 'French Polynesia', 'French West Indies', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Gibraltar', 'Greece', 'Greenland', 'Grenada', 'Guam', 'Guatemala', 'Guernsey', 'Guinea', 'Guinea Bissau', 'Guyana', 'Haiti', 'Honduras', 'Hong Kong', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Isle of Man', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Jersey', 'Jordan', 'Kazakhstan', 'Kenya', 'Kuwait', 'Kyrgyz Republic', 'Laos', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Macau', 'Macedonia', 'Madagascar', 'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Mauritania', 'Mauritius', 'Mexico', 'Moldova', 'Monaco', 'Mongolia', 'Montenegro', 'Montserrat', 'Morocco', 'Mozambique', 'Namibia', 'Nepal', 'Netherlands', 'Netherlands Antilles', 'New Caledonia', 'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'Norway', 'Oman', 'Pakistan', 'Palestine', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Puerto Rico', 'Qatar', 'Reunion', 'Romania', 'Russia', 'Rwanda', 'Saint Pierre &amp; Miquelon', 'Samoa', 'San Marino', 'Satellite', 'Saudi Arabia', 'Senegal', 'Serbia', 'Seychelles', 'Sierra Leone', 'Singapore', 'Slovakia', 'Slovenia', 'South Africa', 'South Korea', 'Spain', 'Sri Lanka', 'St Kitts &amp; Nevis', 'St Lucia', 'St Vincent', 'St. Lucia', 'Sudan', 'Suriname', 'Swaziland', 'Sweden', 'Switzerland', 'Syria', 'Taiwan', 'Tajikistan', 'Tanzania', 'Thailand', "Timor L'Este", 'Togo', 'Tonga', 'Trinidad &amp; Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Turks &amp; Caicos', 'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Venezuela', 'Vietnam', 'Virgin Islands (US)', 'Yemen', 'Zambia', 'Zimbabwe'],
+      drzavaRule: [
+        v => !!v || 'Drzava je obavezna',
+        v => (v && v.length <= 50) || 'Drzava ima najviše 50 karaktera'
+      ],
+
     };
   },
 
@@ -137,25 +214,7 @@ export default {
     formTitle: function(){
        return this.update ? 'Izmena klinike': 'Dodavanje nove klinike';
     },
-    
-    klinikaRules: function(){
-      const rules = [];
-      // pravilo za prazan unos naziva klinike
-      rules.push(v => !!v || "Naziv ne sme ostati prazan");
-      //pravilo za jedinstvenost naziva klinike pri akciji update
-      if(this.update){
-        rules.push(v => this.tempItems.findIndex(x => x.naziv == v && x.id != this.newItem.id) == -1 || "Naziv mora biti jedinstven");
-      }
-      //pravilo za jedinstvenost naziva klinike pri akciji add
-      else{
-        rules.push(v => this.tempItems.findIndex(x => x.naziv == v) == -1 || "Naziv mora biti jedinstven");
-      }
-      
-      return rules;
-    },
-    f: function(){
-      return console.log(this.$store.getters['klinike/getKlinike'])
-    },
+
   },
   created(){
     //load klinike
