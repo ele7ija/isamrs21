@@ -31,5 +31,9 @@ public interface UpitZaPregledRepository extends JpaRepository<UpitZaPregled, Lo
 			+ "u.odobren = true AND "
 			+ "u.pacijent.email = :email")
 	List<UpitZaPregled> findNepotvrdjeniByEmail(@Param("email") String email);
+			
+	@Query("SELECT u FROM UpitZaPregled u "
+			+ "WHERE u.klinika.id = :idKlinike")
+	List<UpitZaPregled> findAllByIdKlinike(@Param("idKlinike") long idKlinike);
 
 }
