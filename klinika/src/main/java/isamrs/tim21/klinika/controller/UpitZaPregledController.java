@@ -22,6 +22,7 @@ import isamrs.tim21.klinika.dto.PosetaDTO;
 import isamrs.tim21.klinika.dto.UpitZaPregledDTO;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.repository.KorisniciRepository;
+import isamrs.tim21.klinika.repository.PregledRepository;
 import isamrs.tim21.klinika.repository.TipPregledaRepository;
 import isamrs.tim21.klinika.repository.UpitZaPregledRepository;
 
@@ -40,6 +41,9 @@ public class UpitZaPregledController {
 	@Autowired
 	TipPregledaRepository tipPregledaRepository;
 	
+	@Autowired
+	PregledRepository pregledRepository;
+	
 	/** Pacijent ili lekar dodaje upit */
 	@PostMapping
 	@PreAuthorize("hasAuthority('pacijent') or hasAuthority('lekar')")
@@ -49,6 +53,7 @@ public class UpitZaPregledController {
 		u2.setTipPregleda(tipPregledaRepository.findById(u.getTipPregleda()).get());
 		u2.setLekar((Lekar) korisniciRepository.findById(u.getLekar()).get());
 		u2.setPacijent((Pacijent) korisniciRepository.findByEmail(u.getPacijent()));
+		u2.setUnapredDefinisaniPregled(pregledRepository.findById(u.getPregled()).get());
 		upitZaPregledRepository.save(u2);
 		return new ResponseEntity<UpitZaPregled>(u2, HttpStatus.OK);
 	}

@@ -205,7 +205,8 @@ export default {
         tipPregleda: this.odabraniPregled.tipPregleda.id,
         lekar: this.odabraniPregled.lekar.id,
         klinika: this.odabraniPregled.klinika.id,
-        pacijent: this._korisnik.username
+        pacijent: this._korisnik.username,
+        pregled: this.odabraniPregled.id
       }
       console.log(obj);
       this.kreirajUpit(obj)

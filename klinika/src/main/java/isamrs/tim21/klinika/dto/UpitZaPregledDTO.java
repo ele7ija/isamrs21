@@ -36,7 +36,8 @@ public class UpitZaPregledDTO {
 	private Long tipPregleda;
 	private Long lekar;
 	private Long klinika;
-	private String pacijent; 
+	private String pacijent;
+	private Long pregled;
 	public Boolean getOdobren() {
 		return odobren;
 	}
@@ -84,6 +85,12 @@ public class UpitZaPregledDTO {
 	}
 	public void setPacijent(String pacijent) {
 		this.pacijent = pacijent;
+	}
+	public Long getPregled() {
+		return pregled;
+	}
+	public void setPregled(Long pregled) {
+		this.pregled = pregled;
 	}
 	
 	
