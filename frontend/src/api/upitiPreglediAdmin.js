@@ -19,15 +19,15 @@ export default{
     );
     return data;
   },
-  async obradiAdmin(idKlinike, upit){
+  obradiAdmin(idKlinike, upit){
     let options = util.prepareOptions();
-    let {data} = await axios.put(
+    return axios.put(
       `${process.env.VUE_APP_BACKEND_ROOT}/upit/obradiAdmin/${idKlinike}/${upit.id}`,
       upit,
       options
     );
-    return data;
   },
+
   deleteUpit(idKlinike, idUpita){
     let options = util.prepareOptions();
     return axios.delete(

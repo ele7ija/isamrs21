@@ -32,7 +32,7 @@ export default {
   data: function(){
     return {
       snackbar: false,
-      snackbarTimeout: 3000,
+      snackbarTimeout: 5000,
       snackbarText: null
     };
   },
@@ -108,7 +108,10 @@ export default {
       }
 
       //PUT zahtev za accept
-      this.obradiAdmin(obj);
+      this.obradiAdmin(obj).then(null, (error) => {
+        this.snackbar = true;
+        this.snackbarText = error;
+      });
       this.refreshTables();
     },
     reject(item){
@@ -124,7 +127,10 @@ export default {
       }
 
       //PUT zahtev za reject
-      this.obradiAdmin(obj);
+      this.obradiAdmin(obj).then(null, (error) => {
+        this.snackbar = true;
+        this.snackbarText = error;
+      });
       this.refreshTables();
     },
     deleteItem(item){

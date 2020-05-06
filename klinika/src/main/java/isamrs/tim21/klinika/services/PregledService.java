@@ -85,6 +85,9 @@ public class PregledService {
 		}
 		Pregled p = pregledRepository.findById(idPregleda).get();
 		for(UpitZaPregled up : p.getUpiti()){
+			if(!up.getAdminObradio()){
+				return new CustomResponse<Boolean>(false, false, "Greska: Postoji upit za ovaj pregled za koji administrator jos uvek nije obradio.");
+			}
 			if(!up.getPacijentObradio()){
 				return new CustomResponse<Boolean>(false, false, "Greska: Postoji upit za ovaj pregled za koji pacijent jos uvek nije video odgovor administratora.");
 			}

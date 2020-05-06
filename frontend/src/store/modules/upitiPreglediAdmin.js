@@ -28,8 +28,18 @@ const actions = {
   },
 
   async obradiAdmin({state, commit}, upit){
-    let response = await upitiPreglediAdmin.obradiAdmin(state.klinika.id, upit);
-    commit('updateExistingUpit', response);
+    return new Promise((resolve, reject) => {
+      upitiPreglediAdmin.obradiAdmin(state.klinika.id, upit)
+      .then(({data: {result, message, success}}) => {
+        if(result != null)
+          commit('updateExistingUpit', result);
+        if(success){
+          resolve(message);
+        }else{
+          reject(message);
+        }
+      })
+    });
   },
 
   async deleteUpit({state, commit, dispatch}, idUpita){
