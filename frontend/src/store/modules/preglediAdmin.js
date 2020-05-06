@@ -41,12 +41,17 @@ const actions = {
   },
 
   async removePregled({state, commit}, pregled){
-    let {success, message} = await pregledi.deletePregled(state.klinika.id, pregled.id);
-    if(success){
-      commit('removePregled', pregled);
-    }else{
-      return Promise.reject(message);
-    }
+    return new Promise((resolve, reject) => {
+      pregledi.deletePregled(state.klinika.id, pregled.id)
+      .then(({data:{success, message}}) => {
+        if(success){
+          commit('removePregled', pregled);
+          resolve(message);
+        }else{
+          reject(message);
+        }
+      })
+    });
   }
 };
 const mutations = {

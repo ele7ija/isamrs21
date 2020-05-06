@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
+import isamrs.tim21.klinika.jsonSerialize.PosetaSerializer;
 import isamrs.tim21.klinika.jsonSerialize.UpitZaPregledListSerializer;
 
 /**
@@ -80,7 +81,7 @@ public class Pregled implements IdentitySerializable{
 	private Klinika klinika;
 
 	@OneToOne(mappedBy="pregled", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-	@JsonSerialize(using=IdentitySerializer.class)
+	@JsonSerialize(using=PosetaSerializer.class)
 	private Poseta poseta;
 	
 	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="unapredDefinisaniPregled")

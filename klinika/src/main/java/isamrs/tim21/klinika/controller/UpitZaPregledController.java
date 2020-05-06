@@ -138,15 +138,15 @@ public class UpitZaPregledController {
 	// Put mapping za odobravanje upita.
 	@PutMapping(value="obradiAdmin/{idKlinike}/{idUpita}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
-	public ResponseEntity<UpitZaPregled> obradiAdmin(@PathVariable("idKlinike") Long idKlinike, 
+	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdmin(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idUpita") Long idUpita, @RequestBody UpitZaPregled upitZaPregledToChange){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
-			return new ResponseEntity<UpitZaPregled>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(new CustomResponse<UpitZaPregled>(null, false, "Greska: Klinika nije pronadjena."), HttpStatus.NOT_FOUND);
 		}else{
 			upitZaPregledToChange.setId(idUpita);
 			upitZaPregledToChange.setKlinika(klinika);
-			return new ResponseEntity<UpitZaPregled>(upitZaPregledeService.obradiAdmin(upitZaPregledToChange), HttpStatus.OK);
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(upitZaPregledeService.obradiAdmin(upitZaPregledToChange), HttpStatus.OK);
 		}
 	}
 	

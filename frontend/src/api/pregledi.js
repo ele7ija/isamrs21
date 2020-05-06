@@ -5,7 +5,7 @@ export default{
   async getAllPregledi(idKlinike){
     let options = util.prepareOptions();
     let response = await axios.get(
-      `${process.env.VUE_APP_BACKEND_ROOT}/pregled/${idKlinike}/slobodni`,
+      `${process.env.VUE_APP_BACKEND_ROOT}/pregled/${idKlinike}`,
       options
     )
     return response.data;
@@ -36,6 +36,6 @@ export default{
     return axios.delete(
       `${process.env.VUE_APP_BACKEND_ROOT}/pregled/${idKlinike}/${idPregleda}`,
       options
-    ).then(response => response.data).catch(error => error.response.data);
+    );
   },
 }

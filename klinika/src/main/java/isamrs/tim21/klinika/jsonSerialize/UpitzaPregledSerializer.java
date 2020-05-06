@@ -20,10 +20,8 @@ public class UpitzaPregledSerializer extends JsonSerializer<UpitZaPregled>{
 		arg1.writeBooleanField("potvrdjen", arg0.getPotvrdjen());
 		
 		arg1.writeFieldName("pacijent");
-		arg1.writeStartObject();
-		arg1.writeNumberField("id", arg0.getPacijent().getId());
-		arg1.writeEndObject();
-		
+		KorisnikSerializer ks = new KorisnikSerializer();
+		ks.serialize(arg0.getPacijent(), arg1, arg2);
 		arg1.writeEndObject();
 		
 	}

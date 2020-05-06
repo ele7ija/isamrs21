@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
+import isamrs.tim21.klinika.jsonSerialize.ZdravstveniKartonSerializer;
 
 @Entity
 @Table(name="poseta")
@@ -36,7 +37,7 @@ public class Poseta implements IdentitySerializable{
 	private String opis;
 	
 	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-	@JsonSerialize(using=IdentitySerializer.class)
+	@JsonSerialize(using=ZdravstveniKartonSerializer.class)
 	private ZdravstveniKarton zdravstveniKarton;
 	
 	@OneToOne(fetch=FetchType.EAGER)

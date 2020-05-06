@@ -1,83 +1,99 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="data"
-    :search="search"
-    class="elevation-1"
-    >
-    <template v-slot:top>
-      <v-toolbar flat color="blue lighten-3">
-        <v-toolbar-title>Slobodni pregledi unutar klinike</v-toolbar-title>
-        <v-divider
-          class="mx-4"
-          inset
-          vertical
-        ></v-divider>
-        <v-spacer></v-spacer>
-        
-        <v-text-field
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="Search"
-          single-line
-          hide-details
-        ></v-text-field>
-        <v-divider
-          class="mx-4"
-          inset
-          vertical
-        ></v-divider>
-        <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="1000px">
-          <template v-slot:activator="{ on }">
-            <v-btn color="primary" dark class="mb-2" v-on="on">Dodaj</v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="headline">{{formTitle}}</span>
-            </v-card-title>
-            <hr>
-            <v-stepper v-model="stepIndex" vertical>
-              <span
-                v-for="step in stepperData"
-                :key="step.index"
-              >
-                <v-stepper-step :complete="stepIndex > step.index" :step="step.index" :editable="step.index <= stepIndex">
-                  {{step.title}}
-                  <small>{{step.subtitle}}</small>
-                </v-stepper-step>
-
-                <v-stepper-content :step="step.index">
-                  <component
-                    class="mb-8"
-                    height="200px"
-                    v-bind:is="step.componentName"
-                    @changeStatus="changeStatus"
-                    @previousStep="decrement"
-                    @add="add"
-                    :index="step.index - 1"
-                    :currentIndex="stepIndex - 1"
-                    :key="step.unique"
-                  ></component>
-                  <v-btn v-if="stepIndex < stepperData.length" color="primary" @click="stepIndex += 1" :disabled="!stepperData[step.index-1].done">Next step</v-btn>
-                  <v-btn v-if="stepIndex > 1 && stepIndex < stepperData.length" text @click="stepIndex -= 1">Previous step</v-btn>
-                  <v-btn v-if="stepIndex == 1" text @click="reset()">Cancel</v-btn>
-                </v-stepper-content>
-              </span>
-            </v-stepper>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-    <template v-slot:item.actions="{ item }">
-      <v-icon
-        small
-        @click="deleteItem(item)"
+  <div>
+    <v-data-table
+      :headers="headers"
+      :items="data"
+      :search="search"
+      class="elevation-1"
       >
-        mdi-delete
-      </v-icon>
-    </template>
-  </v-data-table>
+      <template v-slot:top>
+        <v-toolbar flat color="blue lighten-3">
+          <v-toolbar-title>Slobodni pregledi unutar klinike</v-toolbar-title>
+          <v-divider
+            class="mx-4"
+            inset
+            vertical
+          ></v-divider>
+          <v-spacer></v-spacer>
+          
+          <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Search"
+            single-line
+            hide-details
+          ></v-text-field>
+          <v-divider
+            class="mx-4"
+            inset
+            vertical
+          ></v-divider>
+          <v-spacer></v-spacer>
+          <v-dialog v-model="dialog" max-width="1000px">
+            <template v-slot:activator="{ on }">
+              <v-btn color="primary" dark class="mb-2" v-on="on">Dodaj</v-btn>
+            </template>
+            <v-card>
+              <v-card-title>
+                <span class="headline">{{formTitle}}</span>
+              </v-card-title>
+              <hr>
+              <v-stepper v-model="stepIndex" vertical>
+                <span
+                  v-for="step in stepperData"
+                  :key="step.index"
+                >
+                  <v-stepper-step :complete="stepIndex > step.index" :step="step.index" :editable="step.index <= stepIndex">
+                    {{step.title}}
+                    <small>{{step.subtitle}}</small>
+                  </v-stepper-step>
+
+                  <v-stepper-content :step="step.index">
+                    <component
+                      class="mb-8"
+                      height="200px"
+                      v-bind:is="step.componentName"
+                      @changeStatus="changeStatus"
+                      @previousStep="decrement"
+                      @add="add"
+                      :index="step.index - 1"
+                      :currentIndex="stepIndex - 1"
+                      :key="step.unique"
+                    ></component>
+                    <v-btn v-if="stepIndex < stepperData.length" color="primary" @click="stepIndex += 1" :disabled="!stepperData[step.index-1].done">Next step</v-btn>
+                    <v-btn v-if="stepIndex > 1 && stepIndex < stepperData.length" text @click="stepIndex -= 1">Previous step</v-btn>
+                    <v-btn v-if="stepIndex == 1" text @click="reset()">Cancel</v-btn>
+                  </v-stepper-content>
+                </span>
+              </v-stepper>
+            </v-card>
+          </v-dialog>
+        </v-toolbar>
+      </template>
+      <template v-slot:item.actions="{ item }">
+        <v-icon
+          small
+          @click="deleteItem(item)"
+        >
+          mdi-delete
+        </v-icon>
+      </template>
+    </v-data-table>
+    <v-snackbar
+      v-model="snackbar"
+      :timeout="snackbarTimeout"
+      color="red darken-3"
+    >
+      {{ snackbarText }}
+      <v-btn
+        color="grey darken-3"
+        text
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
+  </div>
 </template>
 
 <script>
@@ -99,6 +115,9 @@ export default {
   },
   data: function(){
     return {
+      snackbar: false,
+      snackbarTimeout: 3000,
+      snackbarText: null,
       dialog: false,
       update: false,
       search: '',
@@ -227,7 +246,10 @@ export default {
     }),
     deleteItem(pregled){
       let obj = { id: pregled.id };
-      this.removePregled(obj);
+      this.removePregled(obj).then(null, (error) => {
+        this.snackbarText = error;
+        this.snackbar = true;
+      });
     },
     add(){
       this.newItem = {

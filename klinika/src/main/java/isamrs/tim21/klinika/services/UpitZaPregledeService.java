@@ -30,7 +30,8 @@ public class UpitZaPregledeService {
 	@Autowired
 	PregledService pregledService;
 
-	public UpitZaPregled obradiAdmin(UpitZaPregled u) {
+	@Transactional
+	public CustomResponse<UpitZaPregled> obradiAdmin(UpitZaPregled u) {
 		UpitZaPregled upit = upitZaPregledRepository.findById(u.getId()).get();
 		upit.setAdminObradio(true);
 		upit.setOdobren(u.getOdobren());
@@ -39,8 +40,16 @@ public class UpitZaPregledeService {
 			//U PITANJU JE BIO CUSTOM PREGLED
 			p = pregledService.add(upit.getKlinika(), u.getUnapredDefinisaniPregled()).getResult();
 			upit.setUnapredDefinisaniPregled(p);
+		}else{
+			//ukoliko pregled ima posetu, admin nije smeo da odobri upit u
+			if(p.getPoseta() != null && upit.getOdobren() == true){
+				upit.setOdobren(false);
+				upit = upitZaPregledRepository.save(upit);
+				return new CustomResponse<UpitZaPregled>(upit, false, "Obavestenje: Ovaj pregled je vec rezervisan, te je iz tog razloga upit ipak odbijen.");
+			}
 		}
-		return upitZaPregledRepository.save(upit);
+		upit = upitZaPregledRepository.save(upit);
+		return new CustomResponse<UpitZaPregled>(upit, true, "OK.");
 	}
 
 	@Transactional

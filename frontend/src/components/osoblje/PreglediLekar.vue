@@ -43,10 +43,12 @@ export default {
             cena: parseInt(x.cena, 10),
             popust: x.popust,
             konacnaCena: parseInt(x.konacnaCena, 10),
-            poseta: x.poseta //potrebno za dalju filtraciju slobodnih i rezervisanih pregleda
+            poseta: x.poseta, //potrebno za dalju filtraciju slobodnih i rezervisanih pregleda
+            upiti: x.upiti
           };
-          if(retval.poseta != null){
-            retval.pacijent = `${x.poseta.zdravstveniKarton.pacijent.ime} ${x.poseta.zdravstveniKarton.pacijent.prezime}`
+          let pacijent = this.getPacijent(x);
+          if(pacijent != null){
+            retval.pacijent = pacijent;
           }
           return retval;
         });
@@ -58,10 +60,10 @@ export default {
      
     },
     _slobodniPregledi: function(){
-      return this._preglediMapped.filter(x => x.poseta == null);
+      return this._preglediMapped.filter(x => this.isSlobodan(x));
     },
     _rezervisaniPregledi: function(){
-      return this._preglediMapped.filter(x => x.poseta != null);
+      return this._preglediMapped.filter(x => this._slobodniPregledi.filter(y => y.id == x.id).length == 0);
     },
 
   },
@@ -74,6 +76,37 @@ export default {
       fetchPreglediKlinike: 'preglediAdmin/fetchPreglediKlinike',
       fetchSaleKlinike: 'sale/loadSale',
     }),
+    isSlobodan(x){
+      if(x.poseta != null)
+        return false;
+      for(let upit of x.upiti){
+        if(upit.potvrdjen){
+          return false;
+        }
+        if(upit.odobren && !upit.pacijentObradio){
+          return false;
+        }
+      }
+      return true;
+    },
+
+    getPacijent(x){
+      /*
+      x - instanca pregleda
+      returns - ime i prezime pacijentaukoliko je pregled rezervisan, null inace 
+      */
+      if(x.poseta != null)
+        return `${x.poseta.zdravstveniKarton.pacijent.ime} ${x.poseta.zdravstveniKarton.pacijent.prezime}`;
+      for(let upit of x.upiti){
+        if(upit.potvrdjen){
+          return `${upit.pacijent.ime} ${upit.pacijent.prezime}`;
+        }
+        if(upit.odobren && !upit.pacijentObradio){
+          return `${upit.pacijent.ime} ${upit.pacijent.prezime}`;
+        }
+      }
+      return null;
+    }
   }
 
 }
