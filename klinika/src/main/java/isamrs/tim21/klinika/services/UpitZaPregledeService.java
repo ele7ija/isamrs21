@@ -59,8 +59,9 @@ public class UpitZaPregledeService {
 						return new CustomResponse<UpitZaPregled>(upit, false, "Obavestenje: Ovaj pregled je vec rezervisan, te je iz tog razloga upit ipak odbijen.");
 					}
 					if(drugiUpit.getOdobren() && !drugiUpit.getPacijentObradio()){
-						/*upit.setOdobren(false);
-						upit = upitZaPregledRepository.save(upit);*/
+						upit.setAdminObradio(false);
+						upit.setOdobren(false);
+						upit = upitZaPregledRepository.save(upit);
 						return new CustomResponse<UpitZaPregled>(null, false, "Obavestenje: Ovaj pregled je vec odobren. Mocicete da odobrite ovaj pregled samo u slucaju da pacijent kojem je ovaj pregled odobren ipak odluci da ne potvrdi rezervaciju.");
 					}
 				}
