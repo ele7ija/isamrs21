@@ -22,6 +22,7 @@ import isamrs.tim21.klinika.repository.PosetaRepository;
 import isamrs.tim21.klinika.repository.PregledRepository;
 import isamrs.tim21.klinika.repository.SalaRepository;
 import isamrs.tim21.klinika.repository.TipPregledaRepository;
+import isamrs.tim21.klinika.repository.UpitZaPregledRepository;
 
 @Service
 public class PregledService {
@@ -43,6 +44,9 @@ public class PregledService {
 	
 	@Autowired
 	KlinikaRepository klinikaRepository;
+	
+	@Autowired
+	UpitZaPregledRepository upitZaPregledRepository;
 
 	public List<Pregled> findAll(Long idKlinike) {
 		return pregledRepository.findAllByIdKlinike(idKlinike);
@@ -55,6 +59,7 @@ public class PregledService {
 	public CustomResponse<Pregled> add(Klinika klinika, Pregled pregled) {
 		pregled.setId(null);
 		pregled.setKlinika(klinika);
+		pregled.setUpiti(new ArrayList<UpitZaPregled>());
 		return validateAll(klinika, pregled);
 		
 	}
@@ -75,9 +80,18 @@ public class PregledService {
 	
 	@Transactional
 	public CustomResponse<Boolean> delete(Long idKlinike, Long idPregleda) {
-		if(posetaRepository.findById(idPregleda).isPresent()){
+		if(posetaRepository.findByIdPregleda(idPregleda) != null){
 			return new CustomResponse<Boolean>(false, false, "Greska: Pregled je rezervisan. Ne mozete ga obrisati.");
 		}
+		Pregled p = pregledRepository.findById(idPregleda).get();
+		for(UpitZaPregled up : p.getUpiti()){
+			if(!up.getPacijentObradio()){
+				return new CustomResponse<Boolean>(false, false, "Greska: Postoji upit za ovaj pregled za koji pacijent jos uvek nije video odgovor administratora.");
+			}
+		}
+		upitZaPregledRepository.deleteAll(p.getUpiti());
+		p.setUpiti(new ArrayList<>());
+		pregledRepository.save(p);
 		int numberOfRemovals = pregledRepository.deleteByIdAndKlinikaId(idKlinike, idPregleda);
 		if(numberOfRemovals == 1){
 			return new CustomResponse<Boolean>(true, true, "OK.");

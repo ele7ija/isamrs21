@@ -95,6 +95,6 @@ public class PregledKontroler {
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<Boolean>> delete(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idPregleda") Long idPregleda){
 		CustomResponse<Boolean> customResponse = pregledService.delete(idKlinike, idPregleda);
-		return new ResponseEntity<CustomResponse<Boolean>>(customResponse, customResponse.isSuccess() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+		return new ResponseEntity<CustomResponse<Boolean>>(customResponse, HttpStatus.OK);
 	}
 }

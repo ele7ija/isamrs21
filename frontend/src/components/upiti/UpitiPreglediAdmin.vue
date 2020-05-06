@@ -77,7 +77,8 @@ export default {
           pregled: x.unapredDefinisaniPregled,
           odobren: x.odobren,
           pacijentObradio: x.pacijentObradio,
-          potvrdjen: x.potvrdjen
+          potvrdjen: x.potvrdjen,
+          _odobren: x.odobren ? "da" : "ne"
         };
       });
     }

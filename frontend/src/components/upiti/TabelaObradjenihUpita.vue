@@ -23,6 +23,7 @@
           <td>{{item.lekar}}</td>
           <td>{{item.tipPregleda}}</td>
           <td>{{item.sala}}</td>
+          <td>{{item._odobren}}</td>
           <td>
             <v-icon
               small
@@ -116,6 +117,11 @@ export default {
         { 
           text: 'Sala',
           value: 'sala',
+          sortable: true
+        },
+        {
+          text: 'Odobren',
+          value: '_odobren',
           sortable: true
         },
         { 
