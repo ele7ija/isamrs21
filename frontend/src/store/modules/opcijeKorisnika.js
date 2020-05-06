@@ -89,7 +89,59 @@ const state = {
           },
         ]
       }
-    ]
+    ],
+
+    'admin-klinickog-centra' : [
+      {
+        title: 'Dashboard',
+        action: 'mdi-view-dashboard',
+        componentName: "home",
+        items: []
+      },
+      { 
+        title: 'Moj profil',
+        action: 'mdi-account',
+        componentName: 'home',
+        items: []
+      },
+      {
+        title: 'Klinički centar',
+        
+        items: [
+          { 
+            title: 'Administratori kliničkog centra',
+            action: 'mdi-account-supervisor',
+            componentName: 'admini_klinickog_centra',
+            items:[]
+          },
+          { 
+            title: 'Administratori klinika',
+            action: 'mdi-account-supervisor',
+            componentName: 'admini_klinika',
+            items:[]
+          },
+          {
+            title: 'Klinike',
+            action: 'mdi-hospital-building',
+            componentName: 'klinike_from_admin_centra',
+            items:[]
+          },
+          { 
+            title: 'Zahtevi za registraciju',
+            action: 'mdi-receipt',
+            componentName: 'tipovi_pregleda',
+            items:[]
+          },
+          {
+            title: 'dijagnoze i lekovi',
+            action: 'mdi-medical-bag',
+            componentName: 'sale',
+            items:[]
+          },
+        ]
+      }
+    ],
+
   }
 }
 const getters = {

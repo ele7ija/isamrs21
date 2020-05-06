@@ -246,7 +246,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   .v-messages {
     display: none;
   }

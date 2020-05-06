@@ -39,6 +39,16 @@ export default{
     );
     return response.data;
   },
+
+  async updateKlinikaFromAdminCentra(klinika){
+    let options = util.prepareOptions();
+    let response = await axios.put(
+      `${process.env.VUE_APP_BACKEND_ROOT}/klinika/${klinika.id}/adminCentra`,
+      klinika,
+      options
+    );
+    return response.data;
+  },
   
   async removeKlinika(idKlinike){
     let options = util.prepareOptions();

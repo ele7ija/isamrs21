@@ -1,6 +1,5 @@
 package isamrs.tim21.klinika.domain;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -26,4 +25,9 @@ public class AdministratorCentra extends Korisnik{
 	@JsonSerialize(using=IdentityListSerializer.class)
 	private List<ZahtevZaRegistraciju> zahtevi;
 
+	public List<ZahtevZaRegistraciju> getZahtevi(){
+		return zahtevi;
+	}
+
+	
 }

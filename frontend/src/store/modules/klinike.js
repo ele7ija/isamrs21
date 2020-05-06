@@ -77,6 +77,10 @@ const getters = {
       state.sortiranjeKlinika
     )
   },
+
+  getKlinike(state){
+    return state.klinike;
+  },
   getPretrazeniPregledi: (state) => (klinikaId) => {
     let postojeci = state.pregledi[klinikaId];
     let novi = postojeci.filter((x) => {
@@ -119,6 +123,19 @@ const actions = {
     let data = await klinikeAPI.getAllKlinike();
     commit('setKlinike', data);
   },
+  
+  async addKlinika({commit}, klinika){
+    //response je objekat klinika
+    let response = await klinikeAPI.addKlinika(klinika); 
+    commit('addKlinika', response);
+  },
+
+  async updateKlinikaFromAdminCentra({commit}, klinika){
+    let response = await klinikeAPI.updateKlinikaFromAdminCentra(klinika);
+    commit('updateKlinikaFromAdminCentra', response);
+  },
+
+  //ostale operacije sa klinikama?
   async fetchKlinikaUlogovanogKorisnika({commit}){
     let data = await klinikeAPI.fetchKlinikaAdmina();
     commit('setKlinikaAdmina', data);
@@ -191,6 +208,14 @@ const actions = {
 const mutations = {
   setKlinike: (state, klinike) =>
     state.klinike = klinike,
+  addKlinika: (state, klinika) =>
+    state.klinike.push(klinika),
+    updateKlinikaFromAdminCentra: (state, klinika) => {
+    // splice metoda radi isto sto i ===> state.klinike[index] = klinika; 
+    //mora ovako kako bi se pravilno izmenilo u vuex store-u
+    let index = state.klinike.findIndex(x => x.id == klinika.id);
+    state.klinike.splice(index, 1, klinika);
+  },
   setKlinikaAdmina: (state, klinika) => state.klinikaAdmina = klinika,
   reset: (state) => {
     state.klinike = [];
