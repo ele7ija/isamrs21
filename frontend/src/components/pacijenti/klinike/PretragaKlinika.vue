@@ -152,17 +152,21 @@ export default {
         for (let tipPregleda of this.dostupniTipoviPregleda) {
           retval.push(tipPregleda.naziv)
         }
+        retval.push('Svi');
         return retval;
       }
     },
     iOdabraniTipPregleda: {
       get: function() {
         if (this.odabraniTipPregleda == null){
-          return '';
+          return 'Svi';
         }
         return this.odabraniTipPregleda.naziv;
       },
       set: function(val) {
+        if (val == 'Svi') {
+          this.setOdabraniTipPregleda(null);
+        }
         let tip = this.dostupniTipoviPregleda.filter(
           (x) => x.naziv == val);
         this.setOdabraniTipPregleda(tip[0]);
