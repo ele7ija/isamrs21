@@ -1,5 +1,6 @@
 package isamrs.tim21.klinika.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -13,7 +14,9 @@ import isamrs.tim21.klinika.domain.MedicinskaSestra;
 import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
 import isamrs.tim21.klinika.domain.Pregled;
 import isamrs.tim21.klinika.domain.Sala;
+import isamrs.tim21.klinika.domain.UpitZaPregled;
 import isamrs.tim21.klinika.dto.CustomResponse;
+import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.repository.OsobljeRepository;
 import isamrs.tim21.klinika.repository.PosetaRepository;
 import isamrs.tim21.klinika.repository.PregledRepository;
@@ -37,6 +40,9 @@ public class PregledService {
 	
 	@Autowired
 	PosetaRepository posetaRepository;
+	
+	@Autowired
+	KlinikaRepository klinikaRepository;
 
 	public List<Pregled> findAll(Long idKlinike) {
 		return pregledRepository.findAllByIdKlinike(idKlinike);
@@ -133,6 +139,25 @@ public class PregledService {
 	}
 
 	public List<Pregled> findSlobodni(Long idKlinike) {
-		return pregledRepository.findAllSlobodniByIdKlinike(idKlinike);
+		Klinika k = klinikaRepository.getOne(idKlinike);
+		List<Pregled> retval = pregledRepository.findByKlinikaAndPosetaIsNull(k);
+		List<Pregled> r = new ArrayList<Pregled>();
+		for (Pregled p : retval) {
+			boolean flag = false;
+			for (UpitZaPregled u : p.getUpiti()) {
+				if (u.getPotvrdjen()) {
+					flag = true;
+					break;
+				}
+				else if (u.getOdobren() && !u.getPacijentObradio()) {
+					flag = true;
+					break;
+				}
+			}
+			if (!flag) {
+				r.add(p);
+			}
+		}
+		return r;
 	}
 }

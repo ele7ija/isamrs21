@@ -7,7 +7,8 @@ import UserDashboard from "@/components/dashboards/UserDashboard";
 import TipPregleda from "@/components/tipovi_pregleda/TipPregleda";
 import Sala from "@/components/sale/Sala";
 import Osoblje from "@/components/osoblje/Osoblje";
-import PreglediMain from "@/components/pregledi/PreglediMain"
+import PreglediMain from "@/components/pregledi/PreglediMain";
+import UpitiPreglediAdmin from "@/components/upiti/UpitiPreglediAdmin";
 import Pacijenti from "@/components/pacijenti/Pacijenti";
 import KlinikaAdmin from '@/components/klinike/KlinikaAdmin';
 import Klinike from '@/components/pacijenti/klinike/Klinike';
@@ -110,6 +111,15 @@ let router = new Router({
       path: '/pregledi',
       name: 'pregledi_admin',
       component: PreglediMain,
+      meta: {
+        authen: true,
+        author: 'admin-klinike'
+      }
+    },
+    {
+      path: '/upiti_pregledi',
+      name: 'upiti_pregledi_admin',
+      component: UpitiPreglediAdmin,
       meta: {
         authen: true,
         author: 'admin-klinike'

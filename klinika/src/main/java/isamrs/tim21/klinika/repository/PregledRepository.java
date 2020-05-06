@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import isamrs.tim21.klinika.domain.Klinika;
 import isamrs.tim21.klinika.domain.Pregled;
 
 @Repository
@@ -31,6 +32,8 @@ public interface PregledRepository extends JpaRepository<Pregled, Long> {
 			+ "WHERE p.klinika.id = :idKlinike "
 			+ "AND p.poseta = null")
 	List<Pregled> findAllSlobodniByIdKlinike(@Param("idKlinike") Long idKlinike);
+	
+	List<Pregled> findByKlinikaAndPosetaIsNull(Klinika k);
 
 	@Query("SELECT p FROM Pregled p "
 	+ "WHERE p.tipPregleda.id = :idTipaPregleda")

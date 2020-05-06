@@ -159,6 +159,9 @@ export default {
       'odabraniPregled',
       'odabranaKlinika'
     ]),
+    ...mapState('korisnici', [
+      '_korisnik'
+    ]),
     generisanDatum: function() {
       let datum = new Date(this.odabraniPregled.pocetakPregleda);
       return datum.toISOString().substr(0, 10);
@@ -181,19 +184,33 @@ export default {
     ...mapMutations('klinike', 
       ['setOdabraniPregled']),
     ...mapActions('klinike',
-      ['kreirajPosetu']),
+      ['kreirajPosetu',
+      'kreirajUpit']),
     odustani: function() {
       this.setOdabraniPregled(null);
       this.$router.go(-1)
     },
     potvrdi: function() {
+      // let obj = {
+      //   pregledId: this.odabraniPregled.id,
+      //   opis: this.napomena
+      // }
+      // console.log(obj);
+      // this.kreirajPosetu(obj)
       let obj = {
-        pregledId: this.odabraniPregled.id,
+        odobren: false,
+        potvrdjen: false,
+        pocetakPregleda: this.odabraniPregled.pocetakPregleda,
+        krajPregleda: this.odabraniPregled.krajPregleda,
+        tipPregleda: this.odabraniPregled.tipPregleda.id,
+        lekar: this.odabraniPregled.lekar.id,
+        klinika: this.odabraniPregled.klinika.id,
+        pacijent: this._korisnik.username,
+        pregled: this.odabraniPregled.id,
         opis: this.napomena
       }
       console.log(obj);
-      this.kreirajPosetu(obj)
-      
+      this.kreirajUpit(obj)
     }
   },
   created() {

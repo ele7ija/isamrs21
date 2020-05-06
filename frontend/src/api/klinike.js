@@ -95,5 +95,55 @@ export default{
       options
     );
     return response.data;
+  },
+
+  async kreirajUpit(obj) {
+    let options = util.prepareOptions();
+    let response = await axios.post(
+      `${process.env.VUE_APP_BACKEND_ROOT}/upit`,
+      obj,
+      options
+    );
+    return response.data;
+  },
+
+  async dobaviNeodobreneUpite() {
+    let korisnik = util._getKorsinik();
+    let options = util.prepareOptions();
+    let response = await axios.get(
+      `${process.env.VUE_APP_BACKEND_ROOT}/upit/neodobreni/${korisnik.username}`,
+      options
+    );
+    return response.data;
+  },
+
+  async dobaviNepotvrdjeneUpite() {
+    let korisnik = util._getKorsinik();
+    let options = util.prepareOptions();
+    let response = await axios.get(
+      `${process.env.VUE_APP_BACKEND_ROOT}/upit/nepotvrdjeni/${korisnik.username}`,
+      options
+    );
+    return response.data;
+  },
+
+  async potvrdiUpit(id) {
+    let options = util.prepareOptions();
+    let response = await axios.put(
+      `${process.env.VUE_APP_BACKEND_ROOT}/upit/potvrdi/${id}`,
+      {}, //obavezno prvo body da ne bi header bio protumacen kao body
+      options
+    );
+    return response.data;
+  },
+
+  async odustaniUpit(id) {
+    let options = util.prepareOptions();
+    let response = await axios.put(
+      `${process.env.VUE_APP_BACKEND_ROOT}/upit/odustani/${id}`,
+      {}, //obavezno prvo body da ne bi header bio protumacen kao body
+      options
+    );
+    return response.data;
   }
 }

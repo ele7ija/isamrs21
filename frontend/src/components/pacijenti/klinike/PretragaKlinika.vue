@@ -64,7 +64,16 @@
               :min='minKrajnji'
               ></v-date-picker>
           </v-menu>
-
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-content>
+            <v-select outlined
+              v-model='iOdabraniTipPregleda'
+              :items='iDostupniTipoviPregleda'
+              label='Tip pregleda'
+              >
+            </v-select>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -113,7 +122,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex';
+import { mapMutations, mapState, mapGetters } from 'vuex';
 export default {
   name: 'PretragaKlinika',
   data: function() {
@@ -129,8 +138,31 @@ export default {
       'krajnjiDatum',
       'tipPregleda',
       'sortiranjeKlinika',
-      'dostupnaSortiranja'
+      'dostupnaSortiranja',
+      'odabraniTipPregleda'
     ]),
+    ...mapGetters('klinike', [
+      'dostupniTipoviPregleda',
+    ]),
+    iDostupniTipoviPregleda: {
+      get: function() {
+        let retval = [];
+        for (let tipPregleda of this.dostupniTipoviPregleda) {
+          retval.push(tipPregleda.naziv)
+        }
+        return retval;
+      }
+    },
+    iOdabraniTipPregleda: {
+      get: function() {
+        return this.odabraniTipPregleda.naziv;
+      },
+      set: function(val) {
+        let tip = this.dostupniTipoviPregleda.filter(
+          (x) => x.naziv == val);
+        this.setOdabraniTipPregleda(tip[0]);
+      }
+    },
     iPocetniDatum: {
       get: function() {
         return this.pocetniDatum;
@@ -197,7 +229,8 @@ export default {
       'setKrajnjiDatum',
       'setTipPregleda',
       'setSortiranjeKlinika',
-      'setPretrage'
+      'setPretrage',
+      'setOdabraniTipPregleda'
     ]),
     dodajSort: function() {
       let sort = this.dostupnaSortiranja.filter(

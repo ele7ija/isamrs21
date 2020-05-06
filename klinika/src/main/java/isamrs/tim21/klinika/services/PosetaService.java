@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import isamrs.tim21.klinika.domain.Pacijent;
 import isamrs.tim21.klinika.domain.Poseta;
 import isamrs.tim21.klinika.domain.Pregled;
+import isamrs.tim21.klinika.domain.UpitZaPregled;
 import isamrs.tim21.klinika.domain.ZdravstveniKarton;
 import isamrs.tim21.klinika.dto.PosetaDTO;
 import isamrs.tim21.klinika.dto.PosetaDTO2;
@@ -111,6 +112,53 @@ public class PosetaService {
 		Poseta p = new Poseta();
 		p.setBolest("");
 		p.setOpis(dto.getOpis());
+		p.setPregled(pregled);
+		p.setZdravstveniKarton(zk);
+		pregled.setPoseta(p);
+		// sacuvaj i vrati posetu
+		posetaRepository.save(p);
+		pregledRepository.save(pregled);
+		if (zk.getPosete() == null) {
+			zk.setPosete(new ArrayList<Poseta>());
+		}
+		zk.getPosete().add(p);
+		return p;
+	}
+	
+	public Poseta kreirajNovuPosetu(UpitZaPregled u) {
+		// proveri da li postoji pregled sa tim id-jem
+		Pregled pregled = null;
+		if (u.getUnapredDefinisaniPregled() != null) {
+			pregled = u.getUnapredDefinisaniPregled();
+		}
+		else {
+			// TODO KREIRANJE PREGLEDA
+		}
+		
+		if (pregled.getPoseta() != null) {
+			return null;
+		}
+		// dobavi korisnika
+		Pacijent pacijent = u.getPacijent();
+		if (pacijent == null) {
+			return null;
+		}
+		// dobavi zdravstveni karton, ako nema karton napravi
+		ZdravstveniKarton zk;
+		if (!zdravstveniKartonRepository.existsById(pacijent.getId())) {
+			zk = new ZdravstveniKarton();
+			zk.setPacijent(pacijent);
+			pacijent.setZdravstveniKarton(zk);
+			korisniciRepository.save(pacijent);
+			zk=pacijent.getZdravstveniKarton();
+		}
+		else {
+			zk = zdravstveniKartonRepository.findById(pacijent.getId()).get();
+		}
+		// kreiraj posetu na osnovu kartona, pregleda itd
+		Poseta p = new Poseta();
+		p.setBolest("");
+		p.setOpis(u.getOpis());
 		p.setPregled(pregled);
 		p.setZdravstveniKarton(zk);
 		pregled.setPoseta(p);

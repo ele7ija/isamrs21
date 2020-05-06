@@ -43,4 +43,4 @@ insert into specijalnost_lekara values(1, 3);
 
 insert into pregled (klinika_id, lekar_id, sala_id, tip_pregleda_id, pocetak_pregleda, kraj_pregleda, cena, popust, konacna_cena) values (1, 3, 1, 1, STR_TO_DATE('28/05/2020 12:00:00','%d/%m/%Y %H:%i:%s'), STR_TO_DATE('28/05/2020 13:00:00','%d/%m/%Y %H:%i:%s'), 1000, 0, 1000);
 insert into pregled (klinika_id, lekar_id, sala_id, tip_pregleda_id, pocetak_pregleda, kraj_pregleda, cena, popust, konacna_cena) values (1, 3, 1, 1, STR_TO_DATE('01/06/2020 12:00:00','%d/%m/%Y %H:%i:%s'), STR_TO_DATE('01/06/2020 13:00:00','%d/%m/%Y %H:%i:%s'), 1000, 0, 1000);
--- insert into pregled (klinika_id, lekar_id, sala_id, tip_pregleda_id, pocetak_pregleda, kraj_pregleda, cena, popust, konacna_cena) values (2, 6, 3, 3, STR_TO_DATE('01/06/2020 12:00:00','%d/%m/%Y %H:%i:%s'), STR_TO_DATE('01/06/2020 13:00:00','%d/%m/%Y %H:%i:%s'), 1000, 0, 1000);
+insert into pregled (klinika_id, lekar_id, sala_id, tip_pregleda_id, pocetak_pregleda, kraj_pregleda, cena, popust, konacna_cena) values (2, 6, 3, 2, STR_TO_DATE('01/06/2020 12:00:00','%d/%m/%Y %H:%i:%s'), STR_TO_DATE('01/06/2020 13:00:00','%d/%m/%Y %H:%i:%s'), 1000, 0, 1000);

@@ -5,7 +5,7 @@ export default{
   async getAllPregledi(idKlinike){
     let options = util.prepareOptions();
     let response = await axios.get(
-      `${process.env.VUE_APP_BACKEND_ROOT}/pregled/${idKlinike}`,
+      `${process.env.VUE_APP_BACKEND_ROOT}/pregled/${idKlinike}/slobodni`,
       options
     )
     return response.data;
