@@ -155,6 +155,9 @@ export default {
     },
     iOdabraniTipPregleda: {
       get: function() {
+        if (this.odabraniTipPregleda == null){
+          return '';
+        }
         return this.odabraniTipPregleda.naziv;
       },
       set: function(val) {

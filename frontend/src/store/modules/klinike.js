@@ -83,6 +83,9 @@ const getters = {
   },
   getPretrazeniPregledi: (state) => (klinikaId) => {
     let postojeci = state.pregledi[klinikaId];
+    if (postojeci == undefined) {
+      return [];
+    }
     let novi = postojeci.filter((x) => {
       let dp = new Date(x.pocetakPregleda);
       let pd = new Date(state.pocetniDatum);
@@ -107,6 +110,9 @@ const getters = {
     let myset = new Set();
     let retval = [];
     for (let klinika of state.klinike) {
+      if (state.pregledi[klinika.id] == undefined) {
+        continue;
+      }
       for (let pregled of state.pregledi[klinika.id]) {
         if (!myset.has(pregled.tipPregleda.naziv)) {
           retval.push(pregled.tipPregleda);
