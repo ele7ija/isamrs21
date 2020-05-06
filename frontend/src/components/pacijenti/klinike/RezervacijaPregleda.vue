@@ -209,12 +209,11 @@ export default {
         pregled: this.odabraniPregled.id,
         opis: this.napomena
       }
-      console.log(obj);
       this.kreirajUpit(obj)
+      setTimeout( () => this.$router.push('/pacijent/istorija'), 1000)
     }
   },
   created() {
-    console.log(this.odabraniPregled)
     if (this.odabraniPregled == null) {
       alert('Ne postoji odabran pregled')
       this.$router.push('/');

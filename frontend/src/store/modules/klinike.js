@@ -175,11 +175,21 @@ const actions = {
     let data = await preglediAPI.getAllPregledi(klinikaId);
       commit('setPreglediKlinike', {id: klinikaId, data: data})
   },
+  async loadAllSlobodniPregledi({commit, state}){
+    for (let klinika of state.klinike){
+      let data = await preglediAPI.getSlobodniPregledi(klinika.id);
+      commit('setPreglediKlinike', {id: klinika.id, data: data})
+    }
+  },
+  async loadSlobodniPregledi({commit}, klinikaId) {
+    let data = await preglediAPI.getSlobodniPregledi(klinikaId);
+      commit('setPreglediKlinike', {id: klinikaId, data: data})
+  },
   async dobaviPodatkeKlinike({dispatch}) {
     // dobavi klinike
     // dobavi preglede
     await dispatch('loadKlinike');
-    await dispatch('loadAllPregledi');
+    await dispatch('loadAllSlobodniPregledi');
   },
   async loadKlinika({commit}, klinikaId){
     let data = await klinikeAPI.getKlinika(klinikaId);
@@ -188,7 +198,7 @@ const actions = {
   async dobaviPodatkeKlinikaPage({commit, state, dispatch}, klinikaId) {
     await dispatch('loadKlinika', klinikaId);
     commit('setOdabranaKlinika', state.klinike[0]);
-    await dispatch('loadPregledi', klinikaId);
+    await dispatch('loadSlobodniPregledi', klinikaId);
   },
   async kreirajUpit({commit}, obj) {
     let data = await klinikeAPI.kreirajUpit(obj);

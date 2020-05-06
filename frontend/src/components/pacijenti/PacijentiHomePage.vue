@@ -50,7 +50,7 @@
                 </v-card>
               </v-col>
             </v-row>
-            <v-row>
+            <!-- <v-row>
               <v-col>
                 <v-card outlined>
                   <v-app-bar 
@@ -93,14 +93,14 @@
                   </v-list>
                 </v-card>
               </v-col>
-            </v-row>
+            </v-row> -->
             <v-row>
               <v-col>
                 <v-card outlined>
                 <v-app-bar 
                   color='primary' dark>
                   <v-toolbar-title>
-                    Nepotvrdjeni upiti
+                    Nepotvrđeni upiti
                   </v-toolbar-title>
                 </v-app-bar>
                 <v-list v-if='nepotvrdjeniUpiti.length != 0'>
@@ -130,7 +130,7 @@
                   <v-list-item>
                     <v-list-item-content class='pt-0'>
                     <v-list-item-title>
-                      Nema nepotvrdjenih upita
+                      Nema nepotvrđenih upita
                     </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>

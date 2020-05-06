@@ -70,6 +70,14 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+  .v-messages {
+    display: none;
+  }
+  .v-text-field__details {
+    display: none;
+  }
+  .v-list-item__content {
+    padding-bottom: 0;
+  }
 </style>

@@ -11,6 +11,15 @@ export default{
     return response.data;
   },
 
+  async getSlobodniPregledi(idKlinike){
+    let options = util.prepareOptions();
+    let response = await axios.get(
+      `${process.env.VUE_APP_BACKEND_ROOT}/pregled/${idKlinike}/slobodni`,
+      options
+    )
+    return response.data;
+  },
+
   addPregled(idKlinike, pregled){
     //vraca promise koji se awaituje, konacan rezultat je customResponse objekat(pogledati backend)
     let options = util.prepareOptions();

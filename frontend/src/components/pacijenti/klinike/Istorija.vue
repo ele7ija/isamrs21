@@ -246,11 +246,14 @@ export default {
       'potvrdiUpit',
       'odustaniUpit'
     ]),
-    potvrdi: function(upitId) {
-      this.potvrdiUpit(upitId);
+    potvrdi: async function(upitId) {
+      await this.potvrdiUpit(upitId);
+      this.dobaviNepotvrdjeneUpite();
+      this.dobaviSvePosete();
     },
-    odustani: function(upitId) {
-      this.odustaniUpit(upitId)
+    odustani: async function(upitId) {
+      await this.odustaniUpit(upitId);
+      this.dobaviNepotvrdjeneUpite();
     },
     formatDate: function(date) {
       let d = new Date(date);

@@ -178,6 +178,7 @@ export default {
         sifra: this.lozinka
       }
       this.registrujKorisnika(korisnik);
+      setTimeout( () => this.$router.push('/login'), 1000)
     }
   }
 }

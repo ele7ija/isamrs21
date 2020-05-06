@@ -22,6 +22,7 @@
           >
             <template v-slot:activator="{ on }">
               <v-text-field
+                hide-details
                 v-model="iPocetniDatum"
                 label="Početni datum"
                 append-icon="mdi-calendar"
@@ -51,6 +52,7 @@
             <template v-slot:activator="{ on }">
               <v-text-field
                 v-model="iKrajnjiDatum"
+                hide-details=""
                 label="Krajnji datum"
                 append-icon="mdi-calendar"
                 readonly

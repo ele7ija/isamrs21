@@ -23,13 +23,15 @@ public interface UpitZaPregledRepository extends JpaRepository<UpitZaPregled, Lo
 
 	@Query("SELECT u FROM UpitZaPregled u "
 			+ "WHERE u.potvrdjen = false AND "
-			+ "u.odobren = true")
+			+ "u.odobren = true AND "
+			+ "u.pacijentObradio = false")
 	List<UpitZaPregled> findNepotvrdjeni();
 
 	@Query("SELECT u FROM UpitZaPregled u "
 			+ "WHERE u.potvrdjen = false AND "
 			+ "u.odobren = true AND "
-			+ "u.pacijent.email = :email")
+			+ "u.pacijent.email = :email AND "
+			+ "u.pacijentObradio = false")
 	List<UpitZaPregled> findNepotvrdjeniByEmail(@Param("email") String email);
 			
 	@Query("SELECT u FROM UpitZaPregled u "
