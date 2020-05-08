@@ -381,7 +381,10 @@ export default {
     addSpecijalnosti(lekar, tipoviPregleda){
       let idLekara = lekar.id;
       let idTipovaPregleda = tipoviPregleda.map(x => x.id);
-      this.addSpecijalnostiMedicinskaOsoba({idLekara, idTipovaPregleda});
+      this.addSpecijalnostiMedicinskaOsoba({idLekara, idTipovaPregleda}).then(null, (error) => {
+        this.snackbarText = error;
+        this.snackbar = true;
+      });
       this.specijalnostiZaDodati = [];
     },
 

@@ -16,12 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.Cenovnik;
-import isamrs.tim21.klinika.domain.Klinika;
-import isamrs.tim21.klinika.domain.TipPregleda;
 import isamrs.tim21.klinika.dto.CustomResponse;
-import isamrs.tim21.klinika.repository.CenovnikRepository;
-import isamrs.tim21.klinika.repository.KlinikaRepository;
-import isamrs.tim21.klinika.repository.TipPregledaRepository;
 import isamrs.tim21.klinika.services.CenovnikService;
 
 
@@ -68,14 +63,12 @@ public class CenovnikKontroler {
 	public ResponseEntity<CustomResponse<Cenovnik>> updateCenovnik(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idCenovnika") Long idCenovnika, @RequestBody Cenovnik cenovnikToChange) throws Exception{
 		ResponseEntity<CustomResponse<Cenovnik>> retval = null;
-		retval = cenovnikService.update(idKlinike, idCenovnika, cenovnikToChange);
-		/*try{
+		try{
 			retval = cenovnikService.update(idKlinike, idCenovnika, cenovnikToChange);
 		}catch(Exception e){
-			System.out.println(e.getStackTrace());
 			retval = new ResponseEntity<CustomResponse<Cenovnik>>(new CustomResponse<Cenovnik>(
 					null, false, "Greska usled optimistickog zakljucavanja. Pokusajte ponovo."), HttpStatus.OK);
-		}*/
+		}
 		return retval;
 	}
 	

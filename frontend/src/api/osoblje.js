@@ -19,23 +19,14 @@ export default{
     );
     return response.data;
   },
-  async updateExistingMedicinskaOsoba(idKlinike, osoba){
+  
+  addSpecijalnostiMedicinskaOsoba(idKlinike, {idLekara, idTipovaPregleda}){
     let options = util.prepareOptions();
-    let response = await axios.put(
-      `${process.env.VUE_APP_BACKEND_ROOT}/medicinskaOsoba/${idKlinike}/${osoba.id}`,
-      osoba,
-      options
-    );
-    return response.data;
-  },
-  async addSpecijalnostiMedicinskaOsoba(idKlinike, {idLekara, idTipovaPregleda}){
-    let options = util.prepareOptions();
-    let response = await axios.put(
+    return axios.put(
       `${process.env.VUE_APP_BACKEND_ROOT}/medicinskaOsoba/${idKlinike}/specijalnosti/${idLekara}`,
       idTipovaPregleda,
       options
     );
-    return response.data;
   },
   removeSpecijalnostiMedicinskaOsoba(idKlinike, {idLekara, idTipaPregleda}){
     let options = util.prepareOptions();

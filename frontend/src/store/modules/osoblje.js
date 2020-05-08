@@ -69,11 +69,19 @@ const actions = {
   },
 
   async addSpecijalnostiMedicinskaOsoba({state, commit}, {idLekara, idTipovaPregleda}){
-    let response = await osoblje.addSpecijalnostiMedicinskaOsoba(state.klinika.id, {idLekara, idTipovaPregleda});
-    let tipoviPregleda = response.tipovi_pregleda.filter(x => idTipovaPregleda.filter(i => i == x.id).length != 0);
-    console.log(tipoviPregleda);
-    commit('addSpecijalnosti', {idLekara, tipoviPregleda});
-    commit('tipoviPregleda/addSpecijalista', {idLekara, idTipovaPregleda}, {root: true})
+    return new Promise((resolve, reject) => {
+      osoblje.addSpecijalnostiMedicinskaOsoba(state.klinika.id, {idLekara, idTipovaPregleda})
+      .then(({data:{result, success, message}}) => {
+        if(success){
+          let tipoviPregleda = result.tipovi_pregleda.filter(x => idTipovaPregleda.filter(i => i == x.id).length != 0);
+          commit('addSpecijalnosti', {idLekara, tipoviPregleda});
+          commit('tipoviPregleda/addSpecijalista', {idLekara, idTipovaPregleda}, {root: true});
+          resolve(message);
+        }else{
+          reject(message);
+        }
+      });
+    })    
   },
 
   async removeMedicinskaOsoba({state, commit, dispatch}, idOsobe){
