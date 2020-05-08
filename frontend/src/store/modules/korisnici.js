@@ -14,7 +14,14 @@ const state = {
 const getters = {
   _getKorsinik: (state) => { return state._korisnik; },
   getKorisnik: (state) => {return state.korisnik},
-  getKorisnici: (state) => {return state.korisnici}
+  getKorisnici: (state) => {return state.korisnici},
+  getAdminiKlinika: (state) => { 
+    var adminiKlinika = state.korisnici.filter(
+      function(korisnik){
+        return korisnik.klinikaAdmina != undefined;
+    });
+    return adminiKlinika;
+  },
 }
 
 const actions = {

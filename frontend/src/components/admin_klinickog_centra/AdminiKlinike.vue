@@ -2,27 +2,24 @@
   <div>
     <v-data-table
       :headers="headers"
-      :items="transformedData"
+      :items="getAll"
       :search="search"
-      :single-expand="singleExpand"
-      :expanded.sync="expanded"
-      item-key="email"
-      show-expand
       class="elevation-1"
+      :single-expand="true"
+      item-key="id"
+      show-expand
       >
-
-<!-- toolbar -->
       <template v-slot:top>
         <v-toolbar flat color="white">
-          <v-toolbar-title>Administratori klinike</v-toolbar-title>
+          <v-toolbar-title>Administratori klinika</v-toolbar-title>
           <v-divider
             class="mx-4"
             inset
             vertical
           ></v-divider>
           <v-spacer></v-spacer>
-
-<!--search bar  -->
+          
+<!-- search bar  -->
           <v-text-field
             v-model="search"
             append-icon="mdi-magnify"
@@ -35,86 +32,98 @@
             inset
             vertical
           ></v-divider>
-          <v-spacer></v-spacer>      
-<!--pop up dialog -->
+          <v-spacer></v-spacer>
+
+
+<!-- forma za unos ili izmenu unutar dialoga-->
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ on }">
-              <v-btn color="primary" dark class="mb-2" v-on="on">Dodaj</v-btn>
+              <v-btn color="primary"  class="mb-2" v-on="on">Dodaj</v-btn>
             </template>
-            <v-card>
-              <v-card-title>
-                <span class="headline">{{formTitle}}</span>
-              </v-card-title>
-              <hr>
-              <v-form v-model="isFormValid">
+            <v-form v-model="isFormValid">
+              <v-card>
+                <!-- naslov forme -->
+                <v-card-title>
+                  <span class="headline">{{formTitle}}</span>
+                </v-card-title>
+                <hr>
+
+                <!-- elementi -->
                 <v-card-text>
-                  <v-container>
-                    <v-row>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="newItem.ime" label="Ime" :rules="notEmptyRule('Ime')"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="newItem.prezime" label="Prezime" :rules="notEmptyRule('Prezime')"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="newItem.email" label="Email" :rules="emailRules"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="newItem.sifra" label="Sifra" :rules="notEmptyRule('Sifra')"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-select
-                          v-model="newItem.radniKalendar.dnevnoRadnoVremeSati"
-                          :items="[4,5,6,7,8]"
-                          label="Radno vreme"
-                          chips
-                          hint="Koje je dnevno radno vreme u satima?"
-                          persistent-hint
-                        ></v-select>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-select
-                          v-model="newItem.pozicija"
-                          :items="['lekar', 'sestra']"
-                          label="Pozicija"
-                          chips
-                          hint="Koja je pozicija novog zaposlenog?"
-                          persistent-hint
-                        ></v-select>
-                      </v-col>
-                      <v-col cols="12" sm="12" md="12" v-if="newItem.pozicija == 'lekar' && tipoviPregleda.length != 0">
-                        <v-select
-                          v-model="newItem.tipovi_pregleda"
-                          :items="_tipoviPregleda"
-                          label="Specijalnosti"
-                          multiple
-                          chips
-                          deletable-chips
-                          hint="Koje su specijalnosti lekara?"
-                          persistent-hint
-                        ></v-select>
-                      </v-col>
-                    </v-row>
+                  <v-container>                      
+                    <v-text-field 
+                    label="ime" 
+                    v-model="newItem.ime" 
+                    :rules="poljeRule"
+                    required
+                    ></v-text-field>
+                    
+                    <v-text-field
+                    label="prezime"
+                    v-model="newItem.prezime"
+                    :rules="poljeRule"
+                    required
+                    ></v-text-field>
+
+                    <v-text-field
+                    label="email"
+                    v-model="newItem.email"
+                    :rules="poljeRule"
+                    required
+                    ></v-text-field>
+
+                    <v-text-field
+                    label="šifra"
+                    v-model="newItem.sifra"
+                    :rules="poljeRule"
+                    required
+                    :append-icon="prikaziLozinku ? 'mdi-eye' : 'mdi-eye-off'"
+                    :type="prikaziLozinku ? 'text': 'password'"
+                    @click:append="prikaziLozinku = !prikaziLozinku"
+                    ></v-text-field>
+
+
+                    <v-select
+                    label="klinika"
+                    v-model="newItem.klinikaId"
+                    :items="getKlinike"
+                    item-text="naziv"
+                    item-value="id"
+                    
+                    :rules="klinikaRule"
+                    chips
+                    required
+                  ></v-select>
+
                   </v-container>
                 </v-card-text>
-
+                
+                
+                <!-- akcije -->
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                  <v-btn color="blue darken-1" text @click="save" :disabled="!isFormValid">Save</v-btn>
+                  <v-btn color="blue darken-1" text @click="close">Nazad</v-btn>
+                  <v-btn color="blue darken-1" text @click="save" :disabled="!isFormValid">Sačuvaj</v-btn>
                 </v-card-actions>
-              </v-form>
-            </v-card>
+              </v-card>
+            </v-form>
           </v-dialog>
         </v-toolbar>
       </template>
 
-<!-- tabela -->
-      <template v-slot:expanded-item="{ headers }">
-        <td :colspan="headers.length">
-          <v-container fluid>
+<!-- opis klinike ide na expand -->
+      <template v-slot:expanded-item="{ headers, item }">
 
-          </v-container>
+        <td :colspan="headers.length" style="padding:15px " class=" grey--text ">
+        
+        <div>
+          <v-data-table
+          :headers="klinikaHeaders"
+          :items="getKlinika(item.klinikaAdmina.id)"
+          class="elevation-1 color: grey lighten-3 "
+          hide-default-footer
+          ></v-data-table>
+        </div>
         </td>
       </template>
 
@@ -122,138 +131,109 @@
   </div>
 </template>
 
-
-
-
 <script>
 import {mapGetters, mapActions} from 'vuex';
+
 export default {
   name: "AdminiKlinike",
   data: function(){
     return {
       dialog: false,
       search: '',
-      isFormValid: false,
-      expanded: [],
-      singleExpand: true,
-      formTitle: "Dodavanje novog administratora klinike",
+      isFormValid: true,
+      prikaziLozinku: false,
       headers: [
         {
           text: 'Ime',
           value: 'ime',
           sortable: true,
-
         },
         {
           text: 'Prezime',
           value: 'prezime',
-          sortable: false
+          sortable: true,
         },
         {
-          text: 'E-mail',
+          text: 'Email',
           value: 'email',
           sortable: true,
         },
         {
           text: 'Klinika',
-          value: 'klinika',
-          sortable: false
-        },
-        { 
-          text: 'Akcije',
-          value: 'actions',
+          value: 'data-table-expand',
           sortable: false,
         },
       ],
-
       newItem: {
         ime: '',
         prezime: '',
         email: '',
         sifra: '',
-        pozicija: '',
-        tipovi_pregleda: [],
-        radniKalendar: {
-          dnevnoRadnoVremeSati: 8
-        }
+        klinikaId: undefined, 
       },
-      specijalnostiZaDodati: []
+      
+      //rules
+      poljeRule: [
+        v => !!v || 'Polje je obavezno',
+        v => (v && v.length <= 50) || 'Polje ima najviše 50 karaktera'
+      ],
+      klinikaRule: [
+        v => !!v || 'Klinika administratora je obavezno polje'
+      ],
+
+      //klinike za administratore
+      klinikaHeaders:[
+        {
+          text: 'Naziv',
+          value: 'naziv',
+          sortable: false,
+        },
+        {
+          text: 'Adresa',
+          value: 'adresa',
+          sortable: false,
+        },
+        {
+          text: 'Grad',
+          value: 'grad',
+          sortable: false,
+        },
+        {
+          text: 'Drzava',
+          value: 'drzava',
+          sortable: false,
+        },
+      ],
     };
   },
-  watch: {
-    expanded: function () {
-      this.specijalnostiZaDodati = [];
-    },
-  },
+
   computed: {
+
     ...mapGetters(
       {
-        getAll: 'osoblje/getMedicinskoOsoblje',
-        get: 'osoblje/getMedicinskaOsoba',
-        tipoviPregleda: 'tipoviPregleda/getTipoviPregleda',
-        korisnici: 'korisnici/getKorisnici'
-      },
-    ),
-    _tipoviPregleda(){
-      return this.tipoviPregleda.map(x => {
-        return{
-          text: x.naziv,
-          value: x
-        };
-      });
-    },
-    transformedData: function(){
-      let data = [];
-      for(let osoblje of this.getAll){
-        osoblje.aktiviran = osoblje.poslednjaPromenaSifre != null ? 'da': 'ne';
-        data.push(osoblje);
+        getAll: 'adminiKlinike/getAdminiKlinike',
+        getKlinike: 'klinike/getKlinike',
       }
-      return data;
+    ),
+
+    formTitle: function(){
+       return 'Dodavanje novog administratora klinike';
     },
-
-    notEmptyRule: () => (property) => {
-      const rules = [];
-      const rule1 = v => !!v || `${property} mora imati vrednost.`;
-      rules.push(rule1);
-      return rules;
-    },
-
-    emailRules: function(){
-      const rules = [];
-      const rule1 = v => !!v || 'Email ne sme ostati prazan';
-      rules.push(rule1);
-
-      const rule2 = v => this.korisnici.findIndex(x => x.email == v) == -1 || 'Email mora biti jedinstven';
-      rules.push(rule2);
-      return rules;
-    },
-
-    _slobodniTipoviPregleda: () => ({lekar, tipoviPregleda}) => {
-      let temp = tipoviPregleda.filter(x => lekar.tipovi_pregleda.filter(y => y.id == x.id).length == 0);
-      return temp.map(x => {
-        return{
-          text: x.naziv,
-          value: x
-        };
-      });
-    }
   },
-
   created(){
+    //load klinike
     this.fetchData();
-    this.fetchTipoviTregleda();
-    this.fetchAllKorisnici();
+    this.loadKlinike();
+    
   },
   methods: {
     ...mapActions(
       {
-        fetchData: 'osoblje/loadMedicinskoOsoblje',
-        fetchTipoviTregleda: 'tipoviPregleda/loadTipoviPregleda',
-        fetchAllKorisnici: 'korisnici/fetchAllKorisnici',
-        addMedicinskaOsoba: 'osoblje/addMedicinskaOsoba',
-        addSpecijalnostiMedicinskaOsoba: 'osoblje/addSpecijalnostiMedicinskaOsoba',
-        removeSpecijalnostiMedicinskaOsoba: 'osoblje/removeSpecijalnostiMedicinskaOsoba',
-        removeMedicinskaOsoba: 'osoblje/removeMedicinskaOsoba',
+        fetchData: 'adminiKlinike/fetchAdminiKlinike',
+        loadKlinike: 'klinike/loadKlinike',
+        addAdminKlinike: 'adminiKlinike/addAdminKlinike',
+        //updateKlinika: 'klinike/updateKlinikaFromAdminCentra',
+        // removeSala: 'sale/removeSala'
       }
     ),
 
@@ -263,53 +243,30 @@ export default {
         prezime: '',
         email: '',
         sifra: '',
-        pozicija: '',
-        tipoviPregleda: [],
-        radniKalendar: {
-          dnevnoRadnoVremeSati: 8
-        }
-      };
+        klinikaId: '',
+      }
     },
-
     close(){
       this.resetNewItem();
       this.dialog = false;
     },
-
     save(){
-      this.newItem.pozicija = this.newItem.pozicija == 'sestra' ? 'medicinska sestra' : 'lekar';
-      this.newItem.tipovi_pregleda = this.newItem.tipovi_pregleda.map(x => {return {id: x.id}});
-      this.addMedicinskaOsoba(this.newItem);
+      this.addAdminKlinike(this.newItem);
       this.close();
     },
 
-    deleteItem(item){
-      this.removeMedicinskaOsoba(item.id);
-    },
 
-    addSpecijalnosti(lekar, tipoviPregleda){
-      let idLekara = lekar.id;
-      let idTipovaPregleda = tipoviPregleda.map(x => x.id);
-      this.addSpecijalnostiMedicinskaOsoba({idLekara, idTipovaPregleda});
-      this.specijalnostiZaDodati = [];
-    },
-
-    removeFromSpecijalnost(lekar, tipPregleda){
-      let idLekara = lekar.id;
-      let idTipaPregleda = tipPregleda.id;
-      this.removeSpecijalnostiMedicinskaOsoba({idLekara, idTipaPregleda});
+    getKlinika(idKlinike){
+      var klinika = (this.getKlinike.find(
+        klinika => {
+          return klinika.id == idKlinike 
+        }));
+      return [klinika];
     }
-    
   }
 }
 </script>
 
 <style>
-.container1{
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-}
-.container1-element{
-  display: table;
-}
+
 </style>

@@ -15,6 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import isamrs.tim21.klinika.dto.AdminKlinikeDTO;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
 
 @Entity
@@ -31,6 +32,12 @@ public class AdministratorKlinike extends Korisnik{
 	@JsonSerialize(using=IdentitySerializer.class)
 	private Klinika klinikaAdmina;
 
+	public AdministratorKlinike(){}
+
+	public AdministratorKlinike(AdminKlinikeDTO adminKlinikeDTO, Klinika klinika){
+		super(adminKlinikeDTO.email, adminKlinikeDTO.sifra, adminKlinikeDTO.ime, adminKlinikeDTO.prezime);
+		this.klinikaAdmina = klinika;
+	}
 	public Klinika getKlinikaAdmina() {
 		return klinikaAdmina;
 	}
