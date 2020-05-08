@@ -19,14 +19,13 @@ export default{
     );
     return data;
   },
-  async updateCenovnik(idKlinike, cenovnik){
+  updateCenovnik(idKlinike, cenovnik){
     let options = util.prepareOptions();
-    let {data} = await axios.put(
+    return axios.put(
       `${process.env.VUE_APP_BACKEND_ROOT}/cenovnik/${idKlinike}/${cenovnik.id}`,
       cenovnik,
       options
     );
-    return data;
   },
   removeCenovnik(idKlinike, idCenovnika){
     let options = util.prepareOptions();

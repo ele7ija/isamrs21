@@ -38,8 +38,17 @@ const actions = {
   },
 
   async updateCenovnik({state, commit}, cenovnik){
-    let response = await cenovnici.updateCenovnik(state.klinika.id, cenovnik);
-    commit('updateExistingCenovnik', response);
+    return new Promise((resolve, reject) => {
+      cenovnici.updateCenovnik(state.klinika.id, cenovnik)
+      .then(({data:{result, message,success}}) => {
+        if(success){
+          commit('updateExistingCenovnik', result);
+          resolve(message);
+        }else{
+          reject(message);
+        }
+      })
+    });
   },
 
   async removeCenovnik({state, commit}, idCenovnika){

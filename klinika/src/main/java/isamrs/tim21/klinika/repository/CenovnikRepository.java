@@ -15,7 +15,7 @@ public interface CenovnikRepository extends JpaRepository<Cenovnik, Long> {
 			+ "WHERE c.klinika.id = :idKlinike")
 	public List<Cenovnik> findAllByIdKlinike(@Param("idKlinike") long idKlinike);
 	
-	@Query("SELECT c from TipPregleda c "
+	@Query("SELECT c from Cenovnik c "
 			+ "WHERE c.klinika.id = :idKlinike "
 			+ "AND c.id = :idCenovnika")
 	public Cenovnik findByIdKlinikeAndIdCenovnika(@Param("idKlinike") long idKlinike, @Param("idCenovnika") long idCenovnika);
