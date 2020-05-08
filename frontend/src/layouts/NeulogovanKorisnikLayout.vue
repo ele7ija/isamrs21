@@ -7,7 +7,7 @@
       <router-link to='/login'>
         <v-toolbar-title class='white--text font-weight-medium pl-4'>
             <v-icon color="white" class='pr-4'>mdi-hospital-building</v-icon>
-            <span>Klinika 'Asdf'</span>
+            <span>Klinika</span>
         </v-toolbar-title>
       </router-link>
       <v-spacer></v-spacer>

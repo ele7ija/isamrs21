@@ -36,7 +36,7 @@ public class KlinikaService {
 		Korisnik user = (Korisnik) this.userDetailsService.loadUserByUsername(email);
 		if(user instanceof AdministratorKlinike){
 			AdministratorKlinike admin = (AdministratorKlinike) user;
-			return klinikaRepository.findById(admin.getId()).orElse(null);
+			return klinikaRepository.findById(admin.getKlinikaAdmina().getId()).orElse(null);
 		}
 		return null;
 	}

@@ -21,7 +21,7 @@ public class KorisnikKontroler {
 	KorisniciRepository korisnikRepository;
 	
 	@GetMapping
-	@PreAuthorize("hasAuthority('admin-klinike')")
+	@PreAuthorize("hasAuthority('admin-klinike') or hasAuthority('admin-klinickog-centra')")
 	public ResponseEntity<List<Korisnik>> getAllKorisnici(){
 		List<Korisnik> osoblje = korisnikRepository.findAll();
 		return new ResponseEntity<List<Korisnik>>(osoblje, HttpStatus.OK);
