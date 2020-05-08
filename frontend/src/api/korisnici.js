@@ -42,5 +42,15 @@ export default {
           reject(error);
         })
     });
-  }
+  },
+
+  async addAdminKlinike(adminKlinike){
+    let options = util.prepareOptions();
+    let response = await axios.post(
+      `${process.env.VUE_APP_BACKEND_ROOT}/admin_klinike`,
+      adminKlinike,
+      options
+    );
+    return response.data;
+  },
 }
