@@ -3,10 +3,11 @@ package isamrs.tim21.klinika.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim21.klinika.domain.Klinika;
 import isamrs.tim21.klinika.domain.Lekar;
@@ -48,14 +49,7 @@ public class PregledService {
 	@Autowired
 	UpitZaPregledRepository upitZaPregledRepository;
 
-	public List<Pregled> findAll(Long idKlinike) {
-		return pregledRepository.findAllByIdKlinike(idKlinike);
-	}
-
-	public Pregled find(Long idKlinike, Long idPregleda) {
-		return pregledRepository.findByIdKlinikeAndIdPregleda(idKlinike, idPregleda); 
-	}
-
+	@Transactional(readOnly=false)
 	public CustomResponse<Pregled> add(Klinika klinika, Pregled pregled) {
 		pregled.setId(null);
 		pregled.setKlinika(klinika);
@@ -64,7 +58,7 @@ public class PregledService {
 		
 	}
 
-	public CustomResponse<Pregled> update(Klinika klinika, Pregled pregled, Long idPregleda) {
+	public CustomResponse<Pregled> update(Klinika klinika, Pregled pregled, Long idPregleda) throws Exception{
 		pregled.setId(idPregleda);
 		
 		/* VALIDACIJE: */		
@@ -78,7 +72,7 @@ public class PregledService {
 		
 	}
 	
-	@Transactional
+	@Transactional(readOnly=false)
 	public CustomResponse<Boolean> delete(Long idKlinike, Long idPregleda) {
 		if(posetaRepository.findByIdPregleda(idPregleda) != null){
 			return new CustomResponse<Boolean>(false, false, "Greska: Pregled je rezervisan. Ne mozete ga obrisati.");
@@ -99,9 +93,10 @@ public class PregledService {
 		if(numberOfRemovals == 1){
 			return new CustomResponse<Boolean>(true, true, "OK.");
 		}
-		return new CustomResponse<Boolean>(false, false, "Greska: Pregled nije pronadjen");
+		return new CustomResponse<Boolean>(false, false, "Greska: Pregled nije pronadjen.");
 	}
 	
+	@Transactional(readOnly=false)
 	private CustomResponse<Pregled> validateAll(Klinika klinika, Pregled pregled) {
 		/* VALIDACIJE: */
 		/* Da li su svi entiteti unutar iste klinike kao i pregled koji se dodaje? ODRADJENO UNUTAR OSTALIH METODA*/
@@ -176,5 +171,56 @@ public class PregledService {
 			}
 		}
 		return r;
+	}
+
+	@Transactional(readOnly=true)
+	public List<Pregled> getAll(Long idKlinike) {
+		if(!klinikaRepository.findById(idKlinike).isPresent()){
+			return null;
+		}else{
+			return pregledRepository.findAllByIdKlinike(idKlinike);
+		}
+	}
+	
+	@Transactional(readOnly=true)
+	public Pregled get(Long idKlinike, Long idPregleda) {
+		if(!klinikaRepository.findById(idKlinike).isPresent()){
+			return null;
+		}else{
+			return pregledRepository.findByIdKlinikeAndIdPregleda(idKlinike, idPregleda);
+		}
+	}
+
+	@Transactional(readOnly=false)
+	public ResponseEntity<CustomResponse<Pregled>> add(Long idKlinike, Pregled pregled) {
+		Klinika klinika = klinikaRepository.findById(idKlinike).orElse(null);
+		if(klinika == null){
+			CustomResponse<Pregled> customResponse = new CustomResponse<Pregled>(null, false,
+					"Greska: Trazena klinika ne postoji");
+			return new ResponseEntity<CustomResponse<Pregled>>(customResponse, HttpStatus.NOT_FOUND);
+		}else{
+			CustomResponse<Pregled> customResponse = add(klinika, pregled);
+			return new ResponseEntity<CustomResponse<Pregled>>(customResponse, HttpStatus.OK);
+		}
+	}
+
+	@Transactional(readOnly=false)
+	public ResponseEntity<CustomResponse<Pregled>> update(Long idKlinike, Long idPregleda, Pregled pregled) {
+		Klinika klinika = klinikaRepository.findById(idKlinike).orElse(null);
+		if(klinika == null){
+			CustomResponse<Pregled> customResponse = new CustomResponse<Pregled>(null, false,
+					"Greska: Trazena klinika ne postoji");
+			return new ResponseEntity<CustomResponse<Pregled>>(customResponse, HttpStatus.NOT_FOUND);
+		}else{
+			CustomResponse<Pregled> customResponse = null;
+			try{
+				customResponse = update(klinika, pregled, idPregleda);
+			}catch(Exception e){
+				return new ResponseEntity<CustomResponse<Pregled>>(
+						new CustomResponse<Pregled>(null, false, "Izuzetak pri optimistickom zakljucavanju. Osvezite stranicu i pokusajte ponovo"),
+						HttpStatus.OK);
+			}
+			return new ResponseEntity<CustomResponse<Pregled>>(customResponse, HttpStatus.OK);
+		}
 	}
 }

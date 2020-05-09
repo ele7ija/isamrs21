@@ -19,25 +19,35 @@ const actions = {
   },
 
   async addPregled({state, commit, dispatch}, pregled){
-    let {result, success, message} = await pregledi.addPregled(state.klinika.id, pregled);
-    if(success){
-      commit('addNewPregled', result);
-      //azuriraj podatek za lekara, sale i tipovePregleda
-      dispatch('osoblje/loadMedicinskoOsoblje', {}, {root: true});
-      dispatch('sale/loadSale', {}, {root: true});
-      dispatch('tipoviPregleda/loadTipoviPregleda', {}, {root: true});
-    }else{
-      return Promise.reject(message);
-    }
+    return new Promise((resolve, reject) => {
+      pregledi.addPregled(state.klinika.id, pregled)
+      .then(({data: {result, success, message}}) => {
+        if(success){
+          commit('addNewPregled', result);
+          //azuriraj podatek za lekara, sale i tipovePregleda
+          dispatch('osoblje/loadMedicinskoOsoblje', {}, {root: true});
+          dispatch('sale/loadSale', {}, {root: true});
+          dispatch('tipoviPregleda/loadTipoviPregleda', {}, {root: true});
+          resolve(message);
+        }else{
+          reject(message);
+        }
+      });
+    });
   },
 
   async updatePregled({state, commit}, pregled){
-    let {result, success, message} = await pregledi.updatePregled(state.klinika.id, pregled);
-    if(success){
-      commit('updateExistingPregled', result);
-    }else{
-      return Promise.reject(message);
-    }
+    return new Promise((resolve, reject) => {
+      pregledi.updatePregled(state.klinika.id, pregled)
+      .then(({data: {result, success, message}}) => {
+        if(success){
+          commit('updateExistingPregled', result);
+          resolve(message);
+        }else{
+          reject(message);
+        }
+      });
+    });
   },
 
   async removePregled({state, commit}, pregled){

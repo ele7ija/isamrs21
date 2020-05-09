@@ -262,7 +262,10 @@ export default {
     save(){
       this.newItem.cenovnik = this.newItem.cenovnik ? {id: this.newItem.cenovnik.id} : null;
       if(this.update){
-        this.updateTipPregleda(this.newItem);
+        this.updateTipPregleda(this.newItem).then(null, (error) => {
+          this.snackbarText = error;
+          this.snackbar = true;
+        });
       }else{
         this.addTipPregleda(this.newItem);
       }

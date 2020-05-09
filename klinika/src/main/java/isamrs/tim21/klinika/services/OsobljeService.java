@@ -72,13 +72,16 @@ public class OsobljeService {
 		return retval;
 	}
 
-	@Transactional(readOnly=false, propagation=Propagation.MANDATORY)
-	public CustomResponse<MedicinskoOsoblje> addSpecijalnostOsoblja(Long idOsoblja, List<Long> idTipovaPregleda) throws Exception {
+	@Transactional(readOnly=false)
+	public CustomResponse<MedicinskoOsoblje> addSpecijalnostOsoblja(Long idOsoblja, List<Long> idTipovaPregleda){
 		MedicinskoOsoblje osoblje = osobljeRepository.findById(idOsoblja).orElse(null);
 		if(osoblje == null || osoblje instanceof MedicinskaSestra){
 			return new CustomResponse<MedicinskoOsoblje>(null, false, "Greska: Lekar nije pronadjen u trazenoj klinici.");
 		}
 		Lekar lekar = (Lekar) osoblje;
+		if(idTipovaPregleda.size() - 1 != lekar.getTipovi_pregleda().size()){
+			return new CustomResponse<MedicinskoOsoblje>(null, false, "Greska: Vasa verzija verovatno nije najsvezija. Osvezite stranicu.");
+		}
 		for(Long idTipaPregleda : idTipovaPregleda){
 			TipPregleda tipPregleda = tipPregledaRepository.findById(idTipaPregleda).orElse(null);
 			if(tipPregleda == null){
@@ -98,7 +101,7 @@ public class OsobljeService {
 	}
 
 	@Transactional(readOnly=false, propagation=Propagation.MANDATORY)
-	public CustomResponse<MedicinskoOsoblje> deleteSpecijalnostOsoblja(Long idOsoblja, Long idTipaPregleda) throws Exception{
+	public CustomResponse<MedicinskoOsoblje> deleteSpecijalnostOsoblja(Long idOsoblja, Long idTipaPregleda){
 		MedicinskoOsoblje osoblje = osobljeRepository.findById(idOsoblja).orElse(null);
 		if(osoblje == null || osoblje instanceof MedicinskaSestra){
 			return new CustomResponse<MedicinskoOsoblje>(osoblje, false, "Greska: Lekar nije pronadjen.");
@@ -127,7 +130,7 @@ public class OsobljeService {
 	}
 
 	@Transactional(readOnly=false, propagation=Propagation.MANDATORY)
-	public CustomResponse<Boolean> delete(Long idKlinike, Long idOsoblja) throws Exception{
+	public CustomResponse<Boolean> delete(Long idKlinike, Long idOsoblja){
 		MedicinskoOsoblje osobaToDelete = osobljeRepository.findByIdKlinikeAndById(idKlinike, idOsoblja);
 		if(osobaToDelete == null){
 			return new CustomResponse<Boolean>(false, false, "Greska. Medicinska osoba ne postoji");
@@ -185,22 +188,15 @@ public class OsobljeService {
 
 	@Transactional(readOnly=false)
 	public ResponseEntity<CustomResponse<MedicinskoOsoblje>> updateSpecijalnosti(Long idKlinike, Long idOsoblja,
-			List<Long> idTipovaPregleda) {
+			List<Long> idTipovaPregleda){
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
 			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(
 					new CustomResponse<MedicinskoOsoblje>(null, false, "Greska: Klinika nije pronadjena."),
-					HttpStatus.NOT_FOUND);
+					HttpStatus.OK);
 		}else{
-			CustomResponse<MedicinskoOsoblje> retval = null;
-			try{
-				retval = addSpecijalnostOsoblja(idOsoblja, idTipovaPregleda);
-			}catch(Exception e){
-				return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(
-						new CustomResponse<MedicinskoOsoblje>(null, false, "Greska usled konkurentnog pristupa. Pokusajte ponovo."),
-						HttpStatus.OK);
-			}
-			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(retval, retval.isSuccess() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+			CustomResponse<MedicinskoOsoblje> retval = addSpecijalnostOsoblja(idOsoblja, idTipovaPregleda);
+			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(retval, HttpStatus.OK);
 		}
 	}
 
@@ -211,14 +207,7 @@ public class OsobljeService {
 		if(klinika == null){
 			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(new CustomResponse<MedicinskoOsoblje>(null, false, "Greska. Klinika ne postoji"), HttpStatus.NOT_FOUND);
 		}else{
-			CustomResponse<MedicinskoOsoblje> customResponse = null;
-			try{
-				customResponse = deleteSpecijalnostOsoblja(idOsoblja, idTipaPregleda);;
-			}catch(Exception e){
-				return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(
-						new CustomResponse<MedicinskoOsoblje>(null, false, "Greska usled konkurentnog pristupa. Pokusajte ponovo."),
-						HttpStatus.OK);
-			}
+			CustomResponse<MedicinskoOsoblje> customResponse = deleteSpecijalnostOsoblja(idOsoblja, idTipaPregleda);
 			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(customResponse, HttpStatus.OK);
 		}
 	}
@@ -229,14 +218,7 @@ public class OsobljeService {
 		if(klinika == null){
 			return new ResponseEntity<CustomResponse<Boolean>>(new CustomResponse<Boolean>(false, false, "Greska. Klinika ne postoji"), HttpStatus.NOT_FOUND);
 		}else{
-			CustomResponse<Boolean> customResponse = null;
-			try{
-				customResponse = delete(idKlinike, idOsoblja);
-			}catch(Exception e){
-				return new ResponseEntity<CustomResponse<Boolean>>(
-						new CustomResponse<Boolean>(false, false, "Greska usled konkurentnog pristupa. Pokusajte ponovo."),
-						HttpStatus.OK);
-			}
+			CustomResponse<Boolean> customResponse = delete(idKlinike, idOsoblja);
 			return new ResponseEntity<CustomResponse<Boolean>>(customResponse, HttpStatus.OK);
 		}
 	}

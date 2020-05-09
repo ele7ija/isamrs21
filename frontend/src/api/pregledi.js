@@ -21,23 +21,21 @@ export default{
   },
 
   addPregled(idKlinike, pregled){
-    //vraca promise koji se awaituje, konacan rezultat je customResponse objekat(pogledati backend)
     let options = util.prepareOptions();
     return axios.post(
       `${process.env.VUE_APP_BACKEND_ROOT}/pregled/${idKlinike}`,
       pregled,
       options
-    ).then(response => response.data).catch(error => error.response.data);
+    );
   },
 
   updatePregled(idKlinike, pregled){
-    //vraca promise koji se awaituje, konacan rezultat je customResponse objekat(pogledati backend)
     let options = util.prepareOptions();
     return axios.put(
       `${process.env.VUE_APP_BACKEND_ROOT}/pregled/${idKlinike}/${pregled.id}`,
       pregled,
       options
-    ).then(response => response.data).catch(error => error.response.data);
+    );
   },
 
   deletePregled(idKlinike, idPregleda){

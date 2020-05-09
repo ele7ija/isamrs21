@@ -21,14 +21,13 @@ export default{
     return response.data;
   },
 
-  async updateSala(idKlinike, sala){
+  updateSala(idKlinike, sala){
     let options = util.prepareOptions();
-    let response = await axios.put(
+    return axios.put(
       `${process.env.VUE_APP_BACKEND_ROOT}/sala/${idKlinike}/${sala.id}`,
       sala,
       options
     );
-    return response.data;
   },
 
   removeSala(idKlinike, idSale){

@@ -72,14 +72,15 @@ public class CenovnikService {
 		if(klinika == null){
 			return new ResponseEntity<CustomResponse<Cenovnik>>(new CustomResponse<Cenovnik>(null, false, "Greska: Klinika nije pronadjena."), HttpStatus.NOT_FOUND);
 		}else{
+			cenovnikToChange.setId(idCenovnika);
+			cenovnikToChange.setKlinika(klinika);
 			Cenovnik cenovnik = cenovnikRepository.findByIdKlinikeAndIdCenovnika(idKlinike, idCenovnika);
 			if(cenovnik == null){
 				return new ResponseEntity<CustomResponse<Cenovnik>>(
 						new CustomResponse<Cenovnik>(null, false, "Greska: Cenovnik nije pronadjen u datoj klinici."), HttpStatus.NOT_FOUND);
 			}
-			cenovnik.setNaziv(cenovnikToChange.getNaziv());
-			cenovnik.setIznosUDinarima(cenovnikToChange.getIznosUDinarima());
-			cenovnik = cenovnikRepository.save(cenovnik);
+			cenovnikToChange.setTipoviPregleda(cenovnik.getTipoviPregleda());
+			cenovnik = cenovnikRepository.save(cenovnikToChange); //ovde moze da dodje do nepoklapanja verzija
 			return new ResponseEntity<CustomResponse<Cenovnik>>(
 					new CustomResponse<Cenovnik>(cenovnik, true, "OK."), HttpStatus.OK);
 		}

@@ -173,7 +173,10 @@ export default {
     },
     save(){
       if(this.update){
-        this.updateSala(this.newItem);
+        this.updateSala(this.newItem).then(null, (error) => {
+          this.snackbarText = error;
+          this.snackbar = true;
+        });
       }else{
         this.addSala(this.newItem);
       }

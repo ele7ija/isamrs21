@@ -28,10 +28,8 @@ const getters = {
 
 const actions = {
   async loadSale({commit, rootGetters}){
-    //let resp = await klinike.fetchKlinikaAdmina();
     let resp = rootGetters['klinike/getKlinikaAdmina'];
     commit('setCurrentKlinika', resp);
-
     let response = await sale.getAllSale(resp.id);
     commit('setSale', response);
   },
@@ -42,8 +40,17 @@ const actions = {
   },
 
   async updateSala({state, commit}, sala){
-    let response = await sale.updateSala(state.klinika.id, sala);
-    commit('updateExistingSala', response);
+    return new Promise((resolve, reject) => {
+      sale.updateSala(state.klinika.id, sala)
+      .then(({data: {result, success, message}}) => {
+        if(success){
+          commit('updateExistingSala', result);
+          resolve(message);
+        }else{
+          reject(message);
+        }
+      });
+    });
   },
 
   async removeSala({state, commit}, idSale){
@@ -68,8 +75,8 @@ const mutations = {
   addNewSala: (state, sala) => state.sale.push(sala),
   updateExistingSala: (state, sala) => {
     let index = state.sale.findIndex(x => x.id == sala.id);
-    state.sale[index].oznaka = sala.oznaka;
-    //itd. za ostale atribute
+    state.sale.splice(index, 1);
+    state.sale.splice(index, 0, sala);
   },
   deleteSala: (state, idSale) => state.sale = state.sale.filter(x => x.id != idSale)
 

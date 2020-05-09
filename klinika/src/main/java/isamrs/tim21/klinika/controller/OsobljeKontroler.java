@@ -61,14 +61,7 @@ public class OsobljeKontroler {
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<MedicinskoOsoblje>> addSpecijalnostOsoblja(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idOsoblja") Long idOsoblja, @RequestBody List<Long> idTipovaPregleda){
-		ResponseEntity<CustomResponse<MedicinskoOsoblje>> retval = null;
-		try{
-			retval = osobljeService.updateSpecijalnosti(idKlinike, idOsoblja, idTipovaPregleda);
-		}catch(Exception e){
-			retval = new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(new CustomResponse<MedicinskoOsoblje>(
-					null, false, "Greska usled optimistickog zakljucavanja. Pokusajte ponovo."), HttpStatus.OK);
-		}
-		return retval;
+		return osobljeService.updateSpecijalnosti(idKlinike, idOsoblja, idTipovaPregleda);
 	}
 	
 	@DeleteMapping(value="/specijalnosti/{idOsoblja}/{idTipaPregleda}")

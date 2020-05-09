@@ -38,8 +38,17 @@ const actions = {
   },
 
   async updateTipPregleda({state, commit}, tipPregleda){
-    let response = await tipoviPregleda.updateTipPregleda(state.klinika.id, tipPregleda);
-    commit('updateExistingTipPregleda', response);
+    return new Promise((resolve, reject) => {
+      tipoviPregleda.updateTipPregleda(state.klinika.id, tipPregleda)
+      .then(({data: {result, success, message}}) => {
+        if(success){
+          commit('updateExistingTipPregleda', result);
+          resolve(message);
+        }else{
+          reject(message);
+        }
+      });
+    });    
   },
 
   async removeTipPregleda({state, commit, dispatch}, idTipaPregleda){
@@ -64,10 +73,8 @@ const mutations = {
   addNewTipPregleda: (state, tipPregleda) => state.tipoviPregleda.push(tipPregleda),
   updateExistingTipPregleda: (state, tipPregleda) => {
     let index = state.tipoviPregleda.findIndex(x => x.id == tipPregleda.id);
-    state.tipoviPregleda[index].naziv = tipPregleda.naziv;
-    state.tipoviPregleda[index].opis = tipPregleda.opis;
-    state.tipoviPregleda[index].cenovnik = tipPregleda.cenovnik;
-    //itd. za ostale atribute
+    state.tipoviPregleda.splice(index, 1);
+    state.tipoviPregleda.splice(index, 0, tipPregleda);
   },
   deleteTipPregleda: (state, idTipaPregleda) => state.tipoviPregleda = state.tipoviPregleda.filter(x => x.id != idTipaPregleda),
   setCenovnikOfTipPregleda: (state, {tipPregleda, idCenovnika}) => {

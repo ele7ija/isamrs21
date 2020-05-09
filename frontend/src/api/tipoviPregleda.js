@@ -19,14 +19,13 @@ export default{
     );
     return data;
   },
-  async updateTipPregleda(idKlinike, tipPregleda){
+  updateTipPregleda(idKlinike, tipPregleda){
     let options = util.prepareOptions();
-    let {data} = await axios.put(
+    return axios.put(
       `${process.env.VUE_APP_BACKEND_ROOT}/tipPregleda/${idKlinike}/${tipPregleda.id}`,
       tipPregleda,
       options
     );
-    return data;
   },
   
   removeTipPregleda(idKlinike, idTipaPregleda){

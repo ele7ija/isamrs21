@@ -35,7 +35,7 @@ public class UpitZaPregledeService {
 		UpitZaPregled upit = upitZaPregledRepository.findById(u.getId()).get();
 		upit.setAdminObradio(true);
 		upit.setOdobren(u.getOdobren());
-		Pregled p = pregledService.find(upit.getKlinika().getId(), u.getUnapredDefinisaniPregled().getId());
+		Pregled p = pregledService.get(upit.getKlinika().getId(), u.getUnapredDefinisaniPregled().getId());
 		if(p == null){
 			//U PITANJU JE BIO CUSTOM PREGLED
 			p = pregledService.add(upit.getKlinika(), u.getUnapredDefinisaniPregled()).getResult();
