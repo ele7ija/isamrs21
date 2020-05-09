@@ -58,70 +58,100 @@ public class UpitZaPregledController {
 	/** Pacijent ili lekar dodaje upit */
 	@PostMapping
 	@PreAuthorize("hasAuthority('pacijent') or hasAuthority('lekar')")
-	public ResponseEntity<UpitZaPregled> kreirajPosetu(@RequestBody UpitZaPregledDTO u) {
-		UpitZaPregled u2 = new UpitZaPregled(u);
-		u2.setKlinika(klinikaRepository.findById(u.getKlinika()).get());
-		u2.setTipPregleda(tipPregledaRepository.findById(u.getTipPregleda()).get());
-		u2.setLekar((Lekar) korisniciRepository.findById(u.getLekar()).get());
-		u2.setPacijent((Pacijent) korisniciRepository.findByEmail(u.getPacijent()));
-		u2.setUnapredDefinisaniPregled(pregledRepository.findById(u.getPregled()).get());
-		
-		u2.setAdminObradio(false);
-		u2.setPacijentObradio(false);
-		u2.setOdobren(false);
-		u2.setPotvrdjen(false);
-		
-		upitZaPregledRepository.save(u2);
-		return new ResponseEntity<UpitZaPregled>(u2, HttpStatus.OK);
+	public ResponseEntity<CustomResponse<UpitZaPregled>> kreirajUpitZaPregled(@RequestBody UpitZaPregledDTO udto) {
+		try {
+			CustomResponse<UpitZaPregled> u = upitZaPregledeService.kreirajUpitZaPregled(udto);
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(u, HttpStatus.OK);
+		}
+		catch (Exception e){
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+				new CustomResponse<UpitZaPregled>(null, false, "Greška: Vaša verzija je zastarela. Osvežite stranicu."),
+				HttpStatus.OK);
+		}
 	}
 	
 	@GetMapping(value="/neodobreni/{email}")
 	@PreAuthorize("hasAuthority('pacijent')")
-	public ResponseEntity<List<UpitZaPregled>> izlistajNeodobreneUpite(@PathVariable("email") String email) {
-		List<UpitZaPregled> l = upitZaPregledRepository.findNeodobreniByEmail(email);
-		return new ResponseEntity<List<UpitZaPregled>>(l, HttpStatus.OK);
+	public ResponseEntity<CustomResponse<List<UpitZaPregled>>> izlistajNeodobreneUpite(@PathVariable("email") String email) {
+		try {
+			CustomResponse<List<UpitZaPregled>> l = upitZaPregledeService.pronadjiNeodobrene(email);
+			return new ResponseEntity<CustomResponse<List<UpitZaPregled>>>(l, HttpStatus.OK);
+		}
+		catch (Exception e){
+			return new ResponseEntity<CustomResponse<List<UpitZaPregled>>>(
+				new CustomResponse<List<UpitZaPregled>>(null, false, "Greška: Vaša verzija je zastarela. Osvežite stranicu."),
+				HttpStatus.OK);
+		}
 	}
 	
 	@GetMapping(value="/neodobreni")
 	@PreAuthorize("hasAuthority('pacijent')")
-	public ResponseEntity<List<UpitZaPregled>> izlistajNeodobreneUpite() {
-		List<UpitZaPregled> l = upitZaPregledRepository.findNeodobreni();
-		return new ResponseEntity<List<UpitZaPregled>>(l, HttpStatus.OK);
+	public ResponseEntity<CustomResponse<List<UpitZaPregled>>> izlistajNeodobreneUpite() {
+		try {
+			CustomResponse<List<UpitZaPregled>> l = upitZaPregledeService.pronadjiNeodobrene();
+			return new ResponseEntity<CustomResponse<List<UpitZaPregled>>>(l, HttpStatus.OK);
+		}
+		catch (Exception e){
+			return new ResponseEntity<CustomResponse<List<UpitZaPregled>>>(
+				new CustomResponse<List<UpitZaPregled>>(null, false, "Greška: Vaša verzija je zastarela. Osvežite stranicu."),
+				HttpStatus.OK);
+		}
 	}
 	
 	@GetMapping(value="/nepotvrdjeni/{email}")
 	@PreAuthorize("hasAuthority('pacijent')")
-	public ResponseEntity<List<UpitZaPregled>> izlistajNepotvrdjeneUpite(@PathVariable("email") String email) {
-		List<UpitZaPregled> l = upitZaPregledRepository.findNepotvrdjeniByEmail(email);
-		return new ResponseEntity<List<UpitZaPregled>>(l, HttpStatus.OK);
+	public ResponseEntity<CustomResponse<List<UpitZaPregled>>> izlistajNepotvrdjeneUpite(@PathVariable("email") String email) {
+		try {
+			CustomResponse<List<UpitZaPregled>> l = upitZaPregledeService.pronadjiNepotvrdjene(email);
+			return new ResponseEntity<CustomResponse<List<UpitZaPregled>>>(l, HttpStatus.OK);
+		}
+		catch (Exception e){
+			return new ResponseEntity<CustomResponse<List<UpitZaPregled>>>(
+				new CustomResponse<List<UpitZaPregled>>(null, false, "Greška: Vaša verzija je zastarela. Osvežite stranicu."),
+				HttpStatus.OK);
+		}
 	}
 	
 	@GetMapping(value="/nepotvrdjeni")
 	@PreAuthorize("hasAuthority('pacijent')")
-	public ResponseEntity<List<UpitZaPregled>> izlistajNepotvrdjeneUpite() {
-		List<UpitZaPregled> l = upitZaPregledRepository.findNepotvrdjeni();
-		return new ResponseEntity<List<UpitZaPregled>>(l, HttpStatus.OK);
+	public ResponseEntity<CustomResponse<List<UpitZaPregled>>> izlistajNepotvrdjeneUpite() {
+		try {
+			CustomResponse<List<UpitZaPregled>> l = upitZaPregledeService.pronadjiNepotvrdjene();
+			return new ResponseEntity<CustomResponse<List<UpitZaPregled>>>(l, HttpStatus.OK);
+		}
+		catch (Exception e){
+			return new ResponseEntity<CustomResponse<List<UpitZaPregled>>>(
+				new CustomResponse<List<UpitZaPregled>>(null, false, "Greška: Vaša verzija je zastarela. Osvežite stranicu."),
+				HttpStatus.OK);
+		}
 	}
 	
 	@PutMapping(value="/potvrdi/{id}")
 	@PreAuthorize("hasAuthority('pacijent')")
-	public ResponseEntity<UpitZaPregled> potvrdi(@PathVariable("id") Long id) {
-		UpitZaPregled u = upitZaPregledRepository.findById(id).get();
-		u.setPotvrdjen(true);
-		u.setPacijentObradio(true);
-		upitZaPregledRepository.save(u);
-		posetaService.kreirajNovuPosetu(u);
-		return new ResponseEntity<UpitZaPregled>(u, HttpStatus.OK);
+	public ResponseEntity<CustomResponse<UpitZaPregled>> potvrdi(@PathVariable("id") Long id) {
+		try {
+			CustomResponse<UpitZaPregled> u = upitZaPregledeService.izmeniPotvrdi(id);
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(u, HttpStatus.OK);
+		}
+		catch (Exception e){
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+				new CustomResponse<UpitZaPregled>(null, false, "Greška: Vaša verzija je zastarela. Osvežite stranicu."),
+				HttpStatus.OK);
+		}
 	}
 	
 	@PutMapping(value="/odustani/{id}")
 	@PreAuthorize("hasAuthority('pacijent')")
-	public ResponseEntity<UpitZaPregled> odustani(@PathVariable("id") Long id) {
-		UpitZaPregled u = upitZaPregledRepository.findById(id).get();
-		u.setPotvrdjen(false);
-		u.setPacijentObradio(true);
-		upitZaPregledRepository.save(u);
-		return new ResponseEntity<UpitZaPregled>(u, HttpStatus.OK);
+	public ResponseEntity<CustomResponse<UpitZaPregled>> odustani(@PathVariable("id") Long id) {
+		try {
+			CustomResponse<UpitZaPregled> u = upitZaPregledeService.izmeniOdustani(id);
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(u, HttpStatus.OK);
+		}
+		catch (Exception e){
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+				new CustomResponse<UpitZaPregled>(null, false, "Greška: Vaša verzija je zastarela. Osvežite stranicu."),
+				HttpStatus.OK);
+		}
 	}
 	
 	@GetMapping(value="/{idKlinike}")
