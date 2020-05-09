@@ -2,6 +2,8 @@ package isamrs.tim21.klinika.controller;
 
 import java.util.List;
 
+import javax.websocket.server.PathParam;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.Klinika;
@@ -126,12 +129,11 @@ public class UpitZaPregledController {
 	
 	@GetMapping(value="/{idKlinike}")
 	public ResponseEntity<List<UpitZaPregled>> getAll(@PathVariable("idKlinike") Long idKlinike){
-		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
-		if(klinika == null){
+		List<UpitZaPregled> upiti = upitZaPregledeService.getAll(idKlinike);
+		if(upiti == null){
 			return new ResponseEntity<List<UpitZaPregled>>(HttpStatus.NOT_FOUND);
 		}else{
-			List<UpitZaPregled> retval = upitZaPregledRepository.findAllByIdKlinike(klinika.getId());
-			return new ResponseEntity<List<UpitZaPregled>>(retval, HttpStatus.OK);
+			return new ResponseEntity<List<UpitZaPregled>>(upiti, HttpStatus.OK);
 		}
 	}
 	
@@ -140,24 +142,13 @@ public class UpitZaPregledController {
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdmin(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idUpita") Long idUpita, @RequestBody UpitZaPregled upitZaPregledToChange){
-		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
-		if(klinika == null){
-			return new ResponseEntity<CustomResponse<UpitZaPregled>>(new CustomResponse<UpitZaPregled>(null, false, "Greska: Klinika nije pronadjena."), HttpStatus.NOT_FOUND);
-		}else{
-			upitZaPregledToChange.setId(idUpita);
-			upitZaPregledToChange.setKlinika(klinika);
-			return new ResponseEntity<CustomResponse<UpitZaPregled>>(upitZaPregledeService.obradiAdmin(upitZaPregledToChange), HttpStatus.OK);
-		}
+		CustomResponse<UpitZaPregled> customResponse = upitZaPregledeService.obradiAdminMain(idKlinike, idUpita, upitZaPregledToChange);
+		return new ResponseEntity<CustomResponse<UpitZaPregled>>(customResponse, HttpStatus.OK);
 	}
 	
 	@DeleteMapping(value="/{idKlinike}/{idUpita}")
-	public ResponseEntity<CustomResponse<Boolean>> delete(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idUpita") Long idUpita){
-		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
-		if(klinika == null){
-			return new ResponseEntity<CustomResponse<Boolean>>(new CustomResponse<Boolean>(false, false, "Greska. Klinika ne postoji"), HttpStatus.NOT_FOUND);
-		}else{
-			CustomResponse<Boolean> customResponse = upitZaPregledeService.delete(idUpita);
-			return new ResponseEntity<CustomResponse<Boolean>>(customResponse, HttpStatus.OK);
-		}
+	public ResponseEntity<CustomResponse<Boolean>> delete(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idUpita") Long idUpita,
+			@RequestParam(name="version") Long version){
+		return upitZaPregledeService.deleteMain(idKlinike, idUpita, version);
 	}
 }

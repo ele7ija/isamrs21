@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
@@ -60,15 +61,17 @@ public class OsobljeKontroler {
 	@PutMapping(value="/specijalnosti/{idOsoblja}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<MedicinskoOsoblje>> addSpecijalnostOsoblja(@PathVariable("idKlinike") Long idKlinike, 
-			@PathVariable("idOsoblja") Long idOsoblja, @RequestBody List<Long> idTipovaPregleda){
-		return osobljeService.updateSpecijalnosti(idKlinike, idOsoblja, idTipovaPregleda);
+			@PathVariable("idOsoblja") Long idOsoblja, @RequestBody List<Long> idTipovaPregleda,
+			@RequestParam(name="version") Long version){
+		return osobljeService.updateSpecijalnosti(idKlinike, idOsoblja, idTipovaPregleda, version);
 	}
 	
 	@DeleteMapping(value="/specijalnosti/{idOsoblja}/{idTipaPregleda}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<MedicinskoOsoblje>> deleteSpecijalnostOsoblja(@PathVariable("idKlinike") Long idKlinike, 
-			@PathVariable("idOsoblja") Long idOsoblja, @PathVariable("idTipaPregleda") Long idTipaPregleda){
-		return osobljeService.deleteSpecijalnostOsoblja(idKlinike, idOsoblja, idTipaPregleda);
+			@PathVariable("idOsoblja") Long idOsoblja, @PathVariable("idTipaPregleda") Long idTipaPregleda,
+			@RequestParam(name="version") Long version){
+		return osobljeService.deleteSpecijalnostOsoblja(idKlinike, idOsoblja, idTipaPregleda, version);
 	}
 	
 	@DeleteMapping(value="/{idOsoblja}")

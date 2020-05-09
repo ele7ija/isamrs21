@@ -51,6 +51,7 @@ export default {
       return temp.map(x => {
         return {
           id: x.id,
+          version: x.version,
           pacijent: `${x.pacijent.ime} ${x.pacijent.prezime}`,
           datum: new Date(x.pocetakPregleda).toLocaleDateString(),
           pocetak: new Date(x.pocetakPregleda).toLocaleTimeString(),
@@ -67,6 +68,7 @@ export default {
       return temp.map(x => {
         return {
           id: x.id,
+          version: x.version,
           pacijent: `${x.pacijent.ime} ${x.pacijent.prezime}`,
           datum: new Date(x.pocetakPregleda).toLocaleDateString(),
           pocetak: new Date(x.pocetakPregleda).toLocaleTimeString(),
@@ -100,6 +102,7 @@ export default {
       let updatedItem = this.upiti.filter(x => x.id == item.id)[0];
       let obj = {
         id: updatedItem.id,
+        version: updatedItem.version,
         adminObradio: true,
         odobren: true,
         unapredDefinisaniPregled: {
@@ -119,6 +122,7 @@ export default {
       let updatedItem = this.upiti.filter(x => x.id == item.id)[0];
       let obj = {
         id: updatedItem.id,
+        version: updatedItem.version,
         adminObradio: true,
         odobren: false,
         unapredDefinisaniPregled: {
@@ -136,7 +140,7 @@ export default {
     deleteItem(item){
       //TODO: brisanje upita na serveru(samo ako je pacijent obradio upit)
       //voditi racuna da se obrise i originalni upit ukoliko je item zapravo izmenjeniUpit
-      this.deleteUpit(item.id).then(null, (error) => {
+      this.deleteUpit({idUpita: item.id, version: item.version}).then(null, (error) => {
         this.snackbarText = error;
         this.snackbar = true;
       });

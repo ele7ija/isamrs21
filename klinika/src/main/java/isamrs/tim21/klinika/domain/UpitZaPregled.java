@@ -15,6 +15,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -88,6 +89,18 @@ public class UpitZaPregled implements IdentitySerializable {
 	@ManyToOne(fetch=FetchType.EAGER)
 	private Pregled unapredDefinisaniPregled;
 	
+	@Version
+	@Column(name="version", columnDefinition="integer DEFAULT 0", nullable=false)
+	private Long version;
+	
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+
 	public UpitZaPregled(UpitZaPregledDTO u) {
 		odobren = u.getOdobren();
 		potvrdjen = u.getPotvrdjen();

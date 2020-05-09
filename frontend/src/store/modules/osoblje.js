@@ -53,9 +53,9 @@ const actions = {
     commit('updateExistingMedicinskaOsoba', response);
   },
 
-  async removeSpecijalnostiMedicinskaOsoba({state, commit}, {idLekara, idTipaPregleda}){
+  async removeSpecijalnostiMedicinskaOsoba({state, commit}, {idLekara, idTipaPregleda, version}){
     return new Promise((resolve, reject) => {
-      osoblje.removeSpecijalnostiMedicinskaOsoba(state.klinika.id, {idLekara, idTipaPregleda})
+      osoblje.removeSpecijalnostiMedicinskaOsoba(state.klinika.id, {idLekara, idTipaPregleda, version})
       .then(({data: {success, message}}) => {
         if(success){
           commit('removeSpecijalnost', {idLekara, idTipaPregleda});
@@ -68,9 +68,9 @@ const actions = {
     });    
   },
 
-  async addSpecijalnostiMedicinskaOsoba({state, commit}, {idLekara, idTipovaPregleda}){
+  async addSpecijalnostiMedicinskaOsoba({state, commit}, {idLekara, idTipovaPregleda, version}){
     return new Promise((resolve, reject) => {
-      osoblje.addSpecijalnostiMedicinskaOsoba(state.klinika.id, {idLekara, idTipovaPregleda})
+      osoblje.addSpecijalnostiMedicinskaOsoba(state.klinika.id, {idLekara, idTipovaPregleda, version})
       .then(({data:{result, success, message}}) => {
         if(success){
           let tipoviPregleda = result.tipovi_pregleda.filter(x => idTipovaPregleda.filter(i => i == x.id).length != 0);
@@ -107,16 +107,19 @@ const mutations = {
   addNewMedicinskaOsoba: (state, osoba) => state.medicinskoOsoblje.push(osoba),
   updateExistingMedicinskaOsoba: (state, osoba) => {
     let index = state.medicinskoOsoblje.findIndex(x => x.id == osoba.id);
-    state.medicinskoOsoblje[index] = osoba;
+    state.medicinskoOsoblje.slice(index, 1);
+    state.medicinskoOsoblje.slice(index, 0, osoba);
   },
   deleteMedicinskaOsoba: (state, idOsobe) => state.medicinskoOsoblje = state.medicinskoOsoblje.filter(x => x.id != idOsobe),
   removeSpecijalnost: (state, {idLekara, idTipaPregleda}) => {
     let index = state.medicinskoOsoblje.findIndex(x => x.id == idLekara);
     state.medicinskoOsoblje[index].tipovi_pregleda = state.medicinskoOsoblje[index].tipovi_pregleda.filter(x => x.id != idTipaPregleda);
+    state.medicinskoOsoblje[index].version += 1;
   },
   addSpecijalnosti: (state, {idLekara, tipoviPregleda}) => {
     let index = state.medicinskoOsoblje.findIndex(x => x.id == idLekara);
     state.medicinskoOsoblje[index].tipovi_pregleda.push(...tipoviPregleda);
+    state.medicinskoOsoblje[index].version += 1;
   }
 
 }

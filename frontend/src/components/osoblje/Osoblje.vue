@@ -381,7 +381,8 @@ export default {
     addSpecijalnosti(lekar, tipoviPregleda){
       let idLekara = lekar.id;
       let idTipovaPregleda = tipoviPregleda.map(x => x.id);
-      this.addSpecijalnostiMedicinskaOsoba({idLekara, idTipovaPregleda}).then(null, (error) => {
+      let version = lekar.version;
+      this.addSpecijalnostiMedicinskaOsoba({idLekara, idTipovaPregleda, version}).then(null, (error) => {
         this.snackbarText = error;
         this.snackbar = true;
       });
@@ -391,7 +392,8 @@ export default {
     removeFromSpecijalnost(lekar, tipPregleda){
       let idLekara = lekar.id;
       let idTipaPregleda = tipPregleda.id;
-      this.removeSpecijalnostiMedicinskaOsoba({idLekara, idTipaPregleda}).then(null, (error) => {
+      let version = lekar.version;
+      this.removeSpecijalnostiMedicinskaOsoba({idLekara, idTipaPregleda, version}).then(null, (error) => {
         this.snackbarText = error;
         this.snackbar = true;
       });

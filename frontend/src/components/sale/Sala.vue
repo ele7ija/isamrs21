@@ -121,6 +121,7 @@ export default {
       ],
       newItem: {
         oznaka: '',
+        version: '',
       },
       update: false
     };
@@ -164,6 +165,7 @@ export default {
     resetNewItem(){
       this.newItem = {
         oznaka: '',
+        version: '',
       };
     },
     close(){
@@ -188,7 +190,7 @@ export default {
       this.dialog = true;
     },
     deleteItem(item){
-      this.removeSala(item.id).then(null, (error) => {
+      this.removeSala({idSale: item.id, version: item.version}).then(null, (error) => {
         this.snackbarText = error;
         this.snackbar = true;
       });
