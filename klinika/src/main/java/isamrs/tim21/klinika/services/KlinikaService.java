@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim21.klinika.domain.AdministratorKlinike;
 import isamrs.tim21.klinika.domain.Klinika;
@@ -26,10 +27,12 @@ public class KlinikaService {
 	@Autowired
 	private CustomUserDetailsService userDetailsService;
 	
+	@Transactional(readOnly=true)
 	private List<Klinika> findAll() {
 		return klinikaRepository.findAll();
 	}
 
+	@Transactional(readOnly=true)
 	public Klinika findKlinikaUlogovanog(HttpServletRequest request) {
 		String token = tokenUtils.getToken(request);
 		String email = this.tokenUtils.getUsernameFromToken(token);
