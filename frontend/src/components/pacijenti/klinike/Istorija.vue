@@ -153,7 +153,7 @@
                 subheader>
                 <v-subheader>Buduće</v-subheader>
                 <template
-                  v-for='(poseta, index) in posete'>
+                  v-for='poseta in posete'>
                   <v-list-item
                     class='pb-2 pt-2'
                     :key='poseta.id' 
@@ -174,15 +174,10 @@
                     </v-list-item-subtitle>
                     </v-list-item-content>
                   </v-list-item>
-                  <v-divider
-                    :key='poseta.id + "d"'
-                    v-if='index!=
-                    !posetaProsla(poseta)'>
-                  </v-divider>
                 </template>
                 <v-subheader>Prošle</v-subheader>
                 <template
-                  v-for='(poseta, index) in posete'>
+                  v-for='poseta in posete'>
                   <v-list-item
                     class='pb-2 pt-1'
                     :key='poseta.id' 
@@ -203,11 +198,6 @@
                     </v-list-item-subtitle>
                     </v-list-item-content>
                   </v-list-item>
-                  <v-divider
-                    :key='poseta.id + "d"'
-                    v-if='index!=posete.length-1 &&
-                    posetaProsla(poseta)'>
-                  </v-divider>
                 </template>
               </v-list>
               <v-list 
