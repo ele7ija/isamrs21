@@ -27,10 +27,10 @@ export default{
       options
     );
   },
-  removeCenovnik(idKlinike, idCenovnika){
+  removeCenovnik(idKlinike, idCenovnika, version){
     let options = util.prepareOptions();
     return axios.delete(
-      `${process.env.VUE_APP_BACKEND_ROOT}/cenovnik/${idKlinike}/${idCenovnika}`,
+      `${process.env.VUE_APP_BACKEND_ROOT}/cenovnik/${idKlinike}/${idCenovnika}?version=${version}`,
       options
     );  
   }

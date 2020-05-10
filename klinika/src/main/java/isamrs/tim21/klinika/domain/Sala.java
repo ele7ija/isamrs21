@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -27,6 +28,10 @@ public class Sala implements IdentitySerializable{
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
+	
+	@Version
+	@Column(name="version", columnDefinition="integer DEFAULT 0", nullable=false)
+	private Long version;
 	
 	public String getOznaka() {
 		return oznaka;
@@ -71,6 +76,14 @@ public class Sala implements IdentitySerializable{
 
 	public void setKlinika(Klinika klinika) {
 		this.klinika = klinika;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 	
 	

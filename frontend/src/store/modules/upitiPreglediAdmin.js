@@ -42,9 +42,9 @@ const actions = {
     });
   },
 
-  async deleteUpit({state, commit, dispatch}, idUpita){
+  async deleteUpit({state, commit, dispatch}, {idUpita, version}){
     return new Promise((resolve, reject) => {
-      upitiPreglediAdmin.deleteUpit(state.klinika.id, idUpita)
+      upitiPreglediAdmin.deleteUpit(state.klinika.id, idUpita, version)
       .then(({data: {success, message}}) => {
         if(success){
           commit('deleteUpitZaPregled', idUpita);

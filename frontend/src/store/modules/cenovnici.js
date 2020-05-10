@@ -51,15 +51,15 @@ const actions = {
     });
   },
 
-  async removeCenovnik({state, commit}, idCenovnika){
+  async removeCenovnik({state, commit}, {idCenovnika, version}){
     return new Promise((resolve, reject) => {
-      cenovnici.removeCenovnik(state.klinika.id, idCenovnika)
-      .then(({data}) => {
-        if(data){
+      cenovnici.removeCenovnik(state.klinika.id, idCenovnika, version)
+      .then(({data: {success, message}}) => {
+        if(success){
           commit('deleteCenovnik', idCenovnika);
-          resolve("OK");
+          resolve(message);
         }else{
-          reject("Nije moguce obrisati stavku cenovnika za koju postoji definisan tip pregleda");
+          reject(message);
         }
       });
     });
@@ -72,10 +72,8 @@ const mutations = {
   addNewCenovnik: (state, cenovnik) => state.cenovnici.push(cenovnik),
   updateExistingCenovnik: (state, cenovnik) => {
     let index = state.cenovnici.findIndex(x => x.id == cenovnik.id);
-    state.cenovnici[index].naziv = cenovnik.naziv;
-    state.cenovnici[index].iznosUDinarima = cenovnik.iznosUDinarima;
-    state.cenovnici[index].tipoviPregleda = cenovnik.tipoviPregleda;
-    //itd. za ostale atribute
+    state.cenovnici.splice(index, 1);
+    state.cenovnici.splice(index, 0, cenovnik);
   },
   deleteCenovnik: (state, idCenovnika) => {
     state.cenovnici = state.cenovnici.filter(x => x.id != idCenovnika);

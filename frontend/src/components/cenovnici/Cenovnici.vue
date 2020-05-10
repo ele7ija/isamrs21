@@ -159,6 +159,7 @@ export default {
       newItem: {
         naziv: '',
         iznosUDinarima: '',
+        version: '',
         tipoviPregleda: [],
       }
     };
@@ -202,6 +203,7 @@ export default {
       this.newItem = {
         naziv: '',
         adresa: '',
+        version: '',
         tipoviPregleda: [],
       };
     },
@@ -229,7 +231,7 @@ export default {
       this.newItem = Object.assign({}, item);
       this.newItem.tipoviPregleda = this.newItem.tipoviPregleda.map(x => {
           return{
-            id: x.id,
+            id: x.id
           };
       });
       
@@ -237,7 +239,8 @@ export default {
     },
 
     deleteItem(item){
-      this.removeCenovnik(item.id).then(null, (error) => {
+      console.log(item.version);
+      this.removeCenovnik({idCenovnika: item.id, version: item.version}).then(null, (error) => {
         this.snackbarText = error;
         this.snackbar = true;
       });

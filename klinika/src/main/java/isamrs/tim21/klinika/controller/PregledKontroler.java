@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.Pregled;
@@ -73,8 +74,9 @@ public class PregledKontroler {
 	
 	@DeleteMapping(value="/{idPregleda}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
-	public ResponseEntity<CustomResponse<Boolean>> delete(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idPregleda") Long idPregleda){
-		CustomResponse<Boolean> customResponse = pregledService.delete(idKlinike, idPregleda);
+	public ResponseEntity<CustomResponse<Boolean>> delete(@PathVariable("idKlinike") Long idKlinike,
+			@PathVariable("idPregleda") Long idPregleda, @RequestParam(name="version") Long version){
+		CustomResponse<Boolean> customResponse = pregledService.delete(idKlinike, idPregleda, version);
 		return new ResponseEntity<CustomResponse<Boolean>>(customResponse, HttpStatus.OK);
 	}
 }

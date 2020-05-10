@@ -14,6 +14,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
@@ -28,6 +29,10 @@ public class TipPregleda implements IdentitySerializable{
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
+	
+	@Version
+	@Column(name="version", columnDefinition="integer DEFAULT 0", nullable=false)
+	private Long version;
 	
 	@Column(name="naziv", nullable=false, unique=true)
 	private String naziv;
@@ -98,6 +103,14 @@ public class TipPregleda implements IdentitySerializable{
 
 	public void setCenovnik(Cenovnik cenovnik) {
 		this.cenovnik = cenovnik;
+	}
+	
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 
 	@Override

@@ -30,14 +30,18 @@ public class SalaService {
 	private KlinikaRepository klinikaRepository;
 
 	@Transactional(readOnly=false)
-	public CustomResponse<Boolean> delete(Long idKlinike, Long idSale) {
+	public CustomResponse<Boolean> delete(Long idKlinike, Long idSale, Long version) {
 		if(!pregledRepository.findByIdSale(idSale).isEmpty()){
 			return new CustomResponse<Boolean>(false, false, "Greska: Ne mozete obrisati salu za koju postoji pregled");
 		}
-		int rowsAffected = salaRepository._deleteById(idKlinike, idSale);
-		if(rowsAffected != 1){
+		Sala sala = salaRepository.findByIdKlinikeAndIdSale(idKlinike, idSale);
+		if(sala == null){
 			return new CustomResponse<Boolean>(false, false, "Greska: Sala nije pronadjena.");
 		}
+		if(sala.getVersion() != version){
+			return new CustomResponse<Boolean>(false, false, "Greska: Vasa verzija je zastarela. Osvezite stranicu.");
+		}
+		salaRepository._deleteById(idKlinike, idSale);
 		return new CustomResponse<Boolean>(true, true, "OK");
 	}
 
@@ -96,12 +100,12 @@ public class SalaService {
 	}
 
 	@Transactional(readOnly=false)
-	public ResponseEntity<CustomResponse<Boolean>> deleteMain(Long idKlinike, Long idSale) {
+	public ResponseEntity<CustomResponse<Boolean>> deleteMain(Long idKlinike, Long idSale, Long version) {
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
 			return new ResponseEntity<CustomResponse<Boolean>>(new CustomResponse<Boolean>(false, false, "Greska. Klinika ne postoji"), HttpStatus.NOT_FOUND);
 		}else{
-			CustomResponse<Boolean> customResponse = delete(idKlinike, idSale);
+			CustomResponse<Boolean> customResponse = delete(idKlinike, idSale, version);
 			return new ResponseEntity<CustomResponse<Boolean>>(customResponse, HttpStatus.OK);
 		}
 	}

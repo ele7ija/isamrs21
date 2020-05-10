@@ -35,14 +35,18 @@ public class TipPregledaService {
 	CenovnikRepository cenovnikRepository;
 
 	@Transactional(readOnly=false)
-	public CustomResponse<Boolean> delete(Long idKlinike, Long idTipaPregleda) {
+	public CustomResponse<Boolean> delete(Long idKlinike, Long idTipaPregleda, Long version) {
 		if(!pregledRepository.findByIdTipaPregleda(idTipaPregleda).isEmpty()){
 			return new CustomResponse<Boolean>(false, false, "Greska: Ne mozete obrisati tip pregleda za koji postoji pregled");
 		}
-		int rowsAffected = tipPregledaRepository._deleteById(idKlinike, idTipaPregleda);
-		if(rowsAffected != 1){
+		TipPregleda tipPregleda = tipPregledaRepository.findByIdKlinikeAndIdTipaPregleda(idKlinike, idTipaPregleda);
+		if(tipPregleda == null){
 			return new CustomResponse<Boolean>(false, false, "Greska: Tip pregleda nije pronadjen.");
 		}
+		if(tipPregleda.getVersion() != version){
+			return new CustomResponse<Boolean>(false, false, "Greska: Verzija podatka je zastarela. Osvezite stranicu.");
+		}
+		tipPregledaRepository._deleteById(idKlinike, idTipaPregleda);
 		return new CustomResponse<Boolean>(true, true, "OK");
 	}
 
@@ -99,6 +103,11 @@ public class TipPregledaService {
 			tipPregledaToChange.setId(idTipaPregleda);
 			tipPregledaToChange.setKlinika(klinika);
 			
+			Cenovnik cenovnik = cenovnikRepository.findByIdKlinikeAndIdCenovnika(idKlinike, tipPregledaToChange.getCenovnik().getId());
+			if(cenovnik.getVersion() != tipPregledaToChange.getCenovnik().getVersion()){
+				throw new ObjectOptimisticLockingFailureException(Cenovnik.class, tipPregledaToChange.getCenovnik());
+			}
+			
 			TipPregleda tipPregleda = tipPregledaRepository.findById(idTipaPregleda).orElse(null);
 			if(tipPregleda == null){
 				return new ResponseEntity<CustomResponse<TipPregleda>>(
@@ -106,6 +115,7 @@ public class TipPregledaService {
 						HttpStatus.OK);
 			}
 			tipPregledaToChange.setLekari(tipPregleda.getLekari()); //ovo se ne menja kroz api call
+			
 			TipPregleda retval = tipPregledaRepository.save(tipPregledaToChange); //ovde moze da dodje do nepoklapanja verzija
 			return new ResponseEntity<CustomResponse<TipPregleda>>(
 					new CustomResponse<TipPregleda>(retval, true, "OK."),
@@ -114,12 +124,12 @@ public class TipPregledaService {
 	}
 
 	@Transactional(readOnly=false)
-	public ResponseEntity<CustomResponse<Boolean>> deleteMain(Long idKlinike, Long idTipaPregleda) {
+	public ResponseEntity<CustomResponse<Boolean>> deleteMain(Long idKlinike, Long idTipaPregleda, Long version) {
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
 		if(klinika == null){
 			return new ResponseEntity<CustomResponse<Boolean>>(new CustomResponse<Boolean>(false, false, "Greska. Klinika ne postoji"), HttpStatus.NOT_FOUND);
 		}else{
-			CustomResponse<Boolean> customResponse = delete(idKlinike, idTipaPregleda);
+			CustomResponse<Boolean> customResponse = delete(idKlinike, idTipaPregleda, version);
 			return new ResponseEntity<CustomResponse<Boolean>>(customResponse, HttpStatus.OK);
 		}
 	}

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import isamrs.tim21.klinika.domain.TipPregleda;
 import isamrs.tim21.klinika.dto.CustomResponse;
@@ -61,7 +62,7 @@ public class TipPregledaKontroler {
 			retval = tipPregledaService.update(idKlinike, idTipaPregleda, tipPregledaToChange); 
 		}catch(ObjectOptimisticLockingFailureException e){
 			return new ResponseEntity<CustomResponse<TipPregleda>>(
-					new CustomResponse<TipPregleda>(null, false, "Verzije se ne poklapaju. Osvezite stranicu i pokusajte ponovo."),
+					new CustomResponse<TipPregleda>(null, false, "Verzije nekih podataka se ne poklapaju. Osvezite stranicu i pokusajte ponovo."),
 					HttpStatus.OK);
 		}
 		return retval;
@@ -69,7 +70,8 @@ public class TipPregledaKontroler {
 	
 	@DeleteMapping(value="/{idTipaPregleda}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
-	public ResponseEntity<CustomResponse<Boolean>> deleteTipPregleda(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idTipaPregleda") Long idTipaPregleda){
-		return tipPregledaService.deleteMain(idKlinike, idTipaPregleda);
+	public ResponseEntity<CustomResponse<Boolean>> deleteTipPregleda(@PathVariable("idKlinike") Long idKlinike,
+			@PathVariable("idTipaPregleda") Long idTipaPregleda, @RequestParam(name="version") Long version){
+		return tipPregledaService.deleteMain(idKlinike, idTipaPregleda, version);
 	}
 }
