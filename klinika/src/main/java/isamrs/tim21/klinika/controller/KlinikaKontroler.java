@@ -71,8 +71,10 @@ public class KlinikaKontroler {
 
 	@PutMapping("/{idKlinike}/adminCentra")
 	@PreAuthorize("hasAuthority('admin-klinickog-centra')")
-	public ResponseEntity<Klinika> updateKlinikaFromAdminCentra(@PathVariable("idKlinike") Long idKlinike, @RequestBody Klinika klinikaParams){
-		//klinikaParams nije potpun objekat klinika. objekat ima samo polja koja su za izmenu. npr naziv, ali nema cenovnik
+	public ResponseEntity<Klinika> updateKlinikaFromAdminCentra(
+		@PathVariable("idKlinike") Long idKlinike, @RequestBody Klinika klinikaParams){
+		//klinikaParams nije potpun objekat klinika. objekat ima samo polja koja su za izmenu
+		// npr naziv, ali nema cenovnik
 		//na staru kliniku setujemo samo nove parametre koje treba promeniti.
 		Klinika oldKlinika = klinikaRepository.findById(idKlinike).orElse(null);
 		oldKlinika.setNaziv(klinikaParams.getNaziv());
