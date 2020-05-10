@@ -14,6 +14,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import isamrs.tim21.klinika.dto.KlinikaDTO;
 import isamrs.tim21.klinika.jsonSerialize.IdentityListSerializer;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
 
@@ -68,6 +69,14 @@ public class Klinika implements IdentitySerializable{
 	private List<Cenovnik> cenovnici;
 	
 	public Klinika(){}
+
+	public Klinika(KlinikaDTO klinikaDTO){
+		naziv = klinikaDTO.naziv;
+		adresa = klinikaDTO.adresa;
+		grad = klinikaDTO.grad;
+		drzava = klinikaDTO.drzava;
+		opis = klinikaDTO.opis;
+	}
 
 	public Long getId() {
 		return id;
