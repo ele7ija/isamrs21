@@ -3,6 +3,7 @@ import Vue from 'vue';
 import tipoviPregleda from './modules/tipoviPregleda';
 import sale from './modules/sale';
 import pacijenti from './modules/pacijenti';
+import upitZaPregled from './modules/upitZaPregled';
 import klinike from './modules/klinike';
 import opcijeKorisnika from './modules/opcijeKorisnika';
 import korisnici from './modules/korisnici';
@@ -33,6 +34,7 @@ export default new Vuex.Store({
     pregledDialog,
     upitiPreglediAdmin,
     adminiKlinike,
+    upitZaPregled
   },
 
   plugins: [

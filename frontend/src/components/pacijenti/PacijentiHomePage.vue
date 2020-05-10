@@ -156,14 +156,18 @@ export default {
   },
   computed: {
     ...mapState('klinike', [
-      'nerealizovanePosete',
+      'nerealizovanePosete'
+    ]),
+    ...mapState('upitZaPregled', [
       'neodobreniUpiti',
       'nepotvrdjeniUpiti'
     ])
   },
   methods: {
     ...mapActions('klinike', [
-      'dobaviNerealizovanePosete',
+      'dobaviNerealizovanePosete'
+    ]),
+    ...mapActions('upitZaPregled', [
       'dobaviNeodobreneUpite',
       'dobaviNepotvrdjeneUpite'
     ]),

@@ -155,7 +155,7 @@
                 <template
                   v-for='(poseta, index) in posete'>
                   <v-list-item
-                    class='pb-2 pt-1'
+                    class='pb-2 pt-2'
                     :key='poseta.id' 
                     two-line=""
                     v-if='!posetaProsla(poseta)'>
@@ -225,6 +225,34 @@
         </v-row>
       </v-col>
     </v-row>
+    <v-snackbar
+      v-model="snackbarErr"
+      :timeout="snackbarTimeout"
+      color="red darken-3"
+    >
+      {{ snackbarText }}
+      <v-btn
+        color="grey darken-3"
+        text
+        @click="snackbarErr = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
+    <v-snackbar
+      v-model="snackbarSucc"
+      :timeout="snackbarTimeout"
+      color="green darken-3"
+    >
+      {{ snackbarText }}
+      <v-btn
+        color="grey darken-3"
+        text
+        @click="snackbarSucc = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -232,28 +260,51 @@
 import { mapActions, mapState } from 'vuex'
 export default {
   name: 'Istorija',
+  data: function() {
+    return {
+      snackbarErr: false,
+      snackbarSucc: false,
+      snackbarTimeout: 2000,
+      snackbarText: null,
+    }
+  },
   computed: {
     ...mapState('klinike', [
-      'posete',
+      'posete']),
+    ...mapState('upitZaPregled', [
       'neodobreniUpiti',
       'nepotvrdjeniUpiti'])
   },
   methods: {
     ...mapActions('klinike', [
       'dobaviSvePosete',
+    ]),
+    ...mapActions('upitZaPregled', [
       'dobaviNeodobreneUpite',
       'dobaviNepotvrdjeneUpite',
       'potvrdiUpit',
       'odustaniUpit'
     ]),
-    potvrdi: async function(upitId) {
-      await this.potvrdiUpit(upitId);
-      this.dobaviNepotvrdjeneUpite();
-      this.dobaviSvePosete();
+    potvrdi: function(upitId) {
+      this.potvrdiUpit(upitId).then((message) => {
+        this.snackbarText = message;
+        this.snackbarSucc = true;
+        this.dobaviNepotvrdjeneUpite();
+        this.dobaviSvePosete();
+      }, (error) => {
+        this.snackbarText = error;
+        this.snackbarErr = true;
+      });
     },
     odustani: async function(upitId) {
-      await this.odustaniUpit(upitId);
-      this.dobaviNepotvrdjeneUpite();
+      this.odustaniUpit(upitId).then((message) => {
+        this.snackbarText = message;
+        this.snackbarSucc = true;
+        this.dobaviNepotvrdjeneUpite();
+      }, (error) => {
+        this.snackbarText = error;
+        this.snackbarErr = true;
+      });
     },
     formatDate: function(date) {
       let d = new Date(date);

@@ -176,6 +176,7 @@ public class UpitZaPregledeService {
 			u.setPotvrdjen(true);
 			u.setPacijentObradio(true);
 			upitZaPregledRepository.save(u);
+			posetaService.kreirajNovuPosetu(u);
 			return new CustomResponse<UpitZaPregled>(u, true, "Upit je potvrđen.");
 		}
 		catch (NoSuchElementException e){
@@ -190,7 +191,7 @@ public class UpitZaPregledeService {
 			u.setPotvrdjen(false);
 			u.setPacijentObradio(true);
 			upitZaPregledRepository.save(u);
-			return new CustomResponse<UpitZaPregled>(u, true, "Upit je potvrđen.");
+			return new CustomResponse<UpitZaPregled>(u, true, "Upit je izbrisan.");
 		}
 		catch (NoSuchElementException e){
 			return new CustomResponse<UpitZaPregled>(null, false, "Upit ne postoji.");

@@ -30,11 +30,6 @@ const state = {
   posete: [],
   nerealizovanePosete: [],
   tipPregleda: null,
-  // Upiti
-  kreiranUpit: null,
-  neodobreniUpiti: [],
-  nepotvrdjeniUpiti: [],
-  potvrdjenUpit: null
 }
 const internalMethods = {
   sortByKey(array, key){
@@ -199,26 +194,6 @@ const actions = {
     await dispatch('loadKlinika', klinikaId);
     commit('setOdabranaKlinika', state.klinike[0]);
     await dispatch('loadSlobodniPregledi', klinikaId);
-  },
-  async kreirajUpit({commit}, obj) {
-    let data = await klinikeAPI.kreirajUpit(obj);
-    commit('setUpit', data)
-  },
-  async dobaviNepotvrdjeneUpite({commit}) {
-    let data = await klinikeAPI.dobaviNepotvrdjeneUpite();
-    commit('setNepotvrdjeniUpiti', data);
-  },
-  async dobaviNeodobreneUpite({commit}) {
-    let data = await klinikeAPI.dobaviNeodobreneUpite();
-    commit('setNeodobreniUpiti', data);
-  },
-  async potvrdiUpit({commit}, upitId){
-    let data = await klinikeAPI.potvrdiUpit(upitId);
-    commit('setPotvrdjenUpit', data);
-  },
-  async odustaniUpit({commit}, upitId){
-    let data = await klinikeAPI.odustaniUpit(upitId);
-    commit('setPotvrdjenUpit', data);
   }
 }
 const mutations = {
@@ -255,14 +230,6 @@ const mutations = {
     state.pregledi[obj.id] = obj.data,
   setNerealizovanePosete: (state, data) =>
     state.nerealizovanePosete = data,
-  setUpit: (state, upit) =>
-    state.kreiranUpit = upit,
-  setNepotvrdjeniUpiti: (state, upiti) =>
-    state.nepotvrdjeniUpiti = upiti,
-  setNeodobreniUpiti: (state, upiti) =>
-    state.neodobreniUpiti = upiti,
-  setPotvrdjenUpit: (state, upit) => 
-    state.potvrdjenUpit = upit,
   setOdabraniTipPregleda: (state, tip) =>
     state.odabraniTipPregleda = tip
 }

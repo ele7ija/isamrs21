@@ -142,6 +142,34 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-snackbar
+      v-model="snackbarErr"
+      :timeout="snackbarTimeout"
+      color="red darken-3"
+    >
+      {{ snackbarText }}
+      <v-btn
+        color="grey darken-3"
+        text
+        @click="snackbarErr = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
+    <v-snackbar
+      v-model="snackbarSucc"
+      :timeout="snackbarTimeout"
+      color="green darken-3"
+    >
+      {{ snackbarText }}
+      <v-btn
+        color="grey darken-3"
+        text
+        @click="snackbarSucc = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -151,6 +179,10 @@ export default {
   name: 'RezervacijaPregleda',
   data: function() {
     return {
+      snackbarErr: false,
+      snackbarSucc: false,
+      snackbarTimeout: 2000,
+      snackbarText: null,
       napomena: ''
     }
   },
@@ -183,8 +215,10 @@ export default {
   methods: {
     ...mapMutations('klinike', 
       ['setOdabraniPregled']),
-    ...mapActions('klinike',
-      ['kreirajPosetu',
+    ...mapActions('klinike', [
+      'kreirajPosetu',
+      'kreirajUpit']),
+    ...mapActions('upitZaPregled', [
       'kreirajUpit']),
     odustani: function() {
       this.setOdabraniPregled(null);
@@ -209,8 +243,15 @@ export default {
         pregled: this.odabraniPregled.id,
         opis: this.napomena
       }
-      this.kreirajUpit(obj)
-      setTimeout( () => this.$router.push('/pacijent/istorija'), 1000)
+      this.kreirajUpit(obj).then((message) => {
+        this.snackbarText = message;
+        this.snackbarSucc = true;
+        setTimeout( () => this.$router.push('/pacijent/istorija'), 2000);
+      }, (error) => {
+        this.snackbarText = error;
+        this.snackbarErr = true;
+      })
+      
     }
   },
   created() {
@@ -219,7 +260,6 @@ export default {
       this.$router.push('/');
     }
   },
-
 }
 </script>
 
