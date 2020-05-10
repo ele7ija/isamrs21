@@ -38,10 +38,10 @@ export default{
     );
   },
 
-  deletePregled(idKlinike, idPregleda){
+  deletePregled(idKlinike, idPregleda, version){
     let options = util.prepareOptions();
     return axios.delete(
-      `${process.env.VUE_APP_BACKEND_ROOT}/pregled/${idKlinike}/${idPregleda}`,
+      `${process.env.VUE_APP_BACKEND_ROOT}/pregled/${idKlinike}/${idPregleda}/?version=${version}`,
       options
     );
   },

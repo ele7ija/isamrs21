@@ -245,8 +245,7 @@ export default {
       removePregled: 'preglediAdmin/removePregled'
     }),
     deleteItem(pregled){
-      let obj = { id: pregled.id };
-      this.removePregled(obj).then(null, (error) => {
+      this.removePregled({idPregleda: pregled.id, version: pregled.version}).then(null, (error) => {
         this.snackbarText = error;
         this.snackbar = true;
       });

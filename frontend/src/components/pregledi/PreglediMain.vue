@@ -34,6 +34,7 @@ export default {
           let sala = this.saleKlinike.filter(y => y.id == x.sala.id)[0];
           let retval = {
             id: x.id,
+            version: x.version,
             datum: new Date(x.pocetakPregleda).toLocaleDateString(),
             pocetak: new Date(x.pocetakPregleda).toLocaleTimeString(),
             kraj: new Date(x.krajPregleda).toLocaleTimeString(),

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.Sala;
@@ -69,7 +70,8 @@ public class SalaKontroler {
 	
 	@DeleteMapping(value="/{idSale}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
-	public ResponseEntity<CustomResponse<Boolean>> deleteSala(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idSale") Long idSale){
-		return salaService.deleteMain(idKlinike, idSale);
+	public ResponseEntity<CustomResponse<Boolean>> deleteSala(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idSale") Long idSale,
+			@RequestParam(name="version") Long version){
+		return salaService.deleteMain(idKlinike, idSale, version);
 	}
 }

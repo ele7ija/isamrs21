@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.Cenovnik;
@@ -74,7 +75,8 @@ public class CenovnikKontroler {
 	
 	@DeleteMapping(value="/{idCenovnika}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
-	public ResponseEntity<Boolean> deleteCenovnik(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idCenovnika") Long idCenovnika){
-		return cenovnikService.delete(idKlinike, idCenovnika);
+	public ResponseEntity<CustomResponse<Boolean>> deleteCenovnik(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idCenovnika") Long idCenovnika,
+			@RequestParam(name="version") Long version){
+		return cenovnikService.delete(idKlinike, idCenovnika, version);
 	}
 }

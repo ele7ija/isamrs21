@@ -30,10 +30,10 @@ export default{
     );
   },
 
-  removeSala(idKlinike, idSale){
+  removeSala(idKlinike, idSale, version){
     let options = util.prepareOptions();
     return axios.delete(
-      `${process.env.VUE_APP_BACKEND_ROOT}/sala/${idKlinike}/${idSale}`,
+      `${process.env.VUE_APP_BACKEND_ROOT}/sala/${idKlinike}/${idSale}?version=${version}`,
       options
     );
   },

@@ -28,10 +28,10 @@ export default{
     );
   },
   
-  removeTipPregleda(idKlinike, idTipaPregleda){
+  removeTipPregleda(idKlinike, idTipaPregleda, version){
     let options = util.prepareOptions();
     return axios.delete(
-      `${process.env.VUE_APP_BACKEND_ROOT}/tipPregleda/${idKlinike}/${idTipaPregleda}`,
+      `${process.env.VUE_APP_BACKEND_ROOT}/tipPregleda/${idKlinike}/${idTipaPregleda}?version=${version}`,
       options
     );
   }

@@ -20,18 +20,18 @@ export default{
     return response.data;
   },
   
-  addSpecijalnostiMedicinskaOsoba(idKlinike, {idLekara, idTipovaPregleda}){
+  addSpecijalnostiMedicinskaOsoba(idKlinike, {idLekara, idTipovaPregleda, version}){
     let options = util.prepareOptions();
     return axios.put(
-      `${process.env.VUE_APP_BACKEND_ROOT}/medicinskaOsoba/${idKlinike}/specijalnosti/${idLekara}`,
+      `${process.env.VUE_APP_BACKEND_ROOT}/medicinskaOsoba/${idKlinike}/specijalnosti/${idLekara}?version=${version}`,
       idTipovaPregleda,
       options
     );
   },
-  removeSpecijalnostiMedicinskaOsoba(idKlinike, {idLekara, idTipaPregleda}){
+  removeSpecijalnostiMedicinskaOsoba(idKlinike, {idLekara, idTipaPregleda, version}){
     let options = util.prepareOptions();
     return axios.delete(
-      `${process.env.VUE_APP_BACKEND_ROOT}/medicinskaOsoba/${idKlinike}/specijalnosti/${idLekara}/${idTipaPregleda}`,
+      `${process.env.VUE_APP_BACKEND_ROOT}/medicinskaOsoba/${idKlinike}/specijalnosti/${idLekara}/${idTipaPregleda}?version=${version}`,
       options
     );
   },

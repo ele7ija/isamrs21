@@ -73,11 +73,17 @@ public class PregledService {
 	}
 	
 	@Transactional(readOnly=false)
-	public CustomResponse<Boolean> delete(Long idKlinike, Long idPregleda) {
+	public CustomResponse<Boolean> delete(Long idKlinike, Long idPregleda, Long version) {
 		if(posetaRepository.findByIdPregleda(idPregleda) != null){
 			return new CustomResponse<Boolean>(false, false, "Greska: Pregled je rezervisan. Ne mozete ga obrisati.");
 		}
 		Pregled p = pregledRepository.findById(idPregleda).get();
+		if(p == null){
+			return new CustomResponse<Boolean>(false, false, "Greska: Pregled nije pronadjen.");
+		}
+		if(p.getVersion() != version){
+			return new CustomResponse<Boolean>(false, false, "Verzija podatka je zastarela. Osvezite stranicu.");
+		}
 		for(UpitZaPregled up : p.getUpiti()){
 			if(!up.getAdminObradio()){
 				return new CustomResponse<Boolean>(false, false, "Greska: Postoji upit za ovaj pregled za koji administrator jos uvek nije obradio.");

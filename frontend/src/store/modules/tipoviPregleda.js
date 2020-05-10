@@ -51,9 +51,9 @@ const actions = {
     });    
   },
 
-  async removeTipPregleda({state, commit, dispatch}, idTipaPregleda){
+  async removeTipPregleda({state, commit, dispatch}, {idTipaPregleda, version}){
     return new Promise((resolve, reject) => {
-      tipoviPregleda.removeTipPregleda(state.klinika.id, idTipaPregleda)
+      tipoviPregleda.removeTipPregleda(state.klinika.id, idTipaPregleda, version)
       .then(({data: {success, message}}) => {
         if(success){
           commit('deleteTipPregleda', idTipaPregleda);

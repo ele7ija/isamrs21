@@ -50,12 +50,12 @@ const actions = {
     });
   },
 
-  async removePregled({state, commit}, pregled){
+  async removePregled({state, commit}, {idPregleda, version}){
     return new Promise((resolve, reject) => {
-      pregledi.deletePregled(state.klinika.id, pregled.id)
+      pregledi.deletePregled(state.klinika.id, idPregleda, version)
       .then(({data:{success, message}}) => {
         if(success){
-          commit('removePregled', pregled);
+          commit('removePregled', idPregleda);
           resolve(message);
         }else{
           reject(message);
@@ -72,7 +72,7 @@ const mutations = {
     let index = state.preglediKlinike.findIndex(x => x.id == pregled.id);
     state.preglediKlinike[index] = pregled;
   },
-  removePregled: (state, pregled) => state.preglediKlinike = state.preglediKlinike.filter(x => x.id != pregled.id)
+  removePregled: (state, idPregleda) => state.preglediKlinike = state.preglediKlinike.filter(x => x.id != idPregleda)
 };
 
 export default{

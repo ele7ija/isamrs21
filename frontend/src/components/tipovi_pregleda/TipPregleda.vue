@@ -152,6 +152,7 @@ export default {
       newItem: {
         naziv: '',
         opis: '',
+        version: '',
         cenovnik: null,
         lekari: []
       },
@@ -212,6 +213,7 @@ export default {
           if(indeks != -1){
             retval.push({
               id: element.id,
+              version: element.version,
               naziv: element.naziv,
               opis: element.opis,
               lekari: element.lekari,
@@ -249,7 +251,9 @@ export default {
       this.newItem = {
         naziv: '',
         opis: '',
-        cenovnik: null
+        version: '',
+        cenovnik: null,
+        lekari: []
       };
     },
 
@@ -260,7 +264,7 @@ export default {
     },
 
     save(){
-      this.newItem.cenovnik = this.newItem.cenovnik ? {id: this.newItem.cenovnik.id} : null;
+      this.newItem.cenovnik = this.newItem.cenovnik ? {id: this.newItem.cenovnik.id, version: this.newItem.cenovnik.version} : null;
       if(this.update){
         this.updateTipPregleda(this.newItem).then(null, (error) => {
           this.snackbarText = error;
@@ -286,7 +290,7 @@ export default {
     },
 
     deleteItem(item){
-      this.removeTipPregleda(item.id).then(null, (error) => {
+      this.removeTipPregleda({idTipaPregleda: item.id, version: item.version}).then(null, (error) => {
         this.snackbarText = error;
         this.snackbar = true;
       });

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.Klinika;
 import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
+import isamrs.tim21.klinika.dto.KlinikaDTO;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.repository.OsobljeRepository;
 import isamrs.tim21.klinika.services.KlinikaService;
@@ -61,27 +62,19 @@ public class KlinikaKontroler {
 		}
 	}
 	
+
 	@PostMapping
 	@PreAuthorize("hasAuthority('admin-klinickog-centra')")
-	public ResponseEntity<Klinika> addKlinika(@RequestBody Klinika klinikaToadd){
-		klinikaToadd.setId(null);
-		Klinika retval = klinikaRepository.save(klinikaToadd);
+	public ResponseEntity<Klinika> addKlinika(@RequestBody KlinikaDTO klinikaToadd){
+		Klinika retval = klinikaService.addKlinika(klinikaToadd);
 		return new ResponseEntity<Klinika>(retval, HttpStatus.OK);
 	}
 
 	@PutMapping("/{idKlinike}/adminCentra")
 	@PreAuthorize("hasAuthority('admin-klinickog-centra')")
-	public ResponseEntity<Klinika> updateKlinikaFromAdminCentra(@PathVariable("idKlinike") Long idKlinike, @RequestBody Klinika klinikaParams){
-		//klinikaParams nije potpun objekat klinika. objekat ima samo polja koja su za izmenu. npr naziv, ali nema cenovnik
-		//na staru kliniku setujemo samo nove parametre koje treba promeniti.
-		Klinika oldKlinika = klinikaRepository.findById(idKlinike).orElse(null);
-		oldKlinika.setNaziv(klinikaParams.getNaziv());
-		oldKlinika.setAdresa(klinikaParams.getAdresa());
-		oldKlinika.setGrad(klinikaParams.getGrad());
-		oldKlinika.setDrzava(klinikaParams.getDrzava());
-		oldKlinika.setOpis(klinikaParams.getOpis());
-
-		Klinika retval = klinikaRepository.save(oldKlinika);
+	public ResponseEntity<Klinika> updateKlinikaFromAdminCentra(
+		@PathVariable("idKlinike") Long idKlinike, @RequestBody KlinikaDTO klinikaToUpdate){
+		Klinika retval = klinikaService.updateKlinikaFromAdminCentra(idKlinike, klinikaToUpdate);
 		return new ResponseEntity<>(retval, HttpStatus.OK);
 	}
 	

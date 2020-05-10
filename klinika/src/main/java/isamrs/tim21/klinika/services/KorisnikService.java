@@ -3,6 +3,7 @@ package isamrs.tim21.klinika.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim21.klinika.domain.AdministratorKlinike;
 import isamrs.tim21.klinika.domain.Authority;
@@ -25,6 +26,7 @@ public class KorisnikService {
   @Autowired
   private AutentifikacijaService autentifikacijaServis;
   
+  @Transactional(readOnly=false)
   public AdministratorKlinike saveAdminKlinike(AdminKlinikeDTO adminKlinikeDTO){
     //na osnovu id klinike pronaci kliniku iz baze; dodati kliniku administratoru klinike
     Klinika klinika = klinikaRepository.findById(adminKlinikeDTO.klinikaId).orElse(null);

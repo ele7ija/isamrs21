@@ -53,9 +53,9 @@ const actions = {
     });
   },
 
-  async removeSala({state, commit}, idSale){
+  async removeSala({state, commit}, {idSale, version}){
     return new Promise((resolve, reject) => {
-      sale.removeSala(state.klinika.id, idSale)
+      sale.removeSala(state.klinika.id, idSale, version)
       .then(({ data: { success, message }}) => {
         if(success){
           commit('deleteSala', idSale);
