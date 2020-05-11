@@ -372,7 +372,7 @@ export default {
     },
 
     deleteItem(item){
-      this.removeMedicinskaOsoba(item.id).then(null, (error) => {
+      this.removeMedicinskaOsoba({idOsobe: item.id, version: item.version}).then(null, (error) => {
         this.snackbarText = error;
         this.snackbar = true;
       });

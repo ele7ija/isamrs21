@@ -6,7 +6,7 @@
           v-model="datetimeStart"
           label="Datum i vreme pocetka pregleda"
           dateFormat="dd.MM.yyyy"
-          @input="clear()"
+          @input="setKraj()"
         >
           <template slot="actions" slot-scope="{ parent }">
             <v-btn color="error darken-1" @click="parent.clearHandler">Clear</v-btn>
@@ -15,74 +15,60 @@
         </v-datetime-picker>
       </v-col>
       <v-col>
-        <v-menu
-          v-if="datetimeStart!=null"
-          ref="menu"
-          :close-on-content-click="false"
-          :return-value.sync="datetimeEnd.time"
-          v-model="datetimeEnd.menu2"
-          max-width="290px"
-          min-width="290px"
-        >
-          <template v-slot:activator="{ on }">
-            <v-text-field
-              v-model="datetimeEnd.time"
-              label="Vreme kraja pregleda"
-              readonly
-              v-on="on"
-            ></v-text-field>
-          </template>
-          <v-time-picker
-            v-if="datetimeEnd.menu2"
-            v-model="datetimeEnd.time"
-            label="Vreme kraja pregleda"
-            dateFormat="dd.MM.yyyy"
-            :min="`${datetimeStart.getHours()}:${datetimeStart.getMinutes()}`"
-            @click:minute="enableContinue()"
-          ></v-time-picker>
-        </v-menu>
+        <v-text-field
+          v-model="datetimeEnd"
+          label="Datum i vreme kraja pregleda"
+          readonly
+        ></v-text-field>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
-<script> 
+<script>
+import {mapGetters} from 'vuex';
 export default {
   name: "DatePicker",
   props: ["index"],
   data: function(){
     return{
       datetimeStart: null,
-      datetimeEnd: {
-        menu2: false,
-        time: null,
-      }
+      datetimeEnd: null
     };
   },
+  computed: {
+    ...mapGetters({
+      selektovaniTipPregleda: "pregledDialog/getTipPregleda"
+    })
+  },
   methods: {
-    enableContinue(){
-      this.$refs.menu.save(this.datetimeEnd.time)
+    setKraj(){
       let obj = {
         index: this.index,
-        done: true
+        done: this.datetimeStart != null
       }
-      let tempDate = new Date(this.datetimeStart.getTime());
-      tempDate.setHours(this.datetimeEnd.time.split(":")[0]);
-      tempDate.setMinutes(this.datetimeEnd.time.split(":")[1]);
-      console.log(tempDate);
-      this.$store.commit('pregledDialog/setKraj', tempDate);
-      this.$emit('changeStatus', obj);
-    },
-    clear(){
-      this.datetimeEnd.time = null;
-      let obj = {
-        index: this.index,
-        done: false
+      let temp = null;
+      if(!obj.done){
+        this.datetimeEnd = null;
+      }else{
+        temp = new Date(this.datetimeStart.getTime() + this.selektovaniTipPregleda.trajanjeMinuti*60000);
+        let day = temp.getDate();
+        let month = temp.getMonth() + 1;
+        let hour = temp.getHours();
+        let minute = temp.getMinutes();
+        if((String(day)).length==1)
+          day='0'+day;
+        if((String(month)).length==1)
+          month='0'+month;
+        if((String(hour)).length==1)
+          hour='0'+hour;
+        if((String(minute)).length==1)
+          minute='0'+minute;
+
+        this.datetimeEnd=`${day}.${month}.${temp.getFullYear()} ${hour}:${minute}`;
       }
-      
-      console.log(this.datetimeStart);
       this.$store.commit('pregledDialog/setPocetak', this.datetimeStart);
-      
+      this.$store.commit('pregledDialog/setKraj', temp);
       this.$emit('changeStatus', obj);
     }
   }

@@ -54,6 +54,7 @@ public class PregledService {
 		pregled.setId(null);
 		pregled.setKlinika(klinika);
 		pregled.setUpiti(new ArrayList<UpitZaPregled>());
+		pregled.setLekar((Lekar)osobljeRepository.findByIdKlinikeAndById(klinika.getId(), pregled.getLekar().getId()));
 		return validateAll(klinika, pregled);
 		
 	}

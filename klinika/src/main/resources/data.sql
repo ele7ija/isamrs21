@@ -44,11 +44,11 @@ insert into cenovnik(id, iznosUDinarima, naziv, klinika_id) values(2, 5000, 'Sta
 insert into cenovnik(id, iznosUDinarima, naziv, klinika_id) values(3, 3000, 'Stavka 3', 3);
 
 
-insert into tip_pregleda (id, naziv, opis, klinika_id, cenovnik_id) values (1, 'Kardiološki pregled', 'Opšti pregled srca i krvnih sudova', 1, 1);
-insert into tip_pregleda (id, naziv, opis, klinika_id, cenovnik_id) values (2, 'Kardiološko testiranje', 'Opšte testiranje srca i krvnih sudova', 1, 1);
-insert into tip_pregleda (id, naziv, opis, klinika_id, cenovnik_id) values (3, 'Gastroenterološki pregled', 'Opšti pregled sistema za varenje', 2, 2);
-insert into tip_pregleda (id, naziv, opis, klinika_id, cenovnik_id) values (4, 'Pulmološki pregled', 'Opšti pregled pluća', 3, 3);
-insert into tip_pregleda (id, naziv, opis, klinika_id, cenovnik_id) values (5, 'Pulmološko testiranje', 'Opšte testiranje pluća', 3, 3);
+insert into tip_pregleda (id, naziv, opis, klinika_id, cenovnik_id, trajanje_minuti) values (1, 'Kardiološki pregled', 'Opšti pregled srca i krvnih sudova', 1, 1, 60);
+insert into tip_pregleda (id, naziv, opis, klinika_id, cenovnik_id, trajanje_minuti) values (2, 'Kardiološko testiranje', 'Opšte testiranje srca i krvnih sudova', 1, 1, 75);
+insert into tip_pregleda (id, naziv, opis, klinika_id, cenovnik_id, trajanje_minuti) values (3, 'Gastroenterološki pregled', 'Opšti pregled sistema za varenje', 2, 2, 90);
+insert into tip_pregleda (id, naziv, opis, klinika_id, cenovnik_id, trajanje_minuti) values (4, 'Pulmološki pregled', 'Opšti pregled pluća', 3, 3, 100);
+insert into tip_pregleda (id, naziv, opis, klinika_id, cenovnik_id, trajanje_minuti) values (5, 'Pulmološko testiranje', 'Opšte testiranje pluća', 3, 3, 50);
 
 insert into specijalnost_lekara values(1, 3);
 insert into specijalnost_lekara values(2, 3);
@@ -66,3 +66,7 @@ insert into pregled (klinika_id, lekar_id, sala_id, tip_pregleda_id, pocetak_pre
 insert into pregled (klinika_id, lekar_id, sala_id, tip_pregleda_id, pocetak_pregleda, kraj_pregleda, cena, popust, konacna_cena) values (3, 8, 4, 4, STR_TO_DATE('01/06/2020 12:00:00','%d/%m/%Y %H:%i:%s'), STR_TO_DATE('01/06/2020 13:00:00','%d/%m/%Y %H:%i:%s'), 1000, 0, 1000);
 insert into pregled (klinika_id, lekar_id, sala_id, tip_pregleda_id, pocetak_pregleda, kraj_pregleda, cena, popust, konacna_cena) values (3, 8, 5, 5, STR_TO_DATE('29/05/2020 12:00:00','%d/%m/%Y %H:%i:%s'), STR_TO_DATE('29/05/2020 13:00:00','%d/%m/%Y %H:%i:%s'), 1000, 0, 1000);
 insert into pregled (klinika_id, lekar_id, sala_id, tip_pregleda_id, pocetak_pregleda, kraj_pregleda, cena, popust, konacna_cena) values (3, 8, 5, 5, STR_TO_DATE('02/06/2020 12:00:00','%d/%m/%Y %H:%i:%s'), STR_TO_DATE('02/06/2020 13:00:00','%d/%m/%Y %H:%i:%s'), 1000, 0, 1000);
+
+insert into upit_za_pregled values(1,0x0,STR_TO_DATE('23/05/2020 9:00:00','%d/%m/%Y %H:%i:%s'),STR_TO_DATE('23/05/2020 13:00:00','%d/%m/%Y %H:%i:%s'),0x0,'bla',0x0,STR_TO_DATE('23/05/2020 12:00:00','%d/%m/%Y %H:%i:%s'),0x0,0,null,1,3,2,1,null);
+insert into upit_za_pregled values(2,0x0,STR_TO_DATE('23/05/2020 9:00:00','%d/%m/%Y %H:%i:%s'),STR_TO_DATE('28/05/2020 12:50:00','%d/%m/%Y %H:%i:%s'),0x0,'bla',0x0,STR_TO_DATE('28/05/2020 12:20:00','%d/%m/%Y %H:%i:%s'),0x0,0,null,1,3,2,1,null);
+insert into upit_za_pregled values(3,0x0,STR_TO_DATE('23/05/2020 9:00:00','%d/%m/%Y %H:%i:%s'),STR_TO_DATE('28/05/2020 12:50:00','%d/%m/%Y %H:%i:%s'),0x0,'bla',0x0,STR_TO_DATE('28/05/2020 11:20:00','%d/%m/%Y %H:%i:%s'),0x0,0,null,1,3,2,1,null);

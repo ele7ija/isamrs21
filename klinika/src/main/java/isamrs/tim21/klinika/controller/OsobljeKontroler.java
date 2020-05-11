@@ -76,8 +76,9 @@ public class OsobljeKontroler {
 	
 	@DeleteMapping(value="/{idOsoblja}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
-	public ResponseEntity<CustomResponse<Boolean>> deleteOsoblje(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idOsoblja") Long idOsoblja){
-		return osobljeService.deleteMain(idKlinike, idOsoblja);
+	public ResponseEntity<CustomResponse<Boolean>> deleteOsoblje(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idOsoblja") Long idOsoblja,
+			@RequestParam(name="version") Long version){
+		return osobljeService.deleteMain(idKlinike, idOsoblja, version);
 	}
 	
 }

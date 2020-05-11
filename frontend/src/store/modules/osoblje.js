@@ -84,9 +84,9 @@ const actions = {
     })    
   },
 
-  async removeMedicinskaOsoba({state, commit, dispatch}, idOsobe){
+  async removeMedicinskaOsoba({state, commit, dispatch}, {idOsobe, version}){
     return new Promise((resolve, reject) => {
-      osoblje.removeMedicinskaOsoba(state.klinika.id, idOsobe)
+      osoblje.removeMedicinskaOsoba(state.klinika.id, idOsobe, version)
       .then(({data:{success, message}}) => {
         if(success){
           commit('deleteMedicinskaOsoba', idOsobe);

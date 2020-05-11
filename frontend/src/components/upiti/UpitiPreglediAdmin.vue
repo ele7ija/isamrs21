@@ -59,7 +59,7 @@ export default {
           lekar: `${x.lekar.ime} ${x.lekar.prezime}`,
           tipPregleda: x.tipPregleda.naziv,
           sala: x.unapredDefinisaniPregled ? x.unapredDefinisaniPregled.sala.oznaka : null,
-          pregled: x.unapredDefinisaniPregled
+          pregled: x.unapredDefinisaniPregled,
         };
       });
     },
@@ -88,11 +88,13 @@ export default {
   },
   created(){
     this.fetchPregledi();
+    this.fetchSale();
     this.fetchUpiti();
   },
   methods: {
     ...mapActions({
       fetchUpiti: "upitiPreglediAdmin/loadUpiti",
+      fetchSale: "sale/loadSale",
       fetchPregledi: "preglediAdmin/fetchPreglediKlinike",
       obradiAdmin: "upitiPreglediAdmin/obradiAdmin",
       deleteUpit: "upitiPreglediAdmin/deleteUpit"

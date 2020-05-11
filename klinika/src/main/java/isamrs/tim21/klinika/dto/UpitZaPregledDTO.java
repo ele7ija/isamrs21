@@ -32,7 +32,7 @@ public class UpitZaPregledDTO {
 	private Date pocetakPregleda;
 	//@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss.SSS")
 	private Date krajPregleda;
-	
+	private Date datumKreiranjaUpita;
 	private Long tipPregleda;
 	private Long lekar;
 	private Long klinika;
@@ -91,6 +91,12 @@ public class UpitZaPregledDTO {
 	}
 	public void setPregled(Long pregled) {
 		this.pregled = pregled;
+	}
+	public Date getDatumKreiranjaUpita() {
+		return datumKreiranjaUpita;
+	}
+	public void setDatumKreiranjaUpita(Date datumKreiranjaUpita) {
+		this.datumKreiranjaUpita = datumKreiranjaUpita;
 	}
 	
 	

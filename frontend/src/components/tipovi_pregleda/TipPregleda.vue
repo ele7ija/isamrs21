@@ -49,7 +49,10 @@
                       <v-col cols="12" sm="6" md="6">
                         <v-text-field v-model="newItem.opis" label="Opis" :rules="opisRules"></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="12" md="12">
+                      <v-col cols="12" sm="6" md="6">
+                        <v-text-field type="number" v-model="newItem.trajanjeMinuti" label="Trajanje u minutima" :rules="minutiRules" :min="1"></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="6">
                         <v-select
                           v-model="newItem.cenovnik"
                           :items="_cenovnici"
@@ -133,6 +136,11 @@ export default {
           sortable: false
         },
         {
+          text: 'Trajanje u minutima',
+          value: 'trajanjeMinuti',
+          sortable: true
+        },
+        {
           text: 'Stavka cenovnika',
           value: 'stavkaCenovnika',
           sortable: true
@@ -154,6 +162,7 @@ export default {
         opis: '',
         version: '',
         cenovnik: null,
+        trajanjeMinuti: 60,
         lekari: []
       },
       update: false
@@ -196,6 +205,13 @@ export default {
       return rules;
     },
 
+    minutiRules: function(){
+      const rules = [];
+      const rule1 = v => !!v || 'Trajanje u minutima ne sme ostati prazno';
+      rules.push(rule1);
+      return rules;
+    },
+
     cenovnikRules: function(){
       const rules = [];
       const rule1 = v => !!v || 'Cenovnik ne sme ostati prazan';
@@ -216,6 +232,7 @@ export default {
               version: element.version,
               naziv: element.naziv,
               opis: element.opis,
+              trajanjeMinuti: element.trajanjeMinuti,
               lekari: element.lekari,
               cenovnik: this.cenovnici[indeks], //ZA BEKEND
               stavkaCenovnika: this.cenovnici[indeks].naziv, //ZA PRIKAZ
@@ -253,6 +270,7 @@ export default {
         opis: '',
         version: '',
         cenovnik: null,
+        trajanjeMinuti: 60,
         lekari: []
       };
     },

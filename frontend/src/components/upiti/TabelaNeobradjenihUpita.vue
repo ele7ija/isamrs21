@@ -57,23 +57,49 @@
       </template>
       <template v-slot:expanded-item="{ headers, item }">
         <td :colspan="headers.length">
-          <p class="text-center mt-2 mb-n4 pb-n4">Jos neki podaci o ovom pregledu</p>
+          <p class="text-center mt-2 mb-n4 pb-n4" v-if="item.pregled">Jos neki podaci o ovom pregledu</p>
           <br>
-          Cena: {{item.pregled.cena}} <br>
-          Popust: {{item.pregled.popust}} <br>
-          KonacnaCena: {{item.pregled.konacnaCena}} <br>
+          <span v-if="item.pregled">
+            Cena: {{item.pregled.cena}} <br>
+            Popust: {{item.pregled.popust}} <br>
+            KonacnaCena: {{item.pregled.konacnaCena}} <br>
+          </span>
+          <span v-if="!item.pregled">
+            Ovo je upit za custom pregled
+          </span>
         </td>
       </template>
     </v-data-table>
-    <v-dialog v-model="dialog" max-width="500px">
+    <v-dialog v-model="dialog">
       <v-card>
         <v-card-title>
           <span class="headline">Odgovor na upit za pregled pacijenta</span>
         </v-card-title>
         <hr>
-        <v-card-text>
-          TODO: Dodeljivanje sale pregledu i eventualna promena pregleda ukoliko ne postoji nijedna sala
-        </v-card-text>
+        <v-stepper v-model="stepIndex" vertical>
+          <span
+            v-for="step in stepperData"
+            :key="step.index"
+          >
+            <v-stepper-step :complete="stepIndex > step.index" :step="step.index" :editable="step.index <= stepIndex">
+              {{step.title}}
+              <small>{{step.subtitle}}</small>
+            </v-stepper-step>
+
+            <v-stepper-content :step="step.index">
+              <component
+                class="mb-8"
+                height="200px"
+                v-bind:is="step.componentName"
+                :slobodneSale="slobodneSale"
+                :upit="editableItem"
+                :key="step.unique"
+                @incStep="incStep"
+                @decStep="decStep"
+              ></component>
+            </v-stepper-content>
+          </span>
+        </v-stepper>
       </v-card>
     </v-dialog>
   </div>
@@ -81,9 +107,15 @@
 
 <script>
 import {mapGetters} from 'vuex';
+import TabelaSala from './TabelaSala';
+import PregledInfo from './PregledInfo';
 export default {
   name: "TabelaNeobradjenihUpita",
   props: ["all"],
+  components: {
+    TabelaSala,
+    PregledInfo
+  },
   data: function(){
     return {
       search: '',
@@ -137,20 +169,52 @@ export default {
           value: 'data-table-expand'
         }
       ],
-      editableItem: {
-        pacijent: null,
-        pocetakPregleda: null,
-        krajPregleda: null,
-        lekar: null,
-        tipPregleda: null,
-        sala: null
-      }
+      editableItem: null,
+      stepIndex: 1,
+      stepperData: [
+        {
+          title: "Izaberite salu pregleda",
+          subtitle: "Odaberite neku od slobodnih sala da biste nastavili.",
+          index: 1,
+          componentName: "TabelaSala",
+          unique: 1
+        },
+        {
+          title: "Pregled informacija",
+          subtitle: "Na osnovu datih informacija će se kreirati rezervacija",
+          index: 2,
+          componentName: "PregledInfo",
+          unique: 2
+        }
+      ]
     };
   },
   computed: {
     ...mapGetters({
-      upiti: "upitiPreglediAdmin/getUpiti"
+      upiti: "upitiPreglediAdmin/getUpiti",
+      sale: "sale/getSale",
+      pregledi: "preglediAdmin/getPreglediKlinike"
     }),
+    slobodneSale(){
+      if(this.editableItem != null){
+        //prvo dobavi preglede koji se preklapaju sa datumom pocetka i kraja upita koji je kreiran
+        let filteredPregledi = this.pregledi.filter(x => {
+            let start = new Date(x.pocetakPregleda);
+            let end = new Date(x.krajPregleda);
+            return (start.getTime() <= this.editableItem.pocetak.getTime() && end.getTime() >= this.editableItem.pocetak.getTime()) ||
+              (this.editableItem.pocetak.getTime() <= start.getTime() && this.editableItem.kraj.getTime() >= start.getTime())
+          });
+
+        //zatim izvuci id-jeve sala ovih pregleda
+        let zauzeteSaleIds = filteredPregledi.map(x => x.sala.id);
+
+        //zatim izbaci sale sa ovim id-jevima iz skupa svih slobodnih sala
+        return this.sale.filter(x => zauzeteSaleIds.findIndex(y => y == x.id) == -1);
+      }else{
+        return [];
+      }
+      
+    }
   },
   methods: {
     accept(item){
@@ -165,13 +229,24 @@ export default {
       this.editableItem = {
         id: item.id,
         pacijent: {text: `${updatedItem.pacijent.ime} ${updatedItem.pacijent.prezime}`, value: updatedItem.pacijent},
-        pocetak: new Date(updatedItem.pocetakPregleda).toLocaleString(),
-        kraj: new Date(updatedItem.krajPregleda).toLocaleTimeString(),
+        pocetak: new Date(updatedItem.pocetakPregleda),
+        kraj: new Date(updatedItem.krajPregleda),
         lekar: {text: `${updatedItem.lekar.ime} ${updatedItem.lekar.prezime}`, value: updatedItem.lekar},
         tipPregleda: {text: updatedItem.tipPregleda.naziv, value: updatedItem.tipPregleda},
         sala: null
       }
       this.dialog = true;
+    },
+    incStep(){
+      if(this.stepIndex == this.stepperData.length){
+        //emituj akciju
+        alert("Emitujem akciju na bek");
+      }else{
+        this.stepIndex++;
+      }
+    },
+    decStep(){
+      this.stepIndex--;
     }
   }
 }

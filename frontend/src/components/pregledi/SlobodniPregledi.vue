@@ -43,7 +43,7 @@
                   v-for="step in stepperData"
                   :key="step.index"
                 >
-                  <v-stepper-step :complete="stepIndex > step.index" :step="step.index" :editable="step.index <= stepIndex">
+                  <v-stepper-step :complete="stepIndex > step.index" :step="step.index">
                     {{step.title}}
                     <small>{{step.subtitle}}</small>
                   </v-stepper-step>
@@ -61,7 +61,7 @@
                       :key="step.unique"
                     ></component>
                     <v-btn v-if="stepIndex < stepperData.length" color="primary" @click="stepIndex += 1" :disabled="!stepperData[step.index-1].done">Next step</v-btn>
-                    <v-btn v-if="stepIndex > 1 && stepIndex < stepperData.length" text @click="stepIndex -= 1">Previous step</v-btn>
+                    <v-btn v-if="stepIndex > 1 && stepIndex < stepperData.length" text @click="decrement()">Previous step</v-btn>
                     <v-btn v-if="stepIndex == 1" text @click="reset()">Cancel</v-btn>
                   </v-stepper-content>
                 </span>
@@ -177,18 +177,18 @@ export default {
       stepIndex: 1,
       stepperData: [
         {
-          title: "Izaberite vreme pregleda",
-          subtitle: "Izbor vremena pregleda ce uticati na kasniji izbor lekara i sala pregleda",
+          title: "Izaberite tip pregleda",
+          subtitle: "Mozete izabrati samo tip pregleda unutar vase klinike. Izbor tipa pregleda ce uticati na kasniji izbor lekara",
           index: 1,
-          componentName: "DatePicker",
+          componentName: "TabelaTipovaPregleda",
           done: false,
           unique: 1
         },
         {
-          title: "Izaberite tip pregleda",
-          subtitle: "Mozete izabrati samo tip pregleda unutar vase klinike. Izbor tipa pregleda ce uticati na kasniji izbor lekara",
+          title: "Izaberite vreme pregleda",
+          subtitle: "Izbor vremena pregleda ce uticati na kasniji izbor lekara i sala pregleda",
           index: 2,
-          componentName: "TabelaTipovaPregleda",
+          componentName: "DatePicker",
           done: false,
           unique: 3
         },
@@ -257,9 +257,9 @@ export default {
         cena: this.cena,
         popust: this.popust,
         konacnaCena: this.konacnaCena,
-        sala: { id: this.sala.id },
-        lekar: { id: this.lekar.id, pozicija: 'lekar' },
-        tipPregleda: { id: this.tipPregleda.id },
+        sala: { id: this.sala.id, version: this.sala.version },
+        lekar: { id: this.lekar.id, pozicija: 'lekar', version: this.lekar.version },
+        tipPregleda: { id: this.tipPregleda.id, version: this.tipPregleda.version },
         klinika: { id: this.klinika.id },
         poseta: null
       };
@@ -271,6 +271,7 @@ export default {
       this.stepIndex = 1;
       for(let step of this.stepperData){
         step.unique += 1;
+        step.done = false;
       }
     },
     changeStatus({index, done}){
@@ -278,6 +279,10 @@ export default {
     },
     decrement(){
       this.stepIndex -= 1;
+      for(let i = this.stepIndex; i < this.stepperData.length; i++){
+        this.stepperData[i].unique += 1;
+        this.stepperData[i].done = false;
+      }
     }
   },
 }

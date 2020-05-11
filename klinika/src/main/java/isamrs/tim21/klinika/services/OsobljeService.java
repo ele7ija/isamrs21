@@ -101,7 +101,7 @@ public class OsobljeService {
 		return new CustomResponse<MedicinskoOsoblje>(lekar, true, "OK.");
 	}
 
-	@Transactional(readOnly=false, propagation=Propagation.MANDATORY)
+	@Transactional(readOnly=false)
 	public CustomResponse<MedicinskoOsoblje> deleteSpecijalnostOsoblja(Long idOsoblja, Long idTipaPregleda, Long version){
 		MedicinskoOsoblje osoblje = osobljeRepository.findById(idOsoblja).orElse(null);
 		if(osoblje == null || osoblje instanceof MedicinskaSestra){
@@ -126,7 +126,7 @@ public class OsobljeService {
 		tipPregleda.getLekari().remove(lekar);
 		
 		lekar.setVersion(lekar.getVersion() + 1);
-		lekar = osobljeRepository.saveAndFlush(lekar); //obavezno zbog uvecanja verzije
+		lekar = osobljeRepository.saveAndFlush(lekar);
 		tipPregledaRepository.saveAndFlush(tipPregleda);
 		
 		return new CustomResponse<MedicinskoOsoblje>(lekar, true, "OK.");
@@ -134,10 +134,13 @@ public class OsobljeService {
 	}
 
 	@Transactional(readOnly=false, propagation=Propagation.MANDATORY)
-	public CustomResponse<Boolean> delete(Long idKlinike, Long idOsoblja){
+	public CustomResponse<Boolean> delete(Long idKlinike, Long idOsoblja, Long version){
 		MedicinskoOsoblje osobaToDelete = osobljeRepository.findByIdKlinikeAndById(idKlinike, idOsoblja);
 		if(osobaToDelete == null){
 			return new CustomResponse<Boolean>(false, false, "Greska. Medicinska osoba ne postoji");
+		}
+		if(osobaToDelete.getVersion() != version){
+			return new CustomResponse<Boolean>(false, false, "Verzija podatka je zastarela. Osvezite stranicu");
 		}
 		if(osobaToDelete instanceof MedicinskaSestra){
 			osobljeRepository.deleteById(idOsoblja);
@@ -217,12 +220,12 @@ public class OsobljeService {
 	}
 
 	@Transactional(readOnly=false)
-	public ResponseEntity<CustomResponse<Boolean>> deleteMain(Long idKlinike, Long idOsoblja) {
+	public ResponseEntity<CustomResponse<Boolean>> deleteMain(Long idKlinike, Long idOsoblja, Long version) {
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
 			return new ResponseEntity<CustomResponse<Boolean>>(new CustomResponse<Boolean>(false, false, "Greska. Klinika ne postoji"), HttpStatus.NOT_FOUND);
 		}else{
-			CustomResponse<Boolean> customResponse = delete(idKlinike, idOsoblja);
+			CustomResponse<Boolean> customResponse = delete(idKlinike, idOsoblja, version);
 			return new ResponseEntity<CustomResponse<Boolean>>(customResponse, HttpStatus.OK);
 		}
 	}

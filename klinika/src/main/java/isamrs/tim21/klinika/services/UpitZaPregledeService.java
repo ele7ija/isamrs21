@@ -53,7 +53,7 @@ public class UpitZaPregledeService {
 			return new CustomResponse<UpitZaPregled>(null, false, "Greska: Trazeni upit nije pronadjen.");
 		}
 		if(upit.getVersion() != u.getVersion()){
-			throw new ObjectOptimisticLockingFailureException(UpitZaPregled.class, u);
+			return new CustomResponse<UpitZaPregled>(u, false, "Greska: Verzija podatka je zastarela. Osvezite stranicu.");
 		}
 		upit.setAdminObradio(true);
 		upit.setOdobren(u.getOdobren());
@@ -142,12 +142,7 @@ public class UpitZaPregledeService {
 		}else{
 			upitZaPregledToChange.setId(idUpita);
 			upitZaPregledToChange.setKlinika(klinika);
-			CustomResponse<UpitZaPregled> customResponse = null;
-			try{
-				customResponse = obradiAdmin(upitZaPregledToChange);
-			}catch(ObjectOptimisticLockingFailureException e){
-				return new CustomResponse<UpitZaPregled>(null, false, "Greska. Verzija upita je zastarela. Osvezite stranicu");
-			}
+			CustomResponse<UpitZaPregled> customResponse = obradiAdmin(upitZaPregledToChange);
 			return customResponse;
 		}
 	}

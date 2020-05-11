@@ -51,7 +51,12 @@ export default {
           text: 'Opis',
           value: 'opis',
           sortable: false
-        }
+        },
+        {
+          text: 'Trajanje u minutima',
+          value: 'trajanjeMinuti',
+          sortable: true
+        },
       ]
     };
   },

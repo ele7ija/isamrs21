@@ -63,8 +63,8 @@ export default {
           x.pregledi.filter(y => {
             let start = new Date(y.pocetakPregleda);
             let end = new Date(y.krajPregleda);
-            return start.getTime() < this.pocetak.getTime() && end.getTime() > this.pocetak.getTime() ||
-              this.pocetak.getTime() < start.getTime() && this.kraj.getTime() > start.getTime()
+            return start.getTime() <= this.pocetak.getTime() && end.getTime() >= this.pocetak.getTime() ||
+              this.pocetak.getTime() <= start.getTime() && this.kraj.getTime() >= start.getTime()
           }).length == 0);
       else
         return [];

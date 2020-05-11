@@ -93,6 +93,10 @@ public class UpitZaPregled implements IdentitySerializable {
 	@Column(name="version", columnDefinition="integer DEFAULT 0", nullable=false)
 	private Long version;
 	
+	@Column(name="datum_kreiranja_upita")
+    @Temporal(TemporalType.TIMESTAMP)
+	private Date datumKreiranjaUpita;
+	
 	public Long getVersion() {
 		return version;
 	}
@@ -108,6 +112,7 @@ public class UpitZaPregled implements IdentitySerializable {
 		krajPregleda = u.getKrajPregleda();
 		adminObradio = false;
 		pacijentObradio = false;
+		datumKreiranjaUpita = u.getDatumKreiranjaUpita();
 	}
 
 	@Override
@@ -235,6 +240,14 @@ public class UpitZaPregled implements IdentitySerializable {
 
 	public void setOpis(String opis) {
 		this.opis = opis;
+	}
+
+	public Date getDatumKreiranjaUpita() {
+		return datumKreiranjaUpita;
+	}
+
+	public void setDatumKreiranjaUpita(Date datumKreiranjaUpita) {
+		this.datumKreiranjaUpita = datumKreiranjaUpita;
 	}
 	
 	

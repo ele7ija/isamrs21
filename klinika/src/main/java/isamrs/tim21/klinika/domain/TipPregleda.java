@@ -54,6 +54,9 @@ public class TipPregleda implements IdentitySerializable{
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JsonSerialize(using=CenovnikSerializer.class)
 	private Cenovnik cenovnik;
+	
+	@Column(name="trajanje_minuti", nullable=false)
+	private int trajanjeMinuti;
 
 	public List<Lekar> getLekari() {
 		return lekari;
@@ -136,6 +139,14 @@ public class TipPregleda implements IdentitySerializable{
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public int getTrajanjeMinuti() {
+		return trajanjeMinuti;
+	}
+
+	public void setTrajanjeMinuti(int trajanjeMinuti) {
+		this.trajanjeMinuti = trajanjeMinuti;
 	}
 
 	

@@ -241,7 +241,8 @@ export default {
         klinika: this.odabraniPregled.klinika.id,
         pacijent: this._korisnik.username,
         pregled: this.odabraniPregled.id,
-        opis: this.napomena
+        opis: this.napomena,
+        datumKreiranjaUpita: new Date()
       }
       this.kreirajUpit(obj).then((message) => {
         this.snackbarText = message;

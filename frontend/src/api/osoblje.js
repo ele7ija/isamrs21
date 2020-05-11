@@ -35,10 +35,10 @@ export default{
       options
     );
   },
-  removeMedicinskaOsoba(idKlinike, idOsobe){
+  removeMedicinskaOsoba(idKlinike, idOsobe, version){
     let options = util.prepareOptions();
     return axios.delete(
-      `${process.env.VUE_APP_BACKEND_ROOT}/medicinskaOsoba/${idKlinike}/${idOsobe}`,
+      `${process.env.VUE_APP_BACKEND_ROOT}/medicinskaOsoba/${idKlinike}/${idOsobe}?version=${version}`,
       options
     );
   },
