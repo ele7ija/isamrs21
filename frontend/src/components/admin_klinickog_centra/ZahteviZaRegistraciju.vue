@@ -1,0 +1,203 @@
+<template>
+<div>
+  <v-data-table
+    :headers="headers"
+    :items="getAll"
+    :search="search"
+    class="elevation-1"
+    
+    >
+    <template v-slot:top>
+      <v-toolbar flat color="white">
+        <v-toolbar-title>Zahtevi za registraciju</v-toolbar-title>
+        <v-divider
+          class="mx-4"
+          inset
+          vertical
+        ></v-divider>
+        <v-spacer></v-spacer>
+        
+        <!-- search bar  -->
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          hide-details
+        ></v-text-field>
+        <v-divider
+          class="mx-4"
+          inset
+          vertical
+        ></v-divider>
+        <v-spacer></v-spacer>
+
+      </v-toolbar>
+    </template>
+
+
+
+    <!-- akcije prihvati i odbij -->
+    <template v-slot:item.actions="{ item }">
+
+      <!-- akcija prihvati -->
+      <v-dialog v-model="dialogOnPrihvati" width="400">
+        <template v-slot:activator="{ on }">
+          <v-btn v-on="on" class="ma-2" elevation=1  color="success lighten-1" small >
+            Prihvati
+            <v-icon right>mdi-check</v-icon>
+          </v-btn>
+        </template>
+
+        <v-card>
+          <v-card-text class="pa-2">
+            Da li ste sigurni da zelite da prihvatite korisnika 
+            {{item.pacijent.ime}} {{item.pacijent.prezime}}?
+          </v-card-text>
+
+          <!-- akcije -->
+          <v-divider></v-divider>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="success" small @click="prihvati(item)">
+              Prihvati
+            </v-btn>
+            <v-btn color="error lighten-1" small @click="dialogOnPrihvati=false">
+              Nazad
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <!-- akcija odbij -->
+      <v-dialog v-model="dialogOnOdbij" width="500">
+        <template v-slot:activator="{ on }">
+          <v-btn v-on="on" class="ma-2" elevation=1  color="error lighten-1" small>
+            Odbij 
+          <v-icon right>mdi-close</v-icon>
+          </v-btn>
+        </template>
+
+        <v-form v-model="isFormValid">
+          <v-card>
+            <v-card-title>
+              <span class="headline">
+              Odbij zahtev korisniku: 
+              {{item.pacijent.ime}} {{item.pacijent.prezime}}
+              </span>
+            </v-card-title>
+
+            <v-card-text>
+              <v-container>
+                <v-textarea
+                outlined
+                label="razlog odbijanja" 
+                hint="Neregistrovanom korisniku obrazložiti zašto je odbijen."
+                ></v-textarea>
+              </v-container>
+            </v-card-text>
+
+            <!-- akcije -->
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="success" small  @click="odbij(item)" :disabled="!isFormValid">
+              Pošalji
+            </v-btn>
+            <v-btn color="error lighten-1" small @click="dialogOnOdbij=false">
+              Nazad
+            </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-form>
+      </v-dialog>
+    </template> 
+
+  </v-data-table>
+
+  
+</div>
+</template>
+
+<script>
+import {mapGetters, mapActions} from 'vuex';
+
+export default {
+  name: "ZahteviZaRegistraciju",
+  data: function (){
+    return {
+      search: '',
+      dialogOnPrihvati: false,
+      dialogOnOdbij: false,
+      isFormValid: true,
+      headers: [
+        {
+          text: 'Ime',
+          value: 'pacijent.ime',
+          sortable: true,
+        },
+        {
+          text: "Prezime",
+          value: 'pacijent.prezime',
+          sortable: true,
+        },
+        {
+          text: "Email",
+          value: 'pacijent.email',
+          sortable: true,
+        },
+        {
+          text: "Datum Podnošenja",
+          value: 'datumString',
+          sortable: true,
+        },
+        {
+          text: "Vreme Podnošenja",
+          value: 'vremeString',
+          sortable: true,
+        },
+        { 
+          text: 'Actions',
+          value: 'actions',
+          sortable: false,
+          align: 'end'
+        }
+      ],
+    }
+  },
+
+  computed: {
+    ...mapGetters(
+      {
+        getAll: 'zahteviZaRegistraciju/getAllZahtevi',
+      }
+    ),
+  },
+
+  created(){
+    this.fetchData();
+
+  },
+
+  methods: {
+    ...mapActions(
+      {
+        fetchData: 'zahteviZaRegistraciju/fetchAllZahtevi',
+
+      }
+    ),
+
+    prihvati (zahtev){
+      this.dialogOnPrihvati = false;
+      return zahtev;
+    },
+    odbij (zahtev){
+      this.dialogOnOdbij = false;
+      return zahtev;
+    },
+  }
+}
+</script>
+
+<style>
+
+</style>

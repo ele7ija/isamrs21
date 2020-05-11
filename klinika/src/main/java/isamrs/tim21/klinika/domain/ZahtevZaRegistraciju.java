@@ -23,10 +23,10 @@ public class ZahtevZaRegistraciju implements IdentitySerializable{
 	@Id
 	private Long id;
 	
-	@Column(name="datumPodnosenja")
+	@Column(name="datum_podnosenja")
 	private Timestamp datumPodnosenja;
 	
-	@Column(name="datumOdobrenja")
+	@Column(name="datum_odobrenja")
 	private Timestamp datumOdobrenja;
 	
 	@OneToOne(fetch=FetchType.EAGER)
