@@ -14,6 +14,7 @@ import isamrs.tim21.klinika.domain.Klinika;
 import isamrs.tim21.klinika.domain.Lekar;
 import isamrs.tim21.klinika.domain.Pacijent;
 import isamrs.tim21.klinika.domain.Pregled;
+import isamrs.tim21.klinika.domain.TipPregleda;
 import isamrs.tim21.klinika.domain.UpitZaPregled;
 import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.dto.UpitZaPregledDTO;
@@ -158,18 +159,26 @@ public class UpitZaPregledeService {
 		UpitZaPregled u2 = new UpitZaPregled(u);
 		try {
 			u2.setKlinika(klinikaRepository.findById(u.getKlinika()).get());
+			// TODO provera vezije
 		}
 		catch(NoSuchElementException e) {
 			return new CustomResponse<UpitZaPregled>(null, false, "Klinika ne postoji.");
 		}
 		try {
 			u2.setTipPregleda(tipPregledaRepository.findById(u.getTipPregleda()).get());
+			if (u2.getTipPregleda().getVersion() != u.getTipPregledaVerzija()) {
+				throw new ObjectOptimisticLockingFailureException(TipPregleda.class, u2.getTipPregleda());
+			}
 		}
 		catch(NoSuchElementException e) {
 			return new CustomResponse<UpitZaPregled>(null, false, "Tip pregleda ne postoji.");
 		}		
 		try {
-			u2.setLekar((Lekar) korisniciRepository.findById(u.getLekar()).get());		}
+			u2.setLekar((Lekar) korisniciRepository.findById(u.getLekar()).get());
+			if (u2.getLekar().getVersion() != u.getLekarVerzija()) {
+				throw new ObjectOptimisticLockingFailureException(Lekar.class, u2.getLekar());
+			}		
+		}
 		catch(NoSuchElementException e) {
 			return new CustomResponse<UpitZaPregled>(null, false, "Lekar ne postoji.");
 		}
@@ -180,7 +189,13 @@ public class UpitZaPregledeService {
 			return new CustomResponse<UpitZaPregled>(null, false, "Pacijent ne postoji.");
 		}
 		try {
-			u2.setUnapredDefinisaniPregled(pregledRepository.findById(u.getPregled()).get());
+			// Upit je nastao na osnovu unapred def pregleda
+			if (u.getPregled() != null) {
+				u2.setUnapredDefinisaniPregled(pregledRepository.findById(u.getPregled()).get());
+				if (u2.getUnapredDefinisaniPregled().getVersion() != u.getPregledVerzija()) {
+					throw new ObjectOptimisticLockingFailureException(Pregled.class, u2.getUnapredDefinisaniPregled());
+				}
+			}
 		}
 		catch(NoSuchElementException e) {
 			return new CustomResponse<UpitZaPregled>(null, false, "Pregled ne postoji.");
@@ -222,9 +237,12 @@ public class UpitZaPregledeService {
 	}
 
 	@Transactional(readOnly=false)
-	public CustomResponse<UpitZaPregled> izmeniPotvrdi(Long id) throws Exception {
+	public CustomResponse<UpitZaPregled> izmeniPotvrdi(Long id, Long verzija) throws Exception {
 		try {
 			UpitZaPregled u = upitZaPregledRepository.findById(id).get();
+			if (u.getVersion() != verzija) {
+				throw new ObjectOptimisticLockingFailureException(UpitZaPregled.class, u);
+			}
 			u.setPotvrdjen(true);
 			u.setPacijentObradio(true);
 			upitZaPregledRepository.save(u);
@@ -237,9 +255,12 @@ public class UpitZaPregledeService {
 	}
 
 	@Transactional(readOnly=false)
-	public CustomResponse<UpitZaPregled> izmeniOdustani(Long id) throws Exception {
+	public CustomResponse<UpitZaPregled> izmeniOdustani(Long id, Long verzija) throws Exception {
 		try {
 			UpitZaPregled u = upitZaPregledRepository.findById(id).get();
+			if (u.getVersion() != verzija) {
+				throw new ObjectOptimisticLockingFailureException(UpitZaPregled.class, u);
+			}
 			u.setPotvrdjen(false);
 			u.setPacijentObradio(true);
 			upitZaPregledRepository.save(u);
