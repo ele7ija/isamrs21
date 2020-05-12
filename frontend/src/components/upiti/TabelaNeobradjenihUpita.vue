@@ -235,7 +235,13 @@ export default {
         tipPregleda: {text: updatedItem.tipPregleda.naziv, value: updatedItem.tipPregleda},
         sala: null
       }
+      this.rerender();
       this.dialog = true;
+    },
+    rerender(){
+      for(let step of this.stepperData){
+        step.unique += 1;
+      }
     },
     incStep(){
       if(this.stepIndex == this.stepperData.length){

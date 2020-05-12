@@ -39,7 +39,7 @@
         </v-btn>
       </template>
     </v-data-table>
-    <v-btn class="my-4 mx-2" color="primary" @click="emit('incStep')" :disabled="!btnEnabled || slobodneSale.length!=0">Dalje</v-btn>
+    <v-btn class="my-4 mx-2" color="primary" @click="emit('incStep')" :disabled="!btnEnabled || slobodneSale.length==0">Dalje</v-btn>
     <v-btn class="my-4 mx-2" color="primary" @click="dialog2=true" v-if="slobodneSale.length==0">Promena podataka iz upita</v-btn>
     <v-dialog v-model="dialog1">
       <PreglediSale :preglediSale="preglediSale"/>
