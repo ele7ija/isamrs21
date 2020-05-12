@@ -63,7 +63,16 @@ public class OsobljeKontroler {
 	public ResponseEntity<CustomResponse<MedicinskoOsoblje>> addSpecijalnostOsoblja(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idOsoblja") Long idOsoblja, @RequestBody List<Long> idTipovaPregleda,
 			@RequestParam(name="version") Long version){
-		return osobljeService.updateSpecijalnosti(idKlinike, idOsoblja, idTipovaPregleda, version);
+		ResponseEntity<CustomResponse<MedicinskoOsoblje>> retval = null;
+		try{
+			retval = osobljeService.updateSpecijalnosti(idKlinike, idOsoblja, idTipovaPregleda, version); 
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(
+					new CustomResponse<MedicinskoOsoblje>(null, false, "Greska: Verzija podatka je zastarela. Osvezite stranicu"),
+					HttpStatus.OK);
+		}
+		return retval;
 	}
 	
 	@DeleteMapping(value="/specijalnosti/{idOsoblja}/{idTipaPregleda}")
@@ -71,14 +80,30 @@ public class OsobljeKontroler {
 	public ResponseEntity<CustomResponse<MedicinskoOsoblje>> deleteSpecijalnostOsoblja(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idOsoblja") Long idOsoblja, @PathVariable("idTipaPregleda") Long idTipaPregleda,
 			@RequestParam(name="version") Long version){
-		return osobljeService.deleteSpecijalnostOsoblja(idKlinike, idOsoblja, idTipaPregleda, version);
+		ResponseEntity<CustomResponse<MedicinskoOsoblje>> retval = null;
+		try{
+			retval = osobljeService.deleteSpecijalnostOsoblja(idKlinike, idOsoblja, idTipaPregleda, version); 
+		}catch(Exception e){
+			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(
+					new CustomResponse<MedicinskoOsoblje>(null, false, "Greska: Verzija podatka je zastarela. Osvezite stranicu"),
+					HttpStatus.OK);
+		}
+		return retval;
 	}
 	
 	@DeleteMapping(value="/{idOsoblja}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<Boolean>> deleteOsoblje(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idOsoblja") Long idOsoblja,
-			@RequestParam(name="version") Long version){
-		return osobljeService.deleteMain(idKlinike, idOsoblja, version);
+			@RequestParam(name="version") Long version){	
+		ResponseEntity<CustomResponse<Boolean>> retval = null;
+		try{
+			retval = osobljeService.deleteMain(idKlinike, idOsoblja, version); 
+		}catch(Exception e){
+			return new ResponseEntity<CustomResponse<Boolean>>(
+					new CustomResponse<Boolean>(true, false, "Greska: Verzija podatka je zastarela. Osvezite stranicu"),
+					HttpStatus.OK);
+		}
+		return retval;
 	}
 	
 }

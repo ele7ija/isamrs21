@@ -52,10 +52,10 @@ public abstract class Korisnik implements IdentitySerializable, UserDetails {
 	protected String prezime;
 	
 	@Column(name = "enabled")
-    private boolean enabled;
+	protected boolean enabled;
 
 	@Column(name = "poslednja_promena_sifre")
-    private java.sql.Timestamp poslednjaPromenaSifre;
+	protected java.sql.Timestamp poslednjaPromenaSifre;
 	
 	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "user_authority",

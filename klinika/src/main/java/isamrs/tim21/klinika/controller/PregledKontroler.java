@@ -69,6 +69,7 @@ public class PregledKontroler {
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<Pregled>> update(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idPregleda") Long idPregleda,
 			@RequestBody Pregled pregled){
+		//TODO: promeniti tako da radi sa verzionisnjem
 		return pregledService.update(idKlinike, idPregleda, pregled);
 	}
 	
@@ -76,7 +77,14 @@ public class PregledKontroler {
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<Boolean>> delete(@PathVariable("idKlinike") Long idKlinike,
 			@PathVariable("idPregleda") Long idPregleda, @RequestParam(name="version") Long version){
-		CustomResponse<Boolean> customResponse = pregledService.delete(idKlinike, idPregleda, version);
-		return new ResponseEntity<CustomResponse<Boolean>>(customResponse, HttpStatus.OK);
+		ResponseEntity<CustomResponse<Boolean>> customResponse = null;
+		try{
+			customResponse = pregledService.delete(idKlinike, idPregleda, version);
+		}catch(Exception e){
+			return new ResponseEntity<CustomResponse<Boolean>>(
+					new CustomResponse<Boolean>(true, false, "Greska. Verzija podatka je zastarela. Osvezite stranicu"),
+					HttpStatus.OK);
+		}
+		return customResponse;
 	}
 }

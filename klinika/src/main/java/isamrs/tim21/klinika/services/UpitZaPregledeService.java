@@ -6,7 +6,6 @@ import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,13 +46,16 @@ public class UpitZaPregledeService {
 	PosetaService posetaService;
 
 	@Transactional
-	public CustomResponse<UpitZaPregled> obradiAdmin(UpitZaPregled u) {
+	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdmin(UpitZaPregled u) throws Exception{
 		UpitZaPregled upit = upitZaPregledRepository.findById(u.getId()).get();
 		if(upit == null){
-			return new CustomResponse<UpitZaPregled>(null, false, "Greska: Trazeni upit nije pronadjen.");
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+					new CustomResponse<UpitZaPregled>(null, false, "Greska: Trazeni upit nije pronadjen."),
+					HttpStatus.NOT_FOUND
+			);
 		}
 		if(upit.getVersion() != u.getVersion()){
-			return new CustomResponse<UpitZaPregled>(u, false, "Greska: Verzija podatka je zastarela. Osvezite stranicu.");
+			throw new Exception();
 		}
 		upit.setAdminObradio(true);
 		upit.setOdobren(u.getOdobren());
@@ -69,7 +71,10 @@ public class UpitZaPregledeService {
 				if(p.getPoseta() != null){
 					upit.setOdobren(false);
 					upit = upitZaPregledRepository.save(upit);
-					return new CustomResponse<UpitZaPregled>(upit, false, "Obavestenje: Ovaj pregled je vec rezervisan, te je iz tog razloga upit ipak odbijen.");
+					return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+							new CustomResponse<UpitZaPregled>(upit, false, "Obavestenje: Ovaj pregled je vec rezervisan, te je iz tog razloga upit ipak odbijen."),
+							HttpStatus.OK
+					);
 				}
 				//ukoliko pregled vec ima odobren upit, admin nije smeo da odobri u
 				for(UpitZaPregled drugiUpit: p.getUpiti()){
@@ -78,48 +83,60 @@ public class UpitZaPregledeService {
 					if(drugiUpit.getOdobren() && drugiUpit.getPotvrdjen()){
 						upit.setOdobren(false);
 						upit = upitZaPregledRepository.save(upit);
-						return new CustomResponse<UpitZaPregled>(upit, false, "Obavestenje: Ovaj pregled je vec rezervisan, te je iz tog razloga upit ipak odbijen.");
+						return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+								new CustomResponse<UpitZaPregled>(upit, false, "Obavestenje: Ovaj pregled je vec rezervisan, te je iz tog razloga upit ipak odbijen."),
+								HttpStatus.OK
+						);
 					}
 					if(drugiUpit.getOdobren() && !drugiUpit.getPacijentObradio()){
 						upit.setAdminObradio(false);
 						upit.setOdobren(false);
 						upit = upitZaPregledRepository.save(upit);
-						return new CustomResponse<UpitZaPregled>(null, false, "Obavestenje: Ovaj pregled je vec odobren. Mocicete da odobrite ovaj pregled samo u slucaju da pacijent kojem je ovaj pregled odobren ipak odluci da ne potvrdi rezervaciju.");
+						return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+								new CustomResponse<UpitZaPregled>(upit, false, "Obavestenje: Ovaj pregled je vec odobren. Mocicete da odobrite ovaj pregled samo u slucaju da pacijent kojem je ovaj pregled odobren ipak odluci da ne potvrdi rezervaciju."),
+								HttpStatus.OK
+						);
 					}
 				}
 			}
 			
 		}
 		upit = upitZaPregledRepository.save(upit);
-		return new CustomResponse<UpitZaPregled>(upit, true, "OK.");
+		return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+				new CustomResponse<UpitZaPregled>(upit, true, "OK."),
+				HttpStatus.OK
+		);
 	}
 
 	@Transactional(readOnly=false)
-	public CustomResponse<Boolean> delete(Long idUpita, Long version) {
+	public CustomResponse<Boolean> delete(Long idUpita, Long version) throws Exception{
 		UpitZaPregled upit = upitZaPregledRepository.findById(idUpita).get();
 		CustomResponse<Boolean> retval;
 		if(upit == null){
 			retval = new CustomResponse<Boolean>(false, false, "Greska. Trazeni upit ne postoji");
 		}
-		else if(upit.getVersion() != version){
+		/*else if(upit.getVersion() != version){
 			retval = new CustomResponse<Boolean>(false, false, "Greska. Verzija podatka je zastarela. Osvezite stranicu.");
-		}
+		}*/
 		else if(!upit.getPacijentObradio()){
-			retval = new CustomResponse<Boolean>(false, false, "Greska. Pacijent jos uvek nije video odgovor na vas upit.");
+			retval = new CustomResponse<Boolean>(true, false, "Greska. Pacijent jos uvek nije video odgovor na vas upit.");
 		}else{
-			upitZaPregledRepository.deleteById(upit.getId());
+			UpitZaPregled upToDelete = new UpitZaPregled();
+			upToDelete.setId(idUpita);
+			upToDelete.setVersion(version);
+			upitZaPregledRepository.delete(upToDelete); //ovde moze da dodje do nepoklapanja verzija
 			retval = new CustomResponse<Boolean>(true, true, "OK.");
 		}
 		return retval;
 	}
 
-	public ResponseEntity<CustomResponse<Boolean>> deleteMain(Long idKlinike, Long idUpita, Long version) {
-		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
+	public ResponseEntity<CustomResponse<Boolean>> deleteMain(Long idKlinike, Long idUpita, Long version) throws Exception{
+		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
 			return new ResponseEntity<CustomResponse<Boolean>>(new CustomResponse<Boolean>(false, false, "Greska. Klinika ne postoji"), HttpStatus.NOT_FOUND);
 		}else{
 			CustomResponse<Boolean> customResponse = delete(idUpita, version);
-			return new ResponseEntity<CustomResponse<Boolean>>(customResponse, HttpStatus.OK);
+			return new ResponseEntity<CustomResponse<Boolean>>(customResponse, customResponse.getResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
 		}
 	}
 	
@@ -134,16 +151,19 @@ public class UpitZaPregledeService {
 	}
 
 	@Transactional(readOnly=false)
-	public CustomResponse<UpitZaPregled> obradiAdminMain(Long idKlinike, Long idUpita,
-			UpitZaPregled upitZaPregledToChange) {
+	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdminMain(Long idKlinike, Long idUpita,
+			UpitZaPregled upitZaPregledToChange) throws Exception{
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
-			return new CustomResponse<UpitZaPregled>(null, false, "Greska: Klinika nije pronadjena.");
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+					new CustomResponse<UpitZaPregled>(null, false, "Greska: Klinika nije pronadjena."),
+					HttpStatus.NOT_FOUND
+			);
 		}else{
 			upitZaPregledToChange.setId(idUpita);
 			upitZaPregledToChange.setKlinika(klinika);
-			CustomResponse<UpitZaPregled> customResponse = obradiAdmin(upitZaPregledToChange);
-			return customResponse;
+			ResponseEntity<CustomResponse<UpitZaPregled>> retval = obradiAdmin(upitZaPregledToChange);
+			return retval;
 		}
 	}
 

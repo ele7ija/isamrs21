@@ -50,11 +50,15 @@ const actions = {
     });
   },
 
-  async removePregled({state, commit}, {idPregleda, version}){
+  async removePregled({state, commit, dispatch}, {idPregleda, version}){
     return new Promise((resolve, reject) => {
       pregledi.deletePregled(state.klinika.id, idPregleda, version)
       .then(({data:{success, message}}) => {
         if(success){
+          //azuriraj podatek za lekara, sale i tipovePregleda
+          dispatch('osoblje/loadMedicinskoOsoblje', {}, {root: true});
+          dispatch('sale/loadSale', {}, {root: true});
+          dispatch('tipoviPregleda/loadTipoviPregleda', {}, {root: true});
           commit('removePregled', idPregleda);
           resolve(message);
         }else{

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -34,6 +35,9 @@ public class Lekar extends MedicinskoOsoblje{
 	@JsonSerialize(using=TipPregledaListSerializer.class)
 	private List<TipPregleda> tipovi_pregleda;
 	
+	@Column(name="broj_specijalizacija", columnDefinition="integer DEFAULT 0")
+	private int brojSpecijalizacija;
+	
 	@OneToMany(mappedBy="lekar", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	@JsonSerialize(using=PregledListSerializer.class)
 	private List<Pregled> pregledi;
@@ -54,4 +58,30 @@ public class Lekar extends MedicinskoOsoblje{
 		this.pregledi = pregledi;
 	}
 
+	public int getBrojSpecijalizacija() {
+		return brojSpecijalizacija;
+	}
+
+	public void setBrojSpecijalizacija(int brojSpecijalizacija) {
+		this.brojSpecijalizacija = brojSpecijalizacija;
+	}
+
+	public Lekar copy() {
+		Lekar retval = new Lekar();
+		retval.setAuthorities(getAuthorities());
+		retval.setBrojSpecijalizacija(brojSpecijalizacija);
+		retval.setEmail(email);
+		retval.setEnabled(enabled);
+		retval.setId(id);
+		retval.setIme(ime);
+		retval.setKlinika(klinika);
+		retval.setPoslednjaPromenaSifre(poslednjaPromenaSifre);
+		retval.setPregledi(pregledi);
+		retval.setPrezime(prezime);
+		retval.setRadniKalendar(radniKalendar);
+		retval.setSifra(sifra);
+		retval.setTipovi_pregleda(tipovi_pregleda);
+		return retval;
+	}
+	
 }

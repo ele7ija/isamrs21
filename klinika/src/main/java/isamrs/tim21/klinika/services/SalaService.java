@@ -30,18 +30,18 @@ public class SalaService {
 	private KlinikaRepository klinikaRepository;
 
 	@Transactional(readOnly=false)
-	public CustomResponse<Boolean> delete(Long idKlinike, Long idSale, Long version) {
+	public CustomResponse<Boolean> delete(Long idKlinike, Long idSale, Long version) throws Exception{
 		if(!pregledRepository.findByIdSale(idSale).isEmpty()){
-			return new CustomResponse<Boolean>(false, false, "Greska: Ne mozete obrisati salu za koju postoji pregled");
+			return new CustomResponse<Boolean>(true, false, "Greska: Ne mozete obrisati salu za koju postoji pregled");
 		}
 		Sala sala = salaRepository.findByIdKlinikeAndIdSale(idKlinike, idSale);
 		if(sala == null){
 			return new CustomResponse<Boolean>(false, false, "Greska: Sala nije pronadjena.");
 		}
-		if(sala.getVersion() != version){
-			return new CustomResponse<Boolean>(false, false, "Greska: Vasa verzija je zastarela. Osvezite stranicu.");
-		}
-		salaRepository._deleteById(idKlinike, idSale);
+		Sala salaToDelete = new Sala();
+		sala.setId(idSale);
+		sala.setVersion(version);
+		salaRepository.delete(salaToDelete); //ovde moze da dodje do nepoklapanja verzija usled optimistickog zakljucavanja
 		return new CustomResponse<Boolean>(true, true, "OK");
 	}
 
@@ -69,7 +69,7 @@ public class SalaService {
 
 	@Transactional(readOnly=false)
 	public ResponseEntity<Sala> addSala(Long idKlinike, Sala salaToAdd) {
-		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
+		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
 			return new ResponseEntity<Sala>(HttpStatus.NOT_FOUND);
 		}else{
@@ -82,31 +82,37 @@ public class SalaService {
 	}
 
 	@Transactional(readOnly=false)
-	public CustomResponse<Sala> update(Long idKlinike, Long idSale, Sala salaToChange) throws Exception{
-		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
+	public ResponseEntity<CustomResponse<Sala>> update(Long idKlinike, Long idSale, Sala salaToChange) throws Exception{
+		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
-			return new CustomResponse<Sala>(null, false, "Greska: Klinika nije pronadjena.");
+			return new ResponseEntity<CustomResponse<Sala>>(
+					new CustomResponse<Sala>(null, false, "Greska: Klinika nije pronadjena."),
+					HttpStatus.NOT_FOUND);
 		}else{
 			salaToChange.setId(idSale);
 			salaToChange.setKlinika(klinika);			
-			Sala sala = salaRepository.findById(idSale).orElse(null);
+			Sala sala = salaRepository.findByIdKlinikeAndIdSale(idKlinike, idSale);
 			if(sala == null){
-				return new CustomResponse<Sala>(null, false, "Greska: Sala nije pronadjena.");
+				return new ResponseEntity<CustomResponse<Sala>>(
+						new CustomResponse<Sala>(null, false, "Greska: Sala nije pronadjena."),
+						HttpStatus.NOT_FOUND);
 			}	
 			salaToChange.setPregledi(sala.getPregledi());
 			Sala retval = salaRepository.save(salaToChange); //ovde moze da dodje do nepoklapanja verzija
-			return new CustomResponse<Sala>(retval, true, "OK.");	
+			return new ResponseEntity<CustomResponse<Sala>>(
+					new CustomResponse<Sala>(retval, true, "OK."),
+					HttpStatus.OK);	
 		}
 	}
 
 	@Transactional(readOnly=false)
-	public ResponseEntity<CustomResponse<Boolean>> deleteMain(Long idKlinike, Long idSale, Long version) {
+	public ResponseEntity<CustomResponse<Boolean>> deleteMain(Long idKlinike, Long idSale, Long version) throws Exception{
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
 			return new ResponseEntity<CustomResponse<Boolean>>(new CustomResponse<Boolean>(false, false, "Greska. Klinika ne postoji"), HttpStatus.NOT_FOUND);
 		}else{
 			CustomResponse<Boolean> customResponse = delete(idKlinike, idSale, version);
-			return new ResponseEntity<CustomResponse<Boolean>>(customResponse, HttpStatus.OK);
+			return new ResponseEntity<CustomResponse<Boolean>>(customResponse, customResponse.getResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
 		}
 	}
 

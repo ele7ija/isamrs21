@@ -20,9 +20,9 @@ insert into korisnik (type, klinika_admina_id, email, sifra, ime, prezime, broj_
 -- Pacijenti
 insert into korisnik (type, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled) values ('PA', 'millan.djuric@hotmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'Milan', 'Djuric', '1', 'Serbia', 'Novi Sad', 2, 2, 0x01);
 -- Lekari
-insert into korisnik (type, klinika_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled) values ('LE', 1, 'lekar@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'Miodrag', 'Lazic', '1', 'Serbia', 'Nis', 3, 3, 0x01);
-insert into korisnik (type, klinika_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled) values ('LE', 2, 'lekar2@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'Marko', 'Mitrovic', '1', 'Serbia', 'Novi Sad', 6, 6, 0x01);
-insert into korisnik (type, klinika_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled) values ('LE', 3, 'lekar3@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'Ognjen', 'Peric', '1', 'Serbia', 'Novi Sad', 8, 8, 0x01);
+insert into korisnik (type, klinika_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled, broj_specijalizacija) values ('LE', 1, 'lekar@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'Miodrag', 'Lazic', '1', 'Serbia', 'Nis', 3, 3, 0x01, 2);
+insert into korisnik (type, klinika_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled, broj_specijalizacija) values ('LE', 2, 'lekar2@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'Marko', 'Mitrovic', '1', 'Serbia', 'Novi Sad', 6, 6, 0x01, 1);
+insert into korisnik (type, klinika_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled, broj_specijalizacija) values ('LE', 3, 'lekar3@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'Ognjen', 'Peric', '1', 'Serbia', 'Novi Sad', 8, 8, 0x01, 2);
 
 -- sablon: values (korisnik_id, sifra_entiteta)
 insert into user_authority values(1,3);

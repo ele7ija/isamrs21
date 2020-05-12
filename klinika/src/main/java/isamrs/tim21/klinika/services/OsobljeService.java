@@ -73,15 +73,17 @@ public class OsobljeService {
 	}
 
 	@Transactional(readOnly=false)
-	public CustomResponse<MedicinskoOsoblje> addSpecijalnostOsoblja(Long idOsoblja, List<Long> idTipovaPregleda, Long version){
+	public CustomResponse<MedicinskoOsoblje> addSpecijalnostOsoblja(Long idOsoblja, List<Long> idTipovaPregleda,
+			Long version) throws Exception {
 		MedicinskoOsoblje osoblje = osobljeRepository.findById(idOsoblja).orElse(null);
 		if(osoblje == null || osoblje instanceof MedicinskaSestra){
-			return new CustomResponse<MedicinskoOsoblje>(null, false, "Greska: Lekar nije pronadjen u trazenoj klinici.");
-		}
-		if(osoblje.getVersion() != version){
-			return new CustomResponse<MedicinskoOsoblje>(osoblje, false, "Verzija podatka je zastarela. Osvezite stranicu");
+			return new CustomResponse<MedicinskoOsoblje>(osoblje, false, "Greska: Lekar nije pronadjen u trazenoj klinici.");
 		}
 		Lekar lekar = (Lekar) osoblje;
+		if(version != lekar.getVersion()){
+			throw new Exception();
+		}
+		int brojSpecijalizacija = lekar.getBrojSpecijalizacija();
 		for(Long idTipaPregleda : idTipovaPregleda){
 			TipPregleda tipPregleda = tipPregledaRepository.findById(idTipaPregleda).orElse(null);
 			if(tipPregleda == null){
@@ -89,72 +91,76 @@ public class OsobljeService {
 			}
 			for(TipPregleda tp : lekar.getTipovi_pregleda()){
 				if(tp.getId() == tipPregleda.getId()){
-					return new CustomResponse<MedicinskoOsoblje>(null, false, "Greska: Tip vec postoji kao specijalnost lekara. Osvezite stranicu.");
+					return new CustomResponse<MedicinskoOsoblje>(null, false, "Greska: Tip pregleda vec postoji kao specijalnost lekara. Osvezite stranicu.");
 				}
 			}
 			lekar.getTipovi_pregleda().add(tipPregleda);
 			tipPregleda.getLekari().add(lekar);
 			tipPregledaRepository.save(tipPregleda);
+			brojSpecijalizacija += 1;
 		}
-		lekar.setVersion(lekar.getVersion() + 1);
-		lekar = osobljeRepository.save(lekar); //obavezno zbog uvecanja verzije
+		lekar.setBrojSpecijalizacija(brojSpecijalizacija);
+		lekar = osobljeRepository.save(lekar); 
 		return new CustomResponse<MedicinskoOsoblje>(lekar, true, "OK.");
 	}
 
 	@Transactional(readOnly=false)
-	public CustomResponse<MedicinskoOsoblje> deleteSpecijalnostOsoblja(Long idOsoblja, Long idTipaPregleda, Long version){
+	public CustomResponse<MedicinskoOsoblje> deleteSpecijalnostOsoblja(Long idOsoblja, Long idTipaPregleda,
+			Long version) throws Exception{
 		MedicinskoOsoblje osoblje = osobljeRepository.findById(idOsoblja).orElse(null);
 		if(osoblje == null || osoblje instanceof MedicinskaSestra){
 			return new CustomResponse<MedicinskoOsoblje>(osoblje, false, "Greska: Lekar nije pronadjen.");
 		}
-		if(osoblje.getVersion() != version){
-			return new CustomResponse<MedicinskoOsoblje>(osoblje, false, "Verzija podatka je zastarela. Osvezite stranicu");
-		}
 		if(!pregledRepository.findByIdLekaraAndIdTipaPregleda(idOsoblja, idTipaPregleda).isEmpty()){
-			return new CustomResponse<MedicinskoOsoblje>(osoblje, false, "Greska: Ne mozete obrisati specijalizaciju lekara na osnovu koje postoji kreiran pregled");
+			return new CustomResponse<MedicinskoOsoblje>(osoblje, false, "Greska: Ne mozete obrisati specijalizaciju lekara na osnovu koje postoji kreiran pregled.");
 		}
 		
 		TipPregleda tipPregleda = tipPregledaRepository.findById(idTipaPregleda).orElse(null);
 		if(tipPregleda == null){
-			return new CustomResponse<MedicinskoOsoblje>(osoblje, false, "Greska: Tip pregleda nije pronadjen");
+			return new CustomResponse<MedicinskoOsoblje>(null, false, "Greska: Tip pregleda nije pronadjen");
 		}
 		Lekar lekar = (Lekar) osoblje;
 		boolean success = lekar.getTipovi_pregleda().remove(tipPregleda);
 		if(!success){
-			return new CustomResponse<MedicinskoOsoblje>(osoblje, false, "Greska: Specijalizacija lekara nije pronadjena");
+			return new CustomResponse<MedicinskoOsoblje>(osoblje, false, "Greska: Specijalizacija lekara nije pronadjena. Osvezite stranicu");
 		}
 		tipPregleda.getLekari().remove(lekar);
 		
-		lekar.setVersion(lekar.getVersion() + 1);
-		lekar = osobljeRepository.saveAndFlush(lekar);
-		tipPregledaRepository.saveAndFlush(tipPregleda);
+		Lekar lekarToUpdate = lekar.copy();
+		lekarToUpdate.setBrojSpecijalizacija(lekarToUpdate.getBrojSpecijalizacija() - 1);
+		lekarToUpdate.setVersion(version);
+		lekar = osobljeRepository.save(lekarToUpdate);
+		tipPregledaRepository.save(tipPregleda);
 		
 		return new CustomResponse<MedicinskoOsoblje>(lekar, true, "OK.");
 		
 	}
 
-	@Transactional(readOnly=false, propagation=Propagation.MANDATORY)
-	public CustomResponse<Boolean> delete(Long idKlinike, Long idOsoblja, Long version){
+	@Transactional(readOnly=false)
+	public CustomResponse<Boolean> delete(Long idKlinike, Long idOsoblja, Long version) throws Exception{
 		MedicinskoOsoblje osobaToDelete = osobljeRepository.findByIdKlinikeAndById(idKlinike, idOsoblja);
 		if(osobaToDelete == null){
 			return new CustomResponse<Boolean>(false, false, "Greska. Medicinska osoba ne postoji");
 		}
-		if(osobaToDelete.getVersion() != version){
-			return new CustomResponse<Boolean>(false, false, "Verzija podatka je zastarela. Osvezite stranicu");
-		}
 		if(osobaToDelete instanceof MedicinskaSestra){
-			osobljeRepository.deleteById(idOsoblja);
+			MedicinskaSestra sestra = new MedicinskaSestra();
+			sestra.setId(idOsoblja);
+			sestra.setVersion(version);
+			osobljeRepository.delete(sestra);
 			return new CustomResponse<Boolean>(true, true, "OK.");
 		}
 		else{
 			if(!pregledRepository.findByIdLekara(idOsoblja).isEmpty()){
-				return new CustomResponse<Boolean>(false, false, "Greska: Ne mozete obrisati lekara za kojeg postoji pregled");
+				return new CustomResponse<Boolean>(true, false, "Greska: Ne mozete obrisati lekara za kojeg postoji pregled");
 			}
 			Lekar lekar = (Lekar) osobljeRepository.findById(idOsoblja).get();
 			for(TipPregleda tp : lekar.getTipovi_pregleda()){
 				tp.getLekari().remove(lekar); //mora posto je tip pregleda vlasnik veze
 			}
-			osobljeRepository.deleteById(idOsoblja);
+			Lekar lekarToDelete = new Lekar();
+			lekarToDelete.setId(idOsoblja);
+			lekarToDelete.setVersion(version);
+			osobljeRepository.delete(lekarToDelete);
 			return new CustomResponse<Boolean>(true, true, "OK.");
 		}
 		
@@ -195,38 +201,38 @@ public class OsobljeService {
 
 	@Transactional(readOnly=false)
 	public ResponseEntity<CustomResponse<MedicinskoOsoblje>> updateSpecijalnosti(Long idKlinike, Long idOsoblja,
-			List<Long> idTipovaPregleda, Long version){
+			List<Long> idTipovaPregleda, Long version) throws Exception{
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
 			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(
 					new CustomResponse<MedicinskoOsoblje>(null, false, "Greska: Klinika nije pronadjena."),
-					HttpStatus.OK);
+					HttpStatus.NOT_FOUND);
 		}else{
 			CustomResponse<MedicinskoOsoblje> retval = addSpecijalnostOsoblja(idOsoblja, idTipovaPregleda, version);
-			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(retval, HttpStatus.OK);
+			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(retval, retval.getResult() == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
 		}
 	}
 
 	@Transactional(readOnly=false)
 	public ResponseEntity<CustomResponse<MedicinskoOsoblje>> deleteSpecijalnostOsoblja(Long idKlinike, Long idOsoblja,
-			Long idTipaPregleda, Long version) {
+			Long idTipaPregleda, Long version) throws Exception{
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
 			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(new CustomResponse<MedicinskoOsoblje>(null, false, "Greska. Klinika ne postoji"), HttpStatus.NOT_FOUND);
 		}else{
 			CustomResponse<MedicinskoOsoblje> customResponse = deleteSpecijalnostOsoblja(idOsoblja, idTipaPregleda, version);
-			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(customResponse, HttpStatus.OK);
+			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(customResponse, customResponse.getResult() == null ? HttpStatus.NOT_FOUND : HttpStatus.OK);
 		}
 	}
 
 	@Transactional(readOnly=false)
-	public ResponseEntity<CustomResponse<Boolean>> deleteMain(Long idKlinike, Long idOsoblja, Long version) {
+	public ResponseEntity<CustomResponse<Boolean>> deleteMain(Long idKlinike, Long idOsoblja, Long version) throws Exception{
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
 			return new ResponseEntity<CustomResponse<Boolean>>(new CustomResponse<Boolean>(false, false, "Greska. Klinika ne postoji"), HttpStatus.NOT_FOUND);
 		}else{
 			CustomResponse<Boolean> customResponse = delete(idKlinike, idOsoblja, version);
-			return new ResponseEntity<CustomResponse<Boolean>>(customResponse, HttpStatus.OK);
+			return new ResponseEntity<CustomResponse<Boolean>>(customResponse, customResponse.getResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
 		}
 	}
 }

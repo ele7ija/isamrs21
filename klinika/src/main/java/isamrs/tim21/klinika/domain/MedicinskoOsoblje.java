@@ -31,11 +31,11 @@ public abstract class MedicinskoOsoblje extends Korisnik{
 
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JsonSerialize(using=IdentitySerializer.class)
-	private Klinika klinika;
+	protected Klinika klinika;
 
 	@OneToOne(mappedBy="medicinskoOsoblje", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	@JsonSerialize(using=RadniKalendarSerializer.class)
-	private RadniKalendar radniKalendar;
+	protected RadniKalendar radniKalendar;
 	
 	public Klinika getKlinika() {
 		return klinika;

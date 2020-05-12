@@ -20,12 +20,6 @@ public interface SalaRepository extends JpaRepository<Sala, Long>{
 	@Query("SELECT s from Sala s "
 			+ "WHERE s.klinika.id = :idKlinike "
 			+ "AND s.id = :idSale")
-	public Sala findByIdKlinikeAndIdSale(@Param("idKlinike") long idKlinike, @Param("idSale") long isSale);
-	
-	@Modifying
-	@Query("DELETE from Sala s "
-			+ "WHERE s.klinika.id = :idKlinike "
-			+ "AND s.id = :idSale")
-	public int _deleteById(@Param("idKlinike") long idKlinike, @Param("idSale") long idSale);
+	public Sala findByIdKlinikeAndIdSale(@Param("idKlinike") long idKlinike, @Param("idSale") long idSale);
 
 }

@@ -4,7 +4,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -60,7 +59,7 @@ public class TipPregledaKontroler {
 		ResponseEntity<CustomResponse<TipPregleda>> retval = null;
 		try{
 			retval = tipPregledaService.update(idKlinike, idTipaPregleda, tipPregledaToChange); 
-		}catch(ObjectOptimisticLockingFailureException e){
+		}catch(Exception e){
 			return new ResponseEntity<CustomResponse<TipPregleda>>(
 					new CustomResponse<TipPregleda>(null, false, "Verzije nekih podataka se ne poklapaju. Osvezite stranicu i pokusajte ponovo."),
 					HttpStatus.OK);
@@ -72,6 +71,14 @@ public class TipPregledaKontroler {
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<Boolean>> deleteTipPregleda(@PathVariable("idKlinike") Long idKlinike,
 			@PathVariable("idTipaPregleda") Long idTipaPregleda, @RequestParam(name="version") Long version){
-		return tipPregledaService.deleteMain(idKlinike, idTipaPregleda, version);
+		ResponseEntity<CustomResponse<Boolean>> retval = null;
+		try {
+			retval = tipPregledaService.deleteMain(idKlinike, idTipaPregleda, version);
+		} catch (Exception e) {
+			return new ResponseEntity<CustomResponse<Boolean>>(
+					new CustomResponse<Boolean>(true, false, "Greska: Vasa verzija je zastarela. Osvezite stranicu"),
+					HttpStatus.OK);
+		}
+		return retval;
 	}
 }

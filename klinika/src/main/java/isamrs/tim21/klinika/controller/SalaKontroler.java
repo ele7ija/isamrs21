@@ -57,21 +57,29 @@ public class SalaKontroler {
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<Sala>> updateSala(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idSale") Long idSale, @RequestBody Sala salaToChange){
-		CustomResponse<Sala> customResponse = null;
+		ResponseEntity<CustomResponse<Sala>> retval = null;
 		try{
-			customResponse = salaService.update(idKlinike, idSale, salaToChange);
+			retval = salaService.update(idKlinike, idSale, salaToChange);
 		}catch(Exception e){
 			return new ResponseEntity<CustomResponse<Sala>>(
 					new CustomResponse<Sala>(null, false, "Greska: Vasa verzija je zastarela. Osvezite stranicu"),
 					HttpStatus.OK);
 		}
-		return new ResponseEntity<CustomResponse<Sala>>(customResponse, HttpStatus.OK);
+		return retval;
 	}
 	
 	@DeleteMapping(value="/{idSale}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<Boolean>> deleteSala(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idSale") Long idSale,
 			@RequestParam(name="version") Long version){
-		return salaService.deleteMain(idKlinike, idSale, version);
+		ResponseEntity<CustomResponse<Boolean>> retval = null;
+		try{
+			retval = salaService.deleteMain(idKlinike, idSale, version);
+		}catch(Exception e){
+			return new ResponseEntity<CustomResponse<Boolean>>(
+					new CustomResponse<Boolean>(true, false, "Greska: Vasa verzija je zastarela. Osvezite stranicu"),
+					HttpStatus.OK);
+		}
+		return retval;
 	}
 }

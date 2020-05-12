@@ -77,6 +77,14 @@ public class CenovnikKontroler {
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<Boolean>> deleteCenovnik(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idCenovnika") Long idCenovnika,
 			@RequestParam(name="version") Long version){
-		return cenovnikService.delete(idKlinike, idCenovnika, version);
+		ResponseEntity<CustomResponse<Boolean>> retval = null;
+		try{
+			retval = cenovnikService.delete(idKlinike, idCenovnika, version);
+		}catch(Exception e){
+			return new ResponseEntity<CustomResponse<Boolean>>(
+					new CustomResponse<Boolean>(true, false, "Greska. Verzija podatka je zastaela. Osvezite stranicu."),
+					HttpStatus.OK);
+		}
+		return retval;
 	}
 }

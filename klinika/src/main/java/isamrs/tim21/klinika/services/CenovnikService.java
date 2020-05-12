@@ -87,28 +87,28 @@ public class CenovnikService {
 	}
 
 	@Transactional(readOnly=false)
-	public ResponseEntity<CustomResponse<Boolean>> delete(Long idKlinike, Long idCenovnika, Long version) {
+	public ResponseEntity<CustomResponse<Boolean>> delete(Long idKlinike, Long idCenovnika, Long version)
+			throws Exception { //baca exception usled optimistickog zakljucavanja koje cemo kasnije implementirati
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
 			return new ResponseEntity<CustomResponse<Boolean>>(HttpStatus.NOT_FOUND);
 		}else{
 			if(tipPregledaRepository.findByIdCenovnika(idCenovnika).size() != 0){
 				return new ResponseEntity<CustomResponse<Boolean>>(
-						new CustomResponse<Boolean>(false, false, "Greska. Ne mozete obrisati cenovnik za koji postoje definisani tipovi pregleda"),
+						new CustomResponse<Boolean>(true, false, "Greska. Ne mozete obrisati cenovnik za koji postoje definisani tipovi pregleda"),
 						HttpStatus.OK);
 			}
 			Cenovnik cenovnik = cenovnikRepository.findById(idCenovnika).orElse(null);
 			if(cenovnik == null){
 				return new ResponseEntity<CustomResponse<Boolean>>(
 						new CustomResponse<Boolean>(false, false, "Greska. Cenovnik nije pronadjen."),
-						HttpStatus.OK);
+						HttpStatus.NOT_FOUND);
 			}
-			if(cenovnik.getVersion() != version){
-				return new ResponseEntity<CustomResponse<Boolean>>(
-						new CustomResponse<Boolean>(false, false, "Vasa verzija je zastarela. Osvezite stranicu."),
-						HttpStatus.OK);
-			}
-			cenovnikRepository.deleteById(idCenovnika);
+			Cenovnik cenovnikToDelete = new Cenovnik();
+			cenovnikToDelete.setId(idCenovnika);
+			cenovnikToDelete.setVersion(version);
+
+			cenovnikRepository.delete(cenovnikToDelete);
 			return new ResponseEntity<CustomResponse<Boolean>>(
 					new CustomResponse<Boolean>(true, true, "OK."),
 					HttpStatus.OK);

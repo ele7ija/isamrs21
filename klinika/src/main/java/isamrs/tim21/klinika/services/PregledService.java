@@ -74,33 +74,42 @@ public class PregledService {
 	}
 	
 	@Transactional(readOnly=false)
-	public CustomResponse<Boolean> delete(Long idKlinike, Long idPregleda, Long version) {
+	public ResponseEntity<CustomResponse<Boolean>> delete(Long idKlinike, Long idPregleda, Long version) throws Exception{
+		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
+		if(klinika == null){
+			return new ResponseEntity<CustomResponse<Boolean>>(
+					new CustomResponse<Boolean>(false, false, "Greska: Klinika nije pronadjen."), HttpStatus.NOT_FOUND);
+		}
 		if(posetaRepository.findByIdPregleda(idPregleda) != null){
-			return new CustomResponse<Boolean>(false, false, "Greska: Pregled je rezervisan. Ne mozete ga obrisati.");
+			return new ResponseEntity<CustomResponse<Boolean>>(
+					new CustomResponse<Boolean>(true, false, "Greska: Pregled je rezervisan. Ne mozete ga obrisati. Osvezite stranicu"), HttpStatus.OK);
 		}
 		Pregled p = pregledRepository.findById(idPregleda).get();
 		if(p == null){
-			return new CustomResponse<Boolean>(false, false, "Greska: Pregled nije pronadjen.");
-		}
-		if(p.getVersion() != version){
-			return new CustomResponse<Boolean>(false, false, "Verzija podatka je zastarela. Osvezite stranicu.");
+			return new ResponseEntity<CustomResponse<Boolean>>(
+					new CustomResponse<Boolean>(false, false, "Greska: Pregled nije pronadjen."), HttpStatus.NOT_FOUND);
 		}
 		for(UpitZaPregled up : p.getUpiti()){
 			if(!up.getAdminObradio()){
-				return new CustomResponse<Boolean>(false, false, "Greska: Postoji upit za ovaj pregled za koji administrator jos uvek nije obradio.");
+				return new ResponseEntity<CustomResponse<Boolean>>(
+						new CustomResponse<Boolean>(true, false, "Greska: Postoji upit za ovaj pregled za koji administrator jos uvek nije obradio."), HttpStatus.OK);
 			}
 			if(!up.getPacijentObradio()){
-				return new CustomResponse<Boolean>(false, false, "Greska: Postoji upit za ovaj pregled za koji pacijent jos uvek nije video odgovor administratora.");
+				return new ResponseEntity<CustomResponse<Boolean>>(
+						new CustomResponse<Boolean>(true, false, "Greska: Postoji upit za ovaj pregled za koji pacijent jos uvek nije video odgovor administratora."), HttpStatus.OK);
 			}
 		}
 		upitZaPregledRepository.deleteAll(p.getUpiti());
 		p.setUpiti(new ArrayList<>());
-		pregledRepository.save(p);
-		int numberOfRemovals = pregledRepository.deleteByIdAndKlinikaId(idKlinike, idPregleda);
-		if(numberOfRemovals == 1){
-			return new CustomResponse<Boolean>(true, true, "OK.");
-		}
-		return new CustomResponse<Boolean>(false, false, "Greska: Pregled nije pronadjen.");
+		pregledRepository.save(p); //nece inkrementirati verziju?
+		
+		Pregled pregledToDelete = new Pregled();
+		pregledToDelete.setId(idPregleda);
+		pregledToDelete.setVersion(version);
+		pregledRepository.delete(pregledToDelete);
+		
+		return new ResponseEntity<CustomResponse<Boolean>>(
+				new CustomResponse<Boolean>(true, true, "OK"), HttpStatus.OK);
 	}
 	
 	@Transactional(readOnly=false)

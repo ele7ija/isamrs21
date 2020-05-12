@@ -47,7 +47,7 @@ const actions = {
         }else{
           reject(message);
         }
-      })
+      });
     });
   },
 

@@ -47,6 +47,9 @@ function createAxiosResponseInterceptor() {
             return Promise.reject(error);
           }).finally(createAxiosResponseInterceptor);
       }
+      else{
+        return error.response;
+      }
     }
   );
 }
