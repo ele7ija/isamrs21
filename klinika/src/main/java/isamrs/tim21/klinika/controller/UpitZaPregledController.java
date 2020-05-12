@@ -121,11 +121,11 @@ public class UpitZaPregledController {
 		}
 	}
 	
-	@PutMapping(value="/potvrdi/{id}")
+	@PutMapping(value="/potvrdi/{id}/{verzija}")
 	@PreAuthorize("hasAuthority('pacijent')")
-	public ResponseEntity<CustomResponse<UpitZaPregled>> potvrdi(@PathVariable("id") Long id) {
+	public ResponseEntity<CustomResponse<UpitZaPregled>> potvrdi(@PathVariable("id") Long id, @PathVariable("verzija") Long verzija) {
 		try {
-			CustomResponse<UpitZaPregled> u = upitZaPregledeService.izmeniPotvrdi(id);
+			CustomResponse<UpitZaPregled> u = upitZaPregledeService.izmeniPotvrdi(id, verzija);
 			return new ResponseEntity<CustomResponse<UpitZaPregled>>(u, HttpStatus.OK);
 		}
 		catch (Exception e){
@@ -135,11 +135,11 @@ public class UpitZaPregledController {
 		}
 	}
 	
-	@PutMapping(value="/odustani/{id}")
+	@PutMapping(value="/odustani/{id}/{verzija}")
 	@PreAuthorize("hasAuthority('pacijent')")
-	public ResponseEntity<CustomResponse<UpitZaPregled>> odustani(@PathVariable("id") Long id) {
+	public ResponseEntity<CustomResponse<UpitZaPregled>> odustani(@PathVariable("id") Long id, @PathVariable("verzija") Long verzija) {
 		try {
-			CustomResponse<UpitZaPregled> u = upitZaPregledeService.izmeniOdustani(id);
+			CustomResponse<UpitZaPregled> u = upitZaPregledeService.izmeniOdustani(id, verzija);
 			return new ResponseEntity<CustomResponse<UpitZaPregled>>(u, HttpStatus.OK);
 		}
 		catch (Exception e){
