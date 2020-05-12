@@ -38,7 +38,7 @@
                 <v-list-item-action>
                   <v-list-item-action-text>
                     <v-btn
-                      @click='potvrdi(upit.id)'
+                      @click='potvrdi(upit.id, upit.version)'
                       color='success'
                       width='150'
                       class='mb-2'>
@@ -48,7 +48,7 @@
                   </v-list-item-action-text>
                   <v-list-item-action-text>
                     <v-btn
-                      @click='odustani(upit.id)'
+                      @click='odustani(upit.id, upit.version)'
                       color='red'
                       width='150'
                       >
@@ -275,8 +275,9 @@ export default {
       'potvrdiUpit',
       'odustaniUpit'
     ]),
-    potvrdi: function(upitId) {
-      this.potvrdiUpit(upitId).then((message) => {
+    potvrdi: function(upitId, verzija) {
+      console.log(verzija)
+      this.potvrdiUpit({upitId, verzija}).then((message) => {
         this.snackbarText = message;
         this.snackbarSucc = true;
         this.dobaviNepotvrdjeneUpite();
@@ -286,8 +287,8 @@ export default {
         this.snackbarErr = true;
       });
     },
-    odustani: async function(upitId) {
-      this.odustaniUpit(upitId).then((message) => {
+    odustani: function(upitId, verzija) {
+      this.odustaniUpit({upitId, verzija}).then((message) => {
         this.snackbarText = message;
         this.snackbarSucc = true;
         this.dobaviNepotvrdjeneUpite();

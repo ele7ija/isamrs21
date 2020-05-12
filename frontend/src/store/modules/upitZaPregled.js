@@ -53,9 +53,10 @@ const actions = {
       })
     })
   },
-  async potvrdiUpit({commit}, upitId){
+  async potvrdiUpit({commit}, {upitId, verzija}){
+    console.log(verzija)
     return new Promise((resolve, reject) => {
-      upitAPI.potvrdiUpit(upitId)
+      upitAPI.potvrdiUpit(upitId, verzija)
       .then(({data: {result, message, success}}) => {
         if (success) {
           commit('setPotvrdjenUpit', result);
@@ -67,9 +68,9 @@ const actions = {
       })
     })
   },
-  async odustaniUpit({commit}, upitId){
+  async odustaniUpit({commit}, {upitId, verzija}){
     return new Promise((resolve, reject) => {
-      upitAPI.odustaniUpit(upitId)
+      upitAPI.odustaniUpit(upitId, verzija)
       .then(({data: {result, message, success}}) => {
         if (success) {
           commit('setPotvrdjenUpit', result);

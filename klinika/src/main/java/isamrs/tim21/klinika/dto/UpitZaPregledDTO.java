@@ -2,27 +2,6 @@ package isamrs.tim21.klinika.dto;
 
 import java.util.Date;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import isamrs.tim21.klinika.domain.Klinika;
-import isamrs.tim21.klinika.domain.Lekar;
-import isamrs.tim21.klinika.domain.TipPregleda;
-import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
-import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
-
 public class UpitZaPregledDTO {
 	private Boolean odobren;
 	
@@ -38,6 +17,35 @@ public class UpitZaPregledDTO {
 	private Long klinika;
 	private String pacijent;
 	private Long pregled;
+
+	private Long pregledVerzija;
+	private Long tipPregledaVerzija;
+	private Long lekarVerzija;
+
+	public Long getPregledVerzija() {
+		return this.pregledVerzija;
+	}
+
+	public void setPregledVerzija(Long pregledVerzija) {
+		this.pregledVerzija = pregledVerzija;
+	}
+
+	public Long getTipPregledaVerzija() {
+		return this.tipPregledaVerzija;
+	}
+
+	public void setTipPregledaVerzija(Long tipPregledaVerzija) {
+		this.tipPregledaVerzija = tipPregledaVerzija;
+	}
+
+	public Long getLekarVerzija() {
+		return this.lekarVerzija;
+	}
+
+	public void setLekarVerzija(Long lekarVerzija) {
+		this.lekarVerzija = lekarVerzija;
+	}
+
 	public Boolean getOdobren() {
 		return odobren;
 	}

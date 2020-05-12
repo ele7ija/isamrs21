@@ -29,19 +29,19 @@ export default{
     );
   },
 
-  async potvrdiUpit(id) {
+  async potvrdiUpit(id, verzija) {
     let options = util.prepareOptions();
     return axios.put(
-      `${process.env.VUE_APP_BACKEND_ROOT}/upit/potvrdi/${id}`,
+      `${process.env.VUE_APP_BACKEND_ROOT}/upit/potvrdi/${id}/${verzija}`,
       {}, //obavezno prvo body da ne bi header bio protumacen kao body
       options
     );
   },
 
-  async odustaniUpit(id) {
+  async odustaniUpit(id, verzija) {
     let options = util.prepareOptions();
     return axios.put(
-      `${process.env.VUE_APP_BACKEND_ROOT}/upit/odustani/${id}`,
+      `${process.env.VUE_APP_BACKEND_ROOT}/upit/odustani/${id}/${verzija}`,
       {}, //obavezno prvo body da ne bi header bio protumacen kao body
       options
     );
