@@ -93,6 +93,7 @@
                 outlined
                 label="razlog odbijanja" 
                 hint="Neregistrovanom korisniku obrazložiti zašto je odbijen."
+                v-model="zahtev.tekst"
                 ></v-textarea>
               </v-container>
             </v-card-text>
@@ -129,6 +130,14 @@ export default {
       dialogOnPrihvati: false,
       dialogOnOdbij: false,
       isFormValid: true,
+      zahtev: {
+        tekst: 'Vaš zahtev se odbija jer..',
+        id: undefined,
+        datumOdobrenja: undefined,
+        adminOdobrio: undefined,
+        prihvacen: undefined,
+      },
+
       headers: [
         {
           text: 'Ime',
@@ -164,7 +173,6 @@ export default {
       ],
     }
   },
-
   computed: {
     ...mapGetters(
       {
@@ -172,32 +180,36 @@ export default {
       }
     ),
   },
-
   created(){
     this.fetchData();
-
   },
-
   methods: {
     ...mapActions(
       {
         fetchData: 'zahteviZaRegistraciju/fetchAllZahtevi',
+        prihvatiZahtev: 'zahteviZaRegistraciju/prihvatiZahtev',
+        odbijZahtev: 'zahteviZaRegistraciju/odbijZahtev',
 
       }
     ),
 
-    prihvati (zahtev){
+    prihvati (item){
       this.dialogOnPrihvati = false;
-      return zahtev;
+      this.prihvatiZahtev(item);
     },
-    odbij (zahtev){
+    odbij (item){
+      //zatvori dijalog
       this.dialogOnOdbij = false;
-      return zahtev;
+      //posalji objekat na bek
+      this.zahtev.id = item.id;
+      this.zahtev.datumOdobrenja = new Date();
+      //this.adminOdobrio =
+      this.zahtev.prihvacen = false;
+      this.odbijZahtev(this.zahtev);
     },
   }
 }
 </script>
 
 <style>
-
 </style>

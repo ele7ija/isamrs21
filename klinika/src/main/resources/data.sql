@@ -19,6 +19,7 @@ insert into korisnik (type, klinika_admina_id, email, sifra, ime, prezime, broj_
 insert into korisnik (type, klinika_admina_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled) values ('AK', 1, 'admin3.admin3@yahoo.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'admin_klinike', 'admin_klinike', '1', 'Serbia', 'Novi Sad', 1, 5, 0x01);
 -- Pacijenti
 insert into korisnik (type, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled) values ('PA', 'millan.djuric@hotmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'Milan', 'Djuric', '1', 'Serbia', 'Novi Sad', 2, 2, 0x01);
+insert into korisnik (type, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled) values ('PA', 'isatim21noreply@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'Miki', 'Veliki', '1', 'Serbia', 'Novi Sad', 1, 9, 0x01);
 -- Lekari
 insert into korisnik (type, klinika_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled) values ('LE', 1, 'lekar@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'Miodrag', 'Lazic', '1', 'Serbia', 'Nis', 3, 3, 0x01);
 insert into korisnik (type, klinika_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled) values ('LE', 2, 'lekar2@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'Marko', 'Mitrovic', '1', 'Serbia', 'Novi Sad', 6, 6, 0x01);
@@ -32,6 +33,7 @@ insert into user_authority values(2,1);
 insert into user_authority values(3,4);
 insert into user_authority values(6,4);
 insert into user_authority values(7,2);
+insert into user_authority values(9,1);
 
 insert into sala (id, oznaka, klinika_id) values (1, 'Glavna kardioloska', 1);
 insert into sala (id, oznaka, klinika_id) values (2, 'Sporedna kardioloska', 1);
@@ -68,4 +70,5 @@ insert into pregled (klinika_id, lekar_id, sala_id, tip_pregleda_id, pocetak_pre
 insert into pregled (klinika_id, lekar_id, sala_id, tip_pregleda_id, pocetak_pregleda, kraj_pregleda, cena, popust, konacna_cena) values (3, 8, 5, 5, STR_TO_DATE('02/06/2020 12:00:00','%d/%m/%Y %H:%i:%s'), STR_TO_DATE('02/06/2020 13:00:00','%d/%m/%Y %H:%i:%s'), 1000, 0, 1000);
 
 -- zahtevi za registraciju
-insert into zahtev_za_registraciju (datum_odobrenja, datum_podnosenja, pacijent_id, admin_odobrio_id) values (null, STR_TO_DATE('28/05/2020 15:00:00','%d/%m/%Y %H:%i:%s'), 2, null);
+insert into zahtev_za_registraciju (datum_odobrenja, datum_podnosenja, pacijent_id, admin_odobrio_id) values (null, STR_TO_DATE('28/04/2020 15:00:00','%d/%m/%Y %H:%i:%s'), 2, null);
+insert into zahtev_za_registraciju (datum_odobrenja, datum_podnosenja, pacijent_id, admin_odobrio_id) values (null, STR_TO_DATE('10/05/2020 16:00:00','%d/%m/%Y %H:%i:%s'), 9, null);

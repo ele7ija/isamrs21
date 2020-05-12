@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import isamrs.tim21.klinika.domain.ZahtevZaRegistraciju;
+import isamrs.tim21.klinika.dto.ZahtevZaRegistracijuDTO;
 import isamrs.tim21.klinika.repository.ZahtevZaRegistracijuRepository;
 
 @Service
@@ -16,5 +17,12 @@ public class ZahtevZaRegistracijuService {
   
   public List<ZahtevZaRegistraciju> findAll() {
     return zahtevRepo.findAll();
+  }
+
+  public ZahtevZaRegistraciju delete(ZahtevZaRegistracijuDTO zahtevZaRegistracijuDTO) {
+    ZahtevZaRegistraciju zahtevZaRegistraciju = 
+      zahtevRepo.findById(zahtevZaRegistracijuDTO.getId()).orElse(null);
+    zahtevRepo.delete(zahtevZaRegistraciju);
+    return zahtevZaRegistraciju;
   }
 }

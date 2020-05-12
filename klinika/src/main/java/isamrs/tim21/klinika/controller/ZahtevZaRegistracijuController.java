@@ -5,18 +5,27 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.ZahtevZaRegistraciju;
+import isamrs.tim21.klinika.dto.ZahtevZaRegistracijuDTO;
+import isamrs.tim21.klinika.services.MailService;
 import isamrs.tim21.klinika.services.ZahtevZaRegistracijuService;
 
 @RestController
 @RequestMapping(path="/zahtevi_za_registraciju")
 public class ZahtevZaRegistracijuController {
   @Autowired
-  ZahtevZaRegistracijuService zahtevService;
+  private ZahtevZaRegistracijuService zahtevService;
+
+  @Autowired
+  private MailService mailService;
 
   @GetMapping
   public ResponseEntity<List<ZahtevZaRegistraciju>> getAllZahtevi(){
@@ -24,4 +33,15 @@ public class ZahtevZaRegistracijuController {
     return new ResponseEntity<>(retval, HttpStatus.OK);
   }
 
+  @PostMapping("/odbij")
+  @PreAuthorize("hasAuthority('admin-klinickog-centra')")
+  public ResponseEntity<ZahtevZaRegistraciju>  odbijZahtev(@RequestBody ZahtevZaRegistracijuDTO zahtevZaRegistracijuDTO){
+    //prvo posalji mejl. nokon slanja mejla obrisi zahtev iz baze
+    //slanje mejla
+    mailService.odbijZahtev(zahtevZaRegistracijuDTO);
+
+    //brisanje zahteva
+    ZahtevZaRegistraciju retval = zahtevService.delete(zahtevZaRegistracijuDTO);
+    return new ResponseEntity<>(retval, HttpStatus.OK);
+  }
 }
