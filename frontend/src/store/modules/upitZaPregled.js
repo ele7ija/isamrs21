@@ -2,7 +2,9 @@ import upitAPI from '@/api/upitZaPregled'
 
 const state = {
   kreiranUpit: null,
-  neodobreniUpiti: [],
+  neodobreniNeodradjeniUpiti: [],
+  neodobreniOdradjeniUpiti: [],
+  obradjenNeodobren: null,
   nepotvrdjeniUpiti: [],
   potvrdjenUpit: null
 }
@@ -39,12 +41,40 @@ const actions = {
       })
     })
   },
-  async dobaviNeodobreneUpite({commit}) {
+  async dobaviNeodobreneNeodradjeneUpite({commit}) {
     return new Promise((resolve, reject) => {
-      upitAPI.pronadjiNeodobreneUpite()
+      upitAPI.pronadjiNeodobreneNeodradjeneUpite()
       .then(({data: {result, message, success}}) => {
         if (success) {
-          commit('setNeodobreniUpiti', result);
+          commit('setNeodobreniNeodradjeniUpiti', result);
+          resolve(message);
+        }
+        else {
+          reject(message);
+        }
+      })
+    })
+  },
+  async dobaviNeodobreneOdradjeneUpite({commit}) {
+    return new Promise((resolve, reject) => {
+      upitAPI.pronadjiNeodobreneOdradjeneUpite()
+      .then(({data: {result, message, success}}) => {
+        if (success) {
+          commit('setNeodobreniOdradjeniUpiti', result);
+          resolve(message);
+        }
+        else {
+          reject(message);
+        }
+      })
+    })
+  },
+  async obradiNeodobreniUpit({commit}, idUpita) {
+    return new Promise((resolve, reject) => {
+      upitAPI.obradiNeodobreniUpit(idUpita)
+      .then(({data: {result, message, success}}) => {
+        if (success) {
+          commit('setObradjenNeodobren', result);
           resolve(message);
         }
         else {
@@ -88,8 +118,12 @@ const mutations = {
     state.kreiranUpit = upit,
   setNepotvrdjeniUpiti: (state, upiti) =>
     state.nepotvrdjeniUpiti = upiti,
-  setNeodobreniUpiti: (state, upiti) =>
-    state.neodobreniUpiti = upiti,
+  setNeodobreniOdradjeniUpiti: (state, upiti) =>
+    state.neodobreniOdradjeniUpiti = upiti,
+  setNeodobreniNeodradjeniUpiti: (state, upiti) =>
+    state.neodobreniNeodradjeniUpiti = upiti,
+  setObradjenNeodobren: (state, upiti) =>
+    state.obradjenNeodobren = upiti,
   setPotvrdjenUpit: (state, upit) => 
     state.potvrdjenUpit = upit,
   setOdabraniTipPregleda: (state, tip) =>

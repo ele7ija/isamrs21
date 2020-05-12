@@ -3,6 +3,8 @@ package isamrs.tim21.klinika.services;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -225,10 +227,31 @@ public class UpitZaPregledeService {
 	}
 
 	@Transactional(readOnly=true)
-	public CustomResponse<List<UpitZaPregled>> pronadjiNeodobrene(String email)
+	public CustomResponse<List<UpitZaPregled>> pronadjiNeodobreneNeodradjene(String email)
 		throws Exception {
-		List<UpitZaPregled> l = upitZaPregledRepository.findNeodobreniByEmail(email);
+		List<UpitZaPregled> l = upitZaPregledRepository.findNeodobreniNeodradjeniByEmail(email);
 		return new CustomResponse<List<UpitZaPregled>>(l, true, "Uspešno pronađeni upiti.");
+	}
+
+	@Transactional(readOnly=true)
+	public CustomResponse<List<UpitZaPregled>> pronadjiNeodobreneOdradjene(String email)
+		throws Exception {
+		List<UpitZaPregled> l = upitZaPregledRepository.findNeodobreniOdradjeniByEmail(email);
+		return new CustomResponse<List<UpitZaPregled>>(l, true, "Uspešno pronađeni upiti.");
+	}
+
+	@Transactional(readOnly=false)
+	public CustomResponse<UpitZaPregled> obradiNeodobren(Long id) 
+		throws Exception {
+		try {
+			UpitZaPregled u = upitZaPregledRepository.findById(id).get();
+			u.setPacijentObradio(true);
+			upitZaPregledRepository.save(u);
+			return new CustomResponse<UpitZaPregled>(u, true, "Upit uspešno obrađen.");
+		}
+		catch (NoSuchElementException e) {
+			return new CustomResponse<UpitZaPregled>(null, false, "Upit ne postoji.");
+		}
 	}
 
 	@Transactional(readOnly=true)

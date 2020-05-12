@@ -11,11 +11,29 @@ export default{
     );
   },
 
-  async pronadjiNeodobreneUpite() {
+  async pronadjiNeodobreneNeodradjeneUpite() {
     let korisnik = util._getKorsinik();
     let options = util.prepareOptions();
     return axios.get(
-      `${process.env.VUE_APP_BACKEND_ROOT}/upit/neodobreni/${korisnik.username}`,
+      `${process.env.VUE_APP_BACKEND_ROOT}/upit/neodobreni/neodradjeni/${korisnik.username}`,
+      options
+    );
+  },
+
+  async pronadjiNeodobreneOdradjeneUpite() {
+    let korisnik = util._getKorsinik();
+    let options = util.prepareOptions();
+    return axios.get(
+      `${process.env.VUE_APP_BACKEND_ROOT}/upit/neodobreni/odradjeni/${korisnik.username}`,
+      options
+    );
+  },
+
+  async obradiNeodobreniUpit(id) {
+    let options = util.prepareOptions();
+    return axios.put(
+      `${process.env.VUE_APP_BACKEND_ROOT}/upit/obradiNeodobren/${id}`,
+      {},
       options
     );
   },

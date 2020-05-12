@@ -76,6 +76,69 @@
           </v-list>
         </v-card>
       </v-col>
+      <v-col 
+        :cols=4
+        v-if='neodobreniOdradjeniUpiti.length!==0'>
+        <v-card outlined>
+          <v-app-bar 
+            color='primary' dark>
+            <v-toolbar-title>
+              Neodobreni upiti
+            </v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-toolbar-title class='caption'>
+              Potvrdite da ste obavešteni o ovome
+            </v-toolbar-title>
+          </v-app-bar>
+          <v-list v-if='neodobreniOdradjeniUpiti.length != 0'>
+            <template
+              v-for='(upit, index) in neodobreniOdradjeniUpiti'>
+              <v-list-item
+                :key='upit.id'
+                two-line>
+                <v-list-item-content class='pt-0'>
+                <v-list-item-title>
+                  {{upit.tipPregleda.naziv}}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{formatDate(upit.pocetakPregleda)}} - 
+                  {{formatDateTime(upit.krajPregleda)}}
+                </v-list-item-subtitle>
+                <v-list-item-subtitle>
+                  {{upit.klinika.adresa}}, {{upit.klinika.grad}},
+                  {{upit.klinika.drzava}}
+                </v-list-item-subtitle>
+                </v-list-item-content>
+                <v-list-item-action>
+                  <v-list-item-action-text>
+                    <v-btn
+                      @click='uredu(upit.id)'
+                      color='info'
+                      width='150'
+                      class='mb-2'>
+                      U redu
+                    </v-btn>
+                  </v-list-item-action-text>
+                </v-list-item-action>
+              </v-list-item>
+              <v-divider
+                :key='upit.id + "d"'
+                v-if='index!=neodobreniOdradjeniUpiti.length-1'>
+              </v-divider>
+            </template>
+          </v-list>
+          <v-list 
+            v-if='neodobreniOdradjeniUpiti.length==0'>
+            <v-list-item>
+              <v-list-item-content class='pt-0'>
+              <v-list-item-title>
+                Nema neodobrenih upita
+              </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-col>
     </v-row>
     <v-row> 
       <v-col :cols=1></v-col>
@@ -87,16 +150,16 @@
               <v-app-bar 
                 color='primary' dark>
                 <v-toolbar-title>
-                  Neodobreni upiti
+                  Upiti koji čekaju odobrenje
                 </v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-toolbar-title class='caption'>
-                  Upiti koje admin treba da odobri
+                  Admin treba da ih odobri
                 </v-toolbar-title>
               </v-app-bar>
-              <v-list v-if='neodobreniUpiti.length != 0'>
+              <v-list v-if='neodobreniNeodradjeniUpiti.length != 0'>
                 <template
-                  v-for='(upit, index) in neodobreniUpiti'>
+                  v-for='(upit, index) in neodobreniNeodradjeniUpiti'>
                   <v-list-item
                     class='pb-2 pt-3'
                     :key='upit.id' 
@@ -117,12 +180,12 @@
                   </v-list-item>
                   <v-divider
                     :key='upit.id + "d"'
-                    v-if='index!=neodobreniUpiti.length-1'>
+                    v-if='index!=neodobreniNeodradjeniUpiti.length-1'>
                   </v-divider>
                 </template>
               </v-list>
               <v-list 
-                v-if='neodobreniUpiti.length==0'>
+                v-if='neodobreniNeodradjeniUpiti.length==0'>
                 <v-list-item>
                   <v-list-item-content class='pt-0'>
                   <v-list-item-title>
@@ -262,7 +325,8 @@ export default {
     ...mapState('klinike', [
       'posete']),
     ...mapState('upitZaPregled', [
-      'neodobreniUpiti',
+      'neodobreniNeodradjeniUpiti',
+      'neodobreniOdradjeniUpiti',
       'nepotvrdjeniUpiti'])
   },
   methods: {
@@ -270,13 +334,14 @@ export default {
       'dobaviSvePosete',
     ]),
     ...mapActions('upitZaPregled', [
-      'dobaviNeodobreneUpite',
+      'dobaviNeodobreneOdradjeneUpite',
+      'dobaviNeodobreneNeodradjeneUpite',
+      'obradiNeodobreniUpit',
       'dobaviNepotvrdjeneUpite',
       'potvrdiUpit',
       'odustaniUpit'
     ]),
     potvrdi: function(upitId, verzija) {
-      console.log(verzija)
       this.potvrdiUpit({upitId, verzija}).then((message) => {
         this.snackbarText = message;
         this.snackbarSucc = true;
@@ -292,6 +357,16 @@ export default {
         this.snackbarText = message;
         this.snackbarSucc = true;
         this.dobaviNepotvrdjeneUpite();
+      }, (error) => {
+        this.snackbarText = error;
+        this.snackbarErr = true;
+      });
+    },
+    uredu: function(upitId) {
+      this.obradiNeodobreniUpit(upitId).then((message) => {
+        this.snackbarText = message;
+        this.snackbarSucc = true;
+        this.dobaviNeodobreneOdradjeneUpite();
       }, (error) => {
         this.snackbarText = error;
         this.snackbarErr = true;
@@ -316,7 +391,8 @@ export default {
   },
   created() {
     this.dobaviSvePosete();
-    this.dobaviNeodobreneUpite();
+    this.dobaviNeodobreneNeodradjeneUpite();
+    this.dobaviNeodobreneOdradjeneUpite();
     this.dobaviNepotvrdjeneUpite();
   }
 }

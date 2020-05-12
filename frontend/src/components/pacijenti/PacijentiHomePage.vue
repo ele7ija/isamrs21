@@ -168,7 +168,7 @@ export default {
       'dobaviNerealizovanePosete'
     ]),
     ...mapActions('upitZaPregled', [
-      'dobaviNeodobreneUpite',
+      'dobaviNeodobreneNeodradjeneUpite',
       'dobaviNepotvrdjeneUpite'
     ]),
     formatDate: function(date) {
@@ -184,7 +184,7 @@ export default {
     },
   },
   created() {
-    this.dobaviNeodobreneUpite();
+    this.dobaviNeodobreneNeodradjeneUpite();
     this.dobaviNepotvrdjeneUpite();
     this.dobaviNerealizovanePosete();
   }

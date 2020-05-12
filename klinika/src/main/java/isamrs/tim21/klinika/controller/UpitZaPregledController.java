@@ -65,11 +65,39 @@ public class UpitZaPregledController {
 		}
 	}
 	
-	@GetMapping(value="/neodobreni/{email}")
+	@GetMapping(value="/neodobreni/neodradjeni/{email}")
 	@PreAuthorize("hasAuthority('pacijent')")
-	public ResponseEntity<CustomResponse<List<UpitZaPregled>>> izlistajNeodobreneUpite(@PathVariable("email") String email) {
+	public ResponseEntity<CustomResponse<List<UpitZaPregled>>> izlistajNeodobreneNeodradjeneUpite(@PathVariable("email") String email) {
 		try {
-			CustomResponse<List<UpitZaPregled>> l = upitZaPregledeService.pronadjiNeodobrene(email);
+			CustomResponse<List<UpitZaPregled>> l = upitZaPregledeService.pronadjiNeodobreneNeodradjene(email);
+			return new ResponseEntity<CustomResponse<List<UpitZaPregled>>>(l, HttpStatus.OK);
+		}
+		catch (Exception e){
+			return new ResponseEntity<CustomResponse<List<UpitZaPregled>>>(
+				new CustomResponse<List<UpitZaPregled>>(null, false, "Greška: Vaša verzija je zastarela. Osvežite stranicu."),
+				HttpStatus.OK);
+		}
+	}
+
+	@PutMapping(value="/obradiNeodobren/{id}")
+	@PreAuthorize("hasAuthority('pacijent')")
+	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiNeodobren(@PathVariable("id") Long id) {
+		try {
+			CustomResponse<UpitZaPregled> u = upitZaPregledeService.obradiNeodobren(id);
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(u, HttpStatus.OK);
+		}
+		catch (Exception e){
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+				new CustomResponse<UpitZaPregled>(null, false, "Greška: Vaša verzija je zastarela. Osvežite stranicu."),
+				HttpStatus.OK);
+		}
+	}
+
+	@GetMapping(value="/neodobreni/odradjeni/{email}")
+	@PreAuthorize("hasAuthority('pacijent')")
+	public ResponseEntity<CustomResponse<List<UpitZaPregled>>> izlistajNeodobreneOdradjeneUpite(@PathVariable("email") String email) {
+		try {
+			CustomResponse<List<UpitZaPregled>> l = upitZaPregledeService.pronadjiNeodobreneOdradjene(email);
 			return new ResponseEntity<CustomResponse<List<UpitZaPregled>>>(l, HttpStatus.OK);
 		}
 		catch (Exception e){
