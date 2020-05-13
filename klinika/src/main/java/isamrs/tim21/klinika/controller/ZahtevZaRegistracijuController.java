@@ -40,7 +40,7 @@ public class ZahtevZaRegistracijuController {
     //slanje mejla
     mailService.odbijZahtev(zahtevZaRegistracijuDTO);
 
-    //brisanje zahteva
+    //brisanje zahteva jedino ako je mejl poslat
     ZahtevZaRegistraciju retval = zahtevService.delete(zahtevZaRegistracijuDTO);
     return new ResponseEntity<>(retval, HttpStatus.OK);
   }

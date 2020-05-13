@@ -1,5 +1,8 @@
 <template>
 <div>
+
+
+
   <v-data-table
     :headers="headers"
     :items="getAll"
@@ -93,6 +96,7 @@
                 outlined
                 label="razlog odbijanja" 
                 hint="Neregistrovanom korisniku obrazložiti zašto je odbijen."
+                :rules=razlogRule
                 v-model="zahtev.tekst"
                 ></v-textarea>
               </v-container>
@@ -114,8 +118,35 @@
     </template> 
 
   </v-data-table>
-
   
+  <!-- snackbarovi -->
+  <v-snackbar
+  :timeout="snackbarSendingTimeout"
+  v-model="snackbarSending">
+    {{snackbarSendingText}}
+
+    <v-progress-circular
+    indeterminate
+    color="info"
+    ></v-progress-circular>
+  </v-snackbar>
+
+  <v-snackbar
+  :timeout="snackbarSentTimeout"
+  v-model="snackbarSent"
+  color="success">
+    {{snackbarSentText}}
+
+    <v-btn
+    outlined
+    small
+    @click="snackbarSent = false">
+    Zatvori
+    </v-btn>
+  </v-snackbar>
+
+
+
 </div>
 </template>
 
@@ -137,7 +168,6 @@ export default {
         adminOdobrio: undefined,
         prihvacen: undefined,
       },
-
       headers: [
         {
           text: 'Ime',
@@ -171,6 +201,19 @@ export default {
           align: 'end'
         }
       ],
+      //rule
+      razlogRule: [
+        v => !!v || 'Razlog odbijanja zahteva je obavezan',
+        v => (v && v.length <= 1000) || 'Razlog ima najviše 1000 karaktera'
+      ],
+      //snackbarovi
+      snackbarSending: false,
+      snackbarSendingText: "Slanje mejla u toku",
+      snackbarSendingTimeout: 0,
+      snackbarSent: true,
+      snackbarSentText: "Mejl je uspešno poslat",
+      snackbarSentTimeout: 4000, //3000 ms
+
     }
   },
   computed: {
@@ -200,6 +243,9 @@ export default {
     odbij (item){
       //zatvori dijalog
       this.dialogOnOdbij = false;
+      //upali snackbar
+      this.snackbar = true;
+
       //posalji objekat na bek
       this.zahtev.id = item.id;
       this.zahtev.datumOdobrenja = new Date();
