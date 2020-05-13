@@ -14,6 +14,7 @@ import layout from './modules/layout';
 import pregledDialog from './modules/pregledDialog';
 import upitiPreglediAdmin from './modules/upitiPreglediAdmin';
 import adminiKlinike from './modules/adminiKlinike'
+import osobljePacijent from './modules/osobljePacijent';
 import createPersistedState from 'vuex-persistedstate'
 
 //Plugins
@@ -34,7 +35,8 @@ export default new Vuex.Store({
     pregledDialog,
     upitiPreglediAdmin,
     adminiKlinike,
-    upitZaPregled
+    upitZaPregled,
+    osobljePacijent
   },
 
   plugins: [

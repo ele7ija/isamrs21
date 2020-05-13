@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import isamrs.tim21.klinika.domain.Lekar;
 import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
 import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.services.OsobljeService;
@@ -35,6 +36,12 @@ public class OsobljeKontroler {
 		}else{
 			return new ResponseEntity<List<MedicinskoOsoblje>>(osoblje, HttpStatus.OK);
 		}
+	}
+
+	@GetMapping(path="/lekari")
+	public ResponseEntity<CustomResponse<List<Lekar>>> getAllLekari(@PathVariable("idKlinike") Long idKlinike){
+		CustomResponse<List<Lekar>> lekari = osobljeService.findAllLekariByIdKlinike(idKlinike);
+		return new ResponseEntity<CustomResponse<List<Lekar>>>(lekari, HttpStatus.OK);
 	}
 	
 	@GetMapping(path="/{idOsoblja}")

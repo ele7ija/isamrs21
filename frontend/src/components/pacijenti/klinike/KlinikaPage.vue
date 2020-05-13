@@ -41,7 +41,7 @@
                   </PreglediDialog>
                   <v-btn
                     outlined
-                    @click.stop='dialog=true'>
+                    @click='navigate(klinikaId)'>
                     <v-icon left>mdi-account-group</v-icon>
                     Lekari
                   </v-btn>
@@ -93,6 +93,9 @@ export default {
     ]),
     dialogStartup() {
       this.dialog = true;
+    },
+    navigate: function(klinikaId) {
+      this.$router.push({ name: 'pacijent-lekari', params: { klinikaId } })
     }
   },
   created() {

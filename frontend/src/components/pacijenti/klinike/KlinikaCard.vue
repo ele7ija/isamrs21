@@ -24,10 +24,10 @@
       </v-btn>
       <v-btn
         outlined
-        @click.stop='dialogStartup'
+        @click='navigate(klinika.id)'
         class=''>
-      <v-icon left>mdi-account-group</v-icon>
-      Lekari
+        <v-icon left>mdi-account-group</v-icon>
+        Lekari
       </v-btn>
       <PreglediDialog
         v-bind:dialog='dialog'
@@ -75,6 +75,9 @@ export default {
       this.setOdabranaKlinika(this.klinika);
       // this.loadAllPregledi(this.klinika.id);
       this.dialog = true;
+    },
+    navigate: function(klinikaId) {
+      this.$router.push({ name: 'pacijent-lekari', params: { klinikaId } })
     }
   },
   created() {
