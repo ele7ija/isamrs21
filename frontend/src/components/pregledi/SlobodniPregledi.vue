@@ -266,6 +266,7 @@ export default {
         lekar: { id: this.lekar.id, pozicija: 'lekar', version: this.lekar.version },
         tipPregleda: { id: this.tipPregleda.id, version: this.tipPregleda.version },
         klinika: { id: this.klinika.id },
+        dodatniLekari: [],
         poseta: null
       };
       this.addPregled(this.newItem);
