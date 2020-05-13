@@ -27,6 +27,27 @@
             single-line
             hide-details
           ></v-text-field>
+          <v-spacer></v-spacer>
+          <span class="datetime-picker">
+            <v-datetime-picker
+              v-model="upit.pocetak"
+              label="Početak pregleda"
+              dateFormat="dd.MM.yyyy"
+              :textFieldProps="textFieldProps"
+              disabled
+            >
+            </v-datetime-picker>
+          </span>
+          <span class="datetime-picker">
+            <v-datetime-picker
+              v-model="upit.kraj"
+              label="Kraj pregleda"
+              dateFormat="dd.MM.yyyy"
+              :textFieldProps="textFieldProps"
+              disabled
+            >
+            </v-datetime-picker>
+          </span>
         </v-toolbar>
       </template>
       <template v-slot:item.actions="{ item }">
@@ -61,6 +82,9 @@ export default {
   },
   data: function(){
     return{
+      textFieldProps: {
+        appendIcon: 'event'
+      },
       btnEnabled: false,
       headers: [
         {
@@ -178,5 +202,12 @@ export default {
 </script>
 
 <style>
-
+.datetime-picker{
+  margin-top: 1.3rem;
+  margin-right: 1rem;
+}
+.datetime-picker{
+  margin-top: 1.3rem;
+  margin-right: 1rem;
+}
 </style>

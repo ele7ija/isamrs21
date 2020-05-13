@@ -14,7 +14,7 @@
           vertical
         ></v-divider>
         <v-spacer></v-spacer>
-        <v-subheader>Crvenom bojom su označeni pregledi zbog koji sala nije slobodna za datum iz upita</v-subheader>
+        <v-subheader>Crvenom bojom su označeni pregledi zbog kojih sala nije slobodna za datum iz upita</v-subheader>
         <v-divider
           class="mx-4"
           inset

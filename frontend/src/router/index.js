@@ -5,7 +5,7 @@ import Registracija from '@/components/Registracija';
 import ONama from '@/components/ONama';
 import UserDashboard from "@/components/dashboards/UserDashboard";
 import TipPregleda from "@/components/tipovi_pregleda/TipPregleda";
-import Sala from "@/components/sale/Sala";
+import SalaMain from "@/components/sale/SalaMain";
 import Osoblje from "@/components/osoblje/Osoblje";
 import PreglediMain from "@/components/pregledi/PreglediMain";
 import UpitiPreglediAdmin from "@/components/upiti/UpitiPreglediAdmin";
@@ -92,7 +92,7 @@ let router = new Router({
     {
       path: '/sale',
       name: 'sala',
-      component: Sala,
+      component: SalaMain,
       meta: {
         authen: true,
         author: 'admin-klinike'
