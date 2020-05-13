@@ -16,6 +16,7 @@ import isamrs.tim21.klinika.domain.Klinika;
 import isamrs.tim21.klinika.domain.Lekar;
 import isamrs.tim21.klinika.domain.MedicinskaSestra;
 import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
+import isamrs.tim21.klinika.domain.Pregled;
 import isamrs.tim21.klinika.domain.TipPregleda;
 import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.repository.AuthorityRepository;
@@ -152,6 +153,9 @@ public class OsobljeService {
 		else{
 			if(!pregledRepository.findByIdLekara(idOsoblja).isEmpty()){
 				return new CustomResponse<Boolean>(true, false, "Greska: Ne mozete obrisati lekara za kojeg postoji pregled");
+			}
+			if(!pregledRepository.findByIdDodatnogLekara(idOsoblja).isEmpty()){
+				return new CustomResponse<Boolean>(true, false, "Greska: Ne mozete obrisati lekara koji asistira na nekoj operaciji.");
 			}
 			Lekar lekar = (Lekar) osobljeRepository.findById(idOsoblja).get();
 			for(TipPregleda tp : lekar.getTipovi_pregleda()){

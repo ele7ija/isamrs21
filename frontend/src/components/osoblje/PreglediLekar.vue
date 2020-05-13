@@ -39,6 +39,7 @@ export default {
             lekar: `${osoblje.ime} ${osoblje.prezime}`,
             lekarId: osoblje.id,
             tipPregleda: tipPregleda.naziv,
+            vrsta: tipPregleda.vrsta,
             sala: sala.oznaka,
             cena: parseInt(x.cena, 10),
             popust: x.popust,
@@ -63,8 +64,8 @@ export default {
       return this._preglediMapped.filter(x => this.isSlobodan(x));
     },
     _rezervisaniPregledi: function(){
-      return this._preglediMapped.filter(x => this._slobodniPregledi.filter(y => y.id == x.id).length == 0);
-    },
+      return this._preglediMapped.filter(x => !this.isSlobodan(x));
+    }
 
   },
   created(){

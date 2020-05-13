@@ -1,6 +1,5 @@
 package isamrs.tim21.klinika.domain;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -8,16 +7,12 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
-import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import isamrs.tim21.klinika.jsonSerialize.IdentityListSerializer;
 import isamrs.tim21.klinika.jsonSerialize.PregledListSerializer;
 import isamrs.tim21.klinika.jsonSerialize.TipPregledaListSerializer;
 
@@ -41,6 +36,9 @@ public class Lekar extends MedicinskoOsoblje{
 	@OneToMany(mappedBy="lekar", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	@JsonSerialize(using=PregledListSerializer.class)
 	private List<Pregled> pregledi;
+	
+	@ManyToMany(cascade=CascadeType.MERGE, mappedBy="dodatniLekari")
+	private List<Pregled> dodatneOperacije;
 	
 	public List<TipPregleda> getTipovi_pregleda() {
 		return tipovi_pregleda;
@@ -82,6 +80,14 @@ public class Lekar extends MedicinskoOsoblje{
 		retval.setSifra(sifra);
 		retval.setTipovi_pregleda(tipovi_pregleda);
 		return retval;
+	}
+
+	public List<Pregled> getDodatneOperacije() {
+		return dodatneOperacije;
+	}
+
+	public void setDodatneOperacije(List<Pregled> dodatneOperacije) {
+		this.dodatneOperacije = dodatneOperacije;
 	}
 	
 }

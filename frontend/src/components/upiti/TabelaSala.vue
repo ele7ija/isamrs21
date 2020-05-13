@@ -8,7 +8,6 @@
       :no-data-text="'Za date parametre upita ne postoji slobodna sala. Kliknite dugme ispod tabele da promenite parametre upita.'"
       show-select
       single-select
-      @item-selected="rowSelect"
       >
       <template v-slot:top>
         <v-toolbar flat color="white">
@@ -59,8 +58,11 @@
           Pregledi
         </v-btn>
       </template>
+      <template v-slot:item.data-table-select="{ item }">
+        <v-simple-checkbox v-if="item.slobodna=='da'" v-model="item.selected" @input="rowSelect(item)" ></v-simple-checkbox>
+      </template>
     </v-data-table>
-    <v-btn class="my-4 mx-2" color="primary" @click="emit('incStep')" :disabled="!btnEnabled || slobodneSale.length==0">Dalje</v-btn>
+    <v-btn class="my-4 mx-2" color="primary" @click="incStep()" :disabled="!btnEnabled || slobodneSale.length==0">Dalje</v-btn>
     <v-btn class="my-4 mx-2" color="primary" @click="dialog2=true" v-if="slobodneSale.length==0">Promena podataka iz upita</v-btn>
     <v-dialog v-model="dialog1">
       <PreglediSale :preglediSale="preglediSale"/>
@@ -86,6 +88,7 @@ export default {
         appendIcon: 'event'
       },
       btnEnabled: false,
+      selected: [],
       headers: [
         {
           text: 'Oznaka',
@@ -126,9 +129,15 @@ export default {
     _sale(){
       let retval = [];
       for(let sala of this.sale){
+        let index = this.selected.findIndex(x => x.id == sala.id);
+        let selected = false;
+        if(index != -1){
+          selected = this.selected[index].selected;
+        }
         let temp = {
           id: sala.id,
-          oznaka: sala.oznaka
+          oznaka: sala.oznaka,
+          selected: selected
         };
         if(this.slobodneSale.filter(x => x.id == sala.id).length == 1){          
           temp.slobodna = 'da';
@@ -155,6 +164,7 @@ export default {
             kraj_date: new Date(x.krajPregleda),
             lekar: `${x.lekar.ime} ${x.lekar.prezime}`,
             tipPregleda: x.tipPregleda.naziv,
+            vrsta: x.tipPregleda.vrsta,
             konacnaCena: parseInt(x.konacnaCena, 10),
           };
           let pacijent = this.getPacijent(x);
@@ -184,18 +194,26 @@ export default {
       }
       return null;
     },
-    rowSelect: function ({item, value}) {
-      if(item.slobodna == 'ne'){
-        return;
+    rowSelect: function (item) {
+      let index = this.selected.findIndex(x => x.id == item.id);
+      if(index == -1){
+        this.selected.push({id: item.id, selected: false});
+        index = this.selected.length - 1;
       }
-      if(value){
+      if(item.selected){
+        for(let sel of this.selected)
+          sel.selected = false;
         this.btnEnabled = true;
+        this.selected[index].selected = true;
       }else{
         this.btnEnabled = false;
+        this.selected[index].selected = false;
       }
     },
-    emit(eventName){
-      this.$emit(eventName);
+    incStep(){
+      let selectedSalaId = this.selected.filter(x => x.selected)[0].id;
+      let selectedSala = this.sale.filter(x => x.id == selectedSalaId)[0];
+      this.$emit("incStep", selectedSala);
     }
   }
 }

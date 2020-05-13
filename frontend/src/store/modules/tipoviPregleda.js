@@ -9,6 +9,9 @@ const getters = {
   getTipoviPregleda: (state) => {
     return state.tipoviPregleda;
   },
+  getTipoviPregledaKojiSuPregledi: (state) => {
+    return state.tipoviPregleda.filter(x => x.vrsta == 'pregled');
+  },
   getTipPregleda: (state) => (id) => {
     let filtriraniTipoviPrelgeda = state.tipoviPregleda.filter(x => x.id == id);
     if(filtriraniTipoviPrelgeda.length == 0){

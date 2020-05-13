@@ -15,7 +15,9 @@ import isamrs.tim21.klinika.domain.MedicinskaSestra;
 import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
 import isamrs.tim21.klinika.domain.Pregled;
 import isamrs.tim21.klinika.domain.Sala;
+import isamrs.tim21.klinika.domain.TipPregleda;
 import isamrs.tim21.klinika.domain.UpitZaPregled;
+import isamrs.tim21.klinika.domain.VrstaTipaPregleda;
 import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.repository.OsobljeRepository;
@@ -54,9 +56,37 @@ public class PregledService {
 		pregled.setId(null);
 		pregled.setKlinika(klinika);
 		pregled.setUpiti(new ArrayList<UpitZaPregled>());
-		pregled.setLekar((Lekar)osobljeRepository.findByIdKlinikeAndById(klinika.getId(), pregled.getLekar().getId()));
-		return validateAll(klinika, pregled);
 		
+		Lekar lekar = (Lekar)osobljeRepository.findByIdKlinikeAndById(klinika.getId(), pregled.getLekar().getId());
+		if(lekar == null){
+			return new CustomResponse<Pregled>(null, false,
+					"Greska: Trazeni lekar nije pronadjen u klinici.");
+		}
+		pregled.setLekar(lekar);
+		
+		TipPregleda tipPregleda = tipPregledaRepository.findByIdKlinikeAndIdTipaPregleda(klinika.getId(), pregled.getTipPregleda().getId());
+		if(tipPregleda == null){
+			return new CustomResponse<Pregled>(null, false,
+					"Greska: Trazeni tip pregleda nije pronadjen u klinici.");
+		}
+		pregled.setTipPregleda(tipPregleda);
+		
+		Sala sala = salaRepository.findByIdKlinikeAndIdSale(klinika.getId(), pregled.getSala().getId());
+		if(sala == null){
+			return new CustomResponse<Pregled>(null, false,
+					"Greska: Trazena sala nije pronadjen u klinici.");
+		}
+		pregled.setSala(sala);
+		
+		for(int i = 0; i < pregled.getDodatniLekari().size(); i++){
+			Lekar l = (Lekar)osobljeRepository.findByIdKlinikeAndById(klinika.getId(), pregled.getDodatniLekari().get(i).getId());
+			if(l == null){
+				return new CustomResponse<Pregled>(null, false,
+						"Greska: Jedan od dodatnih lekara nije pronadjen u klinici.");
+			}
+			pregled.getDodatniLekari().set(i, l);
+		}
+		return validateAll(klinika, pregled);
 	}
 
 	public CustomResponse<Pregled> update(Klinika klinika, Pregled pregled, Long idPregleda) throws Exception{
@@ -131,6 +161,14 @@ public class PregledService {
 					+ "Proverite da li je lekar zauzet u datom vremenskom intervalu, kao i da li je uopste specijalizovan za dati tip pregleda.");
 		}
 		
+		/*
+		 * Da li su svi dodatni lekari slobodni u datom terminu
+		 */
+		if(pregled.getTipPregleda().getVrsta() == VrstaTipaPregleda.operacija && !validateDodatnoOsoblje(klinika, pregled)){
+			return new CustomResponse<Pregled>(null, false,
+					"Greska: Neki od dodatnihlekara nije slobodan u datom terminu pregleda");
+		}
+		
 		return new CustomResponse<Pregled>(pregledRepository.save(pregled), true, "OK"); 
 	}
 	
@@ -149,6 +187,26 @@ public class PregledService {
 		return true;
 	}
 
+	private boolean validateDodatnoOsoblje(Klinika klinika, Pregled pregled){
+		for(Lekar lekar : pregled.getDodatniLekari()){
+			for(Pregled p : lekar.getPregledi()){
+				if(p.getId() == pregled.getId())
+					continue;
+				if(p.intersects(pregled)){
+					return false;
+				}
+			}
+			for(Pregled p : lekar.getDodatneOperacije()){
+				if(p.getId() == pregled.getId())
+					continue;
+				if(p.intersects(pregled)){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
 	private boolean validateOsoblje(Klinika klinika, Pregled pregled) {
 		MedicinskoOsoblje osoblje = osobljeRepository.findByIdKlinikeAndById(klinika.getId(), pregled.getLekar().getId());
 		if(osoblje == null || osoblje instanceof MedicinskaSestra)

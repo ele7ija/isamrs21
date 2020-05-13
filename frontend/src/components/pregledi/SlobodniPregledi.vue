@@ -148,6 +148,11 @@ export default {
           sortable: true
         },
         { 
+          text: 'Vrsta',
+          value: 'vrsta',
+          sortable: true
+        },
+        { 
           text: 'Cena sa popustom',
           value: 'konacnaCena',
           sortable: true

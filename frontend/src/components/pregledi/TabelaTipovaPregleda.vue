@@ -62,8 +62,9 @@ export default {
   },
   computed: {
     ...mapGetters({
-      data: "tipoviPregleda/getTipoviPregleda"
+      data: "tipoviPregleda/getTipoviPregledaKojiSuPregledi"
     })
+    
   },
   methods: {
     rowSelect: function ({item, value}) {

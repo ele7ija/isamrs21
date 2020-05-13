@@ -44,11 +44,11 @@ insert into cenovnik(id, iznosUDinarima, naziv, klinika_id) values(2, 5000, 'Sta
 insert into cenovnik(id, iznosUDinarima, naziv, klinika_id) values(3, 3000, 'Stavka 3', 3);
 
 
-insert into tip_pregleda (id, naziv, opis, klinika_id, cenovnik_id, trajanje_minuti) values (1, 'Kardiološki pregled', 'Opšti pregled srca i krvnih sudova', 1, 1, 60);
-insert into tip_pregleda (id, naziv, opis, klinika_id, cenovnik_id, trajanje_minuti) values (2, 'Kardiološko testiranje', 'Opšte testiranje srca i krvnih sudova', 1, 1, 75);
-insert into tip_pregleda (id, naziv, opis, klinika_id, cenovnik_id, trajanje_minuti) values (3, 'Gastroenterološki pregled', 'Opšti pregled sistema za varenje', 2, 2, 90);
-insert into tip_pregleda (id, naziv, opis, klinika_id, cenovnik_id, trajanje_minuti) values (4, 'Pulmološki pregled', 'Opšti pregled pluća', 3, 3, 100);
-insert into tip_pregleda (id, naziv, opis, klinika_id, cenovnik_id, trajanje_minuti) values (5, 'Pulmološko testiranje', 'Opšte testiranje pluća', 3, 3, 50);
+insert into tip_pregleda (id, naziv, opis, klinika_id, cenovnik_id, trajanje_minuti, vrsta) values (1, 'Kardiološki pregled', 'Opšti pregled srca i krvnih sudova', 1, 1, 60, 'pregled');
+insert into tip_pregleda (id, naziv, opis, klinika_id, cenovnik_id, trajanje_minuti, vrsta) values (2, 'Kardiološko testiranje', 'Opšte testiranje srca i krvnih sudova', 1, 1, 75, 'pregled');
+insert into tip_pregleda (id, naziv, opis, klinika_id, cenovnik_id, trajanje_minuti, vrsta) values (3, 'Gastroenterološki pregled', 'Opšti pregled sistema za varenje', 2, 2, 90, 'pregled');
+insert into tip_pregleda (id, naziv, opis, klinika_id, cenovnik_id, trajanje_minuti, vrsta) values (4, 'Pulmološki pregled', 'Opšti pregled pluća', 3, 3, 100, 'pregled');
+insert into tip_pregleda (id, naziv, opis, klinika_id, cenovnik_id, trajanje_minuti, vrsta) values (5, 'Pulmološko testiranje', 'Opšte testiranje pluća', 3, 3, 50, 'pregled');
 
 insert into specijalnost_lekara values(1, 3);
 insert into specijalnost_lekara values(2, 3);

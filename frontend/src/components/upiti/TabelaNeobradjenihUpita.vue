@@ -243,11 +243,15 @@ export default {
         step.unique += 1;
       }
     },
-    incStep(){
+    incStep(object){
       if(this.stepIndex == this.stepperData.length){
-        //emituj akciju
         alert("Emitujem akciju na bek");
       }else{
+        this.editableItem.sala = {
+          id: object.id,
+          version: object.version
+        };
+        console.log(this.editableItem.sala.id);
         this.stepIndex++;
       }
     },

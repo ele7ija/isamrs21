@@ -61,6 +61,11 @@ export default {
           sortable: true
         },
         { 
+          text: 'Vrsta',
+          value: 'vrsta',
+          sortable: true
+        },
+        { 
           text: 'Cena sa popustom',
           value: 'konacnaCena',
           sortable: true
@@ -94,6 +99,7 @@ export default {
           kraj: new Date(x.krajPregleda).toLocaleTimeString(),
           lekar: `${x.lekar.ime} ${x.lekar.prezime}`,
           tipPregleda: x.tipPregleda.naziv,
+          vrsta: x.tipPregleda.vrsta,
           sala: x.sala.oznaka,
           konacnaCena: parseInt(x.konacnaCena, 10),
           upiti: x.upiti,

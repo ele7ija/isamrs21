@@ -5,6 +5,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -57,6 +59,10 @@ public class TipPregleda implements IdentitySerializable{
 	
 	@Column(name="trajanje_minuti", nullable=false)
 	private int trajanjeMinuti;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name="vrsta", nullable=false)
+	private VrstaTipaPregleda vrsta;
 
 	public List<Lekar> getLekari() {
 		return lekari;
@@ -147,6 +153,14 @@ public class TipPregleda implements IdentitySerializable{
 
 	public void setTrajanjeMinuti(int trajanjeMinuti) {
 		this.trajanjeMinuti = trajanjeMinuti;
+	}
+
+	public VrstaTipaPregleda getVrsta() {
+		return vrsta;
+	}
+
+	public void setVrsta(VrstaTipaPregleda vrsta) {
+		this.vrsta = vrsta;
 	}
 
 	
