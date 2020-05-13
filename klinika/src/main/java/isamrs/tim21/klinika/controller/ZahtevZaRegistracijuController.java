@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.ZahtevZaRegistraciju;
 import isamrs.tim21.klinika.dto.ZahtevZaRegistracijuDTO;
+import isamrs.tim21.klinika.exceptions.SendMailErrorResponse;
+import isamrs.tim21.klinika.exceptions.SendMailException;
 import isamrs.tim21.klinika.services.MailService;
 import isamrs.tim21.klinika.services.ZahtevZaRegistracijuService;
 
@@ -35,13 +37,18 @@ public class ZahtevZaRegistracijuController {
 
   @PostMapping("/odbij")
   @PreAuthorize("hasAuthority('admin-klinickog-centra')")
-  public ResponseEntity<ZahtevZaRegistraciju>  odbijZahtev(@RequestBody ZahtevZaRegistracijuDTO zahtevZaRegistracijuDTO){
+  public ResponseEntity<Object>  odbijZahtev(
+    @RequestBody ZahtevZaRegistracijuDTO zahtevZaRegistracijuDTO){
     //prvo posalji mejl. nokon slanja mejla obrisi zahtev iz baze
     //slanje mejla
+    try{
     mailService.odbijZahtev(zahtevZaRegistracijuDTO);
-
-    //brisanje zahteva jedino ako je mejl poslat
-    ZahtevZaRegistraciju retval = zahtevService.delete(zahtevZaRegistracijuDTO);
-    return new ResponseEntity<>(retval, HttpStatus.OK);
+      //brisanje zahteva jedino ako je mejl uspesno poslat
+      ZahtevZaRegistraciju retval = zahtevService.delete(zahtevZaRegistracijuDTO);
+      return new ResponseEntity<>(retval, HttpStatus.OK);
+    }
+    catch(Exception e){
+      throw new SendMailException("slanje mejla nije uspelo");
+    }
   }
 }

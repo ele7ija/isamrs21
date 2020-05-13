@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import isamrs.tim21.klinika.domain.ZahtevZaRegistraciju;
 import isamrs.tim21.klinika.dto.ZahtevZaRegistracijuDTO;
+import isamrs.tim21.klinika.exceptions.SendMailException;
 import isamrs.tim21.klinika.repository.ZahtevZaRegistracijuRepository;
 
 @Service
@@ -20,16 +21,16 @@ public class MailService {
   private String text;
 
 	public void odbijZahtev(ZahtevZaRegistracijuDTO zahtevZaRegistracijuDTO) {
-      ZahtevZaRegistraciju zahtev = 
-      zahtevRepo.findById(zahtevZaRegistracijuDTO.getId()).orElse(null);
-      String text = generateText(zahtevZaRegistracijuDTO, zahtev);
-      String subject = "Odbijanje zahteva registracije";
-      
-      SimpleMailMessage mailToSend = new SimpleMailMessage();
-      mailToSend.setTo(zahtev.getPacijent().getEmail());
-      mailToSend.setText(text);
-      mailToSend.setSubject(subject);
-      javaMailSender.send(mailToSend);
+    ZahtevZaRegistraciju zahtev = 
+    zahtevRepo.findById(zahtevZaRegistracijuDTO.getId()).orElse(null);
+    String text = generateText(zahtevZaRegistracijuDTO, zahtev);
+    String subject = "Odbijanje zahteva registracije";
+    
+    SimpleMailMessage mailToSend = new SimpleMailMessage();
+    mailToSend.setTo(zahtev.getPacijent().getEmail());
+    mailToSend.setText(text);
+    mailToSend.setSubject(subject);
+    javaMailSender.send(mailToSend);
   }
   
   public String generateText(ZahtevZaRegistracijuDTO zahtevDTO, ZahtevZaRegistraciju zahtev){

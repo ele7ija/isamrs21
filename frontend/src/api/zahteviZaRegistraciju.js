@@ -12,12 +12,11 @@ export default{
   },
 
   async odbijZahtev(zahtev){
-    let options = util.prepareOptions();
-    let response = await axios.post(
+    let options = util.prepareOptions();  
+    return  axios.post(
       `${process.env.VUE_APP_BACKEND_ROOT}/zahtevi_za_registraciju/odbij`,
       zahtev,
       options
-    );
-    return response.data;
+    )
   }
 }

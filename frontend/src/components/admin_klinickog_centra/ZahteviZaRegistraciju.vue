@@ -58,7 +58,7 @@
             {{item.pacijent.ime}} {{item.pacijent.prezime}}?
           </v-card-text>
 
-          <!-- akcije -->
+
           <v-divider></v-divider>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -108,7 +108,7 @@
               <v-btn color="success" small  @click="odbij(item)" :disabled="!isFormValid">
               Pošalji
             </v-btn>
-            <v-btn color="error lighten-1" small @click="dialogOnOdbij=false">
+            <v-btn color="error lighten-1" small @click.stop="dialogOnOdbij=false">
               Nazad
             </v-btn>
             </v-card-actions>
@@ -121,9 +121,9 @@
   
   <!-- snackbarovi -->
   <v-snackbar
-  :timeout="snackbarSendingTimeout"
-  v-model="snackbarSending">
-    {{snackbarSendingText}}
+  :timeout=0
+  v-model="mailSending">
+    Slanje mejla je u toku
 
     <v-progress-circular
     indeterminate
@@ -132,26 +132,39 @@
   </v-snackbar>
 
   <v-snackbar
-  :timeout="snackbarSentTimeout"
-  v-model="snackbarSent"
+  :timeout=4000
+  v-model="mailSent"
   color="success">
-    {{snackbarSentText}}
+    Mejl je uspešno poslat
 
     <v-btn
     outlined
     small
-    @click="snackbarSent = false">
+    @click="mailSent = false">
     Zatvori
     </v-btn>
   </v-snackbar>
+  
+  <v-snackbar
+  :timeout=4000
+  v-model="mailNotSent"
+  color="error">
+    Mejl nije uspešno poslat
 
+    <v-btn
+    outlined
+    small
+    @click="mailNotSent = false">
+    Zatvori
+    </v-btn>
+  </v-snackbar>
 
 
 </div>
 </template>
 
 <script>
-import {mapGetters, mapActions} from 'vuex';
+import {mapGetters, mapActions, } from 'vuex';
 
 export default {
   name: "ZahteviZaRegistraciju",
@@ -206,13 +219,6 @@ export default {
         v => !!v || 'Razlog odbijanja zahteva je obavezan',
         v => (v && v.length <= 1000) || 'Razlog ima najviše 1000 karaktera'
       ],
-      //snackbarovi
-      snackbarSending: false,
-      snackbarSendingText: "Slanje mejla u toku",
-      snackbarSendingTimeout: 0,
-      snackbarSent: true,
-      snackbarSentText: "Mejl je uspešno poslat",
-      snackbarSentTimeout: 4000, //3000 ms
 
     }
   },
@@ -220,9 +226,30 @@ export default {
     ...mapGetters(
       {
         getAll: 'zahteviZaRegistraciju/getAllZahtevi',
+        getMailSending: 'zahteviZaRegistraciju/getMailSending',
+        getMailSent: 'zahteviZaRegistraciju/getMailSent',
+        getMailNotSent: 'zahteviZaRegistraciju/getMailNotSent',
       }
     ),
+
+    //za snackbarove polja
+    mailSending: {
+      get () {return this.getMailSending},
+      set (bool) { this.setMailSending(bool) }
+    },
+    mailSent: {
+      get () {return this.getMailSent},
+      set (bool) {this.setMailSending(bool)}
+    },
+    mailNotSent: {
+      get () {return this.getMailNotSent},
+      set (bool) {this.setMailNotSent(bool)}
+    }
   },
+
+
+
+
   created(){
     this.fetchData();
   },
@@ -232,6 +259,9 @@ export default {
         fetchData: 'zahteviZaRegistraciju/fetchAllZahtevi',
         prihvatiZahtev: 'zahteviZaRegistraciju/prihvatiZahtev',
         odbijZahtev: 'zahteviZaRegistraciju/odbijZahtev',
+        setMailSending: 'zahteviZaRegistraciju/setMailSending',
+        setMailSent: 'zahteviZaRegistraciju/setMailSent',
+        setMailNotSent: 'zahteviZaRegistraciju/setMailNotSent'
 
       }
     ),
@@ -243,8 +273,8 @@ export default {
     odbij (item){
       //zatvori dijalog
       this.dialogOnOdbij = false;
-      //upali snackbar
-      this.snackbar = true;
+      //upali snackbar promeni na true
+      this.snackbarSending = false;
 
       //posalji objekat na bek
       this.zahtev.id = item.id;

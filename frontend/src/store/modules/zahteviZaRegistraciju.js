@@ -1,10 +1,16 @@
 import zahteviAPI from '@/api/zahteviZaRegistraciju'
 const state = {
   zahtevi: [],
+  mailSending: false,
+  mailSent: false,
+  mailNotSent: false,
 }
 
 const getters = {
   getAllZahtevi: (state) => state.zahtevi,
+  getMailSending: (state) =>state.mailSending,
+  getMailSent: (state) =>state.mailSent,
+  getMailNotSent: (state) => state.mailNotSent,
 }
 
 const actions = {
@@ -19,9 +25,41 @@ const actions = {
   },
 
   async odbijZahtev({commit}, zahtev){
-    let data = await zahteviAPI.odbijZahtev(zahtev);
-    commit('deleteZahtev', data);
-  }
+    //mejl se salje
+    commit('setMailSending', true);
+    zahteviAPI.odbijZahtev(zahtev)
+    .then((response) =>{
+      //nakon sto je zavrseno na beku, mejl se vise ne salje
+      commit('setMailSending', false);
+      
+      //ako je response bio uspesan onda je mailSent = true
+      if(response != undefined){
+        console.log("response is defined")
+        commit('deleteZahtev', response.data);
+        commit('setMailSent', true);
+      }
+      //ako response nije bio uspesan onda je mailNotSent = true
+      else{
+        console.log("response is undefined")
+        commit('setMailNotSent', true);
+      }
+    })
+    .catch( () =>{
+      console.log("inside catch")
+      
+    })
+  },  
+
+  setMailSending({commit}, bool){
+    commit('setMailSending', bool);
+  },
+  setMailSent({commit}, bool){
+    commit('setMailSent', bool);
+  },
+  setMailNotSent ({commit}, bool){
+    commit('setMailNotSent', bool);
+  },
+
 }
 
 const mutations = {
@@ -40,7 +78,12 @@ const mutations = {
         return zahtev.id != zahtevToDelete.id;
       }
     );
-  }
+  },
+
+  setMailSending: (state, bool) => state.mailSending = bool,
+  setMailSent: (state, bool) => state.mailSent = bool,
+  setMailNotSent: (state, bool) => state.mailNotSent = bool,
+
 }
 
 export default{
