@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,7 +38,7 @@ public class ZahtevZaRegistracijuController {
 
   @PostMapping("/odbij")
   @PreAuthorize("hasAuthority('admin-klinickog-centra')")
-  public ResponseEntity<Object>  odbijZahtev(
+  public ResponseEntity<ZahtevZaRegistraciju>  odbijZahtev(
     @RequestBody ZahtevZaRegistracijuDTO zahtevZaRegistracijuDTO){
     //prvo posalji mejl. nokon slanja mejla obrisi zahtev iz baze
     //slanje mejla
@@ -50,5 +51,26 @@ public class ZahtevZaRegistracijuController {
     catch(Exception e){
       throw new SendMailException("slanje mejla nije uspelo");
     }
+  }
+
+  @PostMapping("/prihvati")
+  @PreAuthorize("hasAuthority('admin-klinickog-centra')")
+  public ResponseEntity<ZahtevZaRegistraciju> prihvatiZahtev(
+  @RequestBody ZahtevZaRegistracijuDTO zahtevZaRegistracijuDTO){
+    try{
+      mailService.prihvatiZahtev(zahtevZaRegistracijuDTO);
+      //update zahteva jedino ako je mejl uspesno poslat
+      ZahtevZaRegistraciju retval = zahtevService.update(zahtevZaRegistracijuDTO);
+      return new ResponseEntity<>(retval, HttpStatus.OK);
+    }
+    catch(Exception e){
+      throw new SendMailException("slanje mejla nije uspelo");
+    }
+  }
+
+  @PostMapping("/registruj/{id}")
+  public String registrujKorisnika(@PathVariable Long id){
+    String poruka = zahtevService.registrujKorisnika(id);
+    return "asdf";
   }
 }

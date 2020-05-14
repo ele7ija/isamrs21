@@ -19,34 +19,53 @@ const actions = {
     commit('setZahtevi', data);
   },
 
-  async prihvatiZahtev({commit}, zahtev){
-    let data = await zahteviAPI.prihvatiZahtev(zahtev);
-    commit('prihvatiZahtev', data);
+  async prihvatiZahtev({dispatch,commit}, zahtev){
+    //mejl se salje
+    dispatch('setMailSending', true);
+    zahteviAPI.prihvatiZahtev(zahtev)
+    .then((response) =>{
+      //nakon sto je zavrseno na beku, mejl se vise ne salje
+      dispatch('setMailSending', false);
+      var httpStatus = response.status;
+      //ako je response uspesan
+      if(httpStatus === 200){
+        console.log("response: ", response.data);
+        commit('deleteZahtev', response.data);
+        dispatch('setMailSent', true);
+      }
+      //ako response nije bio uspesan
+      else{
+        console.log("response: ", response.data);
+        dispatch('setMailNotSent', true);
+      }
+    })
+    .catch( () =>{
+      console.log("inside catch") 
+    })
   },
 
-  async odbijZahtev({commit}, zahtev){
+  async odbijZahtev({dispatch,commit}, zahtev){
     //mejl se salje
-    commit('setMailSending', true);
+    dispatch('setMailSending', true);
     zahteviAPI.odbijZahtev(zahtev)
     .then((response) =>{
       //nakon sto je zavrseno na beku, mejl se vise ne salje
-      commit('setMailSending', false);
+      dispatch('setMailSending', false);
       var httpStatus = response.status;
       //ako je response bio uspesan onda je mailSent = true
       if(httpStatus === 200){
         console.log("response:", response.data)
         commit('deleteZahtev', response.data);
-        commit('setMailSent', true);
+        dispatch('setMailSent', true);
       }
       //ako response nije bio uspesan onda je mailNotSent = true
       else{
         console.log("response: ", response.data)
-        commit('setMailNotSent', true);
+        dispatch('setMailNotSent', true);
       }
     })
     .catch( () =>{
-      console.log("inside catch")
-      
+      console.log("inside catch")    
     })
   },  
 

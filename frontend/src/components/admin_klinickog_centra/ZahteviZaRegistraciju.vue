@@ -265,10 +265,13 @@ export default {
       this.selectedPacijent.id = item.pacijent.id;
       this.dialogOnOdbij = true;
     },
-    prihvati (item){
-      console.log(item.pacijent.ime)
+    prihvati (){
+      //zatvori dijalog
       this.dialogOnPrihvati = false;
-      this.prihvatiZahtev(item);
+      this.zahtev.id = this.selectedPacijent.id;
+      this.zahtev.datumOdobrenja = new Date();
+      this.zahtev.prihvacen = true;
+      this.prihvatiZahtev(this.zahtev);
     },
     odbij (){
       //zatvori dijalog
