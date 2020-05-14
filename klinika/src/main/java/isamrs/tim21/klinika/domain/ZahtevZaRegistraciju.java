@@ -14,6 +14,7 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import isamrs.tim21.klinika.dto.ZahtevZaRegistracijuDTO;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
 
 
@@ -23,10 +24,10 @@ public class ZahtevZaRegistraciju implements IdentitySerializable{
 	@Id
 	private Long id;
 	
-	@Column(name="datumPodnosenja")
+	@Column(name="datum_podnosenja")
 	private Timestamp datumPodnosenja;
 	
-	@Column(name="datumOdobrenja")
+	@Column(name="datum_odobrenja")
 	private Timestamp datumOdobrenja;
 	
 	@OneToOne(fetch=FetchType.EAGER)

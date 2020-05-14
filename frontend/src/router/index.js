@@ -19,6 +19,7 @@ import Istorija from '@/components/pacijenti/klinike/Istorija';
 import AdminiKlinickogCentra from '@/components/admin_klinickog_centra/AdminiKlinickogCentra'
 import AdminiKlinike from '@/components/admin_klinickog_centra/AdminiKlinike'
 import KlinikeFromAdminCentra from '@/components/admin_klinickog_centra/Klinike'
+import ZahteviZaRegistraciju from '@/components/admin_klinickog_centra/ZahteviZaRegistraciju'
 
 import PacijentiHomePage from '@/components/pacijenti/PacijentiHomePage';
 
@@ -227,6 +228,15 @@ let router = new Router({
         authen: true,
         author: 'admin-klinickog-centra'
       },
+    },
+    {
+      path: '/zahtevi_za_registraciju',
+      name: 'zahtevi_za_registraciju',
+      component: ZahteviZaRegistraciju,
+      meta: {
+        authen: true,
+        author: 'admin-klinickog-centra'
+      }
     },
     
   ]

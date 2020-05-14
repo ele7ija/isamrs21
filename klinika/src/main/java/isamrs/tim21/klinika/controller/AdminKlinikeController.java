@@ -21,7 +21,8 @@ public class AdminKlinikeController {
 
   @PostMapping
   @PreAuthorize("hasAuthority('admin-klinickog-centra')")
-  public ResponseEntity<AdministratorKlinike> addAdministratorKlinike(@RequestBody AdminKlinikeDTO noviAdminKlinikeDTO){
+  public ResponseEntity<AdministratorKlinike> addAdministratorKlinike(
+    @RequestBody AdminKlinikeDTO noviAdminKlinikeDTO){
     AdministratorKlinike retval = korisnikService.saveAdminKlinike(noviAdminKlinikeDTO);
     return new ResponseEntity<>(retval, HttpStatus.OK);
   }
