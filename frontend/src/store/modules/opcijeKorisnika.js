@@ -129,7 +129,7 @@ const state = {
           { 
             title: 'Zahtevi za registraciju',
             action: 'mdi-receipt',
-            componentName: 'tipovi_pregleda',
+            componentName: 'zahtevi_za_registraciju',
             items:[]
           },
           {

@@ -16,6 +16,7 @@ import upitiPreglediAdmin from './modules/upitiPreglediAdmin';
 import adminiKlinike from './modules/adminiKlinike';
 import salaFilter from './modules/salaFilter';
 import createPersistedState from 'vuex-persistedstate'
+import zahteviZaRegistraciju from './modules/zahteviZaRegistraciju'
 
 //Plugins
 Vue.use(Vuex);
@@ -36,7 +37,8 @@ export default new Vuex.Store({
     upitiPreglediAdmin,
     adminiKlinike,
     upitZaPregled,
-    salaFilter
+    salaFilter,
+    zahteviZaRegistraciju,
   },
 
   plugins: [
