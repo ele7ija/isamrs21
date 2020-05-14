@@ -162,7 +162,7 @@ public class OsobljeService {
 				tp.getLekari().remove(lekar); //mora posto je tip pregleda vlasnik veze
 			}
 			Lekar lekarToDelete = new Lekar();
-			lekarToDelete.setId(idOsoblja);
+			lekarToDelete = lekar.copy();
 			lekarToDelete.setVersion(version);
 			osobljeRepository.delete(lekarToDelete);
 			return new CustomResponse<Boolean>(true, true, "OK.");

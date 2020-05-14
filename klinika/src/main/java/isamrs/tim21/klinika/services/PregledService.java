@@ -177,6 +177,8 @@ public class PregledService {
 		if(sala == null){
 			return false;
 		}
+		
+		//vrati false ukoliko postoji pregled koji se odrzava u ovoj sali
 		for(Pregled p : sala.getPregledi()){
 			if(p.getId() == pregled.getId())
 				continue;
@@ -212,6 +214,8 @@ public class PregledService {
 		if(osoblje == null || osoblje instanceof MedicinskaSestra)
 			return false;
 		Lekar lekar = (Lekar) osoblje;
+		
+		//vrati false ukoliko postoji pregled koji vodi ovaj lekar
 		for(Pregled p : lekar.getPregledi()){
 			if(p.getId() == pregled.getId())
 				continue;
@@ -219,6 +223,8 @@ public class PregledService {
 				return false;
 			}
 		}
+		
+		//vrati false ukoliko lekar nije specijalizovan za ovaj tip pregleda
 		if(!lekar.getTipovi_pregleda().contains(pregled.getTipPregleda()))
 			return false;
 		return true;

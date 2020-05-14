@@ -67,7 +67,7 @@
         </td>
       </template>
     </v-data-table>
-    <v-btn class="my-4 mx-2" color="primary" @click="commit()" :disabled="!btnEnabled || slobodniLekari.length==0">Dalje</v-btn>
+    <v-btn class="my-4 mx-2" color="primary" @click="commit()" :disabled="!btnEnabled || slobodniLekari.length==0">Potvrdi</v-btn>
     <v-btn class="my-4 mx-2" @click="close()">Odustani</v-btn>
   </v-card-text>
 </template>

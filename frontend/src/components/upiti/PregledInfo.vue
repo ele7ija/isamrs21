@@ -16,8 +16,11 @@
           <v-col v-if="!isLekarValid" cols=12 md="2">
             <v-btn color="primary" class="mt-3" @click="dialog1=true">Promeni lekara</v-btn>
           </v-col>
-          <v-col cols=12 md="6" v-if="upit.sala">
+          <v-col cols=12 :md="isSalaValid ? 6 : 4" v-if="upit.sala">
             <v-text-field v-model="upit.sala.text" label="Sala" readonly></v-text-field>
+          </v-col>
+          <v-col v-if="!isSalaValid" cols=12 md="2">
+            <v-btn color="primary" class="mt-3" @click="emit('decStep')">Promeni salu</v-btn>
           </v-col>
           <v-col cols=12 md="6">
             <v-text-field v-model="upit._pocetak" label="Početak pregleda" readonly></v-text-field>
@@ -73,16 +76,30 @@ export default {
     };
   },
   mounted(){
-    this.$refs.form.validate();
-    console.log("mountujem");
+    if(this.$refs.form)
+      this.$refs.form.validate();
   },
   computed: {
     ...mapGetters({
       pregledi: "preglediAdmin/getPreglediKlinike",
-      lekari: "osoblje/getLekari"
+      lekari: "osoblje/getLekari",
     }),
     ukupnaCena(){
       return this.upit.cena - 0.01 * this.popust * this.upit.cena;
+    },
+    isSalaValid(){
+      if(!this.upit.sala)
+        return true;
+      let sala = this.upit.sala.value;
+      let preglediSale = this.pregledi.filter(x => x.sala.id == sala.id);
+      return preglediSale.filter(pregled => {
+        let start = this.upit.pocetak;
+        let end = this.upit.kraj;
+        let start2 = new Date(pregled.pocetakPregleda);
+        let end2 = new Date(pregled.krajPregleda);
+        return (start.getTime() <= start2.getTime() && start2.getTime() <= end.getTime())
+          || (start2.getTime() <= start && start <= end2.getTime())
+      }).length == 0;
     },
     isLekarValid(){
       let lekar = this.upit.lekar.value;
@@ -106,6 +123,12 @@ export default {
     lekarRule: function(){
       const rules = [];
       const rule1 = v => this.isLekarValid || `Lekar ${v} ne može da izvrši ovaj pregled`;
+      rules.push(rule1);
+      return rules;
+    },
+    salaRule: function(){
+      const rules = [];
+      const rule1 = v => this.isSalaValid || `Sala ${v} je zauzeta u odabranom terminu.`;
       rules.push(rule1);
       return rules;
     }

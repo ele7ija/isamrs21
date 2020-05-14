@@ -79,7 +79,6 @@ public class UpitZaPregled implements IdentitySerializable {
 	private Lekar lekar;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
-	//@JsonSerialize(using=IdentitySerializer.class)
 	private Klinika klinika;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
