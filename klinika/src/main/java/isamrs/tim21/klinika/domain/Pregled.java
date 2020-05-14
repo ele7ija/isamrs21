@@ -10,6 +10,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -20,6 +23,7 @@ import javax.persistence.Version;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import isamrs.tim21.klinika.jsonSerialize.IdentityListSerializer;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
 import isamrs.tim21.klinika.jsonSerialize.PosetaSerializer;
@@ -64,19 +68,15 @@ public class Pregled implements IdentitySerializable{
 	private Date krajPregleda;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
-	//@JsonSerialize(using=IdentitySerializer.class)
 	private TipPregleda tipPregleda;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
-	//@JsonSerialize(using=IdentitySerializer.class)
 	private Sala sala;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
-	//@JsonSerialize(using=IdentitySerializer.class)
 	private Lekar lekar;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
-	//@JsonSerialize(using=IdentitySerializer.class)
 	private Klinika klinika;
 
 	@OneToOne(mappedBy="pregled", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
@@ -86,6 +86,12 @@ public class Pregled implements IdentitySerializable{
 	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="unapredDefinisaniPregled")
 	@JsonSerialize(using=UpitZaPregledListSerializer.class)
 	private List<UpitZaPregled> upiti;
+	
+	@ManyToMany(cascade=CascadeType.MERGE)
+	@JoinTable(name="dodatne_operacije_lekara", joinColumns=@JoinColumn(name="id_pregleda", referencedColumnName="id"),
+	inverseJoinColumns=@JoinColumn(name="id_lekara", referencedColumnName="id"))
+	@JsonSerialize(using=IdentityListSerializer.class)
+	private List<Lekar> dodatniLekari;
 	
 	@Version
 	@Column(name="version", columnDefinition="integer DEFAULT 0", nullable=false)
@@ -206,6 +212,14 @@ public class Pregled implements IdentitySerializable{
 
 	public void setUpiti(List<UpitZaPregled> upiti) {
 		this.upiti = upiti;
+	}
+
+	public List<Lekar> getDodatniLekari() {
+		return dodatniLekari;
+	}
+
+	public void setDodatniLekari(List<Lekar> dodatniLekari) {
+		this.dodatniLekari = dodatniLekari;
 	}
 	
 	

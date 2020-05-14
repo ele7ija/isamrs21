@@ -68,7 +68,13 @@ const mutations = {
     state.upiti_pregledi_admin.splice(index, 1);
     state.upiti_pregledi_admin.splice(index, 0, upit);
   },
-  deleteUpitZaPregled: (state, idUpita) => state.upiti_pregledi_admin = state.upiti_pregledi_admin.filter(x => x.id != idUpita)
+  deleteUpitZaPregled: (state, idUpita) => state.upiti_pregledi_admin = state.upiti_pregledi_admin.filter(x => x.id != idUpita),
+  setPocetak: (state, object) => {
+    state.upiti_pregledi_admin.filter(x => x.id == object.id)[0].pocetakPregleda = object.pocetak;
+  },
+  setKraj: (state, object) => {
+    state.upiti_pregledi_admin.filter(x => x.id == object.id)[0].krajPregleda = object.kraj;
+  }
 }
 
 export default{

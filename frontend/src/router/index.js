@@ -5,7 +5,7 @@ import Registracija from '@/components/Registracija';
 import ONama from '@/components/ONama';
 import UserDashboard from "@/components/dashboards/UserDashboard";
 import TipPregleda from "@/components/tipovi_pregleda/TipPregleda";
-import Sala from "@/components/sale/Sala";
+import SalaMain from "@/components/sale/SalaMain";
 import Osoblje from "@/components/osoblje/Osoblje";
 import PreglediMain from "@/components/pregledi/PreglediMain";
 import UpitiPreglediAdmin from "@/components/upiti/UpitiPreglediAdmin";
@@ -20,6 +20,7 @@ import Lekari from '@/components/pacijenti/klinike/Lekari';
 import AdminiKlinickogCentra from '@/components/admin_klinickog_centra/AdminiKlinickogCentra'
 import AdminiKlinike from '@/components/admin_klinickog_centra/AdminiKlinike'
 import KlinikeFromAdminCentra from '@/components/admin_klinickog_centra/Klinike'
+import ZahteviZaRegistraciju from '@/components/admin_klinickog_centra/ZahteviZaRegistraciju'
 
 import PacijentiHomePage from '@/components/pacijenti/PacijentiHomePage';
 
@@ -93,7 +94,7 @@ let router = new Router({
     {
       path: '/sale',
       name: 'sala',
-      component: Sala,
+      component: SalaMain,
       meta: {
         authen: true,
         author: 'admin-klinike'
@@ -238,6 +239,15 @@ let router = new Router({
         authen: true,
         author: 'admin-klinickog-centra'
       },
+    },
+    {
+      path: '/zahtevi_za_registraciju',
+      name: 'zahtevi_za_registraciju',
+      component: ZahteviZaRegistraciju,
+      meta: {
+        authen: true,
+        author: 'admin-klinickog-centra'
+      }
     },
     
   ]

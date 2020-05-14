@@ -39,8 +39,8 @@ public class SalaService {
 			return new CustomResponse<Boolean>(false, false, "Greska: Sala nije pronadjena.");
 		}
 		Sala salaToDelete = new Sala();
-		sala.setId(idSale);
-		sala.setVersion(version);
+		salaToDelete.setId(idSale);
+		salaToDelete.setVersion(version);
 		salaRepository.delete(salaToDelete); //ovde moze da dodje do nepoklapanja verzija usled optimistickog zakljucavanja
 		return new CustomResponse<Boolean>(true, true, "OK");
 	}

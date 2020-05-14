@@ -40,6 +40,7 @@ export default {
             kraj: new Date(x.krajPregleda).toLocaleTimeString(),
             lekar: `${osoblje.ime} ${osoblje.prezime}`,
             tipPregleda: tipPregleda.naziv,
+            vrsta: tipPregleda.vrsta,
             sala: sala.oznaka,
             cena: parseInt(x.cena, 10),
             popust: x.popust,

@@ -2,20 +2,18 @@
   <div>
     <v-data-table
       :headers="headers"
-      :items="getAll"
+      :items="_sale"
       :search="search"
-      class="elevation-1"
+      show-expand
+      single-expand
+      :expanded.sync="expanded"
+      item-key="id"
+      class="elevation-1 mt-2"
       >
       <template v-slot:top>
         <v-toolbar flat color="white">
-          <v-toolbar-title>Sale</v-toolbar-title>
-          <v-divider
-            class="mx-4"
-            inset
-            vertical
-          ></v-divider>
+          <v-toolbar-title>{{title}}</v-toolbar-title>
           <v-spacer></v-spacer>
-          
           <v-text-field
             v-model="search"
             append-icon="mdi-magnify"
@@ -23,13 +21,36 @@
             single-line
             hide-details
           ></v-text-field>
-          <v-divider
-            class="mx-4"
-            inset
-            vertical
-          ></v-divider>
           <v-spacer></v-spacer>
-          
+          <span class="datetime-picker">
+            <v-datetime-picker
+              v-model="_dateTimeStart"
+              label="Početak pregleda"
+              dateFormat="dd.MM.yyyy"
+              :textFieldProps="textFieldProps"
+            >
+              <template slot="actions" slot-scope="{ parent }">
+                <v-btn color="error darken-1" @click="clearDates(parent)">Clear</v-btn>
+                <v-btn color="success darken-1" @click="parent.okHandler">Done</v-btn>
+              </template>
+            </v-datetime-picker>
+          </span>
+          <span class="datetime-picker">
+            <v-datetime-picker
+              v-model="_dateTimeEnd"
+              label="Kraj pregleda"
+              dateFormat="dd.MM.yyyy"
+              :textFieldProps="textFieldProps"
+              :disabled="dateTimeStart==null"
+              :key="k"
+            >
+              <template slot="actions" slot-scope="{ parent }">
+                <v-btn color="error darken-1" @click="parent.clearHandler">Clear</v-btn>
+                <v-btn color="success darken-1" @click="parent.okHandler">Done</v-btn>
+              </template>
+            </v-datetime-picker>
+          </span>
+          <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ on }">
               <v-btn color="primary" dark class="mb-2" v-on="on">Dodaj</v-btn>
@@ -59,6 +80,12 @@
             </v-form>
           </v-dialog>
         </v-toolbar>
+      </template>
+      <template v-slot:expanded-item="{ headers, item }">
+        <td :colspan="headers.length">
+          <p class="headline mt-7">Radni kalendar sale: {{item.oznaka}}</p>
+          <PreglediSale :idSale="item.id" class="mb-3"></PreglediSale>
+        </td>
       </template>
       <template v-slot:item.actions="{ item }">
         <v-icon
@@ -95,16 +122,29 @@
 
 <script>
 import {mapGetters, mapActions} from 'vuex';
+import PreglediSale from './PreglediSale'
 export default {
   name: "Sala",
+  props: [
+    "sale",
+    "pregledi"
+  ],
+  components: {
+    PreglediSale
+  },
   data: function(){
     return {
+      k: 0,
+      textFieldProps: {
+        appendIcon: 'event'
+      },
       snackbar: false,
       snackbarTimeout: 3000,
       snackbarText: null,
       dialog: false,
       search: '',
       isFormValid: false,
+      expanded: [],
       headers: [
         {
           text: 'Oznaka',
@@ -116,7 +156,10 @@ export default {
           text: 'Actions',
           value: 'actions',
           sortable: false,
-          align: 'end'
+        },
+        {
+          text: 'Kalendar',
+          value: 'data-table-expand'
         }
       ],
       newItem: {
@@ -127,39 +170,68 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(
-      {
-        getAll: 'sale/getSale',
-        get: 'sale/getSala'
+    ...mapGetters({
+      dateTimeStart: 'salaFilter/dateTimeStart',
+      dateTimeEnd: 'salaFilter/dateTimeEnd'
+    }),
+    _dateTimeStart: {
+      get(){
+        return this.dateTimeStart;
+      },
+      set(newValue){
+        if(newValue == null){
+          this.$store.commit("salaFilter/setDateTimeEnd", null, {root: true});
+        }
+        this.$store.commit("salaFilter/setDateTimeStart", newValue, {root: true});
       }
-    ),
-    
+    },
+    _dateTimeEnd: {
+      get(){
+        return this.dateTimeEnd;
+      },
+      set(newValue){
+        this.$store.commit("salaFilter/setDateTimeEnd", newValue, {root: true});
+      }
+    },
+    _sale(){
+      if(this.dateTimeStart != null && this.dateTimeEnd != null){
+        return this.sale.filter(x => {
+          let preglediSale = this.pregledi.filter(y => y.sala.id == x.id);
+          return preglediSale.filter(y => {
+            let start = new Date(y.pocetakPregleda);
+            let end = new Date(y.krajPregleda);
+            return (start.getTime() <= this.dateTimeStart.getTime() && end.getTime() >= this.dateTimeStart.getTime()) ||
+              (this.dateTimeStart.getTime() <= start.getTime() && this.dateTimeEnd.getTime() >= start.getTime());
+          }).length == 0;
+        });
+      }else{
+        return this.sale;
+      }
+    },
     formTitle: function(){
        return this.update ? 'Izmena sale': 'Dodavanje nove sale';
     },
-    
+    title: function(){
+      return this.dateTimeEnd == null ? 'Sale' : 'Slobodne sale';
+    },
     salaRules: function(){
       const rules = [];
       rules.push(v => !!v || "Oznaka ne sme ostati prazna");
       if(this.update){
-        rules.push(v => this.getAll.findIndex(x => x.oznaka == v && x.id != this.newItem.id) == -1 || "Oznaka mora biti jedinstvena");
+        rules.push(v => this.sale.findIndex(x => x.oznaka == v && x.id != this.newItem.id) == -1 || "Oznaka mora biti jedinstvena");
       }else{
-        rules.push(v => this.getAll.findIndex(x => x.oznaka == v) == -1 || "Oznaka mora biti jedinstvena");
+        rules.push(v => this.sale.findIndex(x => x.oznaka == v) == -1 || "Oznaka mora biti jedinstvena");
       }
       
       return rules;
     }
   },
-  created(){
-    this.fetchData();
-  },
   methods: {
     ...mapActions(
       {
-        fetchData: 'sale/loadSale',
         addSala: 'sale/addSala',
         updateSala: 'sale/updateSala',
-        removeSala: 'sale/removeSala'
+        removeSala: 'sale/removeSala',
       }
     ),
     resetNewItem(){
@@ -194,11 +266,23 @@ export default {
         this.snackbarText = error;
         this.snackbar = true;
       });
+    },
+    clearDates(parent){
+      this._dateTimeEnd = null;
+      parent.clearHandler();
+      this.k++;
     }
   }
 }
 </script>
 
 <style>
-
+.datetime-picker{
+  margin-top: 1.2rem;
+  margin-right: 1rem;
+}
+.datetime-picker{
+  margin-top: 1.2rem;
+  margin-right: 1rem;
+}
 </style>

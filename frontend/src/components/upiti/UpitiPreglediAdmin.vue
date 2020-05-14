@@ -89,12 +89,15 @@ export default {
   created(){
     this.fetchPregledi();
     this.fetchSale();
+    this.fetchOsoblje();
     this.fetchUpiti();
+    this.$store.commit("salaFilter/reset", {}, {root:true});
   },
   methods: {
     ...mapActions({
       fetchUpiti: "upitiPreglediAdmin/loadUpiti",
       fetchSale: "sale/loadSale",
+      fetchOsoblje: "osoblje/loadMedicinskoOsoblje",
       fetchPregledi: "preglediAdmin/fetchPreglediKlinike",
       obradiAdmin: "upitiPreglediAdmin/obradiAdmin",
       deleteUpit: "upitiPreglediAdmin/deleteUpit"

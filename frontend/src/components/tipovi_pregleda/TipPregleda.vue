@@ -47,10 +47,19 @@
                         <v-text-field v-model="newItem.naziv" label="Naziv" :rules="nazivRules"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="6">
-                        <v-text-field v-model="newItem.opis" label="Opis" :rules="opisRules"></v-text-field>
+                        <v-text-field type="number" v-model="newItem.trajanjeMinuti" label="Trajanje u minutima" :rules="minutiRules" :min="1"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="6">
-                        <v-text-field type="number" v-model="newItem.trajanjeMinuti" label="Trajanje u minutima" :rules="minutiRules" :min="1"></v-text-field>
+                        <v-select
+                          v-model="newItem.vrsta"
+                          :items="['pregled', 'operacija']"
+                          label="Vrsta pregleda"
+                          chips
+                          deletable-chips
+                          hint="Odaberite vrstu pregleda"
+                          persistent-hint
+                          :rules="vrstaRules"
+                        ></v-select>
                       </v-col>
                       <v-col cols="12" sm="6" md="6">
                         <v-select
@@ -63,6 +72,9 @@
                           persistent-hint
                           :rules="cenovnikRules"
                         ></v-select>
+                      </v-col>
+                      <v-col cols="12" sm="12" md="12">
+                        <v-text-field v-model="newItem.opis" label="Opis" :rules="opisRules"></v-text-field>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -141,6 +153,11 @@ export default {
           sortable: true
         },
         {
+          text: 'Vrsta',
+          value: 'vrsta',
+          sortable: true
+        },
+        {
           text: 'Stavka cenovnika',
           value: 'stavkaCenovnika',
           sortable: true
@@ -163,6 +180,7 @@ export default {
         version: '',
         cenovnik: null,
         trajanjeMinuti: 60,
+        vrsta: null,
         lekari: []
       },
       update: false
@@ -212,6 +230,13 @@ export default {
       return rules;
     },
 
+    vrstaRules: function(){
+      const rules = [];
+      const rule1 = v => !!v || 'Vrsta pregleda ne sme ostati prazna';
+      rules.push(rule1);
+      return rules;
+    },
+
     cenovnikRules: function(){
       const rules = [];
       const rule1 = v => !!v || 'Cenovnik ne sme ostati prazan';
@@ -233,6 +258,7 @@ export default {
               naziv: element.naziv,
               opis: element.opis,
               trajanjeMinuti: element.trajanjeMinuti,
+              vrsta: element.vrsta,
               lekari: element.lekari,
               cenovnik: this.cenovnici[indeks], //ZA BEKEND
               stavkaCenovnika: this.cenovnici[indeks].naziv, //ZA PRIKAZ
@@ -270,6 +296,7 @@ export default {
         opis: '',
         version: '',
         cenovnik: null,
+        vrsta: null,
         trajanjeMinuti: 60,
         lekari: []
       };
@@ -312,20 +339,6 @@ export default {
         this.snackbarText = error;
         this.snackbar = true;
       });
-    },
-
-    validateRules(){
-      for(let rule of this.nazivRules){
-        if(rule != true){ //mora ovako
-          return true;
-        }
-      }
-      for(let rule of this.opisRules){
-        if(rule != true){ //mora ovako
-          return true;
-        }
-      }
-      return false;
     }
   }
 }
