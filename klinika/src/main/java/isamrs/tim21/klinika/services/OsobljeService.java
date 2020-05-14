@@ -180,6 +180,16 @@ public class OsobljeService {
 			return osobljeRepository.findAllByIdKlinike(idKlinike);
 		}
 	}
+
+	@Transactional(readOnly=true)
+	public CustomResponse<List<Lekar>> findAllLekariByIdKlinike(Long idKlinike) {
+		Klinika klinika = klinikaRepository.findById(idKlinike).orElse(null);
+		if(klinika == null){
+			return new CustomResponse<List<Lekar>>(null, false, "Klinika ne postoji.");
+		}
+		List<Lekar> lekari = osobljeRepository.findAllLekariByIdKlinike(idKlinike);
+		return new CustomResponse<List<Lekar>>(lekari, true, "Lekari pronađeni.");
+	}
 	
 	@Transactional(readOnly=true)
 	public MedicinskoOsoblje findByIdKlinikeAndById(Long idKlinike, Long idOsoblja) {

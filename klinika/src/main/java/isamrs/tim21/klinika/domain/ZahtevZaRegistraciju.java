@@ -2,21 +2,15 @@ package isamrs.tim21.klinika.domain;
 
 import java.sql.Timestamp;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import isamrs.tim21.klinika.dto.ZahtevZaRegistracijuDTO;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
-
 
 @Entity
 @Table(name="zahtev_za_registraciju")
@@ -34,8 +28,8 @@ public class ZahtevZaRegistraciju implements IdentitySerializable{
 	@MapsId
 	private Pacijent pacijent;
 	
-	@ManyToOne(fetch=FetchType.EAGER)
-	private AdministratorCentra adminOdobrio;
+	@Column(name="odobren")
+	private Boolean odobren;
 
 	public Long getId() {
 		return id;
@@ -69,13 +63,12 @@ public class ZahtevZaRegistraciju implements IdentitySerializable{
 		this.pacijent = pacijent;
 	}
 
-	public AdministratorCentra getAdminOdobrio() {
-		return adminOdobrio;
+	public Boolean getOdobren() {
+		return odobren;
 	}
 
-	public void setAdminOdobrio(AdministratorCentra adminOdobrio) {
-		this.adminOdobrio = adminOdobrio;
+	public void setOdobren(Boolean odobren) {
+		this.odobren = odobren;
 	}
-	
 	
 }
