@@ -40,15 +40,19 @@
 
 
 
+
+
+
     <!-- akcije prihvati i odbij -->
     <template v-slot:item.actions="{ item }">
 
-      <!-- akcija prihvati -->
-      <v-dialog v-model="dialogOnPrihvati" width="400">
+      <!-- dialog prihvati -->
+      <!-- retain-focus="false" mora jer vueitfy ima neki bag -->
+      <v-dialog v-model="dialogOnPrihvati" width="400" :retain-focus="false"> 
         <template v-slot:activator="{ on }">
           <v-btn v-on="on" class="ma-2" elevation=1  color="success lighten-1" small >
             Prihvati
-            <v-icon right>mdi-check</v-icon>
+          <v-icon right>mdi-check</v-icon>
           </v-btn>
         </template>
 
@@ -57,8 +61,6 @@
             Da li ste sigurni da zelite da prihvatite korisnika 
             {{item.pacijent.ime}} {{item.pacijent.prezime}}?
           </v-card-text>
-
-
           <v-divider></v-divider>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -72,8 +74,8 @@
         </v-card>
       </v-dialog>
 
-      <!-- akcija odbij -->
-      <v-dialog v-model="dialogOnOdbij" width="500">
+      <!-- dialog odbij -->
+      <v-dialog v-model="dialogOnOdbij" width="500" :retain-focus="false">
         <template v-slot:activator="{ on }">
           <v-btn v-on="on" class="ma-2" elevation=1  color="error lighten-1" small>
             Odbij 
@@ -81,7 +83,7 @@
           </v-btn>
         </template>
 
-        <v-form v-model="isFormValid">
+        <v-form v-model="isFormValid" >
           <v-card>
             <v-card-title>
               <span class="headline">
@@ -102,7 +104,7 @@
               </v-container>
             </v-card-text>
 
-            <!-- akcije -->
+            
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="success" small  @click="odbij(item)" :disabled="!isFormValid">
@@ -117,9 +119,10 @@
       </v-dialog>
     </template> 
 
+
   </v-data-table>
   
-  <!-- snackbarovi -->
+<!-- snackbarovi -->
   <v-snackbar
   :timeout=0
   v-model="mailSending">
@@ -246,9 +249,6 @@ export default {
       set (bool) {this.setMailNotSent(bool)}
     }
   },
-
-
-
 
   created(){
     this.fetchData();
