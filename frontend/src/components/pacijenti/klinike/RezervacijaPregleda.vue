@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid >
+  <v-container fluid v-if='odabraniPregled!=null'>
     <v-row justify="center">
       <v-col cols='7'>
         <v-card>
@@ -195,18 +195,30 @@ export default {
       '_korisnik'
     ]),
     generisanDatum: function() {
+      if (this.odabraniPregled == null) {
+        return ''
+      }
       let datum = new Date(this.odabraniPregled.pocetakPregleda);
       return datum.toISOString().substr(0, 10);
     },
     generisanLekar: function() {
+      if (this.odabraniPregled == null) {
+        return ''
+      }
       return this.odabraniPregled.lekar.ime + ' ' + this.odabraniPregled.lekar.prezime;
     },
     casoviPocetka: function() {
+      if (this.odabraniPregled == null) {
+        return ''
+      }
       let date = new Date(this.odabraniPregled.pocetakPregleda);
       return ('0' + date.getHours()).slice(-2) + ':' +
         ('0' + date.getMinutes()).slice(-2);
     },
     casoviKraja: function() {
+      if (this.odabraniPregled == null) {
+        return ''
+      }
       let date = new Date(this.odabraniPregled.krajPregleda);
       return ('0' + date.getHours()).slice(-2) + ':' +
         ('0' + date.getMinutes()).slice(-2);
@@ -221,8 +233,9 @@ export default {
     ...mapActions('upitZaPregled', [
       'kreirajUpit']),
     odustani: function() {
-      this.setOdabraniPregled(null);
       this.$router.go(-1)
+      this.setOdabraniPregled(null);
+
     },
     potvrdi: function() {
       // let obj = {
