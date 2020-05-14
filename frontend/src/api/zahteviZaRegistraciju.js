@@ -17,6 +17,14 @@ export default{
       `${process.env.VUE_APP_BACKEND_ROOT}/zahtevi_za_registraciju/odbij`,
       zahtev,
       options
-    )
-  }
+    );
+  },
+  async prihvatiZahtev(zahtev){
+    let options = util.prepareOptions();
+    return axios.post(
+      `${process.env.VUE_APP_BACKEND_ROOT}/zahtevi_za_registraciju/prihvati`,
+      zahtev,
+      options
+    );
+  },
 }

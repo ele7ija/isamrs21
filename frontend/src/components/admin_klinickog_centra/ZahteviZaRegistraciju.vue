@@ -1,14 +1,11 @@
 <template>
 <div>
 
-
-
   <v-data-table
     :headers="headers"
     :items="getAll"
     :search="search"
-    class="elevation-1"
-    
+    class="elevation-1" 
     >
     <template v-slot:top>
       <v-toolbar flat color="white">
@@ -38,91 +35,21 @@
       </v-toolbar>
     </template>
 
-
-
-
-
-
     <!-- akcije prihvati i odbij -->
     <template v-slot:item.actions="{ item }">
-
-      <!-- dialog prihvati -->
-      <!-- retain-focus="false" mora jer vueitfy ima neki bag -->
-      <v-dialog v-model="dialogOnPrihvati" width="400" :retain-focus="false"> 
-        <template v-slot:activator="{ on }">
-          <v-btn v-on="on" class="ma-2" elevation=1  color="success lighten-1" small >
+          <v-btn @click="prihvatiDialog(item)" class="ma-2" elevation=1  color="success lighten-1" small >
             Prihvati
           <v-icon right>mdi-check</v-icon>
-          </v-btn>
-        </template>
-
-        <v-card>
-          <v-card-text class="pa-2">
-            Da li ste sigurni da zelite da prihvatite korisnika 
-            {{item.pacijent.ime}} {{item.pacijent.prezime}}?
-          </v-card-text>
-          <v-divider></v-divider>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="success" small @click="prihvati(item)">
-              Prihvati
-            </v-btn>
-            <v-btn color="error lighten-1" small @click="dialogOnPrihvati=false">
-              Nazad
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-
-      <!-- dialog odbij -->
-      <v-dialog v-model="dialogOnOdbij" width="500" :retain-focus="false">
-        <template v-slot:activator="{ on }">
-          <v-btn v-on="on" class="ma-2" elevation=1  color="error lighten-1" small>
+          </v-btn>       
+          <v-btn @click="odbijDialog(item)" class="ma-2" elevation=1  color="error lighten-1" small>
             Odbij 
           <v-icon right>mdi-close</v-icon>
           </v-btn>
-        </template>
-
-        <v-form v-model="isFormValid" >
-          <v-card>
-            <v-card-title>
-              <span class="headline">
-              Odbij zahtev korisniku: 
-              {{item.pacijent.ime}} {{item.pacijent.prezime}}
-              </span>
-            </v-card-title>
-
-            <v-card-text>
-              <v-container>
-                <v-textarea
-                outlined
-                label="razlog odbijanja" 
-                hint="Neregistrovanom korisniku obrazložiti zašto je odbijen."
-                :rules=razlogRule
-                v-model="zahtev.tekst"
-                ></v-textarea>
-              </v-container>
-            </v-card-text>
-
-            
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="success" small  @click="odbij(item)" :disabled="!isFormValid">
-              Pošalji
-            </v-btn>
-            <v-btn color="error lighten-1" small @click.stop="dialogOnOdbij=false">
-              Nazad
-            </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-form>
-      </v-dialog>
     </template> 
-
 
   </v-data-table>
   
-<!-- snackbarovi -->
+  <!-- snackbarovi -->
   <v-snackbar
   :timeout=0
   v-model="mailSending">
@@ -162,6 +89,60 @@
     </v-btn>
   </v-snackbar>
 
+  <!-- dijalozi -->
+  <!-- dialog prihvati -->
+  <!-- retain-focus="false" mora jer vueitfy ima neki bag -->
+  <v-dialog v-model="dialogOnPrihvati" width="400" > 
+    <v-card>
+      <v-card-text class="pa-2">
+        Da li ste sigurni da zelite da prihvatite korisnika {{punoIme}}?
+      </v-card-text>
+      <v-divider></v-divider>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="success" small @click="prihvati">
+          Prihvati
+        </v-btn>
+        <v-btn color="error lighten-1" small @click="dialogOnPrihvati=false">
+          Nazad
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- dialog odbij -->
+  <v-dialog v-model="dialogOnOdbij" width="500" >
+    <v-form v-model="isFormValid" >
+      <v-card>
+        <v-card-title>
+          <span class="headline">
+          Odbij zahtev korisniku: {{punoIme}}
+          </span>
+        </v-card-title>
+
+        <v-card-text>
+          <v-container>
+            <v-textarea
+            outlined
+            label="razlog odbijanja" 
+            hint="Neregistrovanom korisniku obrazložiti zašto je odbijen."
+            :rules=razlogRule
+            v-model="zahtev.tekst"
+            ></v-textarea>
+          </v-container>
+        </v-card-text>    
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="success" small  @click="odbij" :disabled="!isFormValid">
+          Pošalji
+        </v-btn>
+        <v-btn color="error lighten-1" small @click.stop="dialogOnOdbij=false">
+          Nazad
+        </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-form>
+  </v-dialog>
 
 </div>
 </template>
@@ -177,6 +158,10 @@ export default {
       dialogOnPrihvati: false,
       dialogOnOdbij: false,
       isFormValid: true,
+      selectedPacijent: {
+        ime: '',
+        prezime: '',
+      },
       zahtev: {
         tekst: 'Vaš zahtev se odbija jer..',
         id: undefined,
@@ -234,7 +219,9 @@ export default {
         getMailNotSent: 'zahteviZaRegistraciju/getMailNotSent',
       }
     ),
-
+    punoIme: function(){
+      return this.selectedPacijent.ime + ' ' + this.selectedPacijent.prezime;
+    },
     //za snackbarove polja
     mailSending: {
       get () {return this.getMailSending},
@@ -266,20 +253,32 @@ export default {
       }
     ),
 
-    prihvati (item){
-      this.dialogOnPrihvati = false;
-      this.prihvatiZahtev(item);
+    prihvatiDialog(item){
+      this.selectedPacijent.ime = item.pacijent.ime;
+      this.selectedPacijent.prezime = item.pacijent.prezime;
+      this.selectedPacijent.id = item.pacijent.id;
+      this.dialogOnPrihvati = true;
     },
-    odbij (item){
+    odbijDialog(item){
+      this.selectedPacijent.ime = item.pacijent.ime;
+      this.selectedPacijent.prezime = item.pacijent.prezime;
+      this.selectedPacijent.id = item.pacijent.id;
+      this.dialogOnOdbij = true;
+    },
+    prihvati (){
+      //zatvori dijalog
+      this.dialogOnPrihvati = false;
+      this.zahtev.id = this.selectedPacijent.id;
+      this.zahtev.datumOdobrenja = new Date();
+      this.zahtev.prihvacen = true;
+      this.prihvatiZahtev(this.zahtev);
+    },
+    odbij (){
       //zatvori dijalog
       this.dialogOnOdbij = false;
-      //upali snackbar promeni na true
-      this.snackbarSending = false;
-
       //posalji objekat na bek
-      this.zahtev.id = item.id;
+      this.zahtev.id = this.selectedPacijent.id;
       this.zahtev.datumOdobrenja = new Date();
-      //this.adminOdobrio =
       this.zahtev.prihvacen = false;
       this.odbijZahtev(this.zahtev);
     },
