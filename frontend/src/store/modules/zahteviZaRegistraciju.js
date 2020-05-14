@@ -29,6 +29,7 @@ const actions = {
     commit('setMailSending', true);
     zahteviAPI.odbijZahtev(zahtev)
     .then((response) =>{
+      console.log(response);
       //nakon sto je zavrseno na beku, mejl se vise ne salje
       commit('setMailSending', false);
       
