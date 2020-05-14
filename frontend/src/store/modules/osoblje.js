@@ -9,6 +9,9 @@ const getters = {
   getMedicinskoOsoblje: (state) => {
     return state.medicinskoOsoblje;
   },
+  getLekari: (state) => {
+    return state.medicinskoOsoblje.filter(x => x.pozicija == 'lekar');
+  },
   getMedicinskaOsoba: (state) => (id) => {
     let filtriraneOsobe = state.medicinskoOsoblje.filter(x => x.id == id);
     if(filtriraneOsobe.length == 0){
