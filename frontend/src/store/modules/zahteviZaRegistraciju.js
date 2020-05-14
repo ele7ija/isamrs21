@@ -29,19 +29,18 @@ const actions = {
     commit('setMailSending', true);
     zahteviAPI.odbijZahtev(zahtev)
     .then((response) =>{
-      console.log(response);
       //nakon sto je zavrseno na beku, mejl se vise ne salje
       commit('setMailSending', false);
-      
+      var httpStatus = response.status;
       //ako je response bio uspesan onda je mailSent = true
-      if(response != undefined){
-        console.log("response is defined")
+      if(httpStatus === 200){
+        console.log("response:", response.data)
         commit('deleteZahtev', response.data);
         commit('setMailSent', true);
       }
       //ako response nije bio uspesan onda je mailNotSent = true
       else{
-        console.log("response is undefined")
+        console.log("response: ", response.data)
         commit('setMailNotSent', true);
       }
     })
