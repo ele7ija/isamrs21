@@ -65,4 +65,10 @@ public interface PregledRepository extends JpaRepository<Pregled, Long> {
 			+ "WHERE p.klinika.id = :idKlinike "
 			+ "AND p.id = :idPregleda")
 	Pregled findByIdKlinikeAndIdPregledaPessimisticRead(@Param("idKlinike") Long idKlinike, @Param("idPregleda") Long idPregleda);
+
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	@Query("SELECT p FROM Pregled p "
+			+ "WHERE p.klinika.id = :idKlinike "
+			+ "AND p.id = :idPregleda")
+	Pregled findByIdKlinikeAndIdPregledaPessimisticWrite(@Param("idKlinike") Long idKlinike, @Param("idPregleda") Long idPregleda);
 }

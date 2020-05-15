@@ -1,5 +1,6 @@
 package isamrs.tim21.klinika.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -357,11 +358,6 @@ public class UpitZaPregledeService {
 		
 		//dobavi pacijenta u PESSIMISTIC_READ rezimu
 		Pacijent pacijent = pacijentRepository.findByIdPacijentaPessimisticRead(upitZaPregledToChange.getPacijent().getId());
-		if(pacijent.getVersion() != upitZaPregledToChange.getPacijent().getVersion()){
-			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-					new CustomResponse<UpitZaPregled>(null, false, "Greska: Pacijent je zastareo. Osvezite stranicu."),
-					HttpStatus.OK);
-		}
 		upitZaPregledToChange.setPacijent(pacijent);
 		
 		//dobavi salu u PESSIMISTIC_READ rezimu
@@ -394,8 +390,8 @@ public class UpitZaPregledeService {
 					HttpStatus.OK);
 		
 		//dobavi prethodno kreirani pregled u PESSIMISTIC_READ rezimu
-		pregled = pregledRepository.findByIdKlinikeAndIdPregledaPessimisticRead(idKlinike, upitZaPregledToChange.getUnapredDefinisaniPregled().getId());
-		
+		pregled = pregledRepository.findByIdKlinikeAndIdPregledaPessimisticRead(idKlinike, customResponse.getResult().getId());
+
 		upitZaPregledToChange.setUnapredDefinisaniPregled(pregled);
 		upit.setUnapredDefinisaniPregled(pregled);
 		
@@ -412,16 +408,17 @@ public class UpitZaPregledeService {
 			upitZaPregledToChange = upitZaPregledRepository.save(upitZaPregledToChange);
 			upit.setIzmenjeniPregled(upitZaPregledToChange);
 			upit = upitZaPregledRepository.save(upit);
-			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-					new CustomResponse<UpitZaPregled>(upit, true, "OK"),
-					HttpStatus.OK);
+			pregled.getUpiti().add(upitZaPregledToChange);
+			pregled.getUpiti().add(upit);
+			pregledRepository.save(pregled);
 		}else{
 			System.out.println("ostajanje pri starom upitu");
 			upit = upitZaPregledRepository.save(upit);
-			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-					new CustomResponse<UpitZaPregled>(upit, true, "OK"),
-					HttpStatus.OK);
+			pregled.getUpiti().add(upit);
+			pregledRepository.save(pregled);
 		}
-		
+		return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+				new CustomResponse<UpitZaPregled>(upit, true, "OK"),
+				HttpStatus.OK);
 	}
 }

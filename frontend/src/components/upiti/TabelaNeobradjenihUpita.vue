@@ -231,6 +231,7 @@ export default {
     edit(item){
       //SAMO za UPIT ZA CUSTOM PREGLED
       let updatedItem = this.upiti.filter(x => x.id == item.id)[0];
+      this.editableItem = null;
       this.editableItem = {
         id: item.id,
         version: item.version,

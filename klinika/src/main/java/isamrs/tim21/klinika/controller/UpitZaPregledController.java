@@ -59,6 +59,7 @@ public class UpitZaPregledController {
 			return new ResponseEntity<CustomResponse<UpitZaPregled>>(u, HttpStatus.OK);
 		}
 		catch (Exception e){
+			System.out.println(e.getMessage());
 			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
 				new CustomResponse<UpitZaPregled>(null, false, "Greška: Vaša verzija je zastarela. Osvežite stranicu."),
 				HttpStatus.OK);
@@ -210,14 +211,15 @@ public class UpitZaPregledController {
 	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdminCustom(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idUpita") Long idUpita, @RequestBody UpitZaPregled upitZaPregledToChange){
 		ResponseEntity<CustomResponse<UpitZaPregled>> retval = null;
-		try{
+		retval = upitZaPregledeService.obradiAdminCustom(idKlinike, idUpita, upitZaPregledToChange);
+		/*try{
 			retval = upitZaPregledeService.obradiAdminCustom(idKlinike, idUpita, upitZaPregledToChange);
 		}catch(Exception e){
 			System.out.println(e.getMessage());
 			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
 					new CustomResponse<UpitZaPregled>(null, false, "Greska. Verzija podatka je zastarela. Osvezite stranicu"),
 					HttpStatus.OK);
-		}
+		}*/
 		return retval;
 		
 	}

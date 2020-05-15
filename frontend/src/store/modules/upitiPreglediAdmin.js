@@ -42,12 +42,13 @@ const actions = {
     });
   },
 
-  async obradiAdminCustom({state, commit}, upit){
+  async obradiAdminCustom({state, commit, dispatch}, upit){
     return new Promise((resolve, reject) => {
       upitiPreglediAdmin.obradiAdminCustom(state.klinika.id, upit)
       .then(({data: {result, message, success}}) => {
         if(success && result != null){
           commit('updateExistingUpit', result);
+          dispatch('preglediAdmin/fetchPreglediKlinike', {}, {root: true});
           resolve(message);
         }else{
           reject(message);
