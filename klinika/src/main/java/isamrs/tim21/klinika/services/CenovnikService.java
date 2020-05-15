@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim21.klinika.domain.Cenovnik;
@@ -65,9 +66,9 @@ public class CenovnikService {
 		}
 	}
 
-	@Transactional(readOnly=false)
+	@Transactional(readOnly=false, isolation=Isolation.READ_COMMITTED)
 	public ResponseEntity<CustomResponse<Cenovnik>> update(Long idKlinike, Long idCenovnika,
-			Cenovnik cenovnikToChange) throws Exception{ //baca exception usled optimistickog zakljucavanja koje cemo kasnije implementirati
+			Cenovnik cenovnikToChange) throws Exception{
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
 			return new ResponseEntity<CustomResponse<Cenovnik>>(new CustomResponse<Cenovnik>(null, false, "Greska: Klinika nije pronadjena."), HttpStatus.NOT_FOUND);
@@ -79,16 +80,16 @@ public class CenovnikService {
 				return new ResponseEntity<CustomResponse<Cenovnik>>(
 						new CustomResponse<Cenovnik>(null, false, "Greska: Cenovnik nije pronadjen u datoj klinici."), HttpStatus.NOT_FOUND);
 			}
-			cenovnikToChange.setTipoviPregleda(cenovnik.getTipoviPregleda());
-			cenovnik = cenovnikRepository.save(cenovnikToChange); //ovde moze da dodje do nepoklapanja verzija
+			cenovnikToChange.setTipoviPregleda(cenovnik.getTipoviPregleda()); //potencijalni dirty read sprecen sa READ_COMMITTED
+			cenovnik = cenovnikRepository.save(cenovnikToChange);
 			return new ResponseEntity<CustomResponse<Cenovnik>>(
 					new CustomResponse<Cenovnik>(cenovnik, true, "OK."), HttpStatus.OK);
 		}
 	}
 
-	@Transactional(readOnly=false)
+	@Transactional(readOnly=false, isolation=Isolation.SERIALIZABLE) //spreciti unrepeatable read i phantom read nad tipovima pregleda
 	public ResponseEntity<CustomResponse<Boolean>> delete(Long idKlinike, Long idCenovnika, Long version)
-			throws Exception { //baca exception usled optimistickog zakljucavanja koje cemo kasnije implementirati
+			throws Exception {
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
 			return new ResponseEntity<CustomResponse<Boolean>>(HttpStatus.NOT_FOUND);
@@ -98,7 +99,7 @@ public class CenovnikService {
 						new CustomResponse<Boolean>(true, false, "Greska. Ne mozete obrisati cenovnik za koji postoje definisani tipovi pregleda"),
 						HttpStatus.OK);
 			}
-			Cenovnik cenovnik = cenovnikRepository.findById(idCenovnika).orElse(null);
+			Cenovnik cenovnik = cenovnikRepository.findByIdKlinikeAndIdCenovnika(klinika.getId(), idCenovnika);
 			if(cenovnik == null){
 				return new ResponseEntity<CustomResponse<Boolean>>(
 						new CustomResponse<Boolean>(false, false, "Greska. Cenovnik nije pronadjen."),
@@ -108,7 +109,7 @@ public class CenovnikService {
 			cenovnikToDelete.setId(idCenovnika);
 			cenovnikToDelete.setVersion(version);
 
-			cenovnikRepository.delete(cenovnikToDelete);
+			cenovnikRepository.delete(cenovnikToDelete); //ovde moze da dodje do nepoklapanja verzija
 			return new ResponseEntity<CustomResponse<Boolean>>(
 					new CustomResponse<Boolean>(true, true, "OK."),
 					HttpStatus.OK);

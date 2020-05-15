@@ -2,7 +2,7 @@
   <div>
     <v-container fluid>
       <div class="ml-5 mr-5">
-        <TabelaNeobradjenihUpita :all="_neobradjeniUpiti" class="mt-5" @accept="accept" @reject="reject"></TabelaNeobradjenihUpita>
+        <TabelaNeobradjenihUpita :all="_neobradjeniUpiti" class="mt-5" @accept="accept" @reject="reject" @acceptCustom="acceptCustom"></TabelaNeobradjenihUpita>
         <TabelaObradjenihUpita :all="_obradjeniUpiti" class="mt-5" @deleteItem="deleteItem"></TabelaObradjenihUpita>
       </div>
     </v-container>
@@ -47,7 +47,7 @@ export default {
       noviPregled: "preglediAdmin/getNoviPregled"
     }),
     _neobradjeniUpiti: function(){
-      let temp = this.upiti.filter(x => !x.adminObradio);
+      let temp = this.upiti.filter(x => !x.adminObradio && x.izmenjeniPregled == null);
       return temp.map(x => {
         return {
           id: x.id,
@@ -75,7 +75,7 @@ export default {
           kraj: new Date(x.krajPregleda).toLocaleTimeString(),
           lekar: `${x.lekar.ime} ${x.lekar.prezime}`,
           tipPregleda: x.tipPregleda.naziv,
-          sala: x.unapredDefinisaniPregled ? x.unapredDefinisaniPregled.sala.oznaka : null,
+          sala: (x.unapredDefinisaniPregled && x.unapredDefinisaniPregled.sala) ? x.unapredDefinisaniPregled.sala.oznaka : null,
           pregled: x.unapredDefinisaniPregled,
           odobren: x.odobren,
           pacijentObradio: x.pacijentObradio,
@@ -100,6 +100,7 @@ export default {
       fetchOsoblje: "osoblje/loadMedicinskoOsoblje",
       fetchPregledi: "preglediAdmin/fetchPreglediKlinike",
       obradiAdmin: "upitiPreglediAdmin/obradiAdmin",
+      obradiAdminCustom: "upitiPreglediAdmin/obradiAdminCustom",
       deleteUpit: "upitiPreglediAdmin/deleteUpit"
     }),
     accept(item){
@@ -122,6 +123,26 @@ export default {
       });
       this.refreshTables();
     },
+
+    acceptCustom({upit, cena, popust, konacnaCena, dodatniLekari}){
+      //SAMO ZA CUSTOM PREGLED
+      //prvo dodaje pregled, obradjuje upit i definise novi upit ako je to potrebno
+      upit.unapredDefinisaniPregled = {
+        cena,
+        popust,
+        konacnaCena,
+        dodatniLekari
+      };
+      this.obradiAdminCustom(upit).then(
+        null, (error) => {
+          this.snackbar = true;
+          this.snackbarText = error;
+        }
+      );
+      
+      this.refreshTables();
+    },
+
     reject(item){
       //SAMO za UPIT ZA UNAPRED DEFINISAN PREGLED
       let updatedItem = this.upiti.filter(x => x.id == item.id)[0];
@@ -143,8 +164,6 @@ export default {
       this.refreshTables();
     },
     deleteItem(item){
-      //TODO: brisanje upita na serveru(samo ako je pacijent obradio upit)
-      //voditi racuna da se obrise i originalni upit ukoliko je item zapravo izmenjeniUpit
       this.deleteUpit({idUpita: item.id, version: item.version}).then(null, (error) => {
         this.snackbarText = error;
         this.snackbar = true;
@@ -153,7 +172,7 @@ export default {
 
     refreshTables(){
       this._neobradjeniUpiti;
-      this._obradjeniUpiti
+      this._obradjeniUpiti;
     }
 
   }

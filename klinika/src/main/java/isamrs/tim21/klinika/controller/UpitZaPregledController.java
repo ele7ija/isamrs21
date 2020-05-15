@@ -187,7 +187,7 @@ public class UpitZaPregledController {
 		}
 	}
 	
-	// Put mapping za odobravanje upita.
+	// Put mapping za odobravanje upita za unapred definisani pregled.
 	@PutMapping(value="obradiAdmin/{idKlinike}/{idUpita}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdmin(@PathVariable("idKlinike") Long idKlinike, 
@@ -196,6 +196,24 @@ public class UpitZaPregledController {
 		try{
 			retval = upitZaPregledeService.obradiAdminMain(idKlinike, idUpita, upitZaPregledToChange);
 		}catch(Exception e){
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+					new CustomResponse<UpitZaPregled>(null, false, "Greska. Verzija podatka je zastarela. Osvezite stranicu"),
+					HttpStatus.OK);
+		}
+		return retval;
+		
+	}
+	
+	// Put mapping za odobravanje upita za custom pregled.
+	@PutMapping(value="obradiAdminCustom/{idKlinike}/{idUpita}")
+	@PreAuthorize("hasAuthority('admin-klinike')")
+	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdminCustom(@PathVariable("idKlinike") Long idKlinike, 
+			@PathVariable("idUpita") Long idUpita, @RequestBody UpitZaPregled upitZaPregledToChange){
+		ResponseEntity<CustomResponse<UpitZaPregled>> retval = null;
+		try{
+			retval = upitZaPregledeService.obradiAdminCustom(idKlinike, idUpita, upitZaPregledToChange);
+		}catch(Exception e){
+			System.out.println(e.getMessage());
 			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
 					new CustomResponse<UpitZaPregled>(null, false, "Greska. Verzija podatka je zastarela. Osvezite stranicu"),
 					HttpStatus.OK);

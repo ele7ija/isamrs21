@@ -1,5 +1,6 @@
 package isamrs.tim21.klinika.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -106,6 +107,22 @@ public class Pregled implements IdentitySerializable{
 	}
 
 	public Pregled(){}
+
+	public Pregled(UpitZaPregled upitZaPregledToChange) {
+		this.lekar = upitZaPregledToChange.getLekar();
+		this.tipPregleda = upitZaPregledToChange.getTipPregleda();
+		this.sala = upitZaPregledToChange.getSala();
+		this.klinika = upitZaPregledToChange.getKlinika();
+		this.upiti = new ArrayList<UpitZaPregled>(); //kasnije dodaj upit za pregled
+		this.pocetakPregleda = upitZaPregledToChange.getPocetakPregleda();
+		this.krajPregleda = upitZaPregledToChange.getKrajPregleda();
+		
+		//ostalo preuzmi od dummy objekta za pregled sa frontenda
+		this.popust = upitZaPregledToChange.getUnapredDefinisaniPregled().getPopust();
+		this.cena = upitZaPregledToChange.getUnapredDefinisaniPregled().getCena();
+		this.konacnaCena = upitZaPregledToChange.getUnapredDefinisaniPregled().getKonacnaCena();
+		this.dodatniLekari = upitZaPregledToChange.getUnapredDefinisaniPregled().getDodatniLekari();
+	}
 
 	public Klinika getKlinika() {
 		return klinika;
@@ -221,6 +238,5 @@ public class Pregled implements IdentitySerializable{
 	public void setDodatniLekari(List<Lekar> dodatniLekari) {
 		this.dodatniLekari = dodatniLekari;
 	}
-	
 	
 }

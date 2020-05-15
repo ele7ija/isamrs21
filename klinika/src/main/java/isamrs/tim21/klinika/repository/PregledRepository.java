@@ -2,7 +2,10 @@ package isamrs.tim21.klinika.repository;
 
 import java.util.List;
 
+import javax.persistence.LockModeType;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -56,4 +59,10 @@ public interface PregledRepository extends JpaRepository<Pregled, Long> {
 			+ "INNER JOIN p.dodatniLekari lekari "
 			+ "WHERE lekari.id = :idLekara")
 	List<Pregled> findByIdDodatnogLekara(@Param("idLekara") Long idLekara);
+
+	@Lock(LockModeType.PESSIMISTIC_READ)
+	@Query("SELECT p FROM Pregled p "
+			+ "WHERE p.klinika.id = :idKlinike "
+			+ "AND p.id = :idPregleda")
+	Pregled findByIdKlinikeAndIdPregledaPessimisticRead(@Param("idKlinike") Long idKlinike, @Param("idPregleda") Long idPregleda);
 }

@@ -168,7 +168,6 @@ public class PregledService {
 			return new CustomResponse<Pregled>(null, false,
 					"Greska: Neki od dodatnihlekara nije slobodan u datom terminu pregleda");
 		}
-		
 		return new CustomResponse<Pregled>(pregledRepository.save(pregled), true, "OK"); 
 	}
 	

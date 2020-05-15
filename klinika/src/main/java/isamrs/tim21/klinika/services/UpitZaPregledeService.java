@@ -3,26 +3,30 @@ package isamrs.tim21.klinika.services;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim21.klinika.domain.Klinika;
 import isamrs.tim21.klinika.domain.Lekar;
 import isamrs.tim21.klinika.domain.Pacijent;
 import isamrs.tim21.klinika.domain.Pregled;
+import isamrs.tim21.klinika.domain.Sala;
 import isamrs.tim21.klinika.domain.TipPregleda;
 import isamrs.tim21.klinika.domain.UpitZaPregled;
 import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.dto.UpitZaPregledDTO;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.repository.KorisniciRepository;
+import isamrs.tim21.klinika.repository.OsobljeRepository;
+import isamrs.tim21.klinika.repository.PacijentRepository;
 import isamrs.tim21.klinika.repository.PregledRepository;
+import isamrs.tim21.klinika.repository.SalaRepository;
 import isamrs.tim21.klinika.repository.TipPregledaRepository;
 import isamrs.tim21.klinika.repository.UpitZaPregledRepository;
 
@@ -39,6 +43,9 @@ public class UpitZaPregledeService {
 	
 	@Autowired
 	TipPregledaRepository tipPregledaRepository;
+	
+	@Autowired
+	OsobljeRepository osobljeRepository;
 
 	@Autowired
 	PregledRepository pregledRepository;
@@ -48,6 +55,12 @@ public class UpitZaPregledeService {
 	
 	@Autowired
 	PosetaService posetaService;
+	
+	@Autowired
+	SalaRepository salaRepository;
+	
+	@Autowired
+	PacijentRepository pacijentRepository;
 
 	@Transactional
 	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdmin(UpitZaPregled u) throws Exception{
@@ -64,15 +77,22 @@ public class UpitZaPregledeService {
 		upit.setAdminObradio(true);
 		upit.setOdobren(u.getOdobren());
 		Pregled p = pregledService.get(upit.getKlinika().getId(), u.getUnapredDefinisaniPregled().getId());
-		if(p == null){
-			//U PITANJU JE BIO CUSTOM PREGLED
-			p = pregledService.add(upit.getKlinika(), u.getUnapredDefinisaniPregled()).getResult();
-			upit.setUnapredDefinisaniPregled(p);
-		}else{
-			//validacije radis samo ako je admin odobrio ovaj upit
-			if(upit.getOdobren()){
-				//ukoliko pregled ima posetu, admin nije smeo da odobri upit u
-				if(p.getPoseta() != null){
+		//validacije radis samo ako je admin odobrio ovaj upit
+		if(upit.getOdobren()){
+			//ukoliko pregled ima posetu, admin nije smeo da odobri upit u
+			if(p.getPoseta() != null){
+				upit.setOdobren(false);
+				upit = upitZaPregledRepository.save(upit);
+				return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+						new CustomResponse<UpitZaPregled>(upit, false, "Obavestenje: Ovaj pregled je vec rezervisan, te je iz tog razloga upit ipak odbijen."),
+						HttpStatus.OK
+				);
+			}
+			//ukoliko pregled vec ima odobren upit, admin nije smeo da odobri u
+			for(UpitZaPregled drugiUpit: p.getUpiti()){
+				if(drugiUpit.getId() == upit.getId())
+					continue;
+				if(drugiUpit.getOdobren() && drugiUpit.getPotvrdjen()){
 					upit.setOdobren(false);
 					upit = upitZaPregledRepository.save(upit);
 					return new ResponseEntity<CustomResponse<UpitZaPregled>>(
@@ -80,30 +100,16 @@ public class UpitZaPregledeService {
 							HttpStatus.OK
 					);
 				}
-				//ukoliko pregled vec ima odobren upit, admin nije smeo da odobri u
-				for(UpitZaPregled drugiUpit: p.getUpiti()){
-					if(drugiUpit.getId() == upit.getId())
-						continue;
-					if(drugiUpit.getOdobren() && drugiUpit.getPotvrdjen()){
-						upit.setOdobren(false);
-						upit = upitZaPregledRepository.save(upit);
-						return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-								new CustomResponse<UpitZaPregled>(upit, false, "Obavestenje: Ovaj pregled je vec rezervisan, te je iz tog razloga upit ipak odbijen."),
-								HttpStatus.OK
-						);
-					}
-					if(drugiUpit.getOdobren() && !drugiUpit.getPacijentObradio()){
-						upit.setAdminObradio(false);
-						upit.setOdobren(false);
-						upit = upitZaPregledRepository.save(upit);
-						return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-								new CustomResponse<UpitZaPregled>(upit, false, "Obavestenje: Ovaj pregled je vec odobren. Mocicete da odobrite ovaj pregled samo u slucaju da pacijent kojem je ovaj pregled odobren ipak odluci da ne potvrdi rezervaciju."),
-								HttpStatus.OK
-						);
-					}
+				if(drugiUpit.getOdobren() && !drugiUpit.getPacijentObradio()){
+					upit.setAdminObradio(false);
+					upit.setOdobren(false);
+					upit = upitZaPregledRepository.save(upit);
+					return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+							new CustomResponse<UpitZaPregled>(upit, false, "Obavestenje: Ovaj pregled je vec odobren. Mocicete da odobrite ovaj pregled samo u slucaju da pacijent kojem je ovaj pregled odobren ipak odluci da ne potvrdi rezervaciju."),
+							HttpStatus.OK
+					);
 				}
 			}
-			
 		}
 		upit = upitZaPregledRepository.save(upit);
 		return new ResponseEntity<CustomResponse<UpitZaPregled>>(
@@ -171,7 +177,7 @@ public class UpitZaPregledeService {
 		}
 	}
 
-	@Transactional(readOnly=false)
+	@Transactional(readOnly=false, isolation=Isolation.SERIALIZABLE)
 	public CustomResponse<UpitZaPregled> kreirajUpitZaPregled(UpitZaPregledDTO u)
 		throws Exception {
 		UpitZaPregled u2 = new UpitZaPregled(u);
@@ -308,5 +314,114 @@ public class UpitZaPregledeService {
 		catch (NoSuchElementException e){
 			return new CustomResponse<UpitZaPregled>(null, false, "Upit ne postoji.");
 		}
+	}
+
+	@Transactional(readOnly=false)
+	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdminCustom(Long idKlinike, Long idUpita,
+			UpitZaPregled upitZaPregledToChange) {
+		Klinika klinika = klinikaRepository.findById(idKlinike).orElse(null);
+		if(klinika == null){
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+					new CustomResponse<UpitZaPregled>(null, false, "Greska: Klinika nije pronadjena"),
+					HttpStatus.NOT_FOUND);
+		}
+		
+		//dobavi upit za pregled i zakljucaj ga u PESSIMISTIC_FORCE_INCREMENT rezimu
+		UpitZaPregled upit = upitZaPregledRepository.findByIdKlinikeAndByIdPessimisticForceIncrement(idKlinike, idUpita);
+		if(upit.getAdminObradio()){
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+					new CustomResponse<UpitZaPregled>(null, false, "Greska: Ovaj upit za pregled je vec obradjen od strane administratora klinike."),
+					HttpStatus.OK);
+		}
+		
+		//postavi kliniku upitu
+		upitZaPregledToChange.setKlinika(klinika);
+		
+		//dobavi lekara u PESSIMISTIC_READ rezimu
+		Lekar lekar = osobljeRepository.findLekarByIdKlinikeAndByIdPessimisticRead(idKlinike, upitZaPregledToChange.getLekar().getId());
+		if(lekar.getVersion() != upitZaPregledToChange.getLekar().getVersion()){
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+					new CustomResponse<UpitZaPregled>(null, false, "Greska: Verzija lekara je zastarela. Osvezite stranicu."),
+					HttpStatus.OK);
+		}
+		upitZaPregledToChange.setLekar(lekar);
+		
+		//dobavi tip pregleda u PESSIMISTIC_READ rezimu
+		TipPregleda tipPregleda = tipPregledaRepository.findByIdKlinikeAndIdPessimisticRead(idKlinike, upitZaPregledToChange.getTipPregleda().getId());
+		if(tipPregleda.getVersion() != upitZaPregledToChange.getTipPregleda().getVersion()){
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+					new CustomResponse<UpitZaPregled>(null, false, "Greska: Tip pregleda je zastareo. Osvezite stranicu."),
+					HttpStatus.OK);
+		}
+		upitZaPregledToChange.setTipPregleda(tipPregleda);
+		
+		//dobavi pacijenta u PESSIMISTIC_READ rezimu
+		Pacijent pacijent = pacijentRepository.findByIdPacijentaPessimisticRead(upitZaPregledToChange.getPacijent().getId());
+		if(pacijent.getVersion() != upitZaPregledToChange.getPacijent().getVersion()){
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+					new CustomResponse<UpitZaPregled>(null, false, "Greska: Pacijent je zastareo. Osvezite stranicu."),
+					HttpStatus.OK);
+		}
+		upitZaPregledToChange.setPacijent(pacijent);
+		
+		//dobavi salu u PESSIMISTIC_READ rezimu
+		Sala sala = salaRepository.findByIdKlinikeAndIdSalePessimisticRead(idKlinike, upitZaPregledToChange.getSala().getId());
+		if(sala.getVersion() != upitZaPregledToChange.getSala().getVersion()){
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+					new CustomResponse<UpitZaPregled>(null, false, "Greska: Sale je zastarela. Osvezite stranicu."),
+					HttpStatus.OK);
+		}
+		upitZaPregledToChange.setSala(sala);
+		upit.setSala(sala);
+		
+		for(int i = 0; i < upitZaPregledToChange.getUnapredDefinisaniPregled().getDodatniLekari().size(); i++){
+			Long idOsoblja = upitZaPregledToChange.getUnapredDefinisaniPregled().getDodatniLekari().get(i).getId();
+			Lekar l = osobljeRepository.findLekarByIdKlinikeAndByIdPessimisticRead(klinika.getId(), idOsoblja);
+			if(l == null || l.getVersion() != upitZaPregledToChange.getUnapredDefinisaniPregled().getDodatniLekari().get(i).getVersion()){
+				return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+						new CustomResponse<UpitZaPregled>(null, false, "Greska: Jedan od dodatnih lekara ima zastarelu verziju. Osvezite stranicu."),
+						HttpStatus.OK);
+			}
+			upitZaPregledToChange.getUnapredDefinisaniPregled().getDodatniLekari().set(i, l);
+		}
+		
+		//kreiraj pregled
+		Pregled pregled = new Pregled(upitZaPregledToChange);
+		CustomResponse<Pregled> customResponse = pregledService.add(klinika, pregled);
+		if(customResponse.getResult() == null || !customResponse.isSuccess())
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+					new CustomResponse<UpitZaPregled>(null, customResponse.isSuccess(), customResponse.getMessage()),
+					HttpStatus.OK);
+		
+		//dobavi prethodno kreirani pregled u PESSIMISTIC_READ rezimu
+		pregled = pregledRepository.findByIdKlinikeAndIdPregledaPessimisticRead(idKlinike, upitZaPregledToChange.getUnapredDefinisaniPregled().getId());
+		
+		upitZaPregledToChange.setUnapredDefinisaniPregled(pregled);
+		upit.setUnapredDefinisaniPregled(pregled);
+		
+		upit.setOdobren(upitZaPregledToChange.getOdobren());
+		upit.setAdminObradio(true);
+		
+		if(upitZaPregledToChange.differsFrom(upit)){
+			System.out.println("Pravljenje novog upita");
+			//UPIT ZA PREGLED JE IZMENJEN, PRAVI NOVI UPIT ZA PREGLED
+			upitZaPregledToChange.setId(null);
+			upitZaPregledToChange.setVersion(null);
+			upitZaPregledToChange.setKlinika(klinika);
+			upitZaPregledToChange.setOriginalniPregled(upit);
+			upitZaPregledToChange = upitZaPregledRepository.save(upitZaPregledToChange);
+			upit.setIzmenjeniPregled(upitZaPregledToChange);
+			upit = upitZaPregledRepository.save(upit);
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+					new CustomResponse<UpitZaPregled>(upit, true, "OK"),
+					HttpStatus.OK);
+		}else{
+			System.out.println("ostajanje pri starom upitu");
+			upit = upitZaPregledRepository.save(upit);
+			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
+					new CustomResponse<UpitZaPregled>(upit, true, "OK"),
+					HttpStatus.OK);
+		}
+		
 	}
 }

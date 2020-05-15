@@ -98,6 +98,7 @@
                 @setDates="setDates"
                 @setLekar="setLekar"
                 @resetDates="resetDates"
+                @close="close"
               ></component>
             </v-stepper-content>
           </span>
@@ -232,6 +233,7 @@ export default {
       let updatedItem = this.upiti.filter(x => x.id == item.id)[0];
       this.editableItem = {
         id: item.id,
+        version: item.version,
         pacijent: {text: `${updatedItem.pacijent.ime} ${updatedItem.pacijent.prezime}`, value: updatedItem.pacijent},
         pocetak: new Date(updatedItem.pocetakPregleda),
         kraj: new Date(updatedItem.krajPregleda),
@@ -253,7 +255,23 @@ export default {
     },
     incStep(object){
       if(this.stepIndex == this.stepperData.length){
-        alert("Emitujem akciju na bek");
+        let upit = this.upiti.filter(x => x.id == this.editableItem.id)[0];
+        upit.lekar = {id: this.editableItem.lekar.value.id, version: this.editableItem.lekar.value.version, pozicija: 'lekar'};
+        upit.sala = {id: this.editableItem.sala.value.id, version: this.editableItem.sala.value.version};
+        upit.tipPregleda = {id: this.editableItem.tipPregleda.value.id, version: this.editableItem.tipPregleda.value.version};
+        upit.klinika = {id: upit.klinika.id};
+        upit.pocetakPregleda = this.editableItem.pocetak;
+        upit.krajPregleda = this.editableItem.kraj;
+        upit.odobren = true;
+        upit.adminObradio = true;
+
+        let cena = this.editableItem.cena;
+        let popust = object.popust;
+        let konacnaCena = object.konacnaCena;
+        let dodatniLekari = object.dodatniLekari;
+        this.$emit('acceptCustom', {upit, cena, popust, konacnaCena, dodatniLekari});
+        this.stepIndex = 1;
+        this.dialog = false;
       }else{
         this.editableItem.sala = {
           text: object.oznaka,
@@ -263,11 +281,14 @@ export default {
       }
     },
     decStep(){
+      this.rerender();
       this.stepIndex--;
     },
     close(){
+      this.resetDates();
       this.rerender();
       this.stepIndex = 1;
+      this.dialog = false;
     },
     formatDate(date){
       let day = date.getDate();

@@ -42,6 +42,20 @@ const actions = {
     });
   },
 
+  async obradiAdminCustom({state, commit}, upit){
+    return new Promise((resolve, reject) => {
+      upitiPreglediAdmin.obradiAdminCustom(state.klinika.id, upit)
+      .then(({data: {result, message, success}}) => {
+        if(success && result != null){
+          commit('updateExistingUpit', result);
+          resolve(message);
+        }else{
+          reject(message);
+        }
+      })
+    });
+  },
+
   async deleteUpit({state, commit, dispatch}, {idUpita, version}){
     return new Promise((resolve, reject) => {
       upitiPreglediAdmin.deleteUpit(state.klinika.id, idUpita, version)
@@ -63,12 +77,21 @@ const mutations = {
   addNewUpit: (state, upit) => state.upiti_pregledi_admin.push(upit),
   updateExistingUpit: (state, upit) => {
     let index = state.upiti_pregledi_admin.findIndex(x => x.id == upit.id);
-    
     //nesvakidasnji nacin da se update-uje element u nizu, al za sad jedino resenje kod kojeg radi reactivity
     state.upiti_pregledi_admin.splice(index, 1);
     state.upiti_pregledi_admin.splice(index, 0, upit);
+    if(upit.izmenjeniPregled){
+      state.upiti_pregledi_admin.push(upit.izmenjeniPregled);
+    }
   },
-  deleteUpitZaPregled: (state, idUpita) => state.upiti_pregledi_admin = state.upiti_pregledi_admin.filter(x => x.id != idUpita),
+  deleteUpitZaPregled: (state, idUpita) => {
+    let upit = state.upiti_pregledi_admin.filter(x => x.id == idUpita)[0];
+    if(upit.originalniPregled){
+      state.upiti_pregledi_admin = state.upiti_pregledi_admin.filter(x => x.id != idUpita && x.id != upit.originalniPregled.id);
+    }else{
+      state.upiti_pregledi_admin = state.upiti_pregledi_admin.filter(x => x.id != idUpita);
+    }
+  },
   setPocetak: (state, object) => {
     state.upiti_pregledi_admin.filter(x => x.id == object.id)[0].pocetakPregleda = object.pocetak;
   },

@@ -17,10 +17,10 @@
             <v-btn color="primary" class="mt-3" @click="dialog1=true">Promeni lekara</v-btn>
           </v-col>
           <v-col cols=12 :md="isSalaValid ? 6 : 4" v-if="upit.sala">
-            <v-text-field v-model="upit.sala.text" label="Sala" readonly></v-text-field>
+            <v-text-field v-model="upit.sala.text" label="Sala" readonly :rules="salaRule"></v-text-field>
           </v-col>
           <v-col v-if="!isSalaValid" cols=12 md="2">
-            <v-btn color="primary" class="mt-3" @click="emit('decStep')">Promeni salu</v-btn>
+            <v-btn color="primary" class="mt-3" @click="decStep">Promeni salu</v-btn>
           </v-col>
           <v-col cols=12 md="6">
             <v-text-field v-model="upit._pocetak" label="Početak pregleda" readonly></v-text-field>
@@ -46,11 +46,12 @@
           </v-col>
         </v-row>
         <v-btn color="primary" @click="add()" :disabled="!isFormValid">Odobri upit</v-btn>
+        <v-btn class="ml-3" @click="close()">Odustani</v-btn>
       </v-container>
     </v-form>
     <v-dialog v-model="dialog1" max-width="1300px" @input="close">
       <v-card>
-        <TabelaLekara :upit="upit" :slobodniLekari="slobodniLekari" @setDates="setDates" @setLekar="setLekar" @close="close"></TabelaLekara>
+        <TabelaLekara :upit="upit" :slobodniLekari="slobodniLekari" @setDates="setDates" @setLekar="setLekar" @close="resetDates"></TabelaLekara>
       </v-card>
     </v-dialog>
   </div>
@@ -176,9 +177,23 @@ export default {
       this.$emit('setLekar', newValue);
       this.dialog1 = false;
     },
-    close(){
+    resetDates(){
       this.$emit('resetDates');
       this.dialog1 = false;
+    },
+    decStep(){
+      this.$emit('decStep');
+    },
+    close(){
+      this.$emit('close');
+    },
+    add(){
+      let obj = {
+        popust: this.popust,
+        konacnaCena: this.ukupnaCena,
+        dodatniLekari: [] //ZA SAD OVAKO
+      };
+      this.$emit('incStep', obj);
     }
   }
 }

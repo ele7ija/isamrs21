@@ -62,6 +62,7 @@ public class UpitZaPregled implements IdentitySerializable {
 	private UpitZaPregled izmenjeniPregled;
 	
 	@OneToOne(mappedBy = "izmenjeniPregled")
+	@JsonSerialize(using=IdentitySerializer.class)
 	private UpitZaPregled originalniPregled;
 	
 	@Column(name="pocetak_pregleda")
@@ -88,6 +89,9 @@ public class UpitZaPregled implements IdentitySerializable {
 	@ManyToOne(fetch=FetchType.EAGER)
 	private Pregled unapredDefinisaniPregled;
 	
+	@ManyToOne(fetch=FetchType.EAGER)
+	private Sala sala;
+
 	@Version
 	@Column(name="version", columnDefinition="integer DEFAULT 0", nullable=false)
 	private Long version;
@@ -249,6 +253,23 @@ public class UpitZaPregled implements IdentitySerializable {
 		this.datumKreiranjaUpita = datumKreiranjaUpita;
 	}
 	
-	
+	public Sala getSala() {
+		return sala;
+	}
+
+	public void setSala(Sala sala) {
+		this.sala = sala;
+	}
+
+	public boolean differsFrom(UpitZaPregled upit) {
+		//jedine dve stvari koje se menjaju na frontu usled dodele sale upitu za pregled(kraj pregleda se menja ako se menja i pocetak)
+		if(lekar.getId() != upit.getLekar().getId()){
+			return true;
+		}
+		if(!pocetakPregleda.equals(upit.getPocetakPregleda())){
+			return true;
+		}
+		return false;
+	}
 	
 }

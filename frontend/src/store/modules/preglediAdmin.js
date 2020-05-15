@@ -28,7 +28,7 @@ const actions = {
           dispatch('osoblje/loadMedicinskoOsoblje', {}, {root: true});
           dispatch('sale/loadSale', {}, {root: true});
           dispatch('tipoviPregleda/loadTipoviPregleda', {}, {root: true});
-          resolve(message);
+          resolve(result);
         }else{
           reject(message);
         }

@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim21.klinika.domain.Cenovnik;
@@ -33,8 +35,11 @@ public class TipPregledaService {
 	@Autowired
 	CenovnikRepository cenovnikRepository;
 
-	@Transactional(readOnly=false)
+	@Transactional(readOnly=false, propagation=Propagation.REQUIRES_NEW, isolation=Isolation.SERIALIZABLE)
 	public CustomResponse<Boolean> delete(Long idKlinike, Long idTipaPregleda, Long version) throws Exception{
+		/* Zbog phantom read-a i unrepeatable read-a nad pregledima koristimo SERIALIZABLE
+		 * Zbog toga sto je ova metoda pozvana iz transakcije sa manje striktnim isolation parametrom koristimo REQUIRES_NEW
+		 * */
 		if(!pregledRepository.findByIdTipaPregleda(idTipaPregleda).isEmpty()){
 			return new CustomResponse<Boolean>(true, false, "Greska: Ne mozete obrisati tip pregleda za koji postoji pregled");
 		}
@@ -90,7 +95,7 @@ public class TipPregledaService {
 		}
 	}
 
-	@Transactional(readOnly=false)
+	@Transactional(readOnly=false, isolation=Isolation.READ_COMMITTED)
 	public ResponseEntity<CustomResponse<TipPregleda>> update(Long idKlinike, Long idTipaPregleda, TipPregleda tipPregledaToChange)
 			throws Exception{
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
@@ -102,7 +107,8 @@ public class TipPregledaService {
 			tipPregledaToChange.setId(idTipaPregleda);
 			tipPregledaToChange.setKlinika(klinika);
 			
-			Cenovnik cenovnik = cenovnikRepository.findByIdKlinikeAndIdCenovnika(idKlinike, tipPregledaToChange.getCenovnik().getId());
+			Cenovnik cenovnik = cenovnikRepository.findByIdKlinikeAndIdCenovnikaPessimisticRead(
+					idKlinike, tipPregledaToChange.getCenovnik().getId()); //spreci konkurentno brisanje cenovnika
 			tipPregledaToChange.setCenovnik(cenovnik);
 			
 			TipPregleda tipPregleda = tipPregledaRepository.findById(idTipaPregleda).orElse(null);
@@ -111,7 +117,7 @@ public class TipPregledaService {
 						new CustomResponse<TipPregleda>(null, false, "Greska: Tip pregleda nije pronadjen"),
 						HttpStatus.NOT_FOUND);
 			}
-			tipPregledaToChange.setLekari(tipPregleda.getLekari()); //ovo se ne menja kroz api call
+			tipPregledaToChange.setLekari(tipPregleda.getLekari()); //potencijalni dirty read sprecen sa READ_COMMITTED
 			
 			TipPregleda retval = tipPregledaRepository.save(tipPregledaToChange); //ovde moze da dodje do nepoklapanja verzija
 			return new ResponseEntity<CustomResponse<TipPregleda>>(
