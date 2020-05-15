@@ -126,12 +126,15 @@ public class UpitZaPregledeService {
 		if(upit == null){
 			retval = new CustomResponse<Boolean>(false, false, "Greska. Trazeni upit ne postoji");
 		}
-		/*else if(upit.getVersion() != version){
-			retval = new CustomResponse<Boolean>(false, false, "Greska. Verzija podatka je zastarela. Osvezite stranicu.");
-		}*/
 		else if(!upit.getPacijentObradio()){
 			retval = new CustomResponse<Boolean>(true, false, "Greska. Pacijent jos uvek nije video odgovor na vas upit.");
 		}else{
+			if(upit.getOriginalniPregled() != null){
+				UpitZaPregled originalniUpit = upit.getOriginalniPregled();
+				originalniUpit.setIzmenjeniPregled(null);
+				upit.setOriginalniPregled(null);
+				upitZaPregledRepository.delete(originalniUpit); //ovde moze da dodje do nepoklapanja verzija
+			}
 			UpitZaPregled upToDelete = new UpitZaPregled();
 			upToDelete.setId(idUpita);
 			upToDelete.setVersion(version);
