@@ -75,3 +75,8 @@ insert into upit_za_pregled values(3,0x0,STR_TO_DATE('23/05/2020 9:00:00','%d/%m
 -- zahtevi za registraciju
 insert into zahtev_za_registraciju (datum_odobrenja, datum_podnosenja, pacijent_id, odobren) values (null, STR_TO_DATE('28/04/2020 15:00:00','%d/%m/%Y %H:%i:%s'), 2, null);
 insert into zahtev_za_registraciju (datum_odobrenja, datum_podnosenja, pacijent_id, odobren) values (null, STR_TO_DATE('10/05/2020 16:00:00','%d/%m/%Y %H:%i:%s'), 9, null);
+
+insert into sifarnik (id, tip, sifra, naziv) values (1, "DIJAGNOZA", "D58C", "kijavica");
+insert into sifarnik (id, tip, sifra, naziv) values (2, "DIJAGNOZA", "DA7D", "upala uha");
+insert into sifarnik (id, tip, sifra, naziv) values (3, "LEK"      , "L788", "pradaxa"); 
+insert into sifarnik (id, tip, sifra, naziv) values (4, "LEK"      , "L323", "hemomicin");
