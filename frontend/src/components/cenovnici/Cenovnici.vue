@@ -100,8 +100,6 @@
         </v-icon>
       </template>
     </v-data-table>
-    
-    
     <v-snackbar
       v-model="snackbar"
       :timeout="snackbarTimeout"

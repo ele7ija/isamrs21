@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import isamrs.tim21.klinika.domain.AdministratorKlinike;
 import isamrs.tim21.klinika.domain.Authority;
 import isamrs.tim21.klinika.domain.Klinika;
+import isamrs.tim21.klinika.domain.Korisnik;
 import isamrs.tim21.klinika.dto.AdminKlinikeDTO;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.repository.KorisniciRepository;
@@ -26,6 +27,9 @@ public class KorisnikService {
   @Autowired
   private AutentifikacijaService autentifikacijaServis;
   
+  @Autowired
+  private CustomUserDetailsService userDetailService;
+  
   @Transactional(readOnly=false)
   public AdministratorKlinike saveAdminKlinike(AdminKlinikeDTO adminKlinikeDTO){
     //na osnovu id klinike pronaci kliniku iz baze; dodati kliniku administratoru klinike
@@ -42,4 +46,5 @@ public class KorisnikService {
     adminKlinike = korisnikRepository.save(adminKlinike);
     return adminKlinike;
   }
+  
 }

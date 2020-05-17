@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import isamrs.tim21.klinika.dto.LekarProfilDTO;
+import isamrs.tim21.klinika.dto.SestraProfilDTO;
 import isamrs.tim21.klinika.domain.Lekar;
+import isamrs.tim21.klinika.domain.MedicinskaSestra;
 import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
 import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.services.OsobljeService;
@@ -74,12 +77,38 @@ public class OsobljeKontroler {
 		try{
 			retval = osobljeService.updateSpecijalnosti(idKlinike, idOsoblja, idTipovaPregleda, version); 
 		}catch(Exception e){
-			System.out.println(e.getMessage());
 			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(
 					new CustomResponse<MedicinskoOsoblje>(null, false, "Greska: Verzija podatka je zastarela. Osvezite stranicu"),
 					HttpStatus.OK);
 		}
 		return retval;
+	}
+	
+	@PutMapping(value="lekar/profil")
+	public ResponseEntity<CustomResponse<Lekar>> updateProfilLekar(@RequestBody LekarProfilDTO lekar){
+		CustomResponse<Lekar> retval = null;
+		try{
+			retval = osobljeService.updateProfilLekara(lekar);
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+			return new ResponseEntity<CustomResponse<Lekar>>(
+					new CustomResponse<Lekar>(null, false, "Greska."),
+					HttpStatus.OK);
+		}
+		return new ResponseEntity<CustomResponse<Lekar>>(retval, HttpStatus.OK);
+	}
+	
+	@PutMapping(value="sestra/profil")
+	public ResponseEntity<CustomResponse<MedicinskaSestra>> updateProfilSestra(@RequestBody SestraProfilDTO sestra){
+		CustomResponse<MedicinskaSestra> retval = null;
+		try{
+			retval = osobljeService.updateProfilSestra(sestra);
+		}catch(Exception e){
+			return new ResponseEntity<CustomResponse<MedicinskaSestra>>(
+					new CustomResponse<MedicinskaSestra>(null, false, "Greska."),
+					HttpStatus.OK);
+		}
+		return new ResponseEntity<CustomResponse<MedicinskaSestra>>(retval, HttpStatus.OK); 
 	}
 	
 	@DeleteMapping(value="/specijalnosti/{idOsoblja}/{idTipaPregleda}")

@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,9 +17,10 @@ import isamrs.tim21.klinika.domain.Klinika;
 import isamrs.tim21.klinika.domain.Lekar;
 import isamrs.tim21.klinika.domain.MedicinskaSestra;
 import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
-import isamrs.tim21.klinika.domain.Pregled;
 import isamrs.tim21.klinika.domain.TipPregleda;
 import isamrs.tim21.klinika.dto.CustomResponse;
+import isamrs.tim21.klinika.dto.LekarProfilDTO;
+import isamrs.tim21.klinika.dto.SestraProfilDTO;
 import isamrs.tim21.klinika.repository.AuthorityRepository;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.repository.OsobljeRepository;
@@ -48,6 +50,9 @@ public class OsobljeService {
 	
 	@Autowired
 	public KlinikaRepository klinikaRepository;
+	
+	@Autowired
+	public CustomUserDetailsService userDetailsService;
 	
 	@Transactional(readOnly=false, propagation=Propagation.MANDATORY)
 	public MedicinskoOsoblje save(MedicinskoOsoblje osobljeToSave){
@@ -248,5 +253,23 @@ public class OsobljeService {
 			CustomResponse<Boolean> customResponse = delete(idKlinike, idOsoblja, version);
 			return new ResponseEntity<CustomResponse<Boolean>>(customResponse, customResponse.getResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
 		}
+	}
+
+	@Transactional(readOnly=false, isolation=Isolation.REPEATABLE_READ)
+	public CustomResponse<Lekar> updateProfilLekara(LekarProfilDTO lekar) {
+		Lekar retval = (Lekar)userDetailsService.findUserAndChangePassword(lekar.getLekar().getId(), lekar.getPoslednjaSifra(), lekar.getLekar().getSifra());
+		retval.setIme(lekar.getLekar().getIme());
+		retval.setPrezime(lekar.getLekar().getPrezime());
+		retval = osobljeRepository.save(retval);
+		return new CustomResponse<Lekar>(retval, true, "OK.");
+	}
+
+	@Transactional(readOnly=false, isolation=Isolation.REPEATABLE_READ)
+	public CustomResponse<MedicinskaSestra> updateProfilSestra(SestraProfilDTO sestra) {
+		MedicinskaSestra retval = (MedicinskaSestra) userDetailsService.findUserAndChangePassword(sestra.getSestra().getId(),  sestra.getPoslednjaSifra(), sestra.getSestra().getSifra());
+		retval.setIme(sestra.getSestra().getIme());
+		retval.setPrezime(sestra.getSestra().getPrezime());
+		retval = osobljeRepository.save(sestra.getSestra());
+		return new CustomResponse<MedicinskaSestra>(retval, true, "OK.");
 	}
 }
