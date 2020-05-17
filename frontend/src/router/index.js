@@ -21,6 +21,7 @@ import AdminiKlinickogCentra from '@/components/admin_klinickog_centra/AdminiKli
 import AdminiKlinike from '@/components/admin_klinickog_centra/AdminiKlinike'
 import KlinikeFromAdminCentra from '@/components/admin_klinickog_centra/Klinike'
 import ZahteviZaRegistraciju from '@/components/admin_klinickog_centra/ZahteviZaRegistraciju'
+import Sifarnik from '@/components/admin_klinickog_centra/Sifarnik'
 
 import PacijentiHomePage from '@/components/pacijenti/PacijentiHomePage';
 
@@ -244,6 +245,15 @@ let router = new Router({
       path: '/zahtevi_za_registraciju',
       name: 'zahtevi_za_registraciju',
       component: ZahteviZaRegistraciju,
+      meta: {
+        authen: true,
+        author: 'admin-klinickog-centra'
+      }
+    },
+    {
+      path: '/sifarnik',
+      name: 'sifarnik',
+      component: Sifarnik,
       meta: {
         authen: true,
         author: 'admin-klinickog-centra'

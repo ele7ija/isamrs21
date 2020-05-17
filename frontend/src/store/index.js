@@ -18,7 +18,7 @@ import osobljePacijent from './modules/osobljePacijent';
 import salaFilter from './modules/salaFilter';
 import createPersistedState from 'vuex-persistedstate'
 import zahteviZaRegistraciju from './modules/zahteviZaRegistraciju'
-
+import sifarnik from './modules/sifarnik'
 //Plugins
 Vue.use(Vuex);
 
@@ -41,6 +41,7 @@ export default new Vuex.Store({
     osobljePacijent,
     salaFilter,
     zahteviZaRegistraciju,
+    sifarnik,
   },
 
   plugins: [

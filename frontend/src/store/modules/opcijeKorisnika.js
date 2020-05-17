@@ -109,9 +109,9 @@ const state = {
         
         items: [
           { 
-            title: 'Administratori kliničkog centra',
-            action: 'mdi-account-supervisor',
-            componentName: 'admini_klinickog_centra',
+            title: 'Zahtevi za registraciju',
+            action: 'mdi-receipt',
+            componentName: 'zahtevi_za_registraciju',
             items:[]
           },
           { 
@@ -126,16 +126,16 @@ const state = {
             componentName: 'klinike_from_admin_centra',
             items:[]
           },
-          { 
-            title: 'Zahtevi za registraciju',
-            action: 'mdi-receipt',
-            componentName: 'zahtevi_za_registraciju',
+          {
+            title: 'Šifranik dijagnoza i lekova',
+            action: 'mdi-medical-bag',
+            componentName: 'sifarnik',
             items:[]
           },
-          {
-            title: 'dijagnoze i lekovi',
-            action: 'mdi-medical-bag',
-            componentName: 'sale',
+          { 
+            title: 'Administratori kliničkog centra',
+            action: 'mdi-account-supervisor',
+            componentName: 'admini_klinickog_centra',
             items:[]
           },
         ]
