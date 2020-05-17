@@ -22,6 +22,7 @@ const getters = {
     });
     return adminiKlinika;
   },
+  getKorisnikRole: (state) => state.korisnik.role
 }
 
 const actions = {

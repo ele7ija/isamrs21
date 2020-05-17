@@ -4,6 +4,7 @@ import Login from '@/components/Login';
 import Registracija from '@/components/Registracija';
 import ONama from '@/components/ONama';
 import UserDashboard from "@/components/dashboards/UserDashboard";
+import Profil from "@/components/profil/Profil"
 import TipPregleda from "@/components/tipovi_pregleda/TipPregleda";
 import SalaMain from "@/components/sale/SalaMain";
 import Osoblje from "@/components/osoblje/Osoblje";
@@ -22,6 +23,11 @@ import AdminiKlinike from '@/components/admin_klinickog_centra/AdminiKlinike'
 import KlinikeFromAdminCentra from '@/components/admin_klinickog_centra/Klinike'
 import ZahteviZaRegistraciju from '@/components/admin_klinickog_centra/ZahteviZaRegistraciju'
 import Sifarnik from '@/components/admin_klinickog_centra/Sifarnik'
+
+//lekar
+import PacijentiSearch from '@/components/lekar/PacijentiSearch';
+import RadniKalendarLekar from '@/components/lekar/RadniKalendarLekar';
+import OdsustvoLekar from '@/components/lekar/OdsustvoLekar';
 
 import PacijentiHomePage from '@/components/pacijenti/PacijentiHomePage';
 
@@ -68,6 +74,15 @@ let router = new Router({
       path: '/home',
       name: 'home',
       component: UserDashboard,
+      meta: {
+        authen: true,
+        author: ''
+      },
+    },
+    {
+      path: '/profil',
+      name: 'profil',
+      component: Profil,
       meta: {
         authen: true,
         author: ''
@@ -260,6 +275,34 @@ let router = new Router({
       }
     },
     
+    //lekar
+    {
+      path: '/pacijetni_klinike',
+      name: 'PacijentiSearch',
+      component: PacijentiSearch,
+      meta: {
+        authen: true,
+        author: 'lekar'
+      },
+    },
+    {
+      path: '/radni_kalendar',
+      name: 'RadniKalendarLekar',
+      component: RadniKalendarLekar,
+      meta: {
+        authen: true,
+        author: 'lekar'
+      },
+    },
+    {
+      path: '/odsustvo',
+      name: 'OdsustvoLekar',
+      component: OdsustvoLekar,
+      meta: {
+        authen: true,
+        author: 'lekar'
+      },
+    },
   ]
 });
 

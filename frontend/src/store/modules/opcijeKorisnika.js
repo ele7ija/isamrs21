@@ -8,9 +8,9 @@ const state = {
         items: []
       },
       { 
-        title: 'Moj profil',
+        title: 'Profil',
         action: 'mdi-account',
-        componentName: 'tipovi_pregleda',
+        componentName: 'profil',
         items: []
       },
       {
@@ -99,9 +99,9 @@ const state = {
         items: []
       },
       { 
-        title: 'Moj profil',
+        title: 'Profil',
         action: 'mdi-account',
-        componentName: 'home',
+        componentName: 'profil',
         items: []
       },
       {
@@ -141,7 +141,41 @@ const state = {
         ]
       }
     ],
-
+    'lekar': [
+      {
+        title: 'Dashboard',
+        action: 'mdi-view-dashboard',
+        componentName: "home",
+        items: []
+      },
+      { 
+        title: 'Profil',
+        action: 'mdi-account',
+        componentName: 'profil',
+        items: []
+      },
+      {
+        title: 'Klinika',
+        action: 'mdi-hospital-building',
+        items: [
+          { 
+            title: 'Pregled pacijenata',
+            action: 'mdi-account-search',
+            componentName: 'PacijentiSearch'
+          },
+          { 
+            title: 'Radni kalendar',
+            action: 'mdi-calendar',
+            componentName: 'RadniKalendarLekar'
+          },
+          { 
+            title: 'Odsustvo',
+            action: 'mdi-beach',
+            componentName: 'OdsustvoLekar'
+          },
+        ]
+      } 
+    ]
   }
 }
 const getters = {
