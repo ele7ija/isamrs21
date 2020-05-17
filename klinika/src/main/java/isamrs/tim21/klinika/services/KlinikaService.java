@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import isamrs.tim21.klinika.domain.AdministratorKlinike;
 import isamrs.tim21.klinika.domain.Klinika;
 import isamrs.tim21.klinika.domain.Korisnik;
+import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
 import isamrs.tim21.klinika.dto.KlinikaDTO;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.security.TokenUtils;
@@ -41,8 +42,11 @@ public class KlinikaService {
 		if(user instanceof AdministratorKlinike){
 			AdministratorKlinike admin = (AdministratorKlinike) user;
 			return klinikaRepository.findById(admin.getKlinikaAdmina().getId()).orElse(null);
+		}else{
+			//lekar ili medicinska sestra
+			MedicinskoOsoblje osoblje = (MedicinskoOsoblje) user;
+			return klinikaRepository.findById(osoblje.getKlinika().getId()).orElse(null);
 		}
-		return null;
 	}
 
 	@Transactional(readOnly=false)
