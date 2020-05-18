@@ -2,7 +2,7 @@
   <v-container>
     <v-card>
       <v-card-title class="justify-center headline">
-        Profil lekara
+        Profil administratora klinike
       </v-card-title>
       <v-card-text>
         <v-form v-model="isFormValid">
@@ -14,7 +14,13 @@
               <v-text-field v-model="_copy.prezime" label="Prezime" :rules="notEmptyRule('Prezime')"></v-text-field>
             </v-col>
             <v-col cols="12" md="12">
-              <v-text-field v-model="_copy.sifra" label="Sifra" :rules="notEmptyRule('Sifra')"></v-text-field>
+              <v-text-field type="password" v-model="staraSifra" label="Stara sifra" :rules="notEmptyRule('Sifra')"></v-text-field>
+            </v-col>
+            <v-col cols="12" md="12">
+              <v-text-field type="password" v-model="_copy.sifra" label="Nova sifra, opciono"></v-text-field>
+            </v-col>
+            <v-col cols="12" md="12">
+              <v-text-field type="password" v-model="ponovljenaNovaSifra" label="Ponovljena nova sifra, opciono"></v-text-field>
             </v-col>
             <v-card-actions>
               <v-btn
@@ -63,7 +69,8 @@ export default {
       snackbarTimeout: 3000,
       snackbarText: null,
       isFormValid: true,
-      sifra: ''
+      staraSifra: '',
+      ponovljenaNovaSifra: ''
     };
   },
   computed: {
@@ -92,14 +99,20 @@ export default {
     }),
 
     odustani(){
+      this.staraSifra = "";
+      this.ponovljenaNovaSifra = "";
       this.$store.commit("profil/_setCopy", JSON.parse(JSON.stringify(this.profil)), {root: true});
     },
     promeni(){
-      this.updateProfil().then(
+      let staraSifra = this.staraSifra;
+      let novaSifra = this.ponovljenaNovaSifra;
+      this.updateProfil({staraSifra, novaSifra}).then(
         (message) => {
           this.snackbarText = message;
           this.snackbar = true;
           this.success = true;
+          this.staraSifra = "";
+          this.ponovljenaNovaSifra = "";
         },
         (error) => {
           this.snackbarText = error;

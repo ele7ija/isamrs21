@@ -316,6 +316,10 @@ router.beforeEach((to, from, next) => {
       next({name: 'login'});
       return;
     }
+    /*let profil = store.getters['profil/getProfil'];
+    if(profil.poslednjaPromenaSifre == null){
+      next({name: 'profil'}); //obavezna promena sifre pri prvom logovanju korisnika
+    }*/
     // AUTHORIZATION CHECK
     // A certain authority
     if (korisnik.role !== to.meta.author && to.meta.author != '') {

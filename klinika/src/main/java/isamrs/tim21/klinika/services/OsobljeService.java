@@ -1,6 +1,7 @@
 package isamrs.tim21.klinika.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -256,20 +257,26 @@ public class OsobljeService {
 	}
 
 	@Transactional(readOnly=false, isolation=Isolation.REPEATABLE_READ)
-	public CustomResponse<Lekar> updateProfilLekara(LekarProfilDTO lekar) {
+	public CustomResponse<MedicinskoOsoblje> updateProfilLekara(LekarProfilDTO lekar) {
 		Lekar retval = (Lekar)userDetailsService.findUserAndChangePassword(lekar.getLekar().getId(), lekar.getPoslednjaSifra(), lekar.getLekar().getSifra());
 		retval.setIme(lekar.getLekar().getIme());
 		retval.setPrezime(lekar.getLekar().getPrezime());
+		if(!lekar.getPoslednjaSifra().equals(retval.getSifra())){
+			retval.setPoslednjaPromenaSifre(new Date());
+		}
 		retval = osobljeRepository.save(retval);
-		return new CustomResponse<Lekar>(retval, true, "OK.");
+		return new CustomResponse<MedicinskoOsoblje>(retval, true, "OK.");
 	}
 
 	@Transactional(readOnly=false, isolation=Isolation.REPEATABLE_READ)
-	public CustomResponse<MedicinskaSestra> updateProfilSestra(SestraProfilDTO sestra) {
+	public CustomResponse<MedicinskoOsoblje> updateProfilSestra(SestraProfilDTO sestra) {
 		MedicinskaSestra retval = (MedicinskaSestra) userDetailsService.findUserAndChangePassword(sestra.getSestra().getId(),  sestra.getPoslednjaSifra(), sestra.getSestra().getSifra());
 		retval.setIme(sestra.getSestra().getIme());
 		retval.setPrezime(sestra.getSestra().getPrezime());
-		retval = osobljeRepository.save(sestra.getSestra());
-		return new CustomResponse<MedicinskaSestra>(retval, true, "OK.");
+		if(!sestra.getPoslednjaSifra().equals(retval.getSifra())){
+			retval.setPoslednjaPromenaSifre(new Date());
+		}
+		retval = osobljeRepository.save(retval);
+		return new CustomResponse<MedicinskoOsoblje>(retval, true, "OK.");
 	}
 }

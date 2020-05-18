@@ -1,5 +1,7 @@
 package isamrs.tim21.klinika.services;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +23,10 @@ public class AdminKlinikeService {
 		AdministratorKlinike retval = (AdministratorKlinike) userDetailsService.findUserAndChangePassword(admin.getAdminKlinike().getId(), admin.getPoslednjaSifra(), admin.getAdminKlinike().getSifra());
 		retval.setIme(admin.getAdminKlinike().getIme());
 		retval.setPrezime(admin.getAdminKlinike().getPrezime());
-		retval = korisnikRepository.save(admin.getAdminKlinike());
+		if(!admin.getPoslednjaSifra().equals(retval.getSifra())){
+			retval.setPoslednjaPromenaSifre(new Date());
+		}
+		retval = korisnikRepository.save(retval);
 		return new CustomResponse<AdministratorKlinike>(retval, true, "OK.");
 	}
 

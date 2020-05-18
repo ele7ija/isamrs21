@@ -85,30 +85,30 @@ public class OsobljeKontroler {
 	}
 	
 	@PutMapping(value="lekar/profil")
-	public ResponseEntity<CustomResponse<Lekar>> updateProfilLekar(@RequestBody LekarProfilDTO lekar){
-		CustomResponse<Lekar> retval = null;
+	public ResponseEntity<CustomResponse<MedicinskoOsoblje>> updateProfilLekar(@RequestBody LekarProfilDTO lekar){
+		CustomResponse<MedicinskoOsoblje> retval = null;
 		try{
 			retval = osobljeService.updateProfilLekara(lekar);
 		}catch(Exception e){
 			System.out.println(e.getMessage());
-			return new ResponseEntity<CustomResponse<Lekar>>(
-					new CustomResponse<Lekar>(null, false, "Greska."),
+			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(
+					new CustomResponse<MedicinskoOsoblje>(null, false, "Greska."),
 					HttpStatus.OK);
 		}
-		return new ResponseEntity<CustomResponse<Lekar>>(retval, HttpStatus.OK);
+		return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(retval, HttpStatus.OK);
 	}
 	
 	@PutMapping(value="sestra/profil")
-	public ResponseEntity<CustomResponse<MedicinskaSestra>> updateProfilSestra(@RequestBody SestraProfilDTO sestra){
-		CustomResponse<MedicinskaSestra> retval = null;
+	public ResponseEntity<CustomResponse<MedicinskoOsoblje>> updateProfilSestra(@RequestBody SestraProfilDTO sestra){
+		CustomResponse<MedicinskoOsoblje> retval = null;
 		try{
 			retval = osobljeService.updateProfilSestra(sestra);
 		}catch(Exception e){
-			return new ResponseEntity<CustomResponse<MedicinskaSestra>>(
-					new CustomResponse<MedicinskaSestra>(null, false, "Greska."),
+			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(
+					new CustomResponse<MedicinskoOsoblje>(null, false, "Greska."),
 					HttpStatus.OK);
 		}
-		return new ResponseEntity<CustomResponse<MedicinskaSestra>>(retval, HttpStatus.OK); 
+		return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(retval, HttpStatus.OK); 
 	}
 	
 	@DeleteMapping(value="/specijalnosti/{idOsoblja}/{idTipaPregleda}")

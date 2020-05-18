@@ -45,12 +45,14 @@ export default {
     if(role == 'lekar'){
       url += `medicinskaOsoba/${profil.klinika.id}/lekar/profil`;
       obj.lekar = profil
+      obj.lekar.pozicija = 'lekar';
     }
     else if(role == 'medicinska-sestra'){
       url += `medicinskaOsoba/${profil.klinika.id}/sestra/profil`;
       obj.sestra = profil;
+      obj.lekar.pozicija = 'medicinska sestra';
     }
-    else if(role == 'administrator-klinike'){
+    else if(role == 'admin-klinike'){
       url += `admin_klinike/profil`;
       obj.adminKlinike = profil
     }

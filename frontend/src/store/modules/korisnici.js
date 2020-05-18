@@ -90,7 +90,8 @@ const mutations = {
       state.korisnici.splice(index, 1);
       state.korisnici.splice(index, 0, profil);
     }
-  }
+  },
+  setNewSifra: (state, sifra) => state._korisnik.password = sifra
 }
 
 export default{
