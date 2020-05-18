@@ -20,6 +20,7 @@ import createPersistedState from 'vuex-persistedstate'
 import zahteviZaRegistraciju from './modules/zahteviZaRegistraciju'
 import sifarnik from './modules/sifarnik';
 import profil from './modules/profil';
+import adminiCentra from './modules/adminiCentra'
 //Plugins
 Vue.use(Vuex);
 
@@ -43,7 +44,8 @@ export default new Vuex.Store({
     salaFilter,
     zahteviZaRegistraciju,
     sifarnik,
-    profil
+    profil,
+    adminiCentra,
   },
 
   plugins: [

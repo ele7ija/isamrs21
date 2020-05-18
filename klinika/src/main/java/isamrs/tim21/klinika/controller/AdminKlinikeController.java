@@ -26,6 +26,7 @@ public class AdminKlinikeController {
   private AdminKlinikeService adminKlinikeService;
   
   @GetMapping
+  @PreAuthorize("hasAuthority('admin-klinickog-centra')")
   public ResponseEntity<List<AdministratorKlinike>> getAllAdminiKlinike(){
     List<AdministratorKlinike> retval = adminKlinikeService.findAllAdminiKlinike();
     return new ResponseEntity<>(retval, HttpStatus.OK);

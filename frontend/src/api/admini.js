@@ -20,5 +20,24 @@ export default {
     );
     return response.data;
   },
+
+  async fetchAllAdminiCentra(){
+    let options = util.prepareOptions();
+    let response = await axios.get(
+      `${process.env.VUE_APP_BACKEND_ROOT}/admin_centra`,
+      options
+    )
+    return response.data;
+  },
+
+  async addAdminCentra(adminCentra){
+    let options = util.prepareOptions();
+    let response = await axios.post(
+      `${process.env.VUE_APP_BACKEND_ROOT}/admin_centra`,
+      adminCentra,
+      options
+    )
+    return response.data;
+  }
   
 }

@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import isamrs.tim21.klinika.dto.AdminCentraDTO;
 import isamrs.tim21.klinika.jsonSerialize.IdentityListSerializer;
 
 @Entity
@@ -27,6 +28,12 @@ public class AdministratorCentra extends Korisnik{
 
 	public List<ZahtevZaRegistraciju> getZahtevi(){
 		return zahtevi;
+	}
+
+	public AdministratorCentra() {}
+
+	public AdministratorCentra(AdminCentraDTO adminCentraDTO){
+		super(adminCentraDTO.getEmail(), adminCentraDTO.getSifra(), adminCentraDTO.getIme(),adminCentraDTO.getPrezime());
 	}
 
 	

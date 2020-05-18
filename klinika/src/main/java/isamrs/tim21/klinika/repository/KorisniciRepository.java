@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import isamrs.tim21.klinika.domain.AdministratorCentra;
 import isamrs.tim21.klinika.domain.AdministratorKlinike;
 import isamrs.tim21.klinika.domain.Korisnik;
 
@@ -25,5 +26,9 @@ public interface KorisniciRepository extends JpaRepository<Korisnik, Long> {
 	@Query("SELECT k from Korisnik k"
 			+  " WHERE TYPE(k)='AK'" )
 	List<AdministratorKlinike> findAllAdminiKlinike();
+
+	@Query("SELECT k from Korisnik k"
+			+  " WHERE TYPE(k)='AC'" )
+	List<AdministratorCentra> findAllAdminiCentra();
 	
 }

@@ -9,7 +9,7 @@
       >
       <template v-slot:top>
         <v-toolbar flat color="white">
-          <v-toolbar-title>Administratori klinika</v-toolbar-title>
+          <v-toolbar-title>Administratori klinickog centra</v-toolbar-title>
           <v-divider
             class="mx-4"
             inset
@@ -38,7 +38,7 @@
             <template v-slot:activator="{ on }">
               <v-btn color="primary"  class="mb-2" v-on="on">Dodaj</v-btn>
             </template>
-            <v-form v-model="isFormValid">
+            <v-form v-model="isFormValid" ref="myForm">
               <v-card>
                 <!-- naslov forme -->
                 <v-card-title>
@@ -79,24 +79,9 @@
                     :type="prikaziLozinku ? 'text': 'password'"
                     @click:append="prikaziLozinku = !prikaziLozinku"
                     ></v-text-field>
-
-
-                    <v-select
-                    label="klinika"
-                    v-model="newItem.klinikaId"
-                    :items="getKlinike"
-                    item-text="naziv"
-                    item-value="id"
-                    
-                    :rules="klinikaRule"
-                    chips
-                    required
-                  ></v-select>
-
                   </v-container>
                 </v-card-text>
-                
-                
+                              
                 <!-- akcije -->
                 <v-card-actions>
                   <v-spacer></v-spacer>
@@ -108,7 +93,6 @@
           </v-dialog>
         </v-toolbar>
       </template>
-
     </v-data-table>
   </div>
 </template>
@@ -117,7 +101,7 @@
 import {mapGetters, mapActions} from 'vuex';
 
 export default {
-  name: "AdminiKlinike",
+  name: "AdminiKlinickogCentra",
   data: function(){
     return {
       dialog: false,
@@ -140,6 +124,7 @@ export default {
           value: 'email',
           sortable: true,
         },
+
       ],
       newItem: {
         ime: '',
@@ -160,28 +145,29 @@ export default {
 
     ...mapGetters(
       {
-        getAll: 'adminiKlinike/getAdminiKlinike',
-        getKlinike: 'klinike/getKlinike',
+        getAll: 'adminiCentra/getAdminiCentra',
       }
     ),
 
     formTitle: function(){
-       return 'Dodavanje novog administratora klinike';
+       return 'Dodavanje novog administratora klinickog centra';
     },
   },
   created(){
     //load klinike
     this.fetchData();
+    
   },
   methods: {
     ...mapActions(
       {
-        fetchData: 'adminiKlinike/fetchAdminiKlinike',
-        addAdminKlinike: 'adminiKlinike/addAdminKlinike',
+        fetchData: 'adminiCentra/fetchAdminiCentra',
+        addAdminCentra: 'adminiCentra/addAdminCentra',
       }
     ),
 
-    resetNewItem(){
+    resetForm(){
+      this.$refs.myForm.resetValidation(); //internal vue method
       this.newItem = {
         ime: '',
         prezime: '',
@@ -190,22 +176,14 @@ export default {
       }
     },
     close(){
-      this.resetNewItem();
+      this.resetForm();
       this.dialog = false;
     },
     save(){
-      this.addAdminKlinike(this.newItem);
+      this.addAdminCentra(this.newItem);
       this.close();
     },
 
-
-    getKlinika(idKlinike){
-      var klinika = (this.getKlinike.find(
-        klinika => {
-          return klinika.id == idKlinike 
-        }));
-      return [klinika];
-    }
   }
 }
 </script>
