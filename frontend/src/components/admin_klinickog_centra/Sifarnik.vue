@@ -184,10 +184,9 @@ export default {
     }),
 
     save(){
-      this.dialog = false;
+      this.close();
       this.newItem.sifra = this.newItem.sifra.toUpperCase();
       this.addDijagnozaIliLek(this.newItem)
-      this.resetForm();
     },
     close() {
       this.resetForm();

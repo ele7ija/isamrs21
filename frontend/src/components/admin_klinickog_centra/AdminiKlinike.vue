@@ -40,7 +40,7 @@
             <template v-slot:activator="{ on }">
               <v-btn color="primary"  class="mb-2" v-on="on">Dodaj</v-btn>
             </template>
-            <v-form v-model="isFormValid">
+            <v-form v-model="isFormValid" ref="myForm">
               <v-card>
                 <!-- naslov forme -->
                 <v-card-title>
@@ -232,12 +232,11 @@ export default {
         fetchData: 'adminiKlinike/fetchAdminiKlinike',
         loadKlinike: 'klinike/loadKlinike',
         addAdminKlinike: 'adminiKlinike/addAdminKlinike',
-        //updateKlinika: 'klinike/updateKlinikaFromAdminCentra',
-        // removeSala: 'sale/removeSala'
       }
     ),
 
-    resetNewItem(){
+    resetForm(){
+      this.$refs.myForm.resetValidation(); //internal vue method
       this.newItem = {
         ime: '',
         prezime: '',
@@ -247,7 +246,7 @@ export default {
       }
     },
     close(){
-      this.resetNewItem();
+      this.resetForm();
       this.dialog = false;
     },
     save(){

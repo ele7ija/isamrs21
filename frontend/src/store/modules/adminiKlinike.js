@@ -1,5 +1,4 @@
-import korisnikAPI from '@/api/korisnici'
-
+import adminAPI from '@/api/admini'
 
 const state = {
   adminiKlinike: [],
@@ -11,16 +10,12 @@ const getters = {
 
 const actions = {
   async fetchAdminiKlinike({commit}){
-    let sviKorisnici = await korisnikAPI.fetchAllKorisnici();  
-    var adminiKlinike = sviKorisnici.filter(
-      function(korisnik){
-        return korisnik.klinikaAdmina != undefined;
-    });
-    commit('setAdminiKlinika', adminiKlinike);
+    let admini = await adminAPI.fetchAllAdminiKlinike();
+    commit('setAdminiKlinika', admini);
   },
 
   async addAdminKlinike({commit}, adminKlinike){
-    let response = await korisnikAPI.addAdminKlinike(adminKlinike);
+    let response = await adminAPI.addAdminKlinike(adminKlinike);
     commit('addAdminKlinike', response)
   }
 }
