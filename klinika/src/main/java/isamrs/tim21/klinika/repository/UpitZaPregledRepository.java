@@ -59,10 +59,6 @@ public interface UpitZaPregledRepository extends JpaRepository<UpitZaPregled, Lo
 			+ "AND u.id = :idUpita")
 	UpitZaPregled findByIdKlinikeAndByIdPessimisticForceIncrement(@Param("idKlinike") long idKlinike, @Param("idUpita") long idUpita);
 
-	@Lock(LockModeType.PESSIMISTIC_READ)
-	@Query("SELECT u FROM UpitZaPregled u "
-			+ "WHERE u.klinika.id = :idKlinike "
-			+ "AND u.id = :idUpita")
-	UpitZaPregled findByIdKlinikeAndByIdPessimisticRead(Long id, Long id2);
+	
 
 }
