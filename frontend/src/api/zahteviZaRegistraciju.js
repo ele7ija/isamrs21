@@ -27,4 +27,10 @@ export default{
       options
     );
   },
+  async podnesiZahtev(zahtev){
+    return axios.post(
+      `${process.env.VUE_APP_BACKEND_ROOT}/zahtevi_za_registraciju/podnesi`,
+      zahtev
+    );
+  },
 }

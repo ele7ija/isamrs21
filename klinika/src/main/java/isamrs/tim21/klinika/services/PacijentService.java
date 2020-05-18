@@ -32,7 +32,7 @@ public class PacijentService {
 		Pacijent p = new Pacijent(pacijentDTO);
 		// pre nego sto postavimo lozinku u atribut hesiramo je
 		p.setSifra(passwordEncoder.encode(pacijentDTO.getSifra()));
-		p.setEnabled(true);
+		p.setEnabled(false);
 		
 		Authority auth = autentifikacijaServis.findByName("pacijent");
 		if (auth == null) {

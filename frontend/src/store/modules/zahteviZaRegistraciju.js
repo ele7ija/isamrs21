@@ -4,6 +4,7 @@ const state = {
   mailSending: false,
   mailSent: false,
   mailNotSent: false,
+  podnetiZahtev: null,
 }
 
 const getters = {
@@ -67,7 +68,12 @@ const actions = {
     .catch( () =>{
       console.log("inside catch")    
     })
-  },  
+  }, 
+  
+  async podnesiZahtev({commit}, zahtev) {
+    zahteviAPI.podnesiZahtev(zahtev);
+    commit('setPodnetiZahtev', zahtev)
+  },
 
   setMailSending({commit}, bool){
     commit('setMailSending', bool);
@@ -102,6 +108,7 @@ const mutations = {
   setMailSending: (state, bool) => state.mailSending = bool,
   setMailSent: (state, bool) => state.mailSent = bool,
   setMailNotSent: (state, bool) => state.mailNotSent = bool,
+  setPodnetiZahtev: (state, nesto) => state.podnetiZahtev = nesto
 
 }
 

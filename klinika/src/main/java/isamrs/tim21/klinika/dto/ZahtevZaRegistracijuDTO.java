@@ -5,11 +5,22 @@ import java.sql.Timestamp;
 public class ZahtevZaRegistracijuDTO {
   public Long id;
   public Timestamp datumOdobrenja;
+  public Timestamp datumPodnosenja;
+
+  public Timestamp getDatumPodnosenja() {
+    return this.datumPodnosenja;
+  }
+
+  public void setDatumPodnosenja(Timestamp datumPodnosenja) {
+    this.datumPodnosenja = datumPodnosenja;
+  }
+
   public String tekst;
   public Boolean odobren;
 
   public ZahtevZaRegistracijuDTO
-  (Long id, Timestamp datumOdobrenja, String tekst, Boolean odobren) {
+  (Long id, Timestamp datumOdobrenja, String tekst, Boolean odobren,
+  Long pacijentId) {
     this.id = id;
     this.datumOdobrenja = datumOdobrenja;
     this.tekst = tekst;

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.ZahtevZaRegistraciju;
+import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.dto.ZahtevZaRegistracijuDTO;
 import isamrs.tim21.klinika.exceptions.SendMailErrorResponse;
 import isamrs.tim21.klinika.exceptions.SendMailException;
@@ -35,6 +36,14 @@ public class ZahtevZaRegistracijuController {
     List<ZahtevZaRegistraciju> retval = zahtevService.findAll();
     return new ResponseEntity<>(retval, HttpStatus.OK);
   }
+
+  @PostMapping("/podnesi")
+  public ResponseEntity<CustomResponse<ZahtevZaRegistraciju>> podnesi(
+    @RequestBody ZahtevZaRegistraciju zahtev
+  ) {
+    return new ResponseEntity<CustomResponse<ZahtevZaRegistraciju>>(zahtevService.kreiraj(zahtev), HttpStatus.OK);
+  }
+  
 
   @PostMapping("/odbij")
   @PreAuthorize("hasAuthority('admin-klinickog-centra')")
@@ -68,7 +77,7 @@ public class ZahtevZaRegistracijuController {
     }
   }
 
-  @PostMapping("/registruj/{id}")
+  @GetMapping("/registruj/{id}")
   public String registrujKorisnika(@PathVariable Long id){
     String poruka = zahtevService.registrujKorisnika(id);
     return "asdf";
