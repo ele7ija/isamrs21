@@ -10,7 +10,8 @@ const getters = {
     return state.pacijenti;
   },
   getOdabraniPacijent: (state) => state.odabraniPacijent,
-  isLekarovPacijent: (state) => state.lekarovPacijent
+  isLekarovPacijent: (state) => state.lekarovPacijent,
+  getPoseteOdabranogPacijenta: (state) => state.odabraniPacijent.zdravstveniKarton.posete
 }
 const actions = {
   async loadPacijenti({commit}){

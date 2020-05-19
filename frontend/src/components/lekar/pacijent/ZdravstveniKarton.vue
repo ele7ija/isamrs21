@@ -1,16 +1,19 @@
 <template>
   <v-card>
-    <v-card-title>Zdravstveni karton</v-card-title>
+    <v-card-title class="justify-center headline">Zdravstveni karton</v-card-title>
     <v-card-text>
-      Bla bla
-
+      <TabelaPoseta />
     </v-card-text>
   </v-card>
 </template>
 
 <script>
+import TabelaPoseta from './TabelaPoseta';
 export default {
-  name: "ZdravstveniKarton"
+  name: "ZdravstveniKarton",
+  components: {
+    TabelaPoseta
+  }
 }
 </script>
 
