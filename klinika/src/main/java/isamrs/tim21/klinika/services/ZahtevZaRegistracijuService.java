@@ -45,15 +45,23 @@ public class ZahtevZaRegistracijuService {
     zahtevRepo.save(zahtevZaRegistraciju);
     return zahtevZaRegistraciju;
   }
+
   public String registrujKorisnika(Long id){
     ZahtevZaRegistraciju zahtevZaRegistraciju = zahtevRepo.findById(id).orElse(null);
-    //if null bice greska
+    String s ;
+    //ako zahtev sa tim id-jem nije pronadjen, znaci da zahtev nije podnesen 
+    //ili se korisnik vec registrovao
     if (null == zahtevZaRegistraciju){
-      return "problem ";
+      s = "<h1> Registracija nije uspela. Pokušajte ponovo. <h/1> ";
+      return s;
     }
     //else enabluj korisnika i obrisi zahtev
-    zahtevZaRegistraciju.getPacijent().setEnabled(true);
-    zahtevRepo.deleteById(id);
-    return "uspesno ste registrovani";
+    else{
+      zahtevZaRegistraciju.getPacijent().setEnabled(true);
+      zahtevRepo.deleteById(id);
+      s = "<h1> Uspešno ste registrovani"
+      +  "<br> <a href='http://localhost:8081'> Poseti kliniku </a> </h1> ";
+      return s;
+    }
   }
 }
