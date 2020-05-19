@@ -9,8 +9,6 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import isamrs.tim21.klinika.domain.Korisnik;
 import isamrs.tim21.klinika.domain.Lekar;
 import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
 
@@ -39,4 +37,9 @@ public interface OsobljeRepository extends JpaRepository<MedicinskoOsoblje, Long
 			+ "AND k.klinika.id = :idKlinike "
 			+ "AND k.id = :idOsoblja")
 	Lekar findLekarByIdKlinikeAndByIdPessimisticRead(@Param("idKlinike") Long idKlinike, @Param("idOsoblja") Long idOsoblja);
+
+	@Lock(LockModeType.PESSIMISTIC_READ)
+	@Query("SELECT k FROM Korisnik k "
+			+ "WHERE k.id = :idOsoblja")
+	MedicinskoOsoblje findByIdPessimisticReadLockExtended(@Param("idOsoblja") Long idOsoblja);
 }

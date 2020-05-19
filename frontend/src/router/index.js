@@ -28,7 +28,7 @@ import Sifarnik from '@/components/admin_klinickog_centra/Sifarnik'
 import PacijentiSearch from '@/components/lekar/PacijentiSearch';
 import RadniKalendarLekar from '@/components/lekar/RadniKalendarLekar';
 import OdsustvoLekar from '@/components/lekar/OdsustvoLekar';
-
+import ProfilPacijenta from "@/components/lekar/pacijent/ProfilPacijenta";
 import PacijentiHomePage from '@/components/pacijenti/PacijentiHomePage';
 
 import store from '@/store/index';
@@ -301,8 +301,17 @@ let router = new Router({
       meta: {
         authen: true,
         author: 'lekar'
-      },
+      }
     },
+    {
+      path: '/profil_pacijenta',
+      name: 'ProfilPacijenta',
+      component: ProfilPacijenta,
+      meta: {
+        authen: true,
+        author: 'lekar'
+      }
+    }
   ]
 });
 

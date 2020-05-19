@@ -6,6 +6,7 @@ const state = {
   klinike: [],
   pregledi: {},
   klinikaAdmina: null,
+  klinikaOsoblja: null,
   // Pretraga i sortiranje klinika
   pocetniDatum: null,
   krajnjiDatum: null,
@@ -58,6 +59,7 @@ const internalMethods = {
 }
 const getters = {
   getKlinikaAdmina: (state) => state.klinikaAdmina,
+  getKlinikaOsoblja: (state) => state.klinikaOsoblja,
   /** Primenjuje pretrage i sortiranja nad klinikama */
   pretrazeneKlinike: (state, getters) => {
     let retval = [];
@@ -161,6 +163,7 @@ const actions = {
   async fetchKlinikaUlogovanogKorisnika({commit}){
     let data = await klinikeAPI.fetchKlinikaAdmina();
     commit('setKlinikaAdmina', data);
+    commit('setKlinikaOsoblja', data);
   },
   async setKlinikaUlogovanogKorisnika({commit}, klinika){
     let data = await klinikeAPI.updateKlinika(klinika);
@@ -229,6 +232,7 @@ const mutations = {
     state.klinike.splice(index, 1, klinika);
   },
   setKlinikaAdmina: (state, klinika) => state.klinikaAdmina = klinika,
+  setKlinikaOsoblja: (state, klinika) => state.klinikaOsoblja = klinika,
   reset: (state) => {
     state.klinike = [];
     state.klinikaAdmina = null
