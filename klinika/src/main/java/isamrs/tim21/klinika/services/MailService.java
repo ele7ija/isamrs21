@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import isamrs.tim21.klinika.domain.Pacijent;
 import isamrs.tim21.klinika.domain.ZahtevZaRegistraciju;
 import isamrs.tim21.klinika.dto.ZahtevZaRegistracijuDTO;
-import isamrs.tim21.klinika.exceptions.SendMailException;
 import isamrs.tim21.klinika.repository.ZahtevZaRegistracijuRepository;
 
 @Service

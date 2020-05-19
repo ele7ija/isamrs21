@@ -57,6 +57,11 @@ export default {
       obj.adminKlinike = profil
     }
     //itd. za ostale role
+    else if(role == 'admin-klinickog-centra') {
+      url += `admin_centra/profil`;
+      obj.admin = profil;
+      
+    }
 
     return axios.put(
       url,
