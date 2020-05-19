@@ -39,7 +39,7 @@ export default {
   }),
   methods: {
     ...mapActions({
-      fetchKlinikaUlogovanogKorisnika: 'klinike/fetchKlinikaUlogovanogKorisnika'
+      fetchKlinikaUlogovanogKorisnika: 'klinike/fetchKlinikaUlogovanogKorisnika',
     })
   },
   created(){

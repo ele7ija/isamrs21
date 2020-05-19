@@ -9,5 +9,13 @@ export default {
       `${process.env.VUE_APP_BACKEND_ROOT}/pacijenti/all`,
       options)
     return response.data;
+  },
+
+  checkLekarovPacijent({idPacijenta, idLekara}){
+    let options = util.prepareOptions();
+    return axios.get(
+      `${process.env.VUE_APP_BACKEND_ROOT}/pacijenti/pravoPristupa?idPacijenta=${idPacijenta}&idLekara=${idLekara}`,
+      options
+    );
   }
 }

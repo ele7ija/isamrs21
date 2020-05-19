@@ -2,7 +2,7 @@
   <v-container>
     <v-card>
       <v-card-title class="justify-center headline">
-        Profil administratora klinike
+        Profil lekara
       </v-card-title>
       <v-card-text>
         <v-form v-model="isFormValid">

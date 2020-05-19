@@ -43,7 +43,6 @@ public class Pacijent extends Korisnik{
 	private String jbo;
 	
 	@OneToOne(cascade=CascadeType.ALL)
-	@JsonSerialize(using=IdentitySerializer.class)
 	private ZdravstveniKarton zdravstveniKarton;
 	
 	@OneToOne(cascade=CascadeType.ALL)
