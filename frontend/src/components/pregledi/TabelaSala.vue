@@ -55,16 +55,19 @@ export default {
       odabraniTipPregleda: "pregledDialog/getTipPregleda",
       pocetak: "pregledDialog/getPocetak",
       kraj: "pregledDialog/getKraj",
-      data: "sale/getSale"
+      data: "sale/getSale",
+      pregledi: "preglediAdmin/getPreglediKlinike"
     }),
     transformedData: function(){
       if(this.currentIndex == this.index)
         return this.data.filter(x => 
           x.pregledi.filter(y => {
-            let start = new Date(y.pocetakPregleda);
-            let end = new Date(y.krajPregleda);
-            return start.getTime() <= this.pocetak.getTime() && end.getTime() >= this.pocetak.getTime() ||
-              this.pocetak.getTime() <= start.getTime() && this.kraj.getTime() >= start.getTime()
+            let pregled = this.pregledi.filter(z => z.id == y.id)[0]; //zbog dobre vremenske zone
+            let start = pregled.pocetakPregleda;
+            let end = pregled.krajPregleda;
+            let start2 = this.pocetak;
+            let end2 = this.kraj;
+            return this.$utility.timeIntervalsIntersect(start, end, start2, end2);
           }).length == 0);
       else
         return [];

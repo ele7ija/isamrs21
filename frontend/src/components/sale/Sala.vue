@@ -198,10 +198,11 @@ export default {
         return this.sale.filter(x => {
           let preglediSale = this.pregledi.filter(y => y.sala.id == x.id);
           return preglediSale.filter(y => {
-            let start = new Date(y.pocetakPregleda);
+            let start = y.pocetakPregleda;
             let end = new Date(y.krajPregleda);
-            return (start.getTime() <= this.dateTimeStart.getTime() && end.getTime() >= this.dateTimeStart.getTime()) ||
-              (this.dateTimeStart.getTime() <= start.getTime() && this.dateTimeEnd.getTime() >= start.getTime());
+            let start2 = this.dateTimeStart;
+            let end2 = this.dateTimeEnd;
+            return this.$utility.timeIntervalsIntersect(start, end, start2, end2);
           }).length == 0;
         });
       }else{

@@ -65,7 +65,8 @@ export default {
       odabraniTipPregleda: "pregledDialog/getTipPregleda",
       pocetak: "pregledDialog/getPocetak",
       kraj: "pregledDialog/getKraj",
-      data: "osoblje/getMedicinskoOsoblje"
+      data: "osoblje/getMedicinskoOsoblje",
+      pregledi: "preglediAdmin/getPreglediKlinike"
     }),
     transformedData: function(){
       if(this.currentIndex == this.index)
@@ -73,10 +74,12 @@ export default {
           x.pozicija == "lekar" &&
           x.tipovi_pregleda.filter(y => y.id == this.odabraniTipPregleda.id).length != 0 &&
           x.pregledi.filter(y => {
-            let start = new Date(y.pocetakPregleda);
-            let end = new Date(y.krajPregleda);
-            return (start.getTime() <= this.pocetak.getTime() && end.getTime() >= this.pocetak.getTime()) ||
-              (this.pocetak.getTime() <= start.getTime() && this.kraj.getTime() >= start.getTime())
+            let pregled = this.pregledi.filter(z => z.id == y.id)[0]; //zbog dobre vremenske zone
+            let start = pregled.pocetakPregleda;
+            let end = pregled.krajPregleda;
+            let start2 = new Date(this.pocetak);
+            let end2 = new Date(this.kraj);
+            return this.$utility.timeIntervalsIntersect(start, end, start2, end2);
           }).length == 0);
       else
         return [];

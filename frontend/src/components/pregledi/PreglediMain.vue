@@ -32,12 +32,14 @@ export default {
           let osoblje = this.osobljeKlinike.filter(y => y.id == x.lekar.id)[0];
           let tipPregleda = this.tipoviPregledaKlinike.filter(y => y.id == x.tipPregleda.id)[0];
           let sala = this.saleKlinike.filter(y => y.id == x.sala.id)[0];
+          let date1 = x.pocetakPregleda;
+          let date2 = x.krajPregleda;
           let retval = {
             id: x.id,
             version: x.version,
-            datum: new Date(x.pocetakPregleda).toLocaleDateString(),
-            pocetak: new Date(x.pocetakPregleda).toLocaleTimeString(),
-            kraj: new Date(x.krajPregleda).toLocaleTimeString(),
+            datum: this.$utility.formatDate2(date1),
+            pocetak: this.$utility.formatDate3(date1),
+            kraj: this.$utility.formatDate3(date2),
             lekar: `${osoblje.ime} ${osoblje.prezime}`,
             tipPregleda: tipPregleda.naziv,
             vrsta: tipPregleda.vrsta,

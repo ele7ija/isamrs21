@@ -1,4 +1,5 @@
 import pregledi from '@/api/pregledi';
+import utility from '@/utility/utility';
 
 const state = {
   klinika: null,
@@ -19,6 +20,8 @@ const actions = {
   },
 
   async addPregled({state, commit, dispatch}, pregled){
+    pregled.pocetakPregleda = utility.addToDate(new Date(pregled.pocetakPregleda));
+    pregled.krajPregleda = utility.addToDate(new Date(pregled.krajPregleda));
     return new Promise((resolve, reject) => {
       pregledi.addPregled(state.klinika.id, pregled)
       .then(({data: {result, success, message}}) => {
@@ -70,8 +73,18 @@ const actions = {
 };
 const mutations = {
   setCurrentKlinika: (state, klinika) => state.klinika = klinika,
-  setPreglediKlinike: (state, pregledi) => state.preglediKlinike = pregledi,
-  addNewPregled: (state, pregled) => state.preglediKlinike.push(pregled),
+  setPreglediKlinike: (state, pregledi) => {
+    state.preglediKlinike = pregledi
+    for(let pregled of state.preglediKlinike){
+      pregled.pocetakPregleda = utility.handleTimeZone(new Date(pregled.pocetakPregleda));
+      pregled.krajPregleda = utility.handleTimeZone(new Date(pregled.krajPregleda));
+    }
+  },
+  addNewPregled: (state, pregled) => {
+    pregled.pocetakPregleda = utility.handleTimeZone(new Date(pregled.pocetakPregleda));
+    pregled.krajPregleda = utility.handleTimeZone(new Date(pregled.krajPregleda));
+    state.preglediKlinike.push(pregled)
+  },
   updateExistingPregled: (state, pregled) => {
     let index = state.preglediKlinike.findIndex(x => x.id == pregled.id);
     state.preglediKlinike[index] = pregled;

@@ -1,5 +1,5 @@
 import upitiPreglediAdmin from '@/api/upitiPreglediAdmin';
-
+import utility from '@/utility/utility';
 const state = {
   klinika: null,
   upiti_pregledi_admin: []
@@ -23,6 +23,8 @@ const actions = {
   },
 
   async addUpit({state, commit}, upit){
+    upit.pocetakPregleda = utility.addToDate(new Date(upit.pocetakPregleda));
+    upit.krajPregleda = utility.addToDate(new Date(upit.krajPregleda));
     let response = await upitiPreglediAdmin.addUpit(state.klinika.id, upit);
     commit('addNewUpit', response);
   },
@@ -74,14 +76,28 @@ const actions = {
 }
 const mutations = {
   setCurrentKlinika: (state, klinika) => state.klinika = klinika,
-  setUpiti: (state, upiti_pregledi_admin) => state.upiti_pregledi_admin = upiti_pregledi_admin,
-  addNewUpit: (state, upit) => state.upiti_pregledi_admin.push(upit),
+  setUpiti: (state, upiti_pregledi_admin) => {
+    state.upiti_pregledi_admin = upiti_pregledi_admin
+    for(let upit of state.upiti_pregledi_admin){
+      upit.pocetakPregleda = utility.handleTimeZone(new Date(upit.pocetakPregleda));
+      upit.krajPregleda = utility.handleTimeZone(new Date(upit.krajPregleda));
+    }
+  },
+  addNewUpit: (state, upit) => {
+    upit.pocetakPregleda = utility.handleTimeZone(new Date(upit.pocetakPregleda));
+    upit.krajPregleda = utility.handleTimeZone(new Date(upit.krajPregleda));
+    state.upiti_pregledi_admin.push(upit)
+  },
   updateExistingUpit: (state, upit) => {
     let index = state.upiti_pregledi_admin.findIndex(x => x.id == upit.id);
     //nesvakidasnji nacin da se update-uje element u nizu, al za sad jedino resenje kod kojeg radi reactivity
+    upit.pocetakPregleda = utility.handleTimeZone(new Date(upit.pocetakPregleda));
+    upit.krajPregleda = utility.handleTimeZone(new Date(upit.krajPregleda));
     state.upiti_pregledi_admin.splice(index, 1);
     state.upiti_pregledi_admin.splice(index, 0, upit);
     if(upit.izmenjeniPregled){
+      upit.izmenjeniPregled.pocetakPregleda = utility.handleTimeZone(new Date(upit.izmenjeniPregled.pocetakPregleda));
+      upit.izmenjeniPregled.krajPregleda = utility.handleTimeZone(new Date(upit.izmenjeniPregled.krajPregleda));
       state.upiti_pregledi_admin.push(upit.izmenjeniPregled);
     }
   },

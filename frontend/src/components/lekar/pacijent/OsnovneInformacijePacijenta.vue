@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-card-title class="justify-center headline">Osnovne informacije</v-card-title>
+    <v-card-title class="justify-center headline" style="background-color: #A5D6A7;">Osnovne informacije</v-card-title>
     <v-card-text>
       <v-text-field  readonly v-model="elem.value" :label="elem.label" v-for="elem in _info" :key="elem.id"></v-text-field>
     </v-card-text>

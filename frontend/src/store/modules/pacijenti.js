@@ -11,7 +11,17 @@ const getters = {
   },
   getOdabraniPacijent: (state) => state.odabraniPacijent,
   isLekarovPacijent: (state) => state.lekarovPacijent,
-  getPoseteOdabranogPacijenta: (state) => state.odabraniPacijent.zdravstveniKarton.posete
+  getPoseteOdabranogPacijenta: (state) => state.odabraniPacijent.zdravstveniKarton.posete,
+  pregledMozeDaSeZapocne: (state) => (idPosete) => {
+    var d = new Date()
+    var milliseconds = Date.parse(d)
+    milliseconds = milliseconds - (5 * 60 * 1000)
+    // - 5 minutes
+    d = new Date(milliseconds)
+    let poseta = state.odabraniPacijent.zdravstveniKarton.posete.filter(x => x.id == idPosete)[0];
+    let vremePregleda = poseta.pregled.pocetakPregleda;
+    return d <= vremePregleda;
+  }
 }
 const actions = {
   async loadPacijenti({commit}){

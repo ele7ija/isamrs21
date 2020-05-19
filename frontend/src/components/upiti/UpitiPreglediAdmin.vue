@@ -51,13 +51,15 @@ export default {
     _neobradjeniUpiti: function(){
       let temp = this.upiti.filter(x => !x.adminObradio && x.izmenjeniPregled == null);
       return temp.map(x => {
+        let date1 = x.pocetakPregleda;
+        let date2 = x.krajPregleda;
         return {
           id: x.id,
           version: x.version,
           pacijent: `${x.pacijent.ime} ${x.pacijent.prezime}`,
-          datum: new Date(x.pocetakPregleda).toLocaleDateString(),
-          pocetak: new Date(x.pocetakPregleda).toLocaleTimeString(),
-          kraj: new Date(x.krajPregleda).toLocaleTimeString(),
+          datum: this.$utility.formatDate2(date1),
+          pocetak: this.$utility.formatDate3(date1),
+          kraj: this.$utility.formatDate3(date2),
           lekar: `${x.lekar.ime} ${x.lekar.prezime}`,
           tipPregleda: x.tipPregleda.naziv,
           sala: x.sala ? x.sala.oznaka : null,
@@ -68,13 +70,15 @@ export default {
     _obradjeniUpiti: function(){
       let temp = this.upiti.filter(x => x.adminObradio && x.izmenjeniPregled == null);
       return temp.map(x => {
+        let date1 = x.pocetakPregleda;
+        let date2 = x.krajPregleda;
         return {
           id: x.id,
           version: x.version,
           pacijent: `${x.pacijent.ime} ${x.pacijent.prezime}`,
-          datum: new Date(x.pocetakPregleda).toLocaleDateString(),
-          pocetak: new Date(x.pocetakPregleda).toLocaleTimeString(),
-          kraj: new Date(x.krajPregleda).toLocaleTimeString(),
+          datum: this.$utility.formatDate2(date1),
+          pocetak: this.$utility.formatDate3(date1),
+          kraj: this.$utility.formatDate3(date2),
           lekar: `${x.lekar.ime} ${x.lekar.prezime}`,
           tipPregleda: x.tipPregleda.naziv,
           sala: x.sala ? x.sala.oznaka : null,

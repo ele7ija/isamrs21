@@ -50,7 +50,10 @@ const actions = {
     router.push(`home`);
   },
 
-  
+  async fetchAllKorisnici({commit}){
+    let data = await korisnikAPI.fetchAllKorisnici();
+    commit('korisnici/setKorisnici', data, {root:true});
+  },
   
   refresh_token(){
     return korisnikAPI.refresh_token();

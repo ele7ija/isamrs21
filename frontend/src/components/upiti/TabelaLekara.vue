@@ -187,13 +187,15 @@ export default {
       retval.lekar = lekar;
       retval._pregledi = this.pregledi.filter(x => x.lekar.id == lekar.id);
       retval._pregledi = retval._pregledi.map(x => {
+        let date1 = x.pocetakPregleda;
+        let date2 = x.krajPregleda;
         let obj = {
           id: x.id,
-          datum: new Date(x.pocetakPregleda).toLocaleDateString(),
-          pocetak: new Date(x.pocetakPregleda).toLocaleTimeString(),
-          kraj: new Date(x.krajPregleda).toLocaleTimeString(),
-          pocetak_date: new Date(x.pocetakPregleda),
-          kraj_date: new Date(x.krajPregleda),
+          datum: this.$utility.formatDate2(date1),
+          pocetak: this.$utility.formatDate3(date1),
+          kraj: this.$utility.formatDate3(date2),
+          pocetak_date: x.pocetakPregleda,
+          kraj_date: x.krajPregleda,
           lekar: `${x.lekar.ime} ${x.lekar.prezime}`,
           vrsta: x.tipPregleda.vrsta,
           tipPregleda: x.tipPregleda.naziv,

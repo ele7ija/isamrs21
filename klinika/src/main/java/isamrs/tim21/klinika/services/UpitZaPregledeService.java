@@ -76,9 +76,9 @@ public class UpitZaPregledeService {
 		}
 		upit.setAdminObradio(true);
 		upit.setOdobren(u.getOdobren());
-		Pregled p = pregledService.get(upit.getKlinika().getId(), u.getUnapredDefinisaniPregled().getId());
 		//validacije radis samo ako je admin odobrio ovaj upit
 		if(upit.getOdobren()){
+			Pregled p = pregledService.get(upit.getKlinika().getId(), u.getUnapredDefinisaniPregled().getId());
 			//ukoliko pregled ima posetu, admin nije smeo da odobri upit u
 			if(p.getPoseta() != null){
 				upit.setOdobren(false);
