@@ -27,6 +27,44 @@ export default {
     return response.data;
   },
 
+  async fetchKorisnik(email){
+    let options = util.prepareOptions();
+    let response = await axios.get(
+      `${process.env.VUE_APP_BACKEND_ROOT}/korisnici/profil?email=${email}`,
+      options
+    )
+    return response.data;
+  },
+
+  updateProfil({profil, poslednjaSifra, role}){
+    let options = util.prepareOptions();
+    let url = `${process.env.VUE_APP_BACKEND_ROOT}/`;
+    let obj = {
+      poslednjaSifra
+    };
+    if(role == 'lekar'){
+      url += `medicinskaOsoba/${profil.klinika.id}/lekar/profil`;
+      obj.lekar = profil
+      obj.lekar.pozicija = 'lekar';
+    }
+    else if(role == 'medicinska-sestra'){
+      url += `medicinskaOsoba/${profil.klinika.id}/sestra/profil`;
+      obj.sestra = profil;
+      obj.lekar.pozicija = 'medicinska sestra';
+    }
+    else if(role == 'admin-klinike'){
+      url += `admin_klinike/profil`;
+      obj.adminKlinike = profil
+    }
+    //itd. za ostale role
+
+    return axios.put(
+      url,
+      obj,
+      options
+    );
+  },
+
   refresh_token(){
     let korisnik = util._getKorsinik();
     return new Promise((resolve, reject) => {
@@ -44,13 +82,5 @@ export default {
     });
   },
 
-  async addAdminKlinike(adminKlinike){
-    let options = util.prepareOptions();
-    let response = await axios.post(
-      `${process.env.VUE_APP_BACKEND_ROOT}/admin_klinike`,
-      adminKlinike,
-      options
-    );
-    return response.data;
-  },
+
 }

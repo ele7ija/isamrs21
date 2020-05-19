@@ -1,6 +1,7 @@
 package isamrs.tim21.klinika.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,9 +18,10 @@ import isamrs.tim21.klinika.domain.Klinika;
 import isamrs.tim21.klinika.domain.Lekar;
 import isamrs.tim21.klinika.domain.MedicinskaSestra;
 import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
-import isamrs.tim21.klinika.domain.Pregled;
 import isamrs.tim21.klinika.domain.TipPregleda;
 import isamrs.tim21.klinika.dto.CustomResponse;
+import isamrs.tim21.klinika.dto.LekarProfilDTO;
+import isamrs.tim21.klinika.dto.SestraProfilDTO;
 import isamrs.tim21.klinika.repository.AuthorityRepository;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.repository.OsobljeRepository;
@@ -48,6 +51,9 @@ public class OsobljeService {
 	
 	@Autowired
 	public KlinikaRepository klinikaRepository;
+	
+	@Autowired
+	public CustomUserDetailsService userDetailsService;
 	
 	@Transactional(readOnly=false, propagation=Propagation.MANDATORY)
 	public MedicinskoOsoblje save(MedicinskoOsoblje osobljeToSave){
@@ -162,7 +168,7 @@ public class OsobljeService {
 				tp.getLekari().remove(lekar); //mora posto je tip pregleda vlasnik veze
 			}
 			Lekar lekarToDelete = new Lekar();
-			lekarToDelete.setId(idOsoblja);
+			lekarToDelete = lekar.copy();
 			lekarToDelete.setVersion(version);
 			osobljeRepository.delete(lekarToDelete);
 			return new CustomResponse<Boolean>(true, true, "OK.");
@@ -179,6 +185,16 @@ public class OsobljeService {
 		else{
 			return osobljeRepository.findAllByIdKlinike(idKlinike);
 		}
+	}
+
+	@Transactional(readOnly=true)
+	public CustomResponse<List<Lekar>> findAllLekariByIdKlinike(Long idKlinike) {
+		Klinika klinika = klinikaRepository.findById(idKlinike).orElse(null);
+		if(klinika == null){
+			return new CustomResponse<List<Lekar>>(null, false, "Klinika ne postoji.");
+		}
+		List<Lekar> lekari = osobljeRepository.findAllLekariByIdKlinike(idKlinike);
+		return new CustomResponse<List<Lekar>>(lekari, true, "Lekari pronađeni.");
 	}
 	
 	@Transactional(readOnly=true)
@@ -238,5 +254,29 @@ public class OsobljeService {
 			CustomResponse<Boolean> customResponse = delete(idKlinike, idOsoblja, version);
 			return new ResponseEntity<CustomResponse<Boolean>>(customResponse, customResponse.getResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
 		}
+	}
+
+	@Transactional(readOnly=false, isolation=Isolation.REPEATABLE_READ)
+	public CustomResponse<MedicinskoOsoblje> updateProfilLekara(LekarProfilDTO lekar) {
+		Lekar retval = (Lekar)userDetailsService.findUserAndChangePassword(lekar.getLekar().getId(), lekar.getPoslednjaSifra(), lekar.getLekar().getSifra());
+		retval.setIme(lekar.getLekar().getIme());
+		retval.setPrezime(lekar.getLekar().getPrezime());
+		if(!lekar.getPoslednjaSifra().equals(retval.getSifra())){
+			retval.setPoslednjaPromenaSifre(new Date());
+		}
+		retval = osobljeRepository.save(retval);
+		return new CustomResponse<MedicinskoOsoblje>(retval, true, "OK.");
+	}
+
+	@Transactional(readOnly=false, isolation=Isolation.REPEATABLE_READ)
+	public CustomResponse<MedicinskoOsoblje> updateProfilSestra(SestraProfilDTO sestra) {
+		MedicinskaSestra retval = (MedicinskaSestra) userDetailsService.findUserAndChangePassword(sestra.getSestra().getId(),  sestra.getPoslednjaSifra(), sestra.getSestra().getSifra());
+		retval.setIme(sestra.getSestra().getIme());
+		retval.setPrezime(sestra.getSestra().getPrezime());
+		if(!sestra.getPoslednjaSifra().equals(retval.getSifra())){
+			retval.setPoslednjaPromenaSifre(new Date());
+		}
+		retval = osobljeRepository.save(retval);
+		return new CustomResponse<MedicinskoOsoblje>(retval, true, "OK.");
 	}
 }

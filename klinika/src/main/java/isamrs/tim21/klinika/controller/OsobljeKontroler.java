@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import isamrs.tim21.klinika.dto.LekarProfilDTO;
+import isamrs.tim21.klinika.dto.SestraProfilDTO;
+import isamrs.tim21.klinika.domain.Lekar;
+import isamrs.tim21.klinika.domain.MedicinskaSestra;
 import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
 import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.services.OsobljeService;
@@ -35,6 +39,12 @@ public class OsobljeKontroler {
 		}else{
 			return new ResponseEntity<List<MedicinskoOsoblje>>(osoblje, HttpStatus.OK);
 		}
+	}
+
+	@GetMapping(path="/lekari")
+	public ResponseEntity<CustomResponse<List<Lekar>>> getAllLekari(@PathVariable("idKlinike") Long idKlinike){
+		CustomResponse<List<Lekar>> lekari = osobljeService.findAllLekariByIdKlinike(idKlinike);
+		return new ResponseEntity<CustomResponse<List<Lekar>>>(lekari, HttpStatus.OK);
 	}
 	
 	@GetMapping(path="/{idOsoblja}")
@@ -67,12 +77,38 @@ public class OsobljeKontroler {
 		try{
 			retval = osobljeService.updateSpecijalnosti(idKlinike, idOsoblja, idTipovaPregleda, version); 
 		}catch(Exception e){
-			System.out.println(e.getMessage());
 			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(
 					new CustomResponse<MedicinskoOsoblje>(null, false, "Greska: Verzija podatka je zastarela. Osvezite stranicu"),
 					HttpStatus.OK);
 		}
 		return retval;
+	}
+	
+	@PutMapping(value="lekar/profil")
+	public ResponseEntity<CustomResponse<MedicinskoOsoblje>> updateProfilLekar(@RequestBody LekarProfilDTO lekar){
+		CustomResponse<MedicinskoOsoblje> retval = null;
+		try{
+			retval = osobljeService.updateProfilLekara(lekar);
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(
+					new CustomResponse<MedicinskoOsoblje>(null, false, "Greska."),
+					HttpStatus.OK);
+		}
+		return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(retval, HttpStatus.OK);
+	}
+	
+	@PutMapping(value="sestra/profil")
+	public ResponseEntity<CustomResponse<MedicinskoOsoblje>> updateProfilSestra(@RequestBody SestraProfilDTO sestra){
+		CustomResponse<MedicinskoOsoblje> retval = null;
+		try{
+			retval = osobljeService.updateProfilSestra(sestra);
+		}catch(Exception e){
+			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(
+					new CustomResponse<MedicinskoOsoblje>(null, false, "Greska."),
+					HttpStatus.OK);
+		}
+		return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(retval, HttpStatus.OK); 
 	}
 	
 	@DeleteMapping(value="/specijalnosti/{idOsoblja}/{idTipaPregleda}")

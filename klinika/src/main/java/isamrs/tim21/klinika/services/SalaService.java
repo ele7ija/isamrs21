@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim21.klinika.domain.Klinika;
@@ -29,7 +31,11 @@ public class SalaService {
 	@Autowired
 	private KlinikaRepository klinikaRepository;
 
-	@Transactional(readOnly=false)
+	 
+	/* Zbog phantom read-a i unrepeatable read-a nad pregledima koristimo SERIALIZABLE
+	 * Zbog toga sto je ova metoda pozvana iz transakcije sa manje striktnim isolation parametrom koristimo REQUIRES_NEW
+	 * */
+	@Transactional(readOnly=false, propagation=Propagation.REQUIRES_NEW, isolation=Isolation.SERIALIZABLE)
 	public CustomResponse<Boolean> delete(Long idKlinike, Long idSale, Long version) throws Exception{
 		if(!pregledRepository.findByIdSale(idSale).isEmpty()){
 			return new CustomResponse<Boolean>(true, false, "Greska: Ne mozete obrisati salu za koju postoji pregled");
@@ -47,7 +53,7 @@ public class SalaService {
 
 	@Transactional(readOnly=true)
 	public List<Sala> getAllSale(Long idKlinike) {
-		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
+		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
 			return null;
 		}else{
@@ -58,7 +64,7 @@ public class SalaService {
 
 	@Transactional(readOnly=true)
 	public Sala getSala(Long idKlinike, Long idSale) {
-		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
+		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
 			return null;
 		}else{
@@ -81,7 +87,7 @@ public class SalaService {
 		}
 	}
 
-	@Transactional(readOnly=false)
+	@Transactional(readOnly=false, isolation=Isolation.READ_COMMITTED)
 	public ResponseEntity<CustomResponse<Sala>> update(Long idKlinike, Long idSale, Sala salaToChange) throws Exception{
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
@@ -97,7 +103,7 @@ public class SalaService {
 						new CustomResponse<Sala>(null, false, "Greska: Sala nije pronadjena."),
 						HttpStatus.NOT_FOUND);
 			}	
-			salaToChange.setPregledi(sala.getPregledi());
+			salaToChange.setPregledi(sala.getPregledi()); //potencijalni dirty read sprecen sa READ_COMMITTED
 			Sala retval = salaRepository.save(salaToChange); //ovde moze da dodje do nepoklapanja verzija
 			return new ResponseEntity<CustomResponse<Sala>>(
 					new CustomResponse<Sala>(retval, true, "OK."),

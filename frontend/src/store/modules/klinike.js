@@ -101,6 +101,27 @@ const getters = {
     })
     return novi;
   },
+  getPretrazeniPreglediLekara: (state, getters) => ({klinikaId, lekarId}) => {
+    return getters.getPretrazeniPregledi(klinikaId).filter((x) => x.lekar.id == lekarId);
+  },
+  getNepretrazeniPreglediLekara: (state, getters) => ({klinikaId, lekarId}) => {
+    let postojeci = state.pregledi[klinikaId];
+    if (postojeci == undefined) {
+      return [];
+    }
+    return postojeci.filter(x => {
+      // oduzmi one koji su pretrazeni
+      for (let pregled of getters.getPretrazeniPreglediLekara({klinikaId: klinikaId, lekarId: lekarId})) {
+        if (pregled.id === x.id) {
+          return false;
+        }
+      }
+      if (x.lekar.id != lekarId) {
+        return false;
+      }
+      return true
+    })
+  },
   dostupniTipoviPregleda: (state) => {
     let myset = new Set();
     let retval = [];

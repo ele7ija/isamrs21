@@ -8,9 +8,9 @@ const state = {
         items: []
       },
       { 
-        title: 'Moj profil',
+        title: 'Profil',
         action: 'mdi-account',
-        componentName: 'tipovi_pregleda',
+        componentName: 'profil',
         items: []
       },
       {
@@ -99,9 +99,9 @@ const state = {
         items: []
       },
       { 
-        title: 'Moj profil',
+        title: 'Profil',
         action: 'mdi-account',
-        componentName: 'home',
+        componentName: 'profil',
         items: []
       },
       {
@@ -109,9 +109,9 @@ const state = {
         
         items: [
           { 
-            title: 'Administratori kliničkog centra',
-            action: 'mdi-account-supervisor',
-            componentName: 'admini_klinickog_centra',
+            title: 'Zahtevi za registraciju',
+            action: 'mdi-receipt',
+            componentName: 'zahtevi_za_registraciju',
             items:[]
           },
           { 
@@ -126,22 +126,56 @@ const state = {
             componentName: 'klinike_from_admin_centra',
             items:[]
           },
-          { 
-            title: 'Zahtevi za registraciju',
-            action: 'mdi-receipt',
-            componentName: 'zahtevi_za_registraciju',
+          {
+            title: 'Šifranik dijagnoza i lekova',
+            action: 'mdi-medical-bag',
+            componentName: 'sifarnik',
             items:[]
           },
-          {
-            title: 'dijagnoze i lekovi',
-            action: 'mdi-medical-bag',
-            componentName: 'sale',
+          { 
+            title: 'Administratori kliničkog centra',
+            action: 'mdi-account-supervisor',
+            componentName: 'admini_klinickog_centra',
             items:[]
           },
         ]
       }
     ],
-
+    'lekar': [
+      {
+        title: 'Dashboard',
+        action: 'mdi-view-dashboard',
+        componentName: "home",
+        items: []
+      },
+      { 
+        title: 'Profil',
+        action: 'mdi-account',
+        componentName: 'profil',
+        items: []
+      },
+      {
+        title: 'Klinika',
+        action: 'mdi-hospital-building',
+        items: [
+          { 
+            title: 'Pregled pacijenata',
+            action: 'mdi-account-search',
+            componentName: 'PacijentiSearch'
+          },
+          { 
+            title: 'Radni kalendar',
+            action: 'mdi-calendar',
+            componentName: 'RadniKalendarLekar'
+          },
+          { 
+            title: 'Odsustvo',
+            action: 'mdi-beach',
+            componentName: 'OdsustvoLekar'
+          },
+        ]
+      } 
+    ]
   }
 }
 const getters = {

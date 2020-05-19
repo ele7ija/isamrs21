@@ -28,6 +28,15 @@ export default{
     );
   },
 
+  obradiAdminCustom(idKlinike, upit){
+    let options = util.prepareOptions();
+    return axios.put(
+      `${process.env.VUE_APP_BACKEND_ROOT}/upit/obradiAdminCustom/${idKlinike}/${upit.id}`,
+      upit,
+      options
+    );
+  },
+
   deleteUpit(idKlinike, idUpita, version){
     let options = util.prepareOptions();
     return axios.delete(

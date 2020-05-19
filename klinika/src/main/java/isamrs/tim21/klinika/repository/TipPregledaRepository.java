@@ -2,7 +2,10 @@ package isamrs.tim21.klinika.repository;
 
 import java.util.List;
 
+import javax.persistence.LockModeType;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,6 +24,13 @@ public interface TipPregledaRepository extends JpaRepository<TipPregleda, Long> 
 			+ "AND t.id = :idTipaPregleda")
 	public TipPregleda findByIdKlinikeAndIdTipaPregleda(@Param("idKlinike") long idKlinike, @Param("idTipaPregleda") long idTipaPregleda);
 
+	@Lock(LockModeType.PESSIMISTIC_READ)
+	@Query("SELECT t from TipPregleda t "
+			+ "WHERE t.klinika.id = :idKlinike "
+			+ "AND t.id = :idTipaPregleda")
+	public TipPregleda findByIdKlinikeAndIdPessimisticRead(@Param("idKlinike") long idKlinike, @Param("idTipaPregleda") long idTipaPregleda);
+
+	
 	@Query("SELECT t FROM TipPregleda t "
 			+ "WHERE t.cenovnik.id = :idCenovnika")
 	public List<TipPregleda> findByIdCenovnika(@Param("idCenovnika") Long idCenovnika);

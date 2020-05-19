@@ -4,6 +4,7 @@ import Login from '@/components/Login';
 import Registracija from '@/components/Registracija';
 import ONama from '@/components/ONama';
 import UserDashboard from "@/components/dashboards/UserDashboard";
+import Profil from "@/components/profil/Profil"
 import TipPregleda from "@/components/tipovi_pregleda/TipPregleda";
 import SalaMain from "@/components/sale/SalaMain";
 import Osoblje from "@/components/osoblje/Osoblje";
@@ -15,11 +16,18 @@ import Klinike from '@/components/pacijenti/klinike/Klinike';
 import KlinikaPage from '@/components/pacijenti/klinike/KlinikaPage';
 import RezervacijaPregleda from '@/components/pacijenti/klinike/RezervacijaPregleda';
 import Istorija from '@/components/pacijenti/klinike/Istorija';
+import Lekari from '@/components/pacijenti/klinike/Lekari';
 //admin klinickog centra
 import AdminiKlinickogCentra from '@/components/admin_klinickog_centra/AdminiKlinickogCentra'
 import AdminiKlinike from '@/components/admin_klinickog_centra/AdminiKlinike'
 import KlinikeFromAdminCentra from '@/components/admin_klinickog_centra/Klinike'
 import ZahteviZaRegistraciju from '@/components/admin_klinickog_centra/ZahteviZaRegistraciju'
+import Sifarnik from '@/components/admin_klinickog_centra/Sifarnik'
+
+//lekar
+import PacijentiSearch from '@/components/lekar/PacijentiSearch';
+import RadniKalendarLekar from '@/components/lekar/RadniKalendarLekar';
+import OdsustvoLekar from '@/components/lekar/OdsustvoLekar';
 
 import PacijentiHomePage from '@/components/pacijenti/PacijentiHomePage';
 
@@ -66,6 +74,15 @@ let router = new Router({
       path: '/home',
       name: 'home',
       component: UserDashboard,
+      meta: {
+        authen: true,
+        author: ''
+      },
+    },
+    {
+      path: '/profil',
+      name: 'profil',
+      component: Profil,
       meta: {
         authen: true,
         author: ''
@@ -192,6 +209,16 @@ let router = new Router({
       }
     },
     {
+      path: '/pacijent/lekari/:klinikaId',
+      name: 'pacijent-lekari',
+      component: Lekari,
+      props: true,
+      meta: {
+        authen: true,
+        author: 'pacijent'
+      }
+    },
+    {
       path: '/pacijent/rezervacija-pregleda',
       name: 'rezervacija-pregleda',
       component: RezervacijaPregleda,
@@ -238,7 +265,44 @@ let router = new Router({
         author: 'admin-klinickog-centra'
       }
     },
+    {
+      path: '/sifarnik',
+      name: 'sifarnik',
+      component: Sifarnik,
+      meta: {
+        authen: true,
+        author: 'admin-klinickog-centra'
+      }
+    },
     
+    //lekar
+    {
+      path: '/pacijetni_klinike',
+      name: 'PacijentiSearch',
+      component: PacijentiSearch,
+      meta: {
+        authen: true,
+        author: 'lekar'
+      },
+    },
+    {
+      path: '/radni_kalendar',
+      name: 'RadniKalendarLekar',
+      component: RadniKalendarLekar,
+      meta: {
+        authen: true,
+        author: 'lekar'
+      },
+    },
+    {
+      path: '/odsustvo',
+      name: 'OdsustvoLekar',
+      component: OdsustvoLekar,
+      meta: {
+        authen: true,
+        author: 'lekar'
+      },
+    },
   ]
 });
 
@@ -252,6 +316,10 @@ router.beforeEach((to, from, next) => {
       next({name: 'login'});
       return;
     }
+    /*let profil = store.getters['profil/getProfil'];
+    if(profil.poslednjaPromenaSifre == null){
+      next({name: 'profil'}); //obavezna promena sifre pri prvom logovanju korisnika
+    }*/
     // AUTHORIZATION CHECK
     // A certain authority
     if (korisnik.role !== to.meta.author && to.meta.author != '') {

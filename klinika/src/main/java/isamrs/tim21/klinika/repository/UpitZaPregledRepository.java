@@ -2,7 +2,10 @@ package isamrs.tim21.klinika.repository;
 
 import java.util.List;
 
+import javax.persistence.LockModeType;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -49,5 +52,13 @@ public interface UpitZaPregledRepository extends JpaRepository<UpitZaPregled, Lo
 	@Query("SELECT u FROM UpitZaPregled u "
 			+ "WHERE u.unapredDefinisaniPregled.id = :idPregleda")
 	List<UpitZaPregled> findAllByIdPregleda(@Param("idPregleda") long idPregleda);
+	
+	@Lock(LockModeType.PESSIMISTIC_FORCE_INCREMENT)
+	@Query("SELECT u FROM UpitZaPregled u "
+			+ "WHERE u.klinika.id = :idKlinike "
+			+ "AND u.id = :idUpita")
+	UpitZaPregled findByIdKlinikeAndByIdPessimisticForceIncrement(@Param("idKlinike") long idKlinike, @Param("idUpita") long idUpita);
+
+	
 
 }

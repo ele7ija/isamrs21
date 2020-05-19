@@ -43,7 +43,7 @@ public class KlinikaKontroler {
 	}
 	
 	@GetMapping(value="/klinikaUlogovanogKorisnika")
-	@PreAuthorize("hasAuthority('admin-klinike')")
+	@PreAuthorize("hasAuthority('admin-klinike') or hasAuthority('lekar')")
 	public ResponseEntity<Klinika> getKlinikaUlogovanogKorisnika(HttpServletRequest request){	
 		Klinika retval = klinikaService.findKlinikaUlogovanog(request);
 		if(retval == null){

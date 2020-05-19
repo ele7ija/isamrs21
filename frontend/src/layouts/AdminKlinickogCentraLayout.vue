@@ -38,19 +38,6 @@ export default {
   computed: mapGetters({
     'userType': 'korisnici/getKorisnik',
   }),
-
-/*
-//djuricevo: 
-
-  methods: {
-    ...mapActions({
-      fetchKlinikaUlogovanogKorisnika: 'klinike/fetchKlinikaUlogovanogKorisnika'
-    })
-  },
-  created(){
-    this.fetchKlinikaUlogovanogKorisnika();
-  }
-*/
 }
 </script>
 

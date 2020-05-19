@@ -2,8 +2,8 @@
   <div>
     <v-container fluid>
       <div class="ml-5 mr-5">
-        <TabelaNeobradjenihUpita :all="_neobradjeniUpiti" class="mt-5" @accept="accept" @reject="reject"></TabelaNeobradjenihUpita>
-        <TabelaObradjenihUpita :all="_obradjeniUpiti" class="mt-5" @deleteItem="deleteItem"></TabelaObradjenihUpita>
+        <TabelaNeobradjenihUpita :all="_neobradjeniUpiti" class="mt-5" @accept="accept" @reject="reject" @acceptCustom="acceptCustom" :key="key1"></TabelaNeobradjenihUpita>
+        <TabelaObradjenihUpita :all="_obradjeniUpiti" class="mt-5" @deleteItem="deleteItem" :key="key2"></TabelaObradjenihUpita>
       </div>
     </v-container>
     <v-snackbar
@@ -31,6 +31,8 @@ export default {
   name: "UpitiPreglediAdmin",
   data: function(){
     return {
+      key1: 0,
+      key2: 2,
       snackbar: false,
       snackbarTimeout: 5000,
       snackbarText: null
@@ -47,7 +49,7 @@ export default {
       noviPregled: "preglediAdmin/getNoviPregled"
     }),
     _neobradjeniUpiti: function(){
-      let temp = this.upiti.filter(x => !x.adminObradio);
+      let temp = this.upiti.filter(x => !x.adminObradio && x.izmenjeniPregled == null);
       return temp.map(x => {
         return {
           id: x.id,
@@ -58,7 +60,7 @@ export default {
           kraj: new Date(x.krajPregleda).toLocaleTimeString(),
           lekar: `${x.lekar.ime} ${x.lekar.prezime}`,
           tipPregleda: x.tipPregleda.naziv,
-          sala: x.unapredDefinisaniPregled ? x.unapredDefinisaniPregled.sala.oznaka : null,
+          sala: x.sala ? x.sala.oznaka : null,
           pregled: x.unapredDefinisaniPregled,
         };
       });
@@ -75,7 +77,7 @@ export default {
           kraj: new Date(x.krajPregleda).toLocaleTimeString(),
           lekar: `${x.lekar.ime} ${x.lekar.prezime}`,
           tipPregleda: x.tipPregleda.naziv,
-          sala: x.unapredDefinisaniPregled ? x.unapredDefinisaniPregled.sala.oznaka : null,
+          sala: x.sala ? x.sala.oznaka : null,
           pregled: x.unapredDefinisaniPregled,
           odobren: x.odobren,
           pacijentObradio: x.pacijentObradio,
@@ -89,14 +91,18 @@ export default {
   created(){
     this.fetchPregledi();
     this.fetchSale();
+    this.fetchOsoblje();
     this.fetchUpiti();
+    this.$store.commit("salaFilter/reset", {}, {root:true});
   },
   methods: {
     ...mapActions({
       fetchUpiti: "upitiPreglediAdmin/loadUpiti",
       fetchSale: "sale/loadSale",
+      fetchOsoblje: "osoblje/loadMedicinskoOsoblje",
       fetchPregledi: "preglediAdmin/fetchPreglediKlinike",
       obradiAdmin: "upitiPreglediAdmin/obradiAdmin",
+      obradiAdminCustom: "upitiPreglediAdmin/obradiAdminCustom",
       deleteUpit: "upitiPreglediAdmin/deleteUpit"
     }),
     accept(item){
@@ -119,6 +125,26 @@ export default {
       });
       this.refreshTables();
     },
+
+    acceptCustom({upit, cena, popust, konacnaCena, dodatniLekari}){
+      //SAMO ZA CUSTOM PREGLED
+      //prvo dodaje pregled, obradjuje upit i definise novi upit ako je to potrebno
+      upit.unapredDefinisaniPregled = {
+        cena,
+        popust,
+        konacnaCena,
+        dodatniLekari
+      };
+      this.obradiAdminCustom(upit).then(
+        null, (error) => {
+          this.snackbar = true;
+          this.snackbarText = error;
+        }
+      );
+      
+      this.refreshTables();
+    },
+
     reject(item){
       //SAMO za UPIT ZA UNAPRED DEFINISAN PREGLED
       let updatedItem = this.upiti.filter(x => x.id == item.id)[0];
@@ -127,11 +153,12 @@ export default {
         version: updatedItem.version,
         adminObradio: true,
         odobren: false,
-        unapredDefinisaniPregled: {
-          id: updatedItem.unapredDefinisaniPregled ? updatedItem.unapredDefinisaniPregled.id : this.noviPregled.id
-        }
       }
-
+      if(updatedItem.unapredDefinisaniPregled){
+        obj.unapredDefinisaniPregled = {
+          id: updatedItem.unapredDefinisaniPregled.id
+        };
+      }
       //PUT zahtev za reject
       this.obradiAdmin(obj).then(null, (error) => {
         this.snackbar = true;
@@ -140,8 +167,6 @@ export default {
       this.refreshTables();
     },
     deleteItem(item){
-      //TODO: brisanje upita na serveru(samo ako je pacijent obradio upit)
-      //voditi racuna da se obrise i originalni upit ukoliko je item zapravo izmenjeniUpit
       this.deleteUpit({idUpita: item.id, version: item.version}).then(null, (error) => {
         this.snackbarText = error;
         this.snackbar = true;
@@ -149,8 +174,8 @@ export default {
     },
 
     refreshTables(){
-      this._neobradjeniUpiti;
-      this._obradjeniUpiti
+      this.key1++;
+      this.key2++;
     }
 
   }

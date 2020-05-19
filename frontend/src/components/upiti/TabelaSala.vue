@@ -5,7 +5,7 @@
       :items="_sale"
       :search="search"
       class="elevation-1"
-      :no-data-text="'Za date parametre upita ne postoji slobodna sala. Kliknite dugme ispod tabele da promenite parametre upita.'"
+      :no-data-text="'Nema sala u klinici.'"
       show-select
       single-select
       >
@@ -29,12 +29,15 @@
           <v-spacer></v-spacer>
           <span class="datetime-picker">
             <v-datetime-picker
-              v-model="upit.pocetak"
+              v-model="_pocetak"
               label="Početak pregleda"
               dateFormat="dd.MM.yyyy"
               :textFieldProps="textFieldProps"
-              disabled
+              :disabled="!promenaDatuma"
             >
+              <template slot="actions" slot-scope="{ parent }">
+                <v-btn color="success darken-1" @click="parent.okHandler">Done</v-btn>
+              </template>
             </v-datetime-picker>
           </span>
           <span class="datetime-picker">
@@ -45,8 +48,12 @@
               :textFieldProps="textFieldProps"
               disabled
             >
+              <template slot="actions" slot-scope="{ parent }">
+                <v-btn color="success darken-1" @click="parent.okHandler">Done</v-btn>
+              </template>
             </v-datetime-picker>
           </span>
+          <v-btn class="my-4 mx-2" color="primary" @click="promenaDatuma=true" v-if="slobodneSale.length==0">Promena datuma</v-btn>
         </v-toolbar>
       </template>
       <template v-slot:item.actions="{ item }">
@@ -63,30 +70,27 @@
       </template>
     </v-data-table>
     <v-btn class="my-4 mx-2" color="primary" @click="incStep()" :disabled="!btnEnabled || slobodneSale.length==0">Dalje</v-btn>
-    <v-btn class="my-4 mx-2" color="primary" @click="dialog2=true" v-if="slobodneSale.length==0">Promena podataka iz upita</v-btn>
     <v-dialog v-model="dialog1">
-      <PreglediSale :preglediSale="preglediSale"/>
-    </v-dialog>
-    <v-dialog v-model="dialog2" max-width="500px">
-      Komponenta za promenu datuma pregleda zbog zauzetosti sale. Moze izazvati i promenu lekara.
+      <Pregledi :pregledi="preglediSale"/>
     </v-dialog>
   </div>
 </template>
 
 <script>
 import {mapGetters} from 'vuex';
-import PreglediSale from './PreglediSale';
+import Pregledi from './Pregledi';
 export default {
   name: "TabelaSala",
   props: ["upit", "slobodneSale"],
   components: {
-    PreglediSale
+    Pregledi
   },
   data: function(){
     return{
       textFieldProps: {
         appendIcon: 'event'
       },
+      promenaDatuma: false,
       btnEnabled: false,
       selected: [],
       headers: [
@@ -107,13 +111,14 @@ export default {
         }
       ],
       dialog1: false,
-      dialog2: false,
       search: '',
       preglediSale: {
         sala: null,
-        pregledi: [],
+        _pregledi: [],
         pocetak: null,
-        kraj: null
+        kraj: null,
+        title: null,
+        subtitle: null
       }
     };
   },
@@ -126,6 +131,14 @@ export default {
         tipoviPregledaKlinike: 'tipoviPregleda/getTipoviPregleda'
       }
     ),
+    _pocetak: {
+      get(){
+        return this.upit.pocetak;
+      },
+      set(newValue){
+        this.$emit("setDates", {pocetak: newValue, refresh: true});
+      }
+    },
     _sale(){
       let retval = [];
       for(let sala of this.sale){
@@ -152,8 +165,8 @@ export default {
   methods: {
     showPreglediSale(sala){
       this.preglediSale.sala = sala;
-      this.preglediSale.pregledi = this.pregledi.filter(x => x.sala.id == sala.id);
-      this.preglediSale.pregledi = this.preglediSale.pregledi.map(x => {
+      this.preglediSale._pregledi = this.pregledi.filter(x => x.sala.id == sala.id);
+      this.preglediSale._pregledi = this.preglediSale._pregledi.map(x => {
           let retval = {
             id: x.id,
             version: x.version,
@@ -175,6 +188,8 @@ export default {
         })
       this.preglediSale.pocetak = this.upit.pocetak;
       this.preglediSale.kraj = this.upit.kraj;
+      this.preglediSale.title = `Kalendar pregleda sale: ${sala.oznaka}`;
+      this.preglediSale.subtitle = "Crvenom bojom su označeni pregledi zbog kojih sala nije slobodna za datum iz upita";
       this.dialog1 = true;
     },
     getPacijent(x){

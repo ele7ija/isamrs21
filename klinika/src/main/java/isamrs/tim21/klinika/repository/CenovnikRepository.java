@@ -2,7 +2,10 @@ package isamrs.tim21.klinika.repository;
 
 import java.util.List;
 
+import javax.persistence.LockModeType;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -19,4 +22,10 @@ public interface CenovnikRepository extends JpaRepository<Cenovnik, Long> {
 			+ "WHERE c.klinika.id = :idKlinike "
 			+ "AND c.id = :idCenovnika")
 	public Cenovnik findByIdKlinikeAndIdCenovnika(@Param("idKlinike") long idKlinike, @Param("idCenovnika") long idCenovnika);
+
+	@Lock(LockModeType.PESSIMISTIC_READ)
+	@Query("SELECT c from Cenovnik c "
+			+ "WHERE c.klinika.id = :idKlinike "
+			+ "AND c.id = :idCenovnika")
+	public Cenovnik findByIdKlinikeAndIdCenovnikaPessimisticRead(@Param("idKlinike") long idKlinike, @Param("idCenovnika") long idCenovnika);
 }

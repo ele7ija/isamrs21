@@ -41,18 +41,17 @@
         <v-icon
           small
           class="mr-2"
-          v-if="item.pregled!=null"
-          @click="reject(item)"
-        >
-          mdi-close-box
-        </v-icon>
-        <v-icon
-          small
-          class="mr-2"
           v-if="item.pregled==null"
           @click="edit(item)"
         >
           mdi-pencil
+        </v-icon>
+        <v-icon
+          small
+          class="mr-2"
+          @click="reject(item)"
+        >
+          mdi-close-box
         </v-icon>
       </template>
       <template v-slot:expanded-item="{ headers, item }">
@@ -70,7 +69,7 @@
         </td>
       </template>
     </v-data-table>
-    <v-dialog v-model="dialog">
+    <v-dialog v-model="dialog" @input="close()">
       <v-card>
         <v-card-title>
           <span class="headline">Odgovor na upit za pregled pacijenta</span>
@@ -96,6 +95,10 @@
                 :key="step.unique"
                 @incStep="incStep"
                 @decStep="decStep"
+                @setDates="setDates"
+                @setLekar="setLekar"
+                @resetDates="resetDates"
+                @close="close"
               ></component>
             </v-stepper-content>
           </span>
@@ -122,6 +125,8 @@ export default {
       dialog: false,
       expanded: [],
       singleExpand: true,
+      oldKraj: null,
+      oldPocetak: null,
       headers: [
         {
           text: 'Pacijent',
@@ -193,7 +198,8 @@ export default {
     ...mapGetters({
       upiti: "upitiPreglediAdmin/getUpiti",
       sale: "sale/getSale",
-      pregledi: "preglediAdmin/getPreglediKlinike"
+      pregledi: "preglediAdmin/getPreglediKlinike",
+      osoblje: "osoblje/getMedicinskoOsoblje"
     }),
     slobodneSale(){
       if(this.editableItem != null){
@@ -213,7 +219,6 @@ export default {
       }else{
         return [];
       }
-      
     }
   },
   methods: {
@@ -226,15 +231,21 @@ export default {
     edit(item){
       //SAMO za UPIT ZA CUSTOM PREGLED
       let updatedItem = this.upiti.filter(x => x.id == item.id)[0];
+      this.editableItem = null;
       this.editableItem = {
         id: item.id,
+        version: item.version,
         pacijent: {text: `${updatedItem.pacijent.ime} ${updatedItem.pacijent.prezime}`, value: updatedItem.pacijent},
         pocetak: new Date(updatedItem.pocetakPregleda),
         kraj: new Date(updatedItem.krajPregleda),
         lekar: {text: `${updatedItem.lekar.ime} ${updatedItem.lekar.prezime}`, value: updatedItem.lekar},
         tipPregleda: {text: updatedItem.tipPregleda.naziv, value: updatedItem.tipPregleda},
+        vrsta: updatedItem.tipPregleda.vrsta,
+        cena: updatedItem.tipPregleda.cenovnik.iznosUDinarima,
         sala: null
-      }
+      };
+      this.editableItem._pocetak = this.formatDate(this.editableItem.pocetak);
+      this.editableItem._kraj = this.formatDate(this.editableItem.kraj);
       this.rerender();
       this.dialog = true;
     },
@@ -245,18 +256,89 @@ export default {
     },
     incStep(object){
       if(this.stepIndex == this.stepperData.length){
-        alert("Emitujem akciju na bek");
+        let upit = this.upiti.filter(x => x.id == this.editableItem.id)[0];
+        upit.lekar = {id: this.editableItem.lekar.value.id, version: this.editableItem.lekar.value.version, pozicija: 'lekar'};
+        upit.sala = {id: this.editableItem.sala.value.id, version: this.editableItem.sala.value.version};
+        upit.tipPregleda = {id: this.editableItem.tipPregleda.value.id, version: this.editableItem.tipPregleda.value.version};
+        upit.klinika = {id: upit.klinika.id};
+        upit.pocetakPregleda = this.editableItem.pocetak;
+        upit.krajPregleda = this.editableItem.kraj;
+        upit.odobren = true;
+        upit.adminObradio = true;
+
+        let cena = this.editableItem.cena;
+        let popust = object.popust;
+        let konacnaCena = object.konacnaCena;
+        let dodatniLekari = object.dodatniLekari;
+        this.$emit('acceptCustom', {upit, cena, popust, konacnaCena, dodatniLekari});
+        this.stepIndex = 1;
+        this.dialog = false;
       }else{
         this.editableItem.sala = {
-          id: object.id,
-          version: object.version
+          text: object.oznaka,
+          value: object
         };
-        console.log(this.editableItem.sala.id);
         this.stepIndex++;
       }
     },
     decStep(){
+      this.rerender();
       this.stepIndex--;
+    },
+    close(){
+      this.resetDates();
+      this.rerender();
+      this.stepIndex = 1;
+      this.dialog = false;
+    },
+    formatDate(date){
+      let day = date.getDate();
+      let month = date.getMonth() + 1;
+      let hour = date.getHours();
+      let minute = date.getMinutes();
+      if((String(day)).length==1)
+        day='0'+day;
+      if((String(month)).length==1)
+        month='0'+month;
+      if((String(hour)).length==1)
+        hour='0'+hour;
+      if((String(minute)).length==1)
+        minute='0'+minute;
+      return `${day}.${month}.${date.getFullYear()} ${hour}:${minute}`;
+    },
+    setDates({pocetak, refresh}){
+      if(!this.oldPocetak){
+        this.oldPocetak = this.editableItem.pocetak;
+      }
+      if(!this.oldKraj){
+        this.oldKraj = this.editableItem.kraj;
+      }
+
+      this.editableItem.pocetak = pocetak;
+      this.editableItem._pocetak = this.formatDate(pocetak);
+      let kraj = new Date(pocetak.getTime() + this.editableItem.tipPregleda.value.trajanjeMinuti*60000);
+      this.editableItem.kraj = kraj;
+      this.editableItem._kraj = this.formatDate(kraj);
+
+      //remount component two in order to validate form
+      if(refresh)
+        this.stepperData[1].unique += 1;
+    },
+    setLekar(lekar){
+      this.editableItem.lekar.text = `${lekar.ime} ${lekar.prezime}`;
+      this.editableItem.lekar.value = lekar;
+      this.stepperData[1].unique += 1; //remount component two in order to validate form
+    },
+    resetDates(){
+      if(this.oldPocetak){
+        this.editableItem.pocetak = this.oldPocetak;
+        this.editableItem._pocetak = this.formatDate(this.oldPocetak);  
+      }
+      if(this.oldKraj){
+        this.editableItem.kraj = this.oldKraj;
+        this.editableItem._kraj = this.formatDate(this.oldKraj);
+      }
+      this.stepperData[1].unique += 1; //remount component two in order to validate form
     }
   }
 }

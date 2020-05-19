@@ -1,6 +1,7 @@
 package isamrs.tim21.klinika.domain;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -15,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Version;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -55,7 +58,8 @@ public abstract class Korisnik implements IdentitySerializable, UserDetails {
 	protected boolean enabled;
 
 	@Column(name = "poslednja_promena_sifre")
-	protected java.sql.Timestamp poslednjaPromenaSifre;
+	@Temporal(TemporalType.TIMESTAMP)
+	protected Date poslednjaPromenaSifre;
 	
 	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "user_authority",
@@ -121,13 +125,11 @@ public abstract class Korisnik implements IdentitySerializable, UserDetails {
 		this.prezime = prezime;
 	}
 
-	
-
-	public java.sql.Timestamp getPoslednjaPromenaSifre() {
+	public Date getPoslednjaPromenaSifre() {
 		return poslednjaPromenaSifre;
 	}
 
-	public void setPoslednjaPromenaSifre(java.sql.Timestamp poslednjaPromenaSifre) {
+	public void setPoslednjaPromenaSifre(Date poslednjaPromenaSifre) {
 		this.poslednjaPromenaSifre = poslednjaPromenaSifre;
 	}
 

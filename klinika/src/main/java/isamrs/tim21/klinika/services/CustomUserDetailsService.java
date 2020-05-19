@@ -12,8 +12,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim21.klinika.domain.Korisnik;
+import isamrs.tim21.klinika.domain.Lekar;
 import isamrs.tim21.klinika.repository.KorisniciRepository;
 
 
@@ -71,5 +73,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 		user.setSifra(passwordEncoder.encode(newPassword));
 		userRepository.save(user);
 
+	}
+
+	@Transactional(readOnly=false)
+	public Korisnik findUserAndChangePassword(Long id, String poslednjaSifra, String novaSifra) {
+		Korisnik korisnik = userRepository.findByIdAndBySifra(id, poslednjaSifra);
+		korisnik.setSifra(passwordEncoder.encode(novaSifra));
+		return userRepository.save(korisnik);
 	}
 }

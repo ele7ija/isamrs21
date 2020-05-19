@@ -13,11 +13,14 @@ import preglediAdmin from './modules/preglediAdmin';
 import layout from './modules/layout';
 import pregledDialog from './modules/pregledDialog';
 import upitiPreglediAdmin from './modules/upitiPreglediAdmin';
-import adminiKlinike from './modules/adminiKlinike';
+import adminiKlinike from './modules/adminiKlinike'
+import osobljePacijent from './modules/osobljePacijent';
 import salaFilter from './modules/salaFilter';
 import createPersistedState from 'vuex-persistedstate'
 import zahteviZaRegistraciju from './modules/zahteviZaRegistraciju'
-
+import sifarnik from './modules/sifarnik';
+import profil from './modules/profil';
+import adminiCentra from './modules/adminiCentra'
 //Plugins
 Vue.use(Vuex);
 
@@ -37,13 +40,17 @@ export default new Vuex.Store({
     upitiPreglediAdmin,
     adminiKlinike,
     upitZaPregled,
+    osobljePacijent,
     salaFilter,
     zahteviZaRegistraciju,
+    sifarnik,
+    profil,
+    adminiCentra,
   },
 
   plugins: [
     createPersistedState({
-      paths: ['korisnici', 'layout', 'klinike']
+      paths: ['korisnici', 'layout', 'klinike', 'profil']
     }),
   ]
 
