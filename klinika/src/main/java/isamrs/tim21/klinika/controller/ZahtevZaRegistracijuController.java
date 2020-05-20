@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.ZahtevZaRegistraciju;
+import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.dto.ZahtevZaRegistracijuDTO;
-import isamrs.tim21.klinika.exceptions.SendMailErrorResponse;
 import isamrs.tim21.klinika.exceptions.SendMailException;
 import isamrs.tim21.klinika.services.MailService;
 import isamrs.tim21.klinika.services.ZahtevZaRegistracijuService;
@@ -35,6 +34,14 @@ public class ZahtevZaRegistracijuController {
     List<ZahtevZaRegistraciju> retval = zahtevService.findAll();
     return new ResponseEntity<>(retval, HttpStatus.OK);
   }
+
+  @PostMapping("/podnesi")
+  public ResponseEntity<CustomResponse<ZahtevZaRegistraciju>> podnesi(
+    @RequestBody ZahtevZaRegistraciju zahtev
+  ) {
+    return new ResponseEntity<CustomResponse<ZahtevZaRegistraciju>>(zahtevService.kreiraj(zahtev), HttpStatus.OK);
+  }
+  
 
   @PostMapping("/odbij")
   @PreAuthorize("hasAuthority('admin-klinickog-centra')")
@@ -68,9 +75,16 @@ public class ZahtevZaRegistracijuController {
     }
   }
 
-  @PostMapping("/registruj/{id}")
-  public String registrujKorisnika(@PathVariable Long id){
-    String poruka = zahtevService.registrujKorisnika(id);
-    return "asdf";
+  // @GetMapping("/registruj/{id}")
+  // public RedirectView registrujKorisnika(@PathVariable Long id) {
+  //   zahtevService.registrujKorisnika(id); 
+  //   RedirectView r = new RedirectView("http://localhost:8081");
+  //   return r;
+  // }
+
+  @GetMapping ("/registruj/{id}")
+  public String registrujKorisnika(@PathVariable Long id) {
+    String s = zahtevService.registrujKorisnika(id);
+    return s;
   }
 }

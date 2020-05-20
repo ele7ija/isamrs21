@@ -10,6 +10,9 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
 
 @Entity
@@ -24,6 +27,7 @@ public class ZahtevZaRegistraciju implements IdentitySerializable{
 	@Column(name="datum_odobrenja")
 	private Timestamp datumOdobrenja;
 	
+	@Cascade(CascadeType.MERGE)
 	@OneToOne(fetch=FetchType.EAGER)
 	@MapsId
 	private Pacijent pacijent;

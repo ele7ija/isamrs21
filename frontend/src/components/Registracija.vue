@@ -100,7 +100,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 export default {
   name: 'Registracija',
@@ -158,14 +158,20 @@ export default {
       ],
     }
   },
+  computed: {
+    ...mapState('korisnici', [
+      'registrovanKorisnik'
+    ])
+  },
   methods: {
     resetujFormu: function() {
       this.$refs.loginForm.reset();
     },
     ...mapActions({
-      registrujKorisnika: 'korisnici/registrujKorisnika'
+      registrujKorisnika: 'korisnici/registrujKorisnika',
+      podnesiZahtev: 'zahteviZaRegistraciju/podnesiZahtev'
     }),
-    registruj: function(){
+    registruj: async function(){
       let korisnik = {
         ime: this.ime,
         prezime: this.prezime,
@@ -177,7 +183,13 @@ export default {
         email: this.email,
         sifra: this.lozinka
       }
-      this.registrujKorisnika(korisnik);
+      await this.registrujKorisnika(korisnik);
+      let zahtev = {
+        datumPodnosenja: new Date(),
+        pacijent: this.registrovanKorisnik,
+        odobren: false
+      }
+      this.podnesiZahtev(zahtev)
       setTimeout( () => this.$router.push('/login'), 1000)
     }
   }

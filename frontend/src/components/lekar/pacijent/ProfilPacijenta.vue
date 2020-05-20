@@ -4,8 +4,9 @@
       <v-col cols="12" :md="_md">
         <OsnovneInformacijePacijenta/>
       </v-col>
-      <v-col v-if="_md==4" cols="12" md="8">
+      <v-col v-if="_md==3" cols="12" md="9">
         <ZdravstveniKarton/>
+        <TabelaMojihPregleda class="mt-5"/>
       </v-col>
     </v-row>
   </v-container>
@@ -15,11 +16,13 @@
 import { mapGetters, mapActions } from 'vuex';
 import ZdravstveniKarton from './ZdravstveniKarton';
 import OsnovneInformacijePacijenta from './OsnovneInformacijePacijenta';
+import TabelaMojihPregleda from './TabelaMojihPregleda';
 export default {
   name: "ProfilPacijenta",
   components: {
     ZdravstveniKarton,
-    OsnovneInformacijePacijenta
+    OsnovneInformacijePacijenta,
+    TabelaMojihPregleda
   },
   created(){
     this.checkLekarovPacijent();
@@ -30,7 +33,7 @@ export default {
       lekarovPacijent: "pacijenti/isLekarovPacijent"
     }),
     _md(){
-      return this.lekarovPacijent ? 4 : 12;
+      return this.lekarovPacijent ? 3 : 12;
     }
   },
   methods: {

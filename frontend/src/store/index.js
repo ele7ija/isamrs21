@@ -50,7 +50,7 @@ export default new Vuex.Store({
 
   plugins: [
     createPersistedState({
-      paths: ['korisnici', 'layout', 'klinike', 'profil', 'pacijenti']
+      paths: ['korisnici', 'layout', 'klinike', 'profil', 'pacijenti', 'tipoviPregleda']
     }),
   ]
 

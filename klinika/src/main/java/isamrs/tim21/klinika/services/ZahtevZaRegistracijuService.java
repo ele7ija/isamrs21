@@ -5,17 +5,28 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import isamrs.tim21.klinika.domain.Pacijent;
 import isamrs.tim21.klinika.domain.ZahtevZaRegistraciju;
+import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.dto.ZahtevZaRegistracijuDTO;
+import isamrs.tim21.klinika.repository.KorisniciRepository;
 import isamrs.tim21.klinika.repository.ZahtevZaRegistracijuRepository;
 
 @Service
 public class ZahtevZaRegistracijuService {
   @Autowired
   ZahtevZaRegistracijuRepository zahtevRepo;
-  
+  @Autowired
+  KorisniciRepository korisniciRepository;
+
   public List<ZahtevZaRegistraciju> findAll() {
     return zahtevRepo.findAll();
+  }
+
+  public CustomResponse<ZahtevZaRegistraciju> kreiraj(ZahtevZaRegistraciju z) {
+    z.setPacijent((Pacijent) korisniciRepository.findById(z.getPacijent().getId()).get());
+    zahtevRepo.save(z);
+    return new CustomResponse<ZahtevZaRegistraciju>(z, true, "Zahtev kreiran");
   }
 
   public ZahtevZaRegistraciju delete(ZahtevZaRegistracijuDTO zahtevZaRegistracijuDTO) {
@@ -33,15 +44,23 @@ public class ZahtevZaRegistracijuService {
     zahtevRepo.save(zahtevZaRegistraciju);
     return zahtevZaRegistraciju;
   }
+
   public String registrujKorisnika(Long id){
     ZahtevZaRegistraciju zahtevZaRegistraciju = zahtevRepo.findById(id).orElse(null);
-    //if null bice greska
+    String s ;
+    //ako zahtev sa tim id-jem nije pronadjen, znaci da zahtev nije podnesen 
+    //ili se korisnik vec registrovao
     if (null == zahtevZaRegistraciju){
-      return "problem ";
+      s = "<h1> Registracija nije uspela. Pokušajte ponovo. <h/1> ";
+      return s;
     }
     //else enabluj korisnika i obrisi zahtev
-    zahtevZaRegistraciju.getPacijent().setEnabled(true);
-    zahtevRepo.deleteById(id);
-    return "uspesno ste registrovani";
+    else{
+      zahtevZaRegistraciju.getPacijent().setEnabled(true);
+      zahtevRepo.deleteById(id);
+      s = "<h1> Uspešno ste registrovani"
+      +  "<br> <a href='http://localhost:8081'> Poseti kliniku </a> </h1> ";
+      return s;
+    }
   }
 }

@@ -1,8 +1,8 @@
 <template>
   <v-card>
-    <v-card-title>Osnovne informacije</v-card-title>
+    <v-card-title class="justify-center headline">Osnovne informacije</v-card-title>
     <v-card-text>
-      <v-text-field v-for="elem in _info" :key="elem.id" readonly v-model="elem.value" :label="elem.label"></v-text-field>
+      <v-text-field  readonly v-model="elem.value" :label="elem.label" v-for="elem in _info" :key="elem.id"></v-text-field>
     </v-card-text>
   </v-card>
 </template>
