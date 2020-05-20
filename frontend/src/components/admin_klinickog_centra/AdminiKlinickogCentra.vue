@@ -94,6 +94,19 @@
         </v-toolbar>
       </template>
     </v-data-table>
+
+    <!-- reject dialog se pojavi kada nije ulogovan predefinisan admin -->
+    <v-dialog v-model="rejectDialog" persistent max-width="400">
+      <v-card>
+        <v-card-title class="headline error--text" > Zabranjen Pristup</v-card-title>
+        <v-divider></v-divider>
+        <v-card-text class="title "> Niste ovlašćeni da gledate ili dodajete nove administratore kliničkog centra. </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn class="error--text" text @click="this.closeRejectDialog">Nazad</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -105,6 +118,7 @@ export default {
   data: function(){
     return {
       dialog: false,
+      rejectDialog: false,
       search: '',
       isFormValid: true,
       prikaziLozinku: false,
@@ -152,10 +166,15 @@ export default {
     formTitle: function(){
        return 'Dodavanje novog administratora klinickog centra';
     },
+
+
   },
+
   created(){
-    //load klinike
-    this.fetchData();
+    this.tryToLoad();
+    //var predefinisan = this.checkPredefinisan();
+    //console.log(predefinisan)
+    //this.fetchData()
     
   },
   methods: {
@@ -163,6 +182,7 @@ export default {
       {
         fetchData: 'adminiCentra/fetchAdminiCentra',
         addAdminCentra: 'adminiCentra/addAdminCentra',
+        checkPredefinisan: 'adminiCentra/checkPredefinisan',
       }
     ),
 
@@ -184,6 +204,22 @@ export default {
       this.close();
     },
 
+    async tryToLoad () {
+      let predefinisan = await this.checkPredefinisan();
+      if (predefinisan == true){
+        //samo predefinisani administrator moze da ucita ostale administratore
+        this.fetchData();
+      }
+      else{
+        this.rejectDialog= true;
+      }
+      return predefinisan;
+    },
+
+    closeRejectDialog() {
+      this.rejectDialog = false;
+      this.$router.push('/home');
+    }
   }
 }
 </script>
