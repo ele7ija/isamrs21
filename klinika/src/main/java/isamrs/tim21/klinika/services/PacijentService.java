@@ -1,5 +1,6 @@
 package isamrs.tim21.klinika.services;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,9 @@ import isamrs.tim21.klinika.domain.Authority;
 import isamrs.tim21.klinika.domain.Lekar;
 import isamrs.tim21.klinika.domain.Pacijent;
 import isamrs.tim21.klinika.domain.Pregled;
+import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.dto.PacijentDTO;
+import isamrs.tim21.klinika.dto.PacijentIzmenaDTO;
 import isamrs.tim21.klinika.repository.OsobljeRepository;
 import isamrs.tim21.klinika.repository.PacijentRepository;
 
@@ -30,6 +33,9 @@ public class PacijentService {
 	
 	@Autowired
 	private AutentifikacijaService autentifikacijaServis;
+
+	@Autowired
+	public CustomUserDetailsService userDetailsService;
 	
 	public Pacijent findByEmail(String email) throws UsernameNotFoundException {
 		Pacijent p = pacijentRepository.findByEmail(email);
@@ -73,6 +79,17 @@ public class PacijentService {
 				return true;
 		}
 		return false;
+	}
+
+	public CustomResponse<Pacijent> izmeni(PacijentIzmenaDTO p) {
+		Pacijent retval = (Pacijent) userDetailsService.findUserAndChangePassword(p.getPacijent().getId(), p.getPoslednjaSifra(), p.getPacijent().getSifra());
+		// retval.setIme(sestra.getSestra().getIme());
+		// retval.setPrezime(sestra.getSestra().getPrezime());
+		if(!p.getPoslednjaSifra().equals(retval.getSifra())){
+			retval.setPoslednjaPromenaSifre(new Date());
+		}
+		retval = pacijentRepository.save(retval);
+		return new CustomResponse<Pacijent>(retval, true, "OK.");
 	}
 	
 }

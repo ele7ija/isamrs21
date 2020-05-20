@@ -60,7 +60,10 @@ export default {
     else if(role == 'admin-klinickog-centra') {
       url += `admin_centra/profil`;
       obj.admin = profil;
-      
+    }
+    else if (role=='pacijent') {
+      url += 'pacijenti';
+      obj.pacijent = profil;
     }
 
     return axios.put(

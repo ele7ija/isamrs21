@@ -2,17 +2,20 @@ package isamrs.tim21.klinika.controller;
 
 import java.util.List;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.Pacijent;
+import isamrs.tim21.klinika.dto.CustomResponse;
+import isamrs.tim21.klinika.dto.PacijentIzmenaDTO;
 import isamrs.tim21.klinika.services.PacijentService;
 
 @RestController
@@ -41,5 +44,18 @@ public class PacijentKontroler {
 		return new ResponseEntity<Boolean>(retval, HttpStatus.OK);
 	}
 	
+	@PutMapping
+	@PreAuthorize("hasAuthority('pacijent')")
+	public ResponseEntity<CustomResponse<Pacijent>> izmeniProfil(@RequestBody PacijentIzmenaDTO p){
+		CustomResponse<Pacijent> retval = null;
+		try{
+			retval = pacijentService.izmeni(p);
+		}catch(Exception e){
+			return new ResponseEntity<CustomResponse<Pacijent>>(
+					new CustomResponse<Pacijent>(null, false, "Greska."),
+					HttpStatus.OK);
+		}
+		return new ResponseEntity<CustomResponse<Pacijent>>(retval, HttpStatus.OK); 
+	}
 }
 
