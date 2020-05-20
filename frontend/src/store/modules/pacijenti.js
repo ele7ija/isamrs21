@@ -19,8 +19,8 @@ const getters = {
     // - 5 minutes
     d = new Date(milliseconds)
     let poseta = state.odabraniPacijent.zdravstveniKarton.posete.filter(x => x.id == idPosete)[0];
-    let vremePregleda = poseta.pregled.pocetakPregleda;
-    return d <= vremePregleda;
+    let vremePregleda = new Date(poseta.pregled.pocetakPregleda);
+    return d.getTime() <= vremePregleda.getTime();
   }
 }
 const actions = {

@@ -133,7 +133,7 @@ export default {
     ),
     _pocetak: {
       get(){
-        return this.$utility.handleTimeZone(this.upit.pocetak);
+        return this.upit.pocetak;
       },
       set(newValue){
         this.$emit("setDates", {pocetak: newValue, refresh: true});
@@ -141,7 +141,7 @@ export default {
     },
     _kraj: {
       get(){
-        return this.$utility.handleTimeZone(this.upit.kraj);
+        return this.upit.kraj;
       },
       set(newValue){
         console.log(newValue);

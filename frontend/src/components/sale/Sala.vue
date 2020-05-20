@@ -199,7 +199,7 @@ export default {
           let preglediSale = this.pregledi.filter(y => y.sala.id == x.id);
           return preglediSale.filter(y => {
             let start = y.pocetakPregleda;
-            let end = new Date(y.krajPregleda);
+            let end = y.krajPregleda;
             let start2 = this.dateTimeStart;
             let end2 = this.dateTimeEnd;
             return this.$utility.timeIntervalsIntersect(start, end, start2, end2);

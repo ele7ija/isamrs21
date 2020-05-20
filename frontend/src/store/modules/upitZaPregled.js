@@ -1,4 +1,5 @@
 import upitAPI from '@/api/upitZaPregled'
+import utility from '@/utility/utility';
 
 const state = {
   kreiranUpit: null,
@@ -14,6 +15,10 @@ const getters = {
 }
 const actions = {
   async kreirajUpit({commit}, obj) {
+    //sredjivanje vremenskih zona -> kada se salje na server dodaju se dva sata
+    obj.pocetakPregleda = utility.addToDate(new Date(obj.pocetakPregleda));
+    obj.krajPregleda = utility.addToDate(new Date(obj.krajPregleda));
+
     return new Promise((resolve, reject) => {
       upitAPI.kreirajUpit(obj)
       .then(({data: {result, message, success}}) => {
@@ -114,18 +119,46 @@ const actions = {
   }
 }
 const mutations = {
-  setUpit: (state, upit) =>
-    state.kreiranUpit = upit,
-  setNepotvrdjeniUpiti: (state, upiti) =>
-    state.nepotvrdjeniUpiti = upiti,
-  setNeodobreniOdradjeniUpiti: (state, upiti) =>
-    state.neodobreniOdradjeniUpiti = upiti,
-  setNeodobreniNeodradjeniUpiti: (state, upiti) =>
-    state.neodobreniNeodradjeniUpiti = upiti,
-  setObradjenNeodobren: (state, upiti) =>
-    state.obradjenNeodobren = upiti,
-  setPotvrdjenUpit: (state, upit) => 
-    state.potvrdjenUpit = upit,
+  setUpit: (state, upit) =>{
+    state.kreiranUpit = upit;
+
+    //sredjivanje vremenskih zona -? ono sto procitas sa servera umanji za dva sata
+    state.kreiranUpit.pocetakPregleda = utility.handleTimeZone(new Date(state.kreiranUpit.pocetakPregleda));
+    state.kreiranUpit.krajPregleda = utility.handleTimeZone(new Date(state.kreiranUpit.krajPregleda));
+  },
+  setNepotvrdjeniUpiti: (state, upiti) => {
+    state.nepotvrdjeniUpiti = upiti;
+    for(let upit of state.nepotvrdjeniUpiti){
+      upit.pocetakPregleda = utility.handleTimeZone(new Date(upit.pocetakPregleda));
+      upit.krajPregleda = utility.handleTimeZone(new Date(upit.krajPregleda));
+    }
+  },
+  setNeodobreniOdradjeniUpiti: (state, upiti) => {
+    state.neodobreniOdradjeniUpiti = upiti;
+    for(let upit of state.neodobreniOdradjeniUpiti){
+      upit.pocetakPregleda = utility.handleTimeZone(new Date(upit.pocetakPregleda));
+      upit.krajPregleda = utility.handleTimeZone(new Date(upit.krajPregleda));
+    }
+  },
+  setNeodobreniNeodradjeniUpiti: (state, upiti) => {
+    state.neodobreniNeodradjeniUpiti = upiti;
+    for(let upit of state.neodobreniNeodradjeniUpiti){
+      upit.pocetakPregleda = utility.handleTimeZone(new Date(upit.pocetakPregleda));
+      upit.krajPregleda = utility.handleTimeZone(new Date(upit.krajPregleda));
+    }
+  },
+  setObradjenNeodobren: (state, upiti) => {
+    state.obradjenNeodobren = upiti
+    for(let upit of state.obradjenNeodobren){
+      upit.pocetakPregleda = utility.handleTimeZone(new Date(upit.pocetakPregleda));
+      upit.krajPregleda = utility.handleTimeZone(new Date(upit.krajPregleda));
+    }
+  },
+  setPotvrdjenUpit: (state, upit) => {
+    state.potvrdjenUpit = upit;
+    state.potvrdjenUpit.pocetakPregleda = utility.handleTimeZone(new Date(state.potvrdjenUpit.pocetakPregleda));
+    state.potvrdjenUpit.krajPregleda = utility.handleTimeZone(new Date(state.potvrdjenUpit.krajPregleda));
+  },
   setOdabraniTipPregleda: (state, tip) =>
     state.odabraniTipPregleda = tip
 }
