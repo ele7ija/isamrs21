@@ -38,6 +38,6 @@ export default {
       options
     )
     return response.data;
-  }
+  },
   
 }

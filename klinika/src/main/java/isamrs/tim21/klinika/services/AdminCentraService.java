@@ -36,9 +36,9 @@ public class AdminCentraService {
 	public AdministratorCentra saveAdminCentra(AdminCentraDTO noviAdminCentraDTO) {
 		AdministratorCentra admin = new AdministratorCentra(noviAdminCentraDTO);
 		admin.setSifra(passwordEncoder.encode(noviAdminCentraDTO.getSifra()));
-		Authority auth = autentifikacijaServis.findByName("admin-klinike");
+		Authority auth = autentifikacijaServis.findByName("admin-klinickog-centra");
 		if (auth == null) {
-			throw new RuntimeException("Admin-klinike authority nije pronadjen");
+			throw new RuntimeException("Admin-klinickog-centra authority nije pronadjen");
 		}
 		admin.getAuthorities().add(auth);
 		admin = korisnikRepository.save(admin);
