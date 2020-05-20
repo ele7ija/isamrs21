@@ -11,7 +11,7 @@ insert into klinika (id, naziv, adresa, grad, drzava, opis, slika) values(3, 'Ni
 -- insert into klinika (id, naziv, adresa, grad, drzava, opis, slika) values(5, 'Stojce Stoleski', 'Zmaja od Šipova 1', 'Sombor', 'Srbija', 'Donec hendrerit enim nisl, ut rutrum elit pellentesque nec. Ut sit amet porta nunc. Phasellus accumsan lacinia neque finibus lobortis. Praesent elementum, tortor vel varius egestas, eros turpis aliquet risus, sed tempus nulla felis quis diam. Praesent aliquam risus eu tincidunt volutpat. Integer eu purus nec odio sodales pulvinar. Proin imperdiet, orci vitae ornare congue, odio ante vestibulum dui, a blandit lectus erat eu diam. Nam consectetur a nisl eu gravida. Integer vestibulum mi eu nibh congue, nec sollicitudin mi bibendum.', 'https://ikvbv.ns.ac.rs/old/images/Vesti/2016/Instituti-kamenica.jpg');
 
 -- Administratori klinickog centra
-insert into korisnik (type, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled) values ('AC', 'admincentra@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'admin', 'admin', '1', 'Serbia', 'Novi Sad', 1, 7, 0x01);
+insert into korisnik (type, email, sifra, ime, prezime, id, enabled, predefinisan) values ('AC', 'admincentra@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'admin', 'admin', 7, 0x01, 1);
 
 -- Administratori klinike
 insert into korisnik (type, klinika_admina_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled) values ('AK', 1, 'admin.admin@yahoo.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'admin_klinike', 'admin_klinike', '1', 'Serbia', 'Novi Sad', 1, 1, 0x01);
