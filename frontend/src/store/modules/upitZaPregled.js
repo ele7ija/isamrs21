@@ -148,11 +148,9 @@ const mutations = {
     }
   },
   setObradjenNeodobren: (state, upiti) => {
-    state.obradjenNeodobren = upiti
-    for(let upit of state.obradjenNeodobren){
-      upit.pocetakPregleda = utility.handleTimeZone(new Date(upit.pocetakPregleda));
-      upit.krajPregleda = utility.handleTimeZone(new Date(upit.krajPregleda));
-    }
+    state.obradjenNeodobren = upiti;
+    state.obradjenNeodobren.pocetakPregleda = utility.handleTimeZone(new Date(state.obradjenNeodobren.pocetakPregleda));
+    state.obradjenNeodobren.krajPregleda = utility.handleTimeZone(new Date(state.obradjenNeodobren.krajPregleda));
   },
   setPotvrdjenUpit: (state, upit) => {
     state.potvrdjenUpit = upit;
