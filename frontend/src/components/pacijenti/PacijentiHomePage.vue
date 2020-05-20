@@ -95,7 +95,8 @@
               </v-col>
             </v-row> -->
             <v-row>
-              <v-col>
+              <v-col 
+                v-if='nepotvrdjeniUpitiFlag'>
                 <v-card outlined>
                 <v-app-bar 
                   color='primary' dark>
@@ -167,7 +168,16 @@ export default {
     ...mapState('upitZaPregled', [
       'neodobreniUpiti',
       'nepotvrdjeniUpiti'
-    ])
+    ]),
+    nepotvrdjeniUpitiFlag: function() {
+      let flag = false;
+      for (let upit of this.nepotvrdjeniUpiti) {
+        if (upit.originalniPregled != null || upit.izmenjeniPregled == null) {
+          flag = true;
+        }
+      }
+      return flag;
+    }
   },
   methods: {
     ...mapActions('klinike', [

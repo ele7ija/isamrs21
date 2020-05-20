@@ -3,7 +3,7 @@
     <v-row justify='center'>
       <v-col 
         :cols=4
-        v-if='nepotvrdjeniUpiti.length!==0'>
+        v-if='nepotvrdjeniUpitiFlag'>
         <v-card outlined>
           <v-app-bar 
             color='primary' dark>
@@ -112,7 +112,7 @@
             </template>
           </v-list>
           <v-list 
-            v-if='nepotvrdjeniUpiti.length==0'>
+            v-if='!nepotvrdjeniUpitiFlag'>
             <v-list-item>
               <v-list-item-content class='pt-0'>
               <v-list-item-title>
@@ -374,7 +374,16 @@ export default {
     ...mapState('upitZaPregled', [
       'neodobreniNeodradjeniUpiti',
       'neodobreniOdradjeniUpiti',
-      'nepotvrdjeniUpiti'])
+      'nepotvrdjeniUpiti']),
+      nepotvrdjeniUpitiFlag: function() {
+        let flag = false;
+        for (let upit of this.nepotvrdjeniUpiti) {
+          if (upit.originalniPregled != null || upit.izmenjeniPregled == null) {
+            flag = true;
+          }
+        }
+        return flag;
+      }
   },
   methods: {
     ...mapActions('klinike', [
