@@ -19,7 +19,7 @@
             <template
               v-for='(upit, index) in nepotvrdjeniUpiti'>
               <v-list-item
-                
+                v-if='upit.izmenjeniPregled == null'
                 :key='upit.id'
                 two-line>
                 <v-list-item-content class='pt-0'>
@@ -29,6 +29,48 @@
                 <v-list-item-subtitle>
                   {{formatDate(upit.pocetakPregleda)}} - 
                   {{formatDateTime(upit.krajPregleda)}}
+                </v-list-item-subtitle>
+                <v-list-item-subtitle>
+                  {{upit.klinika.adresa}}, {{upit.klinika.grad}},
+                  {{upit.klinika.drzava}}
+                </v-list-item-subtitle>
+                </v-list-item-content>
+                <v-list-item-action>
+                  <v-list-item-action-text>
+                    <v-btn
+                      @click='potvrdi(upit.id, upit.version)'
+                      color='success'
+                      width='150'
+                      class='mb-2'>
+                      <v-icon>mdi-check</v-icon>
+                      Potvrdi
+                    </v-btn>
+                  </v-list-item-action-text>
+                  <v-list-item-action-text>
+                    <v-btn
+                      @click='odustani(upit.id, upit.version)'
+                      color='red'
+                      width='150'
+                      >
+                      <v-icon>mdi-cancel</v-icon>
+                      Odustani
+                    </v-btn>
+                  </v-list-item-action-text>
+                </v-list-item-action>
+              </v-list-item>
+              <v-list-item
+                v-if='upit.izmenjeniPregled != null'
+                class='izmenjeni'
+                :key='upit.id'
+                two-line
+                >
+                <v-list-item-content class='pt-0'>
+                <v-list-item-title>
+                  {{upit.tipPregleda.naziv}}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{formatDate(upit.izmenjeniPregled.pocetakPregleda)}} - 
+                  {{formatDateTime(upit.izmenjeniPregled.krajPregleda)}}
                 </v-list-item-subtitle>
                 <v-list-item-subtitle>
                   {{upit.klinika.adresa}}, {{upit.klinika.grad}},
@@ -398,6 +440,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+  .izmenjeni {
+    background-color: rgba(255, 0, 0, 0.2);
+  }
 </style>
