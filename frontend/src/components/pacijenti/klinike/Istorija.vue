@@ -19,7 +19,7 @@
             <template
               v-for='(upit, index) in nepotvrdjeniUpiti'>
               <v-list-item
-                v-if='upit.izmenjeniPregled == null'
+                v-if='upit.izmenjeniPregled == null && upit.originalniPregled == null'
                 :key='upit.id'
                 two-line>
                 <v-list-item-content class='pt-0'>
@@ -59,18 +59,23 @@
                 </v-list-item-action>
               </v-list-item>
               <v-list-item
-                v-if='upit.izmenjeniPregled != null'
+                v-if='upit.izmenjeniPregled == null && upit.originalniPregled != null'
                 class='izmenjeni'
                 :key='upit.id'
-                two-line
-                >
+                two-line>
+               
                 <v-list-item-content class='pt-0'>
+                  <v-row justify="center">
+                  <div class='justify-center overline font-weight-bold pb-1'>
+                    IZMENJEN PREGLED
+                  </div>
+                  </v-row>
                 <v-list-item-title>
                   {{upit.tipPregleda.naziv}}
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                  {{formatDate(upit.izmenjeniPregled.pocetakPregleda)}} - 
-                  {{formatDateTime(upit.izmenjeniPregled.krajPregleda)}}
+                  {{formatDate(upit.pocetakPregleda)}} - 
+                  {{formatDateTime(upit.krajPregleda)}}
                 </v-list-item-subtitle>
                 <v-list-item-subtitle>
                   {{upit.klinika.adresa}}, {{upit.klinika.grad}},
@@ -440,8 +445,8 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
   .izmenjeni {
-    background-color: rgba(255, 0, 0, 0.2);
+    background-color: rgba(255,0,0,0.2)
   }
 </style>

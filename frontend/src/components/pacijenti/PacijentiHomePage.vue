@@ -102,13 +102,19 @@
                   <v-toolbar-title>
                     Nepotvrđeni upiti
                   </v-toolbar-title>
+                  <v-spacer></v-spacer>
+                  <v-toolbar-title class='caption'>
+                    Pogledati 'Istoriju'
+                  </v-toolbar-title>
                 </v-app-bar>
                 <v-list v-if='nepotvrdjeniUpiti.length != 0'>
                   <template
                     v-for='(upit, index) in nepotvrdjeniUpiti'>
                     <v-list-item
+                      v-if='upit.originalniPregled !=null || upit.izmenjeniPregled==null'
                       :key='upit.id' 
-                      two-line>
+                      two-line
+                      class='pb-0 pt-1'>
                       <v-list-item-content class='pt-0'>
                       <v-list-item-title>
                         {{upit.tipPregleda.naziv}}

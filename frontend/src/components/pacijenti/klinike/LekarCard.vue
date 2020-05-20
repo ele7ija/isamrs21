@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card :disabled='pretrazeniPregledi.length==0'>
     <v-card-title>
       {{lekar.ime}} {{lekar.prezime}}
     </v-card-title>
@@ -55,7 +55,8 @@
               <v-btn
                 color='orange'
                 class='mb-0'
-                outlined>
+                outlined
+                @click='rezervisiPostojeci(pregled)'>
                 <v-icon>mdi-check</v-icon>
                 Rezerviši
               </v-btn>
