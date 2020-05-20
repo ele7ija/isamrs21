@@ -28,7 +28,6 @@
             <v-icon
               small
               class="mr-2"
-              v-if="item.pregled!=null"
               @click="deleteItem(item)"
             >
               mdi-delete

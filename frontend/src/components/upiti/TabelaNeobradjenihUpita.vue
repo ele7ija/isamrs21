@@ -205,11 +205,12 @@ export default {
       if(this.editableItem != null){
         //prvo dobavi preglede koji se preklapaju sa datumom pocetka i kraja upita koji je kreiran
         let filteredPregledi = this.pregledi.filter(x => {
-            let start = new Date(x.pocetakPregleda);
-            let end = new Date(x.krajPregleda);
-            return (start.getTime() <= this.editableItem.pocetak.getTime() && end.getTime() >= this.editableItem.pocetak.getTime()) ||
-              (this.editableItem.pocetak.getTime() <= start.getTime() && this.editableItem.kraj.getTime() >= start.getTime())
-          });
+          let start = x.pocetakPregleda;
+          let end = x.krajPregleda;
+          let start2 = this.editableItem.pocetak;
+          let end2 = this.editableItem.kraj;
+          return this.$utility.timeIntervalsIntersect(start, end, start2, end2);
+        });
 
         //zatim izvuci id-jeve sala ovih pregleda
         let zauzeteSaleIds = filteredPregledi.map(x => x.sala.id);
@@ -236,16 +237,16 @@ export default {
         id: item.id,
         version: item.version,
         pacijent: {text: `${updatedItem.pacijent.ime} ${updatedItem.pacijent.prezime}`, value: updatedItem.pacijent},
-        pocetak: new Date(updatedItem.pocetakPregleda),
-        kraj: new Date(updatedItem.krajPregleda),
+        pocetak: updatedItem.pocetakPregleda,
+        kraj: updatedItem.krajPregleda,
         lekar: {text: `${updatedItem.lekar.ime} ${updatedItem.lekar.prezime}`, value: updatedItem.lekar},
         tipPregleda: {text: updatedItem.tipPregleda.naziv, value: updatedItem.tipPregleda},
         vrsta: updatedItem.tipPregleda.vrsta,
         cena: updatedItem.tipPregleda.cenovnik.iznosUDinarima,
         sala: null
       };
-      this.editableItem._pocetak = this.formatDate(this.editableItem.pocetak);
-      this.editableItem._kraj = this.formatDate(this.editableItem.kraj);
+      this.editableItem._pocetak = this.$utility.formatDate(this.editableItem.pocetak);
+      this.editableItem._kraj = this.$utility.formatDate(this.editableItem.kraj);
       this.rerender();
       this.dialog = true;
     },
@@ -291,21 +292,6 @@ export default {
       this.stepIndex = 1;
       this.dialog = false;
     },
-    formatDate(date){
-      let day = date.getDate();
-      let month = date.getMonth() + 1;
-      let hour = date.getHours();
-      let minute = date.getMinutes();
-      if((String(day)).length==1)
-        day='0'+day;
-      if((String(month)).length==1)
-        month='0'+month;
-      if((String(hour)).length==1)
-        hour='0'+hour;
-      if((String(minute)).length==1)
-        minute='0'+minute;
-      return `${day}.${month}.${date.getFullYear()} ${hour}:${minute}`;
-    },
     setDates({pocetak, refresh}){
       if(!this.oldPocetak){
         this.oldPocetak = this.editableItem.pocetak;
@@ -315,10 +301,10 @@ export default {
       }
 
       this.editableItem.pocetak = pocetak;
-      this.editableItem._pocetak = this.formatDate(pocetak);
+      this.editableItem._pocetak = this.$utility.formatDate(pocetak);
       let kraj = new Date(pocetak.getTime() + this.editableItem.tipPregleda.value.trajanjeMinuti*60000);
       this.editableItem.kraj = kraj;
-      this.editableItem._kraj = this.formatDate(kraj);
+      this.editableItem._kraj = this.$utility.formatDate(kraj);
 
       //remount component two in order to validate form
       if(refresh)
@@ -332,11 +318,11 @@ export default {
     resetDates(){
       if(this.oldPocetak){
         this.editableItem.pocetak = this.oldPocetak;
-        this.editableItem._pocetak = this.formatDate(this.oldPocetak);  
+        this.editableItem._pocetak = this.$utility.formatDate(this.oldPocetak);  
       }
       if(this.oldKraj){
         this.editableItem.kraj = this.oldKraj;
-        this.editableItem._kraj = this.formatDate(this.oldKraj);
+        this.editableItem._kraj = this.$utility.formatDate(this.oldKraj);
       }
       this.stepperData[1].unique += 1; //remount component two in order to validate form
     }

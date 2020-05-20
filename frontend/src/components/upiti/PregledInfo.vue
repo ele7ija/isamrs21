@@ -96,10 +96,11 @@ export default {
       return preglediSale.filter(pregled => {
         let start = this.upit.pocetak;
         let end = this.upit.kraj;
-        let start2 = new Date(pregled.pocetakPregleda);
-        let end2 = new Date(pregled.krajPregleda);
-        return (start.getTime() <= start2.getTime() && start2.getTime() <= end.getTime())
-          || (start2.getTime() <= start && start <= end2.getTime())
+        let start2 = pregled.pocetakPregleda;
+        let end2 = pregled.krajPregleda;
+        if(this.$utility.timeIntervalsIntersect(start, end, start2, end2)){
+            return false;
+        }
       }).length == 0;
     },
     isLekarValid(){
@@ -147,10 +148,9 @@ export default {
       for(let pregled of  preglediLekara){
         let start = this.upit.pocetak;
         let end = this.upit.kraj;
-        let start2 = new Date(pregled.pocetakPregleda);
-        let end2 = new Date(pregled.krajPregleda);
-        if((start.getTime() <= start2.getTime() && start2.getTime() <= end.getTime())
-          || (start2.getTime() <= start && start <= end2.getTime())){
+        let start2 = pregled.pocetakPregleda;
+        let end2 = pregled.krajPregleda;
+        if(this.$utility.timeIntervalsIntersect(start, end, start2, end2)){
             return false;
         }
       }
@@ -160,10 +160,9 @@ export default {
       for(let pregled of  dodatneOperacijeLekara){
         let start = this.upit.pocetak;
         let end = this.upit.kraj;
-        let start2 = new Date(pregled.pocetakPregleda);
-        let end2 = new Date(pregled.krajPregleda);
-        if((start.getTime() <= start2.getTime() && start2.getTime() <= end.getTime())
-          || (start2.getTime() <= start && start <= end2.getTime())){
+        let start2 = pregled.pocetakPregleda;
+        let end2 = pregled.krajPregleda;
+        if(this.$utility.timeIntervalsIntersect(start, end, start2, end2)){
             return false;
         }
       }

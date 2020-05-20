@@ -103,6 +103,9 @@ export default {
     dialog: {
       get(){
         return this.poslednjaPromenaSifre == null
+      },
+      set(newValue){
+        console.log(newValue);
       }
     }
   },

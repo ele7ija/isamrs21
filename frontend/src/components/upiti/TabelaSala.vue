@@ -42,7 +42,7 @@
           </span>
           <span class="datetime-picker">
             <v-datetime-picker
-              v-model="upit.kraj"
+              v-model="_kraj"
               label="Kraj pregleda"
               dateFormat="dd.MM.yyyy"
               :textFieldProps="textFieldProps"
@@ -139,6 +139,14 @@ export default {
         this.$emit("setDates", {pocetak: newValue, refresh: true});
       }
     },
+    _kraj: {
+      get(){
+        return this.upit.kraj;
+      },
+      set(newValue){
+        console.log(newValue);
+      }
+    },
     _sale(){
       let retval = [];
       for(let sala of this.sale){
@@ -167,25 +175,27 @@ export default {
       this.preglediSale.sala = sala;
       this.preglediSale._pregledi = this.pregledi.filter(x => x.sala.id == sala.id);
       this.preglediSale._pregledi = this.preglediSale._pregledi.map(x => {
-          let retval = {
-            id: x.id,
-            version: x.version,
-            datum: new Date(x.pocetakPregleda).toLocaleDateString(),
-            pocetak: new Date(x.pocetakPregleda).toLocaleTimeString(),
-            kraj: new Date(x.krajPregleda).toLocaleTimeString(),
-            pocetak_date: new Date(x.pocetakPregleda),
-            kraj_date: new Date(x.krajPregleda),
-            lekar: `${x.lekar.ime} ${x.lekar.prezime}`,
-            tipPregleda: x.tipPregleda.naziv,
-            vrsta: x.tipPregleda.vrsta,
-            konacnaCena: parseInt(x.konacnaCena, 10),
-          };
-          let pacijent = this.getPacijent(x);
-          if(pacijent != null){
-            retval.pacijent = pacijent;
-          }
-          return retval;
-        })
+        let date1 = x.pocetakPregleda;
+        let date2 = x.krajPregleda;
+        let retval = {
+          id: x.id,
+          version: x.version,
+          datum: this.$utility.formatDate2(date1),
+          pocetak: this.$utility.formatDate3(date1),
+          kraj: this.$utility.formatDate3(date2),
+          pocetak_date: x.pocetakPregleda,
+          kraj_date: x.krajPregleda,
+          lekar: `${x.lekar.ime} ${x.lekar.prezime}`,
+          tipPregleda: x.tipPregleda.naziv,
+          vrsta: x.tipPregleda.vrsta,
+          konacnaCena: parseInt(x.konacnaCena, 10),
+        };
+        let pacijent = this.getPacijent(x);
+        if(pacijent != null){
+          retval.pacijent = pacijent;
+        }
+        return retval;
+      });
       this.preglediSale.pocetak = this.upit.pocetak;
       this.preglediSale.kraj = this.upit.kraj;
       this.preglediSale.title = `Kalendar pregleda sale: ${sala.oznaka}`;

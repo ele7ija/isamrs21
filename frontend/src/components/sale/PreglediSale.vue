@@ -92,11 +92,13 @@ export default {
     },
     preglediView(){
       return this.preglediFiltered.map(x => {
+        let date1 = x.pocetakPregleda;
+        let date2 = x.krajPregleda;
         return {
           id: x.id,
-          datum: new Date(x.pocetakPregleda).toLocaleDateString(),
-          pocetak: new Date(x.pocetakPregleda).toLocaleTimeString(),
-          kraj: new Date(x.krajPregleda).toLocaleTimeString(),
+          datum: this.$utility.formatDate2(date1),
+          pocetak: this.$utility.formatDate3(date1),
+          kraj: this.$utility.formatDate3(date2),
           lekar: `${x.lekar.ime} ${x.lekar.prezime}`,
           tipPregleda: x.tipPregleda.naziv,
           vrsta: x.tipPregleda.vrsta,

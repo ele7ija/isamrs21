@@ -32,10 +32,7 @@
     </template>
     <template v-slot:item="{ item }">
         <tr :class="{
-              'red lighten-3': ((item.pocetak_date.getTime() <= pregledi.pocetak.getTime() && 
-                                item.kraj_date.getTime() >= pregledi.pocetak.getTime()) || 
-                                (pregledi.pocetak.getTime() <= item.pocetak_date.getTime() && 
-                                pregledi.kraj.getTime() >= item.pocetak_date.getTime()))
+              'red lighten-3': isValid(item)
               }">
           <td>{{item.datum}}</td>
           <td>{{item.pocetak}}</td>
@@ -101,6 +98,15 @@ export default {
         }
       ]
     };
+  },
+  methods: {
+    isValid(item){
+      let start = item.pocetak_date;
+      let end = item.kraj_date;
+      let start2 = this.pregledi.pocetak;
+      let end2 = this.pregledi.kraj;
+      return this.$utility.timeIntervalsIntersect(start, end, start2, end2);
+    }
   }
 }
 </script>

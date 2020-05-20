@@ -192,15 +192,16 @@ public class UpitZaPregledController {
 	@PutMapping(value="obradiAdmin/{idKlinike}/{idUpita}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdmin(@PathVariable("idKlinike") Long idKlinike, 
-			@PathVariable("idUpita") Long idUpita, @RequestBody UpitZaPregled upitZaPregledToChange){
+			@PathVariable("idUpita") Long idUpita, @RequestBody UpitZaPregled upitZaPregledToChange) throws Exception{
 		ResponseEntity<CustomResponse<UpitZaPregled>> retval = null;
-		try{
+		retval = upitZaPregledeService.obradiAdminMain(idKlinike, idUpita, upitZaPregledToChange);
+		/*try{
 			retval = upitZaPregledeService.obradiAdminMain(idKlinike, idUpita, upitZaPregledToChange);
 		}catch(Exception e){
 			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
 					new CustomResponse<UpitZaPregled>(null, false, "Greska. Verzija podatka je zastarela. Osvezite stranicu"),
 					HttpStatus.OK);
-		}
+		}*/
 		return retval;
 		
 	}

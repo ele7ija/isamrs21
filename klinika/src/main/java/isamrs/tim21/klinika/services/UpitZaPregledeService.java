@@ -76,9 +76,9 @@ public class UpitZaPregledeService {
 		}
 		upit.setAdminObradio(true);
 		upit.setOdobren(u.getOdobren());
-		Pregled p = pregledService.get(upit.getKlinika().getId(), u.getUnapredDefinisaniPregled().getId());
 		//validacije radis samo ako je admin odobrio ovaj upit
 		if(upit.getOdobren()){
+			Pregled p = pregledService.get(upit.getKlinika().getId(), u.getUnapredDefinisaniPregled().getId());
 			//ukoliko pregled ima posetu, admin nije smeo da odobri upit u
 			if(p.getPoseta() != null){
 				upit.setOdobren(false);
@@ -218,7 +218,9 @@ public class UpitZaPregledeService {
 		try {
 			// Upit je nastao na osnovu unapred def pregleda
 			if (u.getPregled() != null) {
-				u2.setUnapredDefinisaniPregled(pregledRepository.findById(u.getPregled()).get());
+				Pregled pregled = pregledRepository.findById(u.getPregled()).get();
+				u2.setUnapredDefinisaniPregled(pregled);
+				u2.setSala(pregled.getSala());
 				if (u2.getUnapredDefinisaniPregled().getVersion() != u.getPregledVerzija()) {
 					throw new ObjectOptimisticLockingFailureException(Pregled.class, u2.getUnapredDefinisaniPregled());
 				}

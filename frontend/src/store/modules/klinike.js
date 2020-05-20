@@ -1,5 +1,6 @@
 import klinikeAPI from '@/api/klinike';
 import preglediAPI from '@/api/pregledi'
+import utility from '@/utility/utility';
 
 const state = {
   // Main data
@@ -248,11 +249,23 @@ const mutations = {
     state.odabranaKlinika = klinika,
   setKreiranaPoseta: (state, poseta) => 
     state.kreiranaPoseta = poseta,
-  setPosete: (state, posete) => 
-    state.posete = posete,
-  setPregledi: (state, pregledi) => state.pregledi = pregledi,
-  setPreglediKlinike: (state, obj) =>
-    state.pregledi[obj.id] = obj.data,
+  setPosete: (state, posete) => {
+    state.posete = posete;
+    for(let poseta of state.posete){
+      poseta.pregled.pocetakPregleda = utility.handleTimeZone(new Date(poseta.pregled.pocetakPregleda));
+      poseta.pregled.krajPregleda = utility.handleTimeZone(new Date(poseta.pregled.krajPregleda));
+    }
+  },
+  setPregledi: (state, pregledi) => {
+    state.pregledi = pregledi
+  },
+  setPreglediKlinike: (state, obj) => {
+    state.pregledi[obj.id] = obj.data;
+    for(let pregled of state.pregledi[obj.id]){
+      pregled.pocetakPregleda = utility.handleTimeZone(new Date(pregled.pocetakPregleda));
+      pregled.krajPregleda = utility.handleTimeZone(new Date(pregled.krajPregleda));
+    }
+  },
   setNerealizovanePosete: (state, data) =>
     state.nerealizovanePosete = data,
   setOdabraniTipPregleda: (state, tip) =>

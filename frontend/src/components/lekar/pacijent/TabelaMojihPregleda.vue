@@ -28,6 +28,7 @@
         </template>
         <template v-slot:item.actions="{ item }">
           <v-btn
+            :disabled="!pregledMozeDaSeZapocne(item.id)"
             color="primary"
             @click="zapocni(item)"
           >
@@ -88,7 +89,8 @@ export default {
   computed: {
     ...mapGetters({
       posete: 'pacijenti/getPoseteOdabranogPacijenta',
-      tipoviPregleda: 'tipoviPregleda/getTipoviPregleda'
+      tipoviPregleda: 'tipoviPregleda/getTipoviPregleda',
+      pregledMozeDaSeZapocne: 'pacijenti/pregledMozeDaSeZapocne'
     }),
     _posete(){
       if(this.posete){
