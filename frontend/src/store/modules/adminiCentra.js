@@ -1,5 +1,6 @@
 import adminAPI from '@/api/admini'
 
+
 const state = {
   adminiCentra: [],
 }
@@ -17,6 +18,17 @@ const actions = {
   async addAdminCentra({commit}, adminCentra){
     let response = await adminAPI.addAdminCentra(adminCentra);
     commit('addAdminCentra', response)
+  },
+
+  checkPredefinisan({rootGetters}){
+    var profil = rootGetters["profil/getProfil"];
+    if(profil.email === "admincentra@gmail.com"){
+      return true;
+    }
+    else{
+      return false;
+    }
+    
   }
 }
 

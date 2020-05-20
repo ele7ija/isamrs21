@@ -50,7 +50,7 @@ public class ZahtevZaRegistracijuController {
     //prvo posalji mejl. nokon slanja mejla obrisi zahtev iz baze
     //slanje mejla
     try{
-    mailService.odbijZahtev(zahtevZaRegistracijuDTO);
+      mailService.odbijZahtev(zahtevZaRegistracijuDTO);
       //brisanje zahteva jedino ako je mejl uspesno poslat
       ZahtevZaRegistraciju retval = zahtevService.delete(zahtevZaRegistracijuDTO);
       return new ResponseEntity<>(retval, HttpStatus.OK);

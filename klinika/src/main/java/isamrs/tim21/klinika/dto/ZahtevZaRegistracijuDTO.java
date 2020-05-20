@@ -19,8 +19,7 @@ public class ZahtevZaRegistracijuDTO {
   public Boolean odobren;
 
   public ZahtevZaRegistracijuDTO
-  (Long id, Timestamp datumOdobrenja, String tekst, Boolean odobren,
-  Long pacijentId) {
+  (Long id, Timestamp datumOdobrenja, String tekst, Boolean odobren) {
     this.id = id;
     this.datumOdobrenja = datumOdobrenja;
     this.tekst = tekst;

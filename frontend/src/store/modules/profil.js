@@ -1,7 +1,7 @@
 import korisnikAPI from '@/api/korisnici';
 
 const state = {
-  profil: null, //celokupni podaci ulogovanog korisnika, dobavljaju se samo pri izmeni profila korisnika
+  profil: null, //celokupni podaci ulogovanog korisnika, dobavljaju se uvek
   copy: null
 };
 

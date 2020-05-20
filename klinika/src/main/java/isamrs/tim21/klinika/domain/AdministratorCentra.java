@@ -3,11 +3,10 @@ package isamrs.tim21.klinika.domain;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-
-import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -21,6 +20,9 @@ public class AdministratorCentra extends Korisnik{
 	/**
 	 * 
 	 */
+	@Column(name="predefinisan")
+	private Boolean predefinisan = false;
+
 	private static final long serialVersionUID = -7205443171988738622L;
 	@OneToMany(cascade=CascadeType.ALL)
 	@JsonSerialize(using=IdentityListSerializer.class)
