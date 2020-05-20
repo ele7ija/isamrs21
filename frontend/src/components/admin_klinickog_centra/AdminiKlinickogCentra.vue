@@ -100,7 +100,7 @@
       <v-card>
         <v-card-title class="headline error--text" > Zabranjen Pristup</v-card-title>
         <v-divider></v-divider>
-        <v-card-text class="title "> Niste ovlašćeni da gledate ili dodajete nove administratore kliničkog centra. </v-card-text>
+        <v-card-text class="title "> Niste ovlašćeni da  dodajete nove administratore kliničkog centra. </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn class="error--text" text @click="this.closeRejectDialog">Nazad</v-btn>
@@ -172,9 +172,6 @@ export default {
 
   created(){
     this.tryToLoad();
-    //var predefinisan = this.checkPredefinisan();
-    //console.log(predefinisan)
-    //this.fetchData()
     
   },
   methods: {
