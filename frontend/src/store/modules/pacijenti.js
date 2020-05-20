@@ -1,5 +1,5 @@
 import pacijenti from '@/api/pacijenti'
-
+import utility from '@/utility/utility';
 const state = {
   pacijenti: [], //svi pacijenti
   odabraniPacijent: null, //pacijent kojem je trenutno pristupio lekar,
@@ -14,15 +14,11 @@ const getters = {
   getPoseteOdabranogPacijenta: (state) => state.odabraniPacijent.zdravstveniKarton.posete,
   pregledMozeDaSeZapocne: (state) => (idPosete) => {
     var d = new Date()
-    var milliseconds = Date.parse(d)
-    milliseconds = milliseconds - (5 * 60 * 1000)
-    // - 5 minutes
-    d = new Date(milliseconds)
     let poseta = state.odabraniPacijent.zdravstveniKarton.posete.filter(x => x.id == idPosete)[0];
-    let vremePregleda = new Date(poseta.pregled.pocetakPregleda);
-    console.log(d);
-    console.log(poseta.pregled.pocetakPregleda);
-    return d.getTime() <= vremePregleda.getTime();
+    let vremePregleda = utility.handleTimeZone(new Date(poseta.pregled.pocetakPregleda));
+    var diff = Math.abs(d.getTime() - vremePregleda.getTime());
+    console.log(diff/60000);
+    return (diff / 60000) <= 15; //pregled moze da se zapocne 15 minuta ranije
   }
 }
 const actions = {

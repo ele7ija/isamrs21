@@ -194,14 +194,13 @@ public class UpitZaPregledController {
 	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdmin(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idUpita") Long idUpita, @RequestBody UpitZaPregled upitZaPregledToChange) throws Exception{
 		ResponseEntity<CustomResponse<UpitZaPregled>> retval = null;
-		retval = upitZaPregledeService.obradiAdminMain(idKlinike, idUpita, upitZaPregledToChange);
-		/*try{
+		try{
 			retval = upitZaPregledeService.obradiAdminMain(idKlinike, idUpita, upitZaPregledToChange);
 		}catch(Exception e){
 			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
 					new CustomResponse<UpitZaPregled>(null, false, "Greska. Verzija podatka je zastarela. Osvezite stranicu"),
 					HttpStatus.OK);
-		}*/
+		}
 		return retval;
 		
 	}
@@ -212,15 +211,14 @@ public class UpitZaPregledController {
 	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdminCustom(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idUpita") Long idUpita, @RequestBody UpitZaPregled upitZaPregledToChange){
 		ResponseEntity<CustomResponse<UpitZaPregled>> retval = null;
-		retval = upitZaPregledeService.obradiAdminCustom(idKlinike, idUpita, upitZaPregledToChange);
-		/*try{
+		try{
 			retval = upitZaPregledeService.obradiAdminCustom(idKlinike, idUpita, upitZaPregledToChange);
 		}catch(Exception e){
 			System.out.println(e.getMessage());
 			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
 					new CustomResponse<UpitZaPregled>(null, false, "Greska. Verzija podatka je zastarela. Osvezite stranicu"),
 					HttpStatus.OK);
-		}*/
+		}
 		return retval;
 		
 	}
