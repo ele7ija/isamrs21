@@ -45,6 +45,8 @@ const actions = {
   },
 
   async obradiAdminCustom({state, commit, dispatch}, upit){
+    upit.pocetakPregleda = utility.addToDate(new Date(upit.pocetakPregleda));
+    upit.krajPregleda = utility.addToDate(new Date(upit.krajPregleda));
     return new Promise((resolve, reject) => {
       upitiPreglediAdmin.obradiAdminCustom(state.klinika.id, upit)
       .then(({data: {result, message, success}}) => {

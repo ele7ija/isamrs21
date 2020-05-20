@@ -218,7 +218,9 @@ public class UpitZaPregledeService {
 		try {
 			// Upit je nastao na osnovu unapred def pregleda
 			if (u.getPregled() != null) {
-				u2.setUnapredDefinisaniPregled(pregledRepository.findById(u.getPregled()).get());
+				Pregled pregled = pregledRepository.findById(u.getPregled()).get();
+				u2.setUnapredDefinisaniPregled(pregled);
+				u2.setSala(pregled.getSala());
 				if (u2.getUnapredDefinisaniPregled().getVersion() != u.getPregledVerzija()) {
 					throw new ObjectOptimisticLockingFailureException(Pregled.class, u2.getUnapredDefinisaniPregled());
 				}

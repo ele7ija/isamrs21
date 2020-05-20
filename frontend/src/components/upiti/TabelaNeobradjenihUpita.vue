@@ -318,11 +318,11 @@ export default {
     resetDates(){
       if(this.oldPocetak){
         this.editableItem.pocetak = this.oldPocetak;
-        this.editableItem._pocetak = this.formatDate(this.oldPocetak);  
+        this.editableItem._pocetak = this.$utility.formatDate(this.oldPocetak);  
       }
       if(this.oldKraj){
         this.editableItem.kraj = this.oldKraj;
-        this.editableItem._kraj = this.formatDate(this.oldKraj);
+        this.editableItem._kraj = this.$utility.formatDate(this.oldKraj);
       }
       this.stepperData[1].unique += 1; //remount component two in order to validate form
     }

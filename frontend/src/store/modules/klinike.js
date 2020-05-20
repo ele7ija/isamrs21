@@ -249,8 +249,13 @@ const mutations = {
     state.odabranaKlinika = klinika,
   setKreiranaPoseta: (state, poseta) => 
     state.kreiranaPoseta = poseta,
-  setPosete: (state, posete) => 
-    state.posete = posete,
+  setPosete: (state, posete) => {
+    state.posete = posete;
+    for(let poseta of state.posete){
+      poseta.pregled.pocetakPregleda = utility.handleTimeZone(new Date(poseta.pregled.pocetakPregleda));
+      poseta.pregled.krajPregleda = utility.handleTimeZone(new Date(poseta.pregled.krajPregleda));
+    }
+  },
   setPregledi: (state, pregledi) => {
     state.pregledi = pregledi
   },

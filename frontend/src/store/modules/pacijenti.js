@@ -20,6 +20,8 @@ const getters = {
     d = new Date(milliseconds)
     let poseta = state.odabraniPacijent.zdravstveniKarton.posete.filter(x => x.id == idPosete)[0];
     let vremePregleda = new Date(poseta.pregled.pocetakPregleda);
+    console.log(d);
+    console.log(poseta.pregled.pocetakPregleda);
     return d.getTime() <= vremePregleda.getTime();
   }
 }
