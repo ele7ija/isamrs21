@@ -21,6 +21,8 @@ import zahteviZaRegistraciju from './modules/zahteviZaRegistraciju'
 import sifarnik from './modules/sifarnik';
 import profil from './modules/profil';
 import adminiCentra from './modules/adminiCentra'
+import zahteviZaGodisnjiOsoblje from './modules/zahteviZaGodisnjiOsoblje';
+import zahteviZaGodisnjiAdmin from './modules/zahteviZaGodisnjiAdmin';
 //Plugins
 Vue.use(Vuex);
 
@@ -46,6 +48,8 @@ export default new Vuex.Store({
     sifarnik,
     profil,
     adminiCentra,
+    zahteviZaGodisnjiOsoblje,
+    zahteviZaGodisnjiAdmin
   },
 
   plugins: [

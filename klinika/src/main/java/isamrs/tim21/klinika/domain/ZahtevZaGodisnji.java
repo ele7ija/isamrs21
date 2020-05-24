@@ -32,6 +32,15 @@ public class ZahtevZaGodisnji implements IdentitySerializable{
 	@Column(name="odobreno")
 	private boolean odobreno;
 	
+	@Column(name="admin_obradio")
+	private boolean adminObradio;
+	
+	@Column(name="osoblje_obradilo")
+	private boolean osobljeObradilo;
+	
+	@Column(name="razlog_odbijanja")
+	private String razlogOdbijanja;
+	
 	@Temporal(TemporalType.DATE)
 	private Date prviDanGodisnjeg;
 	
@@ -77,6 +86,39 @@ public class ZahtevZaGodisnji implements IdentitySerializable{
 	public void setPoslednjiDanGodisnjeg(Date poslednjiDanGodisnjeg) {
 		this.poslednjiDanGodisnjeg = poslednjiDanGodisnjeg;
 	}
+
+	public String getRazlogOdbijanja() {
+		return razlogOdbijanja;
+	}
+
+	public void setRazlogOdbijanja(String razlogOdbijanja) {
+		this.razlogOdbijanja = razlogOdbijanja;
+	}
+
+	public boolean intersects(ZahtevZaGodisnji zahtevToAdd) {
+		if((prviDanGodisnjeg.after(zahtevToAdd.getPrviDanGodisnjeg()) || prviDanGodisnjeg.equals(zahtevToAdd.getPrviDanGodisnjeg())) && 
+				prviDanGodisnjeg.before(zahtevToAdd.getPoslednjiDanGodisnjeg()) || prviDanGodisnjeg.equals(zahtevToAdd.getPoslednjiDanGodisnjeg()))
+			return true;
+		if((zahtevToAdd.getPrviDanGodisnjeg().after(prviDanGodisnjeg) || zahtevToAdd.getPrviDanGodisnjeg().equals(prviDanGodisnjeg)) && 
+				zahtevToAdd.getPrviDanGodisnjeg().before(poslednjiDanGodisnjeg) || zahtevToAdd.getPrviDanGodisnjeg().equals(poslednjiDanGodisnjeg))
+			return true;
+		return false;
+	}
+
+	public boolean isOsobljeObradilo() {
+		return osobljeObradilo;
+	}
+
+	public void setOsobljeObradilo(boolean osobljeObradilo) {
+		this.osobljeObradilo = osobljeObradilo;
+	}
 	
-	
+	public boolean isAdminObradio() {
+		return adminObradio;
+	}
+
+	public void setAdminObradio(boolean adminObradio) {
+		this.adminObradio = adminObradio;
+	}
+
 }

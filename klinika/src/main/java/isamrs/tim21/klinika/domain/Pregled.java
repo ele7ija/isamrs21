@@ -238,5 +238,15 @@ public class Pregled implements IdentitySerializable{
 	public void setDodatniLekari(List<Lekar> dodatniLekari) {
 		this.dodatniLekari = dodatniLekari;
 	}
+
+	public boolean intersects(ZahtevZaGodisnji zahtevzaGodisnji) {
+		if((pocetakPregleda.after(zahtevzaGodisnji.getPrviDanGodisnjeg()) || pocetakPregleda.equals(zahtevzaGodisnji.getPrviDanGodisnjeg())) && 
+			pocetakPregleda.before(zahtevzaGodisnji.getPoslednjiDanGodisnjeg()) || pocetakPregleda.equals(zahtevzaGodisnji.getPoslednjiDanGodisnjeg()))
+			return true;
+		if((zahtevzaGodisnji.getPrviDanGodisnjeg().after(pocetakPregleda) || zahtevzaGodisnji.getPrviDanGodisnjeg().equals(pocetakPregleda)) && 
+				zahtevzaGodisnji.getPrviDanGodisnjeg().before(krajPregleda) || zahtevzaGodisnji.getPrviDanGodisnjeg().equals(krajPregleda))
+			return true;
+		return false;
+	}
 	
 }
