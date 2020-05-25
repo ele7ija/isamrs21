@@ -16,8 +16,8 @@
     </router-link>
     <v-card-text class='pt-0 pb-2'>
       <v-list>
-        <v-list-item class='pr-0 pl-0'>
-          <v-list-item-avatar>
+        <v-list-item class='pr-0 pl-0' dense>
+          <v-list-item-avatar class='mt-0 mb-0'>
             <v-icon>
               mdi-cash-usd-outline
             </v-icon>
@@ -26,13 +26,13 @@
             <v-list-item-title class='subtitle-2'>
               Cena pregleda:
               <span class='subtitle-2 font-weight-bold pb-0'>
-                {{minimalnaCena}}.00 RSD
+                {{minimalnaCena}} RSD
               </span>
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item class='pr-0 pl-0'>
-          <v-list-item-avatar>
+        <v-list-item class='pr-0 pl-0' dense="">
+          <v-list-item-avatar class='mt-0 mb-0'>
             <v-icon>
               mdi-star
             </v-icon>
