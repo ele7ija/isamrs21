@@ -20,7 +20,8 @@
                     <td>{{row.item.lekar.ime}}&nbsp;{{row.item.lekar.prezime}}</td>
                     <td>{{row.item.sala.oznaka}}</td>
                     <td>{{formatDate(row.item.pocetakPregleda)}}</td>
-                    <td>{{formatDate(row.item.krajPregleda)}}</td>
+                    <td>{{formatTime(row.item.krajPregleda)}}</td>
+                    <td><b>{{row.item.cena - row.item.popust/100 * row.item.cena}}.00 RSD</b> ({{row.item.popust}}%)</td>
                     <td>
                       <v-btn 
                         @click="rezervisi(row.item)"
@@ -72,6 +73,10 @@ export default {
         {
           text: 'Kraj',
           value: 'kraj'
+        },
+        {
+          text: 'Cena',
+          value: 'cena'
         }
       ],
     }
@@ -104,7 +109,11 @@ export default {
       return ("0" + d.getDate()).slice(-2) + '.' +
         ("0" + (d.getMonth()+1)).slice(-2) + '.' +
         d.getFullYear() + '. ' +
-        d.getHours() + ':' + ('0' + d.getMinutes()).slice(-2);
+        ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+    },
+    formatTime: function(date) {
+      let d = new Date(date);
+      return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
     },
     customSort: function(items, index, isDesc) {
       console.log(items, index, isDesc)

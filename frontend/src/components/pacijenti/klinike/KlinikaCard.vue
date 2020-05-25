@@ -6,14 +6,47 @@
         gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.8)"
         class='align-end'
         height=200>
-        <v-card-title class='white--text font-weight-medium'>
+        <v-card-title class='white--text font-weight-medium subtitle-1'>
           Klinika "{{klinika.naziv}}"
         </v-card-title>
-        <v-card-subtitle class='white--text'>
+        <v-card-subtitle class='white--text caption'>
             {{klinika.adresa}}, {{klinika.grad}}, {{klinika.drzava}}
         </v-card-subtitle>
       </v-img>
     </router-link>
+    <v-card-text class='pt-0 pb-2'>
+      <v-list>
+        <v-list-item class='pr-0 pl-0'>
+          <v-list-item-avatar>
+            <v-icon>
+              mdi-cash-usd-outline
+            </v-icon>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class='subtitle-2'>
+              Cena pregleda:
+              <span class='subtitle-2 font-weight-bold pb-0'>
+                {{minimalnaCena}}.00 RSD
+              </span>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item class='pr-0 pl-0'>
+          <v-list-item-avatar>
+            <v-icon>
+              mdi-star
+            </v-icon>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class='subtitle-2'>
+              Prosečna ocena: <span class='subtitle-2 font-weight-bold'>
+                {{minimalnaCena}}
+              </span>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-card-text>
     <v-card-actions>
       <v-btn 
         color='primary'
@@ -62,6 +95,19 @@ export default {
     ]),
     pregledi: function() {
       return this.getPretrazeniPregledi(this.klinika.id);
+    },
+    minimalnaCena: function() {
+      if (this.pregledi.length == 0) {
+        return '--'
+      }
+      let min = 1000000;
+      this.pregledi.forEach(x => {
+        let cena = x.cena - x.popust/100 * x.cena; 
+        if(cena < min) {
+          min = cena;
+        } 
+      })
+      return min;
     }
   },
   methods: {
