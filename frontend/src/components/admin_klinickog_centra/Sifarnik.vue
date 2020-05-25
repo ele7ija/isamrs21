@@ -150,7 +150,7 @@ export default {
       */
       rules.push(
         v => 
-        this.getAll.findIndex(x => x.sifra.toUpperCase()== v.toUpperCase()) == -1 
+        (v && this.getAll.findIndex(x => x.sifra.toUpperCase()== v.toUpperCase()) == -1) 
         || "Šifra mora biti jedinstvena"
       );
       return rules;
@@ -161,7 +161,7 @@ export default {
       rules.push( v => (v && v.length <= 50) || 'Polje ima najviše 50 karaktera');  
       rules.push(
         v => 
-        this.getAll.findIndex(x => x.naziv.toUpperCase() == v.toUpperCase()) == -1 
+        (v && this.getAll.findIndex(x => x.naziv.toUpperCase() == v.toUpperCase()) == -1) 
         || "Naziv mora biti jedinstven"
       );
       return rules;
@@ -184,9 +184,9 @@ export default {
     }),
 
     save(){
-      this.close();
       this.newItem.sifra = this.newItem.sifra.toUpperCase();
-      this.addDijagnozaIliLek(this.newItem)
+      this.addDijagnozaIliLek(this.newItem);
+      this.close();
     },
     close() {
       this.resetForm();
