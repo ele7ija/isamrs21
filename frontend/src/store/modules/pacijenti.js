@@ -18,8 +18,8 @@ const getters = {
     let vremePregleda = utility.handleTimeZone(new Date(poseta.pregled.pocetakPregleda));
     var diff = Math.abs(d.getTime() - vremePregleda.getTime());
     console.log(diff/60000);
-    // return (diff / 60000) <= 15; //pregled moze da se zapocne 15 minuta ranije
-    return true;
+    return (diff / 60000) <= 15; //pregled moze da se zapocne 15 minuta ranije
+    // return true; //radi testiranja
   }
 }
 const actions = {
