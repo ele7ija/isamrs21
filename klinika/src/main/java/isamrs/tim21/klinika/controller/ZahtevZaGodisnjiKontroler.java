@@ -82,6 +82,7 @@ public class ZahtevZaGodisnjiKontroler {
 				HttpStatus.NOT_FOUND
 			);
 		}
+		zahtevZaGodisnjiService.sendMail(zahtev);
 		return new ResponseEntity<CustomResponse<ZahtevZaGodisnji>>(
 			new CustomResponse<ZahtevZaGodisnji>(zahtev, true, "Zahtev je uspešno obrađen."),
 			HttpStatus.OK

@@ -1,6 +1,7 @@
 package isamrs.tim21.klinika.domain;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -26,7 +27,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import isamrs.tim21.klinika.jsonSerialize.IdentityListSerializer;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
-import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
 import isamrs.tim21.klinika.jsonSerialize.PosetaSerializer;
 import isamrs.tim21.klinika.jsonSerialize.UpitZaPregledListSerializer;
 
@@ -240,11 +240,29 @@ public class Pregled implements IdentitySerializable{
 	}
 
 	public boolean intersects(ZahtevZaGodisnji zahtevzaGodisnji) {
-		if((pocetakPregleda.after(zahtevzaGodisnji.getPrviDanGodisnjeg()) || pocetakPregleda.equals(zahtevzaGodisnji.getPrviDanGodisnjeg())) && 
-			pocetakPregleda.before(zahtevzaGodisnji.getPoslednjiDanGodisnjeg()) || pocetakPregleda.equals(zahtevzaGodisnji.getPoslednjiDanGodisnjeg()))
+		Date pocetak = new Date(this.pocetakPregleda.getTime());
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(pocetak);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		pocetak = cal.getTime();
+
+		Date kraj = new Date(this.krajPregleda.getTime());
+		cal.setTime(kraj);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		kraj = cal.getTime();
+
+
+		if((pocetak.after(zahtevzaGodisnji.getPrviDanGodisnjeg()) || pocetak.equals(zahtevzaGodisnji.getPrviDanGodisnjeg())) && 
+		pocetak.before(zahtevzaGodisnji.getPoslednjiDanGodisnjeg()) || pocetak.equals(zahtevzaGodisnji.getPoslednjiDanGodisnjeg()))
 			return true;
-		if((zahtevzaGodisnji.getPrviDanGodisnjeg().after(pocetakPregleda) || zahtevzaGodisnji.getPrviDanGodisnjeg().equals(pocetakPregleda)) && 
-				zahtevzaGodisnji.getPrviDanGodisnjeg().before(krajPregleda) || zahtevzaGodisnji.getPrviDanGodisnjeg().equals(krajPregleda))
+		if((zahtevzaGodisnji.getPrviDanGodisnjeg().after(pocetak) || zahtevzaGodisnji.getPrviDanGodisnjeg().equals(pocetak)) && 
+				zahtevzaGodisnji.getPrviDanGodisnjeg().before(kraj) || zahtevzaGodisnji.getPrviDanGodisnjeg().equals(kraj))
 			return true;
 		return false;
 	}

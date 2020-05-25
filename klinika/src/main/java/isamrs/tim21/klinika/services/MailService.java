@@ -1,14 +1,17 @@
 package isamrs.tim21.klinika.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import isamrs.tim21.klinika.domain.Pacijent;
+import isamrs.tim21.klinika.domain.ZahtevZaGodisnji;
 import isamrs.tim21.klinika.domain.ZahtevZaRegistraciju;
 import isamrs.tim21.klinika.dto.ZahtevZaRegistracijuDTO;
 import isamrs.tim21.klinika.repository.ZahtevZaRegistracijuRepository;
+import org.springframework.scheduling.annotation.Async;
 
 @Service
 public class MailService {
@@ -17,6 +20,9 @@ public class MailService {
   
   @Autowired
   private JavaMailSender javaMailSender;
+
+  @Autowired
+  Environment environment;
 
   private String subject;
   private String text;
@@ -58,6 +64,41 @@ public class MailService {
     text += poruka;
     text += "\n\n";
     text += "Vaš ISA tim21.";
+  }
+
+  @Async
+  public void prihvatiZahtevZaGodisnji(ZahtevZaGodisnji zahtev) {
+    subject = "Prihvatanje zahteva za odsustvo";
+    poruka = "Vaš zahtev za odsustvo je odobren.";
+    generateText(zahtev);
+
+    SimpleMailMessage mailToSend = new SimpleMailMessage();
+    mailToSend.setTo(zahtev.getRadniKalendar().getMedicinskoOsoblje().getEmail());
+    mailToSend.setText(this.text);
+    mailToSend.setSubject(subject);
+    javaMailSender.send(mailToSend);
+  }
+
+  private void generateText(ZahtevZaGodisnji zahtev) {
+    text = "Poštovani korisniče ";
+    text += zahtev.getRadniKalendar().getMedicinskoOsoblje().getIme() + " " + zahtev.getRadniKalendar().getMedicinskoOsoblje().getPrezime();
+    text += ", \n\n";
+    text += poruka;
+    text += "\n\n";
+    text += "Vaš ISA tim21.";
+  }
+
+  @Async
+  public void odbiZahtevZaGodisnji(ZahtevZaGodisnji zahtev) {
+    subject = "Odbijanje zahteva za odsustvo";
+    poruka = "Vaš zahtev za odsustvo je odbijen. Razlog: '" + zahtev.getRazlogOdbijanja() + "'.";
+    generateText(zahtev);
+
+    SimpleMailMessage mailToSend = new SimpleMailMessage();
+    mailToSend.setTo(zahtev.getRadniKalendar().getMedicinskoOsoblje().getEmail());
+    mailToSend.setText(this.text);
+    mailToSend.setSubject(subject);
+    javaMailSender.send(mailToSend);
   }
   
 }

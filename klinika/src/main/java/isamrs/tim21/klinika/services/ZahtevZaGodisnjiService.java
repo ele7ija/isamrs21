@@ -3,6 +3,7 @@ package isamrs.tim21.klinika.services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import isamrs.tim21.klinika.domain.ZahtevZaGodisnji;
 import isamrs.tim21.klinika.repository.RadniKalendarRepository;
 import isamrs.tim21.klinika.repository.ZahtevZaGodisnjiRepository;
 
+
 @Service
 public class ZahtevZaGodisnjiService {
 
@@ -23,6 +25,9 @@ public class ZahtevZaGodisnjiService {
 	
 	@Autowired
 	RadniKalendarRepository radniKalendarRepository;
+
+	@Autowired
+	MailService mailService;
 	
 	@Transactional(readOnly=true)
 	public List<ZahtevZaGodisnji> findAllByIdKlinike(Long idKlinike) {
@@ -74,6 +79,15 @@ public class ZahtevZaGodisnjiService {
 		}
 		zahtevToUpdate.setRadniKalendar(kalendar);
 		return zahtevZaGodisnjiRepository.save(zahtevToUpdate);
+	}
+	
+	@Async
+	public void sendMail(ZahtevZaGodisnji zahtev){
+		if(zahtev.isOdobreno()){
+			mailService.prihvatiZahtevZaGodisnji(zahtev);
+		}else{
+			mailService.odbiZahtevZaGodisnji(zahtev);
+		}
 	}
 
 	@Transactional(readOnly=false)
