@@ -47,6 +47,11 @@ const state = {
             action: 'mdi-alpha-u',
             componentName: 'upiti_pregledi_admin'
           },
+          {
+            title: 'Upiti za odsustvo',
+            action: 'mdi-beach',
+            componentName: 'zahtevi_godisnji'
+          },
         ]
       }
       

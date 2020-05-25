@@ -1,6 +1,6 @@
 <template>
   <v-data-table
-    :items="_neobradjeni"
+    :items="_poslati"
     :headers="headers"
   >
     <template v-slot:top>
@@ -38,8 +38,8 @@
             </template>
             <v-date-picker v-model="pocetak" no-title scrollable>
               <v-spacer></v-spacer>
-              <v-btn text color="decline" @click="menu1 = false">Odustani</v-btn>
-              <v-btn text color="accept" @click="$refs.menu1.save(pocetak)">Potvrdi</v-btn>
+              <v-btn text color="red lighten-1" @click="menu1 = false">Odustani</v-btn>
+              <v-btn text color="green lighten-1" @click="$refs.menu1.save(pocetak)">Potvrdi</v-btn>
             </v-date-picker>
           </v-menu>
         </td>
@@ -64,8 +64,8 @@
             </template>
             <v-date-picker v-model="kraj" no-title scrollable min="00010101T000000-0500">
               <v-spacer></v-spacer>
-              <v-btn text color="decline" @click="menu2 = false">Odustani</v-btn>
-              <v-btn text color="accept" @click="$refs.menu2.save(kraj)">Potvrdi</v-btn>
+              <v-btn text color="red lighten-1" @click="menu2 = false">Odustani</v-btn>
+              <v-btn text color="green lighten-1" @click="$refs.menu2.save(kraj)">Potvrdi</v-btn>
             </v-date-picker>
           </v-menu>
         </td>
@@ -94,7 +94,7 @@ export default {
           filter: (value) => {
             if(!this.pocetakDate)
               return true;
-            let date = this.$utility.stringToDate(value);
+            let date = this.$utility.stringToDate2(value);
             if(!this.krajDate)
               return date.getTime() == this.pocetakDate.getTime();
             return date >= this.pocetakDate && date <= this.krajDate;
@@ -104,7 +104,7 @@ export default {
           filter: (value) => {
             if(!this.krajDate)
               return true;
-            let date = this.$utility.stringToDate(value);
+            let date = this.$utility.stringToDate2(value);
             if(!this.pocetakDate)
               return date.getTime() == this.krajDate.getTime();
             return date >= this.pocetakDate && date <= this.krajDate;
@@ -119,7 +119,7 @@ export default {
         this.pocetakDate = null;
         this.pocetakFormatted = null;
       }else{
-        this.pocetakDate = new Date(newValue);
+        this.pocetakDate = this.$utility.handleTimeZone(new Date(newValue));
         this.pocetakFormatted = this.formatDate(this.pocetakDate);
       }
     },
@@ -128,22 +128,22 @@ export default {
         this.krajDate = null;
         this.krajFormatted = null;
       }else{
-        this.krajDate = new Date(newValue);
+        this.krajDate = this.$utility.handleTimeZone(new Date(newValue));
         this.krajFormatted = this.formatDate(this.krajDate);
       }
     },
   },
   computed: {
     ...mapGetters({
-      neobradjeni: 'zahteviZaGodisnjiOsoblje/getPoslatiZahteviZaGodisnji'
+      poslati: 'zahteviZaGodisnjiOsoblje/getPoslatiZahteviZaGodisnji'
     }),
-    _neobradjeni(){
-      if(this.neobradjeni){
-        return this.neobradjeni.map(x => {
+    _poslati(){
+      if(this.poslati){
+        return this.poslati.map(x => {
           return {
             id: x.id,
-            prviDanGodisnjeg: this.$utility.formatDate(new Date(x.prviDanGodisnjeg)),
-            poslednjiDanGodisnjeg: this.$utility.formatDate(new Date(x.poslednjiDanGodisnjeg))
+            prviDanGodisnjeg: this.$utility.formatDate2(new Date(x.prviDanGodisnjeg)),
+            poslednjiDanGodisnjeg: this.$utility.formatDate2(new Date(x.poslednjiDanGodisnjeg))
           };
         });
       }else{
@@ -153,7 +153,7 @@ export default {
   },
   methods: {
     formatDate(date){
-      return date.toLocaleDateString('sr');
+      return this.$utility.formatDate2(date);
     },
     ponisti(){
       this.pocetak = null;

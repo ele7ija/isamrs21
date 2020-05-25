@@ -27,10 +27,10 @@
                       v-on="on"
                     ></v-text-field>
                   </template>
-                  <v-date-picker v-model="pocetak" no-title scrollable>
+                  <v-date-picker v-model="pocetak" no-title scrollable :min="new Date().toISOString().substr(0, 10)">
                     <v-spacer></v-spacer>
-                    <v-btn text color="decline" @click="menu1 = false">Odustani</v-btn>
-                    <v-btn text color="accept" @click="$refs.menu1.save(pocetak)">Potvrdi</v-btn>
+                    <v-btn text color="red lighten-1" @click="menu1 = false">Odustani</v-btn>
+                    <v-btn text color="green lighten-1" @click="$refs.menu1.save(pocetak)">Potvrdi</v-btn>
                   </v-date-picker>
                 </v-menu>
               </v-col>
@@ -46,6 +46,7 @@
                 >
                   <template v-slot:activator="{ on }">
                     <v-text-field
+                      :disabled="pocetak==null"
                       v-model="krajFormatted"
                       label="Poslednji dan odsustva"
                       prepend-icon="mdi-calendar-range"
@@ -55,8 +56,8 @@
                   </template>
                   <v-date-picker v-model="kraj" no-title scrollable :min="pocetak">
                     <v-spacer></v-spacer>
-                    <v-btn text color="decline" @click="menu2 = false">Odustani</v-btn>
-                    <v-btn text color="accept" @click="$refs.menu2.save(kraj)">Potvrdi</v-btn>
+                    <v-btn text color="red lighten-1" @click="menu2 = false">Odustani</v-btn>
+                    <v-btn text color="green lighten-1" @click="$refs.menu2.save(kraj)">Potvrdi</v-btn>
                   </v-date-picker>
                 </v-menu>
               </v-col>
@@ -64,7 +65,8 @@
                 <v-btn
                   class="mt-3"
                   color="blue darken-1"
-                  @click="podnesiZahtev">
+                  @click="podnesiZahtev"
+                  :disabled="kraj==null">
                   Podnesi zahtev
                 </v-btn>
                 <v-btn
@@ -80,7 +82,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="5">
         <v-card>
           <v-card-title>
             Zahtevi na čekanju
@@ -89,11 +91,11 @@
             Ovo su zahtevi koje administrator klinike još uvek nije obradio
           </v-card-subtitle>
           <v-card-text>
-            <TabelaPoslatihUpita/>
+            <TabelaPoslatihUpita :key="key"/>
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="7">
         <v-card>
           <v-card-title>
             Obrađeni zahtevi
@@ -111,7 +113,7 @@
 </template>
 
 <script>
-import {mapActions} from 'vuex';
+import {mapActions, mapGetters} from 'vuex';
 import TabelaPoslatihUpita from './zahtevi/TabelaPoslatihUpita';
 import TabelaNeobradjenihUpita from './zahtevi/TabelaNeobradjenihUpita';
 export default{
@@ -122,6 +124,8 @@ export default{
   },
   data: function(){
     return{
+      key: 0,
+      
       menu1: false,
       menu2: false,
 
@@ -133,6 +137,11 @@ export default{
       krajDate: null, //date
       krajFormatted: null, //formatted string
     };
+  },
+  computed: {
+    ...mapGetters({
+      profil: 'profil/getProfil',
+    })
   },
   watch: {
     pocetak (newValue) {
@@ -159,10 +168,29 @@ export default{
   },
   methods: {
     ...mapActions({
-      fetchMojiZahtevi: 'zahteviZaGodisnjiOsoblje/fetchMojiZahtevi'
+      fetchMojiZahtevi: 'zahteviZaGodisnjiOsoblje/fetchMojiZahtevi',
+      addZahtev: 'zahteviZaGodisnjiOsoblje/addZahtev'
     }),
     podnesiZahtev(){
-      console.log("emituj akciju na bek");
+      let profil = this.profil;
+      let obj = {
+        radniKalendar: {
+          id: profil.radniKalendar.id,
+          medicinskoOsoblje: {
+            id: profil.id,
+            pozicija: 'lekar'
+          }
+        },
+        prviDanGodisnjeg: this.pocetakDate,
+        poslednjiDanGodisnjeg: this.krajDate,
+        odobreno: false,
+        adminObradio: false,
+        osobljeObradilo: false,
+        razlogOdbijanja: ''
+      };
+      this.addZahtev(obj);
+      this.ponisti();
+      this.key += 1;
     },
     ponisti(){
       this.pocetak = null;

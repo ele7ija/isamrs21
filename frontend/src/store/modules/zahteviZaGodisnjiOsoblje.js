@@ -23,6 +23,11 @@ const actions = {
     commit('setNeobradjeniZahteviZaGodisnji', data2);
   },
 
+  async addZahtev({commit}, zahtev){
+    let data = await zahteviZaGodisnji.addZahtev(zahtev);
+    commit('addNewZahtev', data);
+  },
+
   async obradiOsoblje({commit}, idZahteva){
     await zahteviZaGodisnji.obradiOsoblje(idZahteva);
     commit('obradi', idZahteva);
@@ -34,10 +39,11 @@ const mutations = {
   setPoslatiZahteviZaGodisnji: (state, poslatiZahteviZaGodisnji) => state.poslatiZahteviZaGodisnji = poslatiZahteviZaGodisnji,
   setNeobradjeniZahteviZaGodisnji: (state, neobradjeniZahteviZaGodisnji) => state.neobradjeniZahteviZaGodisnji = neobradjeniZahteviZaGodisnji,
   obradi: (state, idZahteva) => {
-    let index = state.poslatiZahteviZaGodisnji.findIndex(x => x.id == idZahteva);
+    let index = state.neobradjeniZahteviZaGodisnji.findIndex(x => x.id == idZahteva);
     if(index != -1)
-      state.poslatiZahteviZaGodisnji(index, 1);
-  }
+      state.neobradjeniZahteviZaGodisnji.splice(index, 1);
+  },
+  addNewZahtev: (state, zahtev) => state.poslatiZahteviZaGodisnji.push(zahtev)
 }
 
 export default{

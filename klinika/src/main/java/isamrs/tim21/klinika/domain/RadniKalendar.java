@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import isamrs.tim21.klinika.jsonSerialize.IdentityListSerializer;
@@ -30,7 +31,7 @@ public class RadniKalendar implements IdentitySerializable{
 	
 	@OneToOne(fetch=FetchType.EAGER)
 	@MapsId
-	@JsonSerialize(using=IdentitySerializer.class)
+	@JsonIgnoreProperties(value={"radniKalendar"}, allowSetters=true)
 	private MedicinskoOsoblje medicinskoOsoblje;
 	
 	@OneToMany(mappedBy="radniKalendar", fetch=FetchType.LAZY, cascade=CascadeType.ALL)

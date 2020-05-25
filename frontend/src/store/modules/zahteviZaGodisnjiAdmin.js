@@ -1,11 +1,11 @@
 import zahteviZaGodisnji from '@/api/zahteviZaGodisnji';
 const state = {
-  zahteviZaGodisnji: [],
+  neobradjeniZahteviZaGodisnji: [], //zahtevi koje admin nije obradio
   klinika: null,
 }
 
 const getters = {
-  getAllZahteviZaGodisnji: (state) => state.zahteviZaGodisnji
+  getNeobradjeniZahteviZaGodisnji: (state) => state.neobradjeniZahteviZaGodisnji
 }
 
 const actions = {
@@ -13,7 +13,7 @@ const actions = {
     let resp = rootGetters['klinike/getKlinikaAdmina'];
     commit('setCurrentKlinika', resp);
 
-    let data = await zahteviZaGodisnji.fetchAllZahtevi();
+    let data = await zahteviZaGodisnji.fetchAllZahtevi(resp.id);
     commit('setZahteviZaGodisnji', data);
   },
 
@@ -30,32 +30,17 @@ const actions = {
       });
     });
   },
-
-  async deleteZahtev({commit}, idZahteva){
-    return new Promise((resolve, reject) => {
-      zahteviZaGodisnji.deleteZahtev(idZahteva)
-      .then(({data: {result, message, success}}) => {
-        if(success){
-          commit('deleteZahtevZaGodisnji', result);
-          resolve(message);
-        }else{
-          reject(message);
-        }
-      });
-    });
-  }
 }
 
 const mutations = {
   setCurrentKlinika: (state, klinika) => state.klinika = klinika,
-  setZahteviZaGodisnji: (state, zahteviZaGodisnji) => state.zahteviZaGodisnji = zahteviZaGodisnji,
-  updateZahtevZaGodisnji: (state, zahtevZaGodisnji) => {
-    let index = state.zahteviZaGodisnji.findIndex(x => x.id == zahtevZaGodisnji.id);
-    state.zahteviZaGodisnji.splice(index, 1);
-    state.zahteviZaGodisnji.splice(index, 0, zahtevZaGodisnji);
+  setZahteviZaGodisnji: (state, zahteviZaGodisnji) => {
+    state.neobradjeniZahteviZaGodisnji = zahteviZaGodisnji.filter(x => !x.adminObradio);
   },
-  deleteZahtevZaGodisnji: (state, zahtevZaGodisnji) =>
-    state.zahteviZaGodisnji = state.zahteviZaGodisnji.filter(x => x.id != zahtevZaGodisnji.id)
+  updateZahtevZaGodisnji: (state, zahtevZaGodisnji) => {
+    let index = state.neobradjeniZahteviZaGodisnji.findIndex(x => x.id == zahtevZaGodisnji.id);
+    state.neobradjeniZahteviZaGodisnji.splice(index, 1);
+  }
 }
 
 export default{

@@ -1,12 +1,12 @@
 <template>
   <div>
     <v-data-table
-      :items="_neobradjeni"
+      :items="_zahtevi"
       :headers="headers"
     >
       <template v-slot:top>
         <v-toolbar flat color="blue lighten-3">
-          <v-toolbar-title>Zahtevi</v-toolbar-title>
+          <v-toolbar-title>Neobrađeni zahtevi</v-toolbar-title>
           <v-divider
             class="mx-4"
             inset
@@ -18,6 +18,12 @@
       </template>
       <template v-slot:body.prepend>
         <tr>
+          <td>
+            <v-text-field label="Ime i prezime" v-model="imePrezime"></v-text-field>
+          </td>
+          <td>
+            <v-select label="Pozicija" v-model="pozicija" :items="['lekar', 'medicinska sestra']"></v-select>
+          </td>
           <td>
             <v-menu
               ref="menu1"
@@ -72,48 +78,47 @@
           </td>
         </tr>
       </template>
-      <template v-slot:item="{ item }">
-        <tr :class="{
-              'red lighten-3': !item.odobreno,
-              'green lighten-3': item.odobreno,
-              }">
-          <td>{{item.prviDanGodisnjeg}}</td>
-          <td>{{item.poslednjiDanGodisnjeg}}</td>
-          <td>
-            <span>
-            <v-btn
-              v-if="!item.odobreno"
-              small
-              color="primary"
-              @click="detalji(item.id)"
-            >
-              Detalji
-            </v-btn>
-            <v-btn
-              small
-              :class="{'ml-2': !item.odobreno}"
-              color="accent"
-              @click="potvrdi(item.id)"
-            >
-              Potvrdi
-            </v-btn>
-            </span>
-          </td>
-        </tr>
+      <template v-slot:item.actions="{ item }">
+        <v-btn
+          color="green lighten-1"
+          @click="odorbi(item.id)"
+        >
+          Odobri
+        </v-btn>
+        <v-btn
+          color="red lighten-1"
+          class="ml-2"
+          @click="pripremiOdbijanje(item.id)"
+        >
+          Odbi
+        </v-btn>
       </template>
     </v-data-table>
+    <v-snackbar
+      v-model="snackbar"
+      :timeout="snackbarTimeout"
+      color="red darken-3"
+    >
+      {{ snackbarText }}
+      <v-btn
+        color="grey darken-3"
+        text
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
     <v-dialog v-model="dialog" max-width="500">
       <v-card>
         <v-card-title
           class="headline justify-center"
         >
-          Zahtev je odbijen
+          Odbijanje zateva za odsustvo
         </v-card-title>
         <v-card-text>
           <v-textarea
             label="Razlog odbijanja"
             outlined
-            readonly
             v-model="razlog"
           >
           </v-textarea>
@@ -121,11 +126,18 @@
         <v-card-actions>
           <div class="mt-n10 ml-5">
             <v-btn
+              color="green light-1"
+              @click="odbi"
+              :disabled="razlog==''"
+            >
+              Odbi
+            </v-btn>
+            <v-btn
               class="ml-3"
               color="red light-1"
               @click="zatvori"
             >
-              Zatvori
+              Odustani
             </v-btn>
           </div>
         </v-card-actions>
@@ -137,15 +149,21 @@
 <script>
 import {mapGetters, mapActions} from 'vuex';
 export default {
-  name: 'TabelaNeobradjenihUpita',
+  name: 'NeobradjeniZahteviZaGodisnji',
   data: function(){
     return{
       dialog: false,
+      idZahtevaZaOdbijanje: null,
       razlog: '',
 
+      snackbar: false,
+      snackbarTimeout: 3000,
+      snackbarText: null,
+
+      imePrezime: '',
+      pozicija: '',
       menu1: false,
       menu2: false,
-
       pocetak: null, //string
       pocetakDate: null, //date
       pocetakFormatted: null, //formated string
@@ -154,6 +172,20 @@ export default {
       krajDate: null, //date
       krajFormatted: null, //formatted string
       headers: [
+        { text: 'Ime i prezime', value: 'imePrezime', sortable: true,
+          filter: (value) => {
+            if(!this.imePrezime)
+              return true;
+            return this.imePrezime.indexOf(value) != -1 || value.indexOf(this.imePrezime) != -1;
+          }
+        },
+        { text: 'Pozicija', value: 'pozicija', sortable: true,
+          filter: (value) => {
+            if(!this.pozicija)
+              return true;
+            return this.pozicija == value;
+          }
+        },
         { text: 'Prvi dan odsustva', value: 'prviDanGodisnjeg', sortable: false,
           filter: (value) => {
             if(!this.pocetakDate)
@@ -200,16 +232,17 @@ export default {
   },
   computed: {
     ...mapGetters({
-      neobradjeni: 'zahteviZaGodisnjiOsoblje/getNeobradjeniZahteviZaGodisnji'
+      zahtevi: 'zahteviZaGodisnjiAdmin/getNeobradjeniZahteviZaGodisnji'
     }),
-    _neobradjeni(){
-      if(this.neobradjeni){
-        return this.neobradjeni.map(x => {
+    _zahtevi(){
+      if(this.zahtevi){
+        return this.zahtevi.map(x => {
           return {
             id: x.id,
+            imePrezime: `${x.radniKalendar.medicinskoOsoblje.ime} ${x.radniKalendar.medicinskoOsoblje.prezime}`,
+            pozicija: x.radniKalendar.medicinskoOsoblje.pozicija,
             prviDanGodisnjeg: this.$utility.formatDate2(new Date(x.prviDanGodisnjeg)),
             poslednjiDanGodisnjeg: this.$utility.formatDate2(new Date(x.poslednjiDanGodisnjeg)),
-            odobreno: x.odobreno
           };
         });
       }else{
@@ -219,7 +252,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      obradiOsoblje: 'zahteviZaGodisnjiOsoblje/obradiOsoblje'
+      updateZahtev: 'zahteviZaGodisnjiAdmin/updateZahtev'
     }),
     formatDate(date){
       return this.$utility.formatDate2(date);
@@ -227,18 +260,38 @@ export default {
     ponisti(){
       this.pocetak = null;
       this.kraj = null;
+      this.pozicija = null;
+      this.imePrezime = null;
     },
-    potvrdi(idZahteva){
-      this.obradiOsoblje(idZahteva);
-    },
-    detalji(idZahteva){
-      let zahtev = this.neobradjeni.filter(x => x.id == idZahteva)[0];
-      this.razlog = zahtev.razlogOdbijanja;
+    pripremiOdbijanje(idZahteva){
+      this.idZahtevaZaOdbijanje = idZahteva;
       this.dialog = true;
     },
     zatvori(){
+      this.idZahtevaZaOdbijanje = null;
       this.razlog = '';
       this.dialog = false;
+    },
+    odorbi(idZahteva){
+      let zahtev = this.zahtevi.filter(x => x.id == idZahteva)[0];
+      zahtev.adminObradio = true;
+      zahtev.odobreno = true;
+      this.updateZahtev(zahtev).then(null, (error) => {
+        this.snackbarText = error;
+        this.snackbar = true;
+      });
+    },
+    odbi(){
+      let idZahteva = this.idZahtevaZaOdbijanje
+      let zahtev = this.zahtevi.filter(x => x.id == idZahteva)[0];
+      zahtev.adminObradio = true;
+      zahtev.odobreno = false;
+      zahtev.razlogOdbijanja = this.razlog
+      this.updateZahtev(zahtev).then(null, (error) => {
+        this.snackbarText = error;
+        this.snackbar = true;
+      });
+      this.zatvori();
     }
   }
 }

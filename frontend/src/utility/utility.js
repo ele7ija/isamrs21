@@ -63,6 +63,20 @@ export default {
     return date;
   },
 
+  stringToDate2(value){
+    //pretvara string formata dd.MM.yyy u datum
+    let date = new Date();
+    let temp = value.split('.');
+    date.setDate(temp[0]);
+    date.setMonth(temp[1] - 1);
+    date.setFullYear(temp[2]);
+    date.setHours(0);
+    date.setMinutes(0);
+    date.setSeconds(0);
+    date.setMilliseconds(0);
+    return date;
+  },
+
   handleTimeZone(date){
     //umanjuje dva sata od datuma usled razlicite vremenske zone dobijene sa servera
     date.setMinutes(date.getMinutes() + date.getTimezoneOffset());

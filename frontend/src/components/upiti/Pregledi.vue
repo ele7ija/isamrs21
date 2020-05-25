@@ -31,19 +31,19 @@
       </v-toolbar>
     </template>
     <template v-slot:item="{ item }">
-        <tr :class="{
-              'red lighten-3': isValid(item)
-              }">
-          <td>{{item.datum}}</td>
-          <td>{{item.pocetak}}</td>
-          <td>{{item.kraj}}</td>
-          <td>{{item.lekar}}</td>
-          <td>{{item.tipPregleda}}</td>
-          <td>{{item.vrsta}}</td>
-          <td>{{item.konacnaCena}}</td>
-          <td>{{item.pacijent}}</td>
-        </tr>
-      </template>
+      <tr :class="{
+            'red lighten-3': isValid(item)
+            }">
+        <td>{{item.datum}}</td>
+        <td>{{item.pocetak}}</td>
+        <td>{{item.kraj}}</td>
+        <td>{{item.lekar}}</td>
+        <td>{{item.tipPregleda}}</td>
+        <td>{{item.vrsta}}</td>
+        <td>{{item.konacnaCena}}</td>
+        <td>{{item.pacijent}}</td>
+      </tr>
+    </template>
   </v-data-table>
 </template>
 

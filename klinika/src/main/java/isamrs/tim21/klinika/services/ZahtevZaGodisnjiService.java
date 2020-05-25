@@ -83,14 +83,4 @@ public class ZahtevZaGodisnjiService {
 		return zahtevZaGodisnjiRepository.save(zahtev);
 	}
 
-	@Transactional(readOnly=false)
-	public void delete(Long idZahtevaZaGodisnji) throws Exception{
-		ZahtevZaGodisnji zahtev = zahtevZaGodisnjiRepository.findByIdPessimisticWrite(idZahtevaZaGodisnji); //pessimistic write nad zahtevom za godisnji koji se brise
-		if(zahtev == null)
-			throw new Exception("Greska: Zahtev nije pronađen.");
-		if(!zahtev.isOsobljeObradilo())
-			throw new Exception("Greska: Ne možete obrisati zahtev za godišnji čije odbijanje/prihvatanje podnosioc još uvek nije video.");
-		zahtevZaGodisnjiRepository.deleteById(idZahtevaZaGodisnji);
-	}
-
 }

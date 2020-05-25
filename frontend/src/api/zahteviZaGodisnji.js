@@ -31,8 +31,8 @@ export default{
 
   async addZahtev(zahtev){
     let options = util.prepareOptions();  
-    let response = axios.post(
-      `${process.env.VUE_APP_BACKEND_ROOT}/zahtevZaGodisnji/`,
+    let response = await axios.post(
+      `${process.env.VUE_APP_BACKEND_ROOT}/zahtevZaGodisnji`,
       zahtev,
       options
     );
@@ -52,14 +52,7 @@ export default{
     let options = util.prepareOptions();
     return axios.put(
       `${process.env.VUE_APP_BACKEND_ROOT}/zahtevZaGodisnji/obradiOsoblje/${idZahteva}`,
-      options
-    );
-  },
-
-  deleteZahtev(idZahteva){
-    let options = util.prepareOptions();
-    return axios.delete(
-      `${process.env.VUE_APP_BACKEND_ROOT}/zahtevZaGodisnji/${idZahteva}`,
+      {},
       options
     );
   }

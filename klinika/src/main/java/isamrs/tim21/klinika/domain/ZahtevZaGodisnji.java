@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
@@ -26,7 +27,7 @@ public class ZahtevZaGodisnji implements IdentitySerializable{
 	private Long id;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JsonSerialize(using=IdentitySerializer.class)
+	@JsonIgnoreProperties(value={"zahteviZaGodisnjiOdmor"}, allowSetters=true)
 	private RadniKalendar radniKalendar;
 	
 	@Column(name="odobreno")

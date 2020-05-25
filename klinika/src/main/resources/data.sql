@@ -25,6 +25,10 @@ insert into korisnik (type, klinika_id, email, sifra, ime, prezime, broj_telefon
 insert into korisnik (type, klinika_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled, broj_specijalizacija) values ('LE', 2, 'lekar2@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'Marko', 'Mitrovic', '1', 'Serbia', 'Novi Sad', 6, 6, 0x01, 1);
 insert into korisnik (type, klinika_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled, broj_specijalizacija) values ('LE', 3, 'lekar3@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'Ognjen', 'Peric', '1', 'Serbia', 'Novi Sad', 8, 8, 0x01, 2);
 
+insert into radni_kalendar(dnevno_radno_vreme, medicinsko_osoblje_id) values(3,3);
+insert into radni_kalendar(dnevno_radno_vreme, medicinsko_osoblje_id) values(6,6);
+insert into radni_kalendar(dnevno_radno_vreme, medicinsko_osoblje_id) values(8,8);
+
 -- sablon: values (korisnik_id, sifra_entiteta)
 insert into user_authority values(1,3);
 insert into user_authority values(4,3);

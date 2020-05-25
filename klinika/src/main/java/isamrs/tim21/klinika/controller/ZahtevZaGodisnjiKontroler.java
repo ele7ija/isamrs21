@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -95,22 +94,6 @@ public class ZahtevZaGodisnjiKontroler {
 		ZahtevZaGodisnji zahtev = zahtevZaGodisnjiService.obradiOsoblje(idZahtevaZaGodisnji);
 		return new ResponseEntity<ZahtevZaGodisnji>(
 			zahtev,
-			HttpStatus.OK
-		);
-	}
-	
-	@DeleteMapping(value="/{idZahtevaZaGodisnji}")
-	public ResponseEntity<CustomResponse<Boolean>> delete(@PathVariable("idZahtevaZaGodisnji") Long idZahtevaZaGodisnji){
-		try{
-			zahtevZaGodisnjiService.delete(idZahtevaZaGodisnji);
-		}catch(Exception e){
-			return new ResponseEntity<CustomResponse<Boolean>>(
-				new CustomResponse<Boolean>(false, false, e.getMessage()),
-				HttpStatus.NOT_FOUND
-			);
-		}
-		return new ResponseEntity<CustomResponse<Boolean>>(
-			new CustomResponse<Boolean>(true, true, "Zahtev je uspešno obrisan."),
 			HttpStatus.OK
 		);
 	}

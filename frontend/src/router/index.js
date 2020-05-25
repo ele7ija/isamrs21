@@ -10,6 +10,7 @@ import SalaMain from "@/components/sale/SalaMain";
 import Osoblje from "@/components/osoblje/Osoblje";
 import PreglediMain from "@/components/pregledi/PreglediMain";
 import UpitiPreglediAdmin from "@/components/upiti/UpitiPreglediAdmin";
+import ZahteviZaGodisnji from "@/components/zahtevi_godisnji/ZahteviZaGodisnji";
 import Pacijenti from "@/components/pacijenti/Pacijenti";
 import KlinikaAdmin from '@/components/klinike/KlinikaAdmin';
 import Klinike from '@/components/pacijenti/klinike/Klinike';
@@ -138,6 +139,15 @@ let router = new Router({
       path: '/upiti_pregledi',
       name: 'upiti_pregledi_admin',
       component: UpitiPreglediAdmin,
+      meta: {
+        authen: true,
+        author: 'admin-klinike'
+      }
+    },
+    {
+      path: '/zahtevi_godisnji',
+      name: 'zahtevi_godisnji',
+      component: ZahteviZaGodisnji,
       meta: {
         authen: true,
         author: 'admin-klinike'
