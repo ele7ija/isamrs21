@@ -17,9 +17,9 @@ const getters = {
     let poseta = state.odabraniPacijent.zdravstveniKarton.posete.filter(x => x.id == idPosete)[0];
     let vremePregleda = utility.handleTimeZone(new Date(poseta.pregled.pocetakPregleda));
     var diff = Math.abs(d.getTime() - vremePregleda.getTime());
-    console.log(diff/60000);
-    return (diff / 60000) <= 15; //pregled moze da se zapocne 15 minuta ranije
-    // return true; //radi testiranja
+    diff/60000;
+    // return (diff / 60000) <= 15; //pregled moze da se zapocne 15 minuta ranije
+     return true; //radi testiranja
   }
 }
 const actions = {

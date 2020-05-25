@@ -93,7 +93,6 @@ export default {
     ...mapGetters({
       posete: 'pacijenti/getPoseteOdabranogPacijenta',
       tipoviPregleda: 'tipoviPregleda/getTipoviPregleda',
-      pregledMozeDaSeZapocne: 'pacijenti/pregledMozeDaSeZapocne'
     }),
     _posete(){
       if(this.posete){
@@ -131,11 +130,6 @@ export default {
       this.key2 += 1;
     },
 
-    //zapocni pregled
-    zapocni(item){
-      console.log(item)
-
-    }
   }
 }
 </script>
