@@ -1,4 +1,5 @@
 <template>
+<div>
   <v-card>
     <v-card-text>
       <v-data-table
@@ -27,23 +28,25 @@
           </tr>
         </template>
         <template v-slot:item.actions="{ item }">
-          <v-btn
-            :disabled="!pregledMozeDaSeZapocne(item.id)"
-            color="primary"
-            @click="zapocni(item)"
-          >
-            Započni pregled
-          </v-btn>
+
+          <FormaIzvestajPoseta :posetaId="item.id" />
         </template>
+
       </v-data-table>
     </v-card-text>
   </v-card>
+  
+</div>
 </template>
 
 <script>
+import FormaIzvestajPoseta from './FormaIzvestajPoseta'
 import {mapGetters} from 'vuex';
 export default {
   name: 'TabelaMojihPregleda',
+  components: {
+    FormaIzvestajPoseta,
+  },
   data: function(){
     return {
       key1: 0,
@@ -108,7 +111,8 @@ export default {
             kraj: this.$utility.formatDate(date2),
             tipPregleda: x.pregled.tipPregleda.naziv,
             bolest: x.bolest,
-            opis: x.opis
+            opis: x.opis,
+            zdravstveniKarton : x.zdravstveniKarton,
           };
         });
       }else
@@ -125,6 +129,12 @@ export default {
       this.tipPregleda = '';
       this.key1 += 1;
       this.key2 += 1;
+    },
+
+    //zapocni pregled
+    zapocni(item){
+      console.log(item)
+
     }
   }
 }

@@ -19,6 +19,7 @@ const getters = {
     var diff = Math.abs(d.getTime() - vremePregleda.getTime());
     console.log(diff/60000);
     return (diff / 60000) <= 15; //pregled moze da se zapocne 15 minuta ranije
+    // return true; //radi testiranja
   }
 }
 const actions = {
