@@ -27,6 +27,17 @@
                   </KlinikaCard>
                 </v-col>
               </v-row>
+              <v-row>
+                <v-col 
+                  v-for='klinika in nepretrazeneKlinike'
+                  :key='klinika.id'
+                  lg=4
+                  md=6
+                  sm=6>
+                  <KlinikaCard class='disabled' v-bind:klinika='klinika'>
+                  </KlinikaCard>
+                </v-col>
+              </v-row>
             </v-container>
             
           </v-card-text>
@@ -53,6 +64,7 @@ export default {
   computed: {
     ...mapGetters('klinike', [
       'pretrazeneKlinike',
+      'nepretrazeneKlinike'
     ]),
     klinike: function(){ 
       return this.pretrazeneKlinike;
@@ -71,6 +83,9 @@ export default {
 </script>
 
 <style scoped>
+  .disabled {
+    opacity: 0.5;
+  }
   .v-messages {
     display: none;
   }

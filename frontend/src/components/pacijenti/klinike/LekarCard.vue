@@ -1,13 +1,13 @@
 <template>
-  <v-card :disabled='pretrazeniPregledi.length==0'>
-    <v-card-title>
+  <v-card>
+    <v-card-title :class='pretrazeniPregledi.length==0 ? "disabled" : ""'>
       {{lekar.ime}} {{lekar.prezime}}
     </v-card-title>
-    <v-card-subtitle>
+    <v-card-subtitle :class='pretrazeniPregledi.length==0 ? "disabled" : ""'>
       {{lekar.email}}
     </v-card-subtitle>
     <v-divider></v-divider>
-    <v-card-text class='pb-2'>
+    <v-card-text :class='pretrazeniPregledi.length==0 ? "disabled pb-2" : "pb-2"'>
       <v-list>
         <v-list-item
           v-for='pregled in pretrazeniPregledi'
@@ -282,6 +282,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+  .disabled {
+    opacity: 0.7;
+  }
 </style>

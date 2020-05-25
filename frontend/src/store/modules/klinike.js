@@ -75,7 +75,16 @@ const getters = {
       state.sortiranjeKlinika
     )
   },
-
+  nepretrazeneKlinike: (state, getters) => {
+    let retval = [];
+    for (let k of state.klinike) {
+      let l = getters.pretrazeneKlinike.filter(x => x.id == k.id);
+      if (l.length == 0) {
+        retval.push(k);
+      }
+    }
+    return retval;
+  },
   getKlinike(state){
     return state.klinike;
   },
