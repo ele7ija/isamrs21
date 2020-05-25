@@ -367,11 +367,8 @@ public class UpitZaPregledeService {
 		for(int i = 0; i < upitZaPregledToChange.getUnapredDefinisaniPregled().getDodatniLekari().size(); i++){
 			Long idOsoblja = upitZaPregledToChange.getUnapredDefinisaniPregled().getDodatniLekari().get(i).getId();
 			Lekar l = osobljeRepository.findLekarByIdKlinikeAndByIdPessimisticRead(klinika.getId(), idOsoblja);
-			if(l == null || l.getVersion() != upitZaPregledToChange.getUnapredDefinisaniPregled().getDodatniLekari().get(i).getVersion()){
-				return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-						new CustomResponse<UpitZaPregled>(null, false, "Greska: Jedan od dodatnih lekara ima zastarelu verziju. Osvezite stranicu."),
-						HttpStatus.OK);
-			}
+			if(l == null)
+				throw new Exception("Jedan od dodatnih lekara nije pronadjen.");
 			upitZaPregledToChange.getUnapredDefinisaniPregled().getDodatniLekari().set(i, l);
 		}
 		
@@ -379,22 +376,11 @@ public class UpitZaPregledeService {
 		Pregled pregled = new Pregled(upitZaPregledToChange);
 		CustomResponse<Pregled> customResponse = pregledService.add(klinika, pregled);
 		if(customResponse.getResult() == null || !customResponse.isSuccess())
-			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-					new CustomResponse<UpitZaPregled>(null, customResponse.isSuccess(), customResponse.getMessage()),
-					HttpStatus.OK);
+			throw new Exception(customResponse.getMessage());
 		
 		//dobavi prethodno kreirani pregled u PESSIMISTIC_READ rezimu
 		pregled = pregledRepository.findByIdKlinikeAndIdPregledaPessimisticRead(idKlinike, customResponse.getResult().getId());
 
-		//ako je upit za pregled odobren, proveri da li je lekar odsutan
-		if(upitZaPregledToChange.getOdobren()){
-			for(ZahtevZaGodisnji zahtevZaGodisnji: lekar.getRadniKalendar().getZahteviZaGodisnjiOdmor()){
-				ZahtevZaGodisnji zahtevWithSharedLock = zahtevZaGodisnjiRepository.findByIdPessimissticRead(zahtevZaGodisnji.getId()); //kako niko ne bi mogao da odobri ovaj zahtev do kraja transakcije
-				if(zahtevWithSharedLock.isOdobreno() && pregled.intersects(zahtevWithSharedLock)){
-					throw new Exception("Greška. Lekar ima odobren zahtev za godišnji u terminu datog pregleda");
-				}
-			}
-		}
 		upitZaPregledToChange.setUnapredDefinisaniPregled(pregled);
 		upit.setUnapredDefinisaniPregled(pregled);
 		

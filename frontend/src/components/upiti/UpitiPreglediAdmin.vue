@@ -125,11 +125,16 @@ export default {
       }
 
       //PUT zahtev za accept
-      this.obradiAdmin(obj).then(null, (error) => {
-        this.snackbar = true;
-        this.snackbarText = error;
+      this.obradiAdmin(obj).then(
+        () => {
+          this.refreshTables();
+        },
+        (error) => {
+          this.snackbar = true;
+          this.snackbarText = error;
+          this.refreshTables();
       });
-      this.refreshTables();
+      
     },
 
     acceptCustom({upit, cena, popust, konacnaCena, dodatniLekari}){
@@ -142,13 +147,15 @@ export default {
         dodatniLekari
       };
       this.obradiAdminCustom(upit).then(
-        null, (error) => {
+        () => {
+          this.refreshTables();
+        },
+        (error) => {
           this.snackbar = true;
           this.snackbarText = error;
+          this.refreshTables();
         }
       );
-      
-      this.refreshTables();
     },
 
     reject(item){
@@ -166,11 +173,16 @@ export default {
         };
       }
       //PUT zahtev za reject
-      this.obradiAdmin(obj).then(null, (error) => {
-        this.snackbar = true;
-        this.snackbarText = error;
+      this.obradiAdmin(obj).then(
+        () => {
+          this.refreshTables();
+        },
+        (error) => {
+          this.snackbar = true;
+          this.snackbarText = error;
+          this.refreshTables();
       });
-      this.refreshTables();
+      
     },
     deleteItem(item){
       this.deleteUpit({idUpita: item.id, version: item.version}).then(null, (error) => {
