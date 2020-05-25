@@ -4,7 +4,7 @@
     :headers="headers"
   >
     <template v-slot:top>
-      <v-toolbar flat>
+      <v-toolbar flat color="blue lighten-3">
         <v-toolbar-title>Zahtevi</v-toolbar-title>
         <v-divider
           class="mx-4"
@@ -12,7 +12,7 @@
           vertical
         ></v-divider>
         <v-spacer></v-spacer>
-        <v-btn @click="ponisti" color="accent">Poništi filter</v-btn>
+        <v-btn @click="ponisti" color="orange lighten-1">Poništi filter</v-btn>
       </v-toolbar>
     </template>
     <template v-slot:body.prepend>

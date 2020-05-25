@@ -166,6 +166,20 @@ export default {
             return false;
         }
       }
+
+      //proveri da li je lekar na odsustvu u ovo vreme
+      for(let zahtev of lekar.radniKalendar.zahteviZaGodisnjiOdmor){
+        if(!zahtev.odobreno)
+          continue;
+        let start = this.$utility.handleTimeZone(new Date(zahtev.prviDanGodisnjeg));
+        let end = this.$utility.handleTimeZone(new Date(zahtev.poslednjiDanGodisnjeg));
+        let start2 = new Date(this.upit.pocetak);
+        start2.setHours(0,0,0,0);
+        let end2 = new Date(this.upit.kraj);
+        end2.setHours(0,0,0,0);
+        if(this.$utility.timeIntervalsIntersect(start, end, start2, end2))
+          return false;
+      }
       
       return true;
     },

@@ -14,10 +14,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
-import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
 
 @Entity
 @Table(name="zahtev_za_godisnji")

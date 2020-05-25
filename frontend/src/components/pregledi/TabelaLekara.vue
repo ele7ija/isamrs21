@@ -73,14 +73,34 @@ export default {
         return this.data.filter(x => 
           x.pozicija == "lekar" &&
           x.tipovi_pregleda.filter(y => y.id == this.odabraniTipPregleda.id).length != 0 &&
-          x.pregledi.filter(y => {
-            let pregled = this.pregledi.filter(z => z.id == y.id)[0]; //zbog dobre vremenske zone
+          x.pregledi.filter(y => { //provera da li lekar ima termin pregleda u ovom terminu
+            let pregled = this.pregledi.filter(z => z.id == y.id)[0];
             let start = pregled.pocetakPregleda;
             let end = pregled.krajPregleda;
             let start2 = new Date(this.pocetak);
             let end2 = new Date(this.kraj);
             return this.$utility.timeIntervalsIntersect(start, end, start2, end2);
-          }).length == 0);
+          }).length == 0 &&
+          x.dodatneOperacije.filter(y => { //provera da li lekar ima dodatnu operaciju u ovom terminu
+            let pregled = this.pregledi.filter(z => z.id == y.id)[0];
+            let start = pregled.pocetakPregleda;
+            let end = pregled.krajPregleda;
+            let start2 = new Date(this.pocetak);
+            let end2 = new Date(this.kraj);
+            return this.$utility.timeIntervalsIntersect(start, end, start2, end2);
+          }).length == 0 &&
+          x.radniKalendar.zahteviZaGodisnjiOdmor.filter(y => { //provera da li je lekar na odsustvu u ovom terminu
+            if(!y.odobreno)
+              return false;
+            let start = this.$utility.handleTimeZone(new Date(y.prviDanGodisnjeg));
+            let end = this.$utility.handleTimeZone(new Date(y.poslednjiDanGodisnjeg));
+            let start2 = new Date(this.pocetak);
+            start2.setHours(0,0,0,0);
+            let end2 = new Date(this.kraj);
+            end2.setHours(0,0,0,0);
+            return this.$utility.timeIntervalsIntersect(start, end, start2, end2);
+          }).length == 0
+          );
       else
         return [];
     }

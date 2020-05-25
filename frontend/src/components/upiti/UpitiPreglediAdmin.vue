@@ -97,6 +97,7 @@ export default {
     this.fetchSale();
     this.fetchOsoblje();
     this.fetchUpiti();
+    this.fetchZahteviZaOdsustvo();
     this.$store.commit("salaFilter/reset", {}, {root:true});
   },
   methods: {
@@ -105,6 +106,7 @@ export default {
       fetchSale: "sale/loadSale",
       fetchOsoblje: "osoblje/loadMedicinskoOsoblje",
       fetchPregledi: "preglediAdmin/fetchPreglediKlinike",
+      fetchZahteviZaOdsustvo: 'zahteviZaGodisnjiAdmin/fetchAllZahtevi',
       obradiAdmin: "upitiPreglediAdmin/obradiAdmin",
       obradiAdminCustom: "upitiPreglediAdmin/obradiAdminCustom",
       deleteUpit: "upitiPreglediAdmin/deleteUpit"

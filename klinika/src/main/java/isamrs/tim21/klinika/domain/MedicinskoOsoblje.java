@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
-import isamrs.tim21.klinika.jsonSerialize.RadniKalendarSerializer;
 
 @Entity
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "pozicija")
@@ -34,7 +33,6 @@ public abstract class MedicinskoOsoblje extends Korisnik{
 	protected Klinika klinika;
 
 	@OneToOne(mappedBy="medicinskoOsoblje", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-	@JsonSerialize(using=RadniKalendarSerializer.class)
 	protected RadniKalendar radniKalendar;
 	
 	public Klinika getKlinika() {

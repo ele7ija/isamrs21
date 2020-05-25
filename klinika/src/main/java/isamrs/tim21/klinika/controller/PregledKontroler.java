@@ -78,7 +78,6 @@ public class PregledKontroler {
 	public ResponseEntity<CustomResponse<Boolean>> delete(@PathVariable("idKlinike") Long idKlinike,
 			@PathVariable("idPregleda") Long idPregleda, @RequestParam(name="version") Long version) throws Exception{
 		ResponseEntity<CustomResponse<Boolean>> customResponse = null;
-		customResponse = pregledService.delete(idKlinike, idPregleda, version);
 		try{
 			customResponse = pregledService.delete(idKlinike, idPregleda, version);
 		}catch(Exception e){

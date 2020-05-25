@@ -69,11 +69,11 @@ public class ZahtevZaGodisnjiService {
 				Lekar lekar = (Lekar) osoblje;
 				for(Pregled pregled : lekar.getPregledi()){
 					if(pregled.intersects(zahtevToUpdate))
-						throw new Exception("Greška: Već ne možete odobriti zahtev za godišnji jer postoji pregled kod lekara u datom vremenskom intervalu.");
+						throw new Exception("Greška: Ne možete odobriti zahtev za godišnji jer postoji pregled kod lekara u datom vremenskom intervalu.");
 				}
 				for(Pregled pregled : lekar.getDodatneOperacije()){
 					if(pregled.intersects(zahtevToUpdate))
-						throw new Exception("Greška: Već ne možete odobriti zahtev za godišnji jer postoji dodatna operacija kod lekara u datom vremenskom intervalu.");
+						throw new Exception("Greška: Ne možete odobriti zahtev za godišnji jer postoji dodatna operacija kod lekara u datom vremenskom intervalu.");
 				}
 			}
 		}

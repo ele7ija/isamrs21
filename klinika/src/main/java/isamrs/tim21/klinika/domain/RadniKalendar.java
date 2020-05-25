@@ -19,7 +19,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import isamrs.tim21.klinika.jsonSerialize.IdentityListSerializer;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
-import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
 
 @Entity
 @Table(name="radni_kalendar")
@@ -35,7 +34,6 @@ public class RadniKalendar implements IdentitySerializable{
 	private MedicinskoOsoblje medicinskoOsoblje;
 	
 	@OneToMany(mappedBy="radniKalendar", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-	@JsonSerialize(using=IdentityListSerializer.class)
 	private List<ZahtevZaGodisnji> zahteviZaGodisnjiOdmor;
 	
 	@Column(name="dnevno_radno_vreme", nullable=false)

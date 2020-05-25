@@ -214,9 +214,8 @@ public class UpitZaPregledController {
 		try{
 			retval = upitZaPregledeService.obradiAdminCustom(idKlinike, idUpita, upitZaPregledToChange);
 		}catch(Exception e){
-			System.out.println(e.getMessage());
 			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-					new CustomResponse<UpitZaPregled>(null, false, "Greska. Verzija podatka je zastarela. Osvezite stranicu"),
+					new CustomResponse<UpitZaPregled>(null, false, e.getMessage()),
 					HttpStatus.OK);
 		}
 		return retval;

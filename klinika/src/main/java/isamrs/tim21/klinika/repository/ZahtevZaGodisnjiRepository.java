@@ -33,4 +33,9 @@ public interface ZahtevZaGodisnjiRepository extends JpaRepository<ZahtevZaGodisn
 			+ "AND z.osobljeObradilo = false")
 	List<ZahtevZaGodisnji> findAllNeobradjeniByIdOsoblja(@Param("idOsoblja") Long idOsoblja);
 
+	@Lock(LockModeType.PESSIMISTIC_READ)
+	@Query("SELECT z FROM ZahtevZaGodisnji z "
+			+ "WHERE z.id = :idZahtevaZaGodisnji")
+	ZahtevZaGodisnji findByIdPessimissticRead(@Param("idZahtevaZaGodisnji") Long idZahtevaZaGodisnji);
+
 }

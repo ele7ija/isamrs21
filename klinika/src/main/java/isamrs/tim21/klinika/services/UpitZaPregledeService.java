@@ -19,6 +19,7 @@ import isamrs.tim21.klinika.domain.Pregled;
 import isamrs.tim21.klinika.domain.Sala;
 import isamrs.tim21.klinika.domain.TipPregleda;
 import isamrs.tim21.klinika.domain.UpitZaPregled;
+import isamrs.tim21.klinika.domain.ZahtevZaGodisnji;
 import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.dto.UpitZaPregledDTO;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
@@ -29,6 +30,7 @@ import isamrs.tim21.klinika.repository.PregledRepository;
 import isamrs.tim21.klinika.repository.SalaRepository;
 import isamrs.tim21.klinika.repository.TipPregledaRepository;
 import isamrs.tim21.klinika.repository.UpitZaPregledRepository;
+import isamrs.tim21.klinika.repository.ZahtevZaGodisnjiRepository;
 
 @Service
 public class UpitZaPregledeService {
@@ -61,6 +63,9 @@ public class UpitZaPregledeService {
 	
 	@Autowired
 	PacijentRepository pacijentRepository;
+
+	@Autowired
+	ZahtevZaGodisnjiRepository zahtevZaGodisnjiRepository;
 
 	@Transactional
 	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdmin(UpitZaPregled u) throws Exception{
@@ -323,7 +328,7 @@ public class UpitZaPregledeService {
 
 	@Transactional(readOnly=false)
 	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdminCustom(Long idKlinike, Long idUpita,
-			UpitZaPregled upitZaPregledToChange) {
+			UpitZaPregled upitZaPregledToChange) throws Exception{
 		Klinika klinika = klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
 			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
@@ -344,20 +349,10 @@ public class UpitZaPregledeService {
 		
 		//dobavi lekara u PESSIMISTIC_READ rezimu
 		Lekar lekar = osobljeRepository.findLekarByIdKlinikeAndByIdPessimisticRead(idKlinike, upitZaPregledToChange.getLekar().getId());
-		if(lekar.getVersion() != upitZaPregledToChange.getLekar().getVersion()){
-			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-					new CustomResponse<UpitZaPregled>(null, false, "Greska: Verzija lekara je zastarela. Osvezite stranicu."),
-					HttpStatus.OK);
-		}
 		upitZaPregledToChange.setLekar(lekar);
 		
 		//dobavi tip pregleda u PESSIMISTIC_READ rezimu
 		TipPregleda tipPregleda = tipPregledaRepository.findByIdKlinikeAndIdPessimisticRead(idKlinike, upitZaPregledToChange.getTipPregleda().getId());
-		if(tipPregleda.getVersion() != upitZaPregledToChange.getTipPregleda().getVersion()){
-			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-					new CustomResponse<UpitZaPregled>(null, false, "Greska: Tip pregleda je zastareo. Osvezite stranicu."),
-					HttpStatus.OK);
-		}
 		upitZaPregledToChange.setTipPregleda(tipPregleda);
 		
 		//dobavi pacijenta u PESSIMISTIC_READ rezimu
@@ -366,11 +361,6 @@ public class UpitZaPregledeService {
 		
 		//dobavi salu u PESSIMISTIC_READ rezimu
 		Sala sala = salaRepository.findByIdKlinikeAndIdSalePessimisticRead(idKlinike, upitZaPregledToChange.getSala().getId());
-		if(sala.getVersion() != upitZaPregledToChange.getSala().getVersion()){
-			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-					new CustomResponse<UpitZaPregled>(null, false, "Greska: Sale je zastarela. Osvezite stranicu."),
-					HttpStatus.OK);
-		}
 		upitZaPregledToChange.setSala(sala);
 		upit.setSala(sala);
 		
@@ -396,6 +386,15 @@ public class UpitZaPregledeService {
 		//dobavi prethodno kreirani pregled u PESSIMISTIC_READ rezimu
 		pregled = pregledRepository.findByIdKlinikeAndIdPregledaPessimisticRead(idKlinike, customResponse.getResult().getId());
 
+		//ako je upit za pregled odobren, proveri da li je lekar odsutan
+		if(upitZaPregledToChange.getOdobren()){
+			for(ZahtevZaGodisnji zahtevZaGodisnji: lekar.getRadniKalendar().getZahteviZaGodisnjiOdmor()){
+				ZahtevZaGodisnji zahtevWithSharedLock = zahtevZaGodisnjiRepository.findByIdPessimissticRead(zahtevZaGodisnji.getId()); //kako niko ne bi mogao da odobri ovaj zahtev do kraja transakcije
+				if(zahtevWithSharedLock.isOdobreno() && pregled.intersects(zahtevWithSharedLock)){
+					throw new Exception("Greška. Lekar ima odobren zahtev za godišnji u terminu datog pregleda");
+				}
+			}
+		}
 		upitZaPregledToChange.setUnapredDefinisaniPregled(pregled);
 		upit.setUnapredDefinisaniPregled(pregled);
 		
