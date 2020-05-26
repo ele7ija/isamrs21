@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim21.klinika.domain.Lekar;
@@ -51,36 +52,44 @@ public class ZahtevZaGodisnjiService {
 		return zahtevZaGodisnjiRepository.save(zahtevToAdd);
 	}
 
-	@Transactional(readOnly=false, isolation=Isolation.SERIALIZABLE)
+	@Transactional(readOnly=false)
 	public ZahtevZaGodisnji update(Long idZahtevaZaGodisnji, ZahtevZaGodisnji zahtevToUpdate) throws Exception {
+		RadniKalendar kalendar = radniKalendarRepository.findById(zahtevToUpdate.getRadniKalendar().getId()).get();
+		if(zahtevToUpdate.isOdobreno()){
+			return approve(zahtevToUpdate, kalendar);
+		}else{
+			zahtevToUpdate.setRadniKalendar(kalendar);
+			return zahtevZaGodisnjiRepository.save(zahtevToUpdate);
+		}
+	}
+	
+	@Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+	private ZahtevZaGodisnji approve(ZahtevZaGodisnji zahtevToUpdate, RadniKalendar kalendar)throws Exception{
 		//serializable jer je potrebno spreciti neku drugu transakciju koju izvrsava da odobri zahtev za godisnji u istom vremenskom periodu
 		//odnosno, moramo da sprecimo phantom read
 		//medjutim, kako je dozvoljeno dodavati samo neodobrene zahteve za godisnji paralelno sa ovom metodom, REPEATABLE_READ je dovoljan nivo izolacije
 		//ostavljamo serializable ipak zbog provere pregleda
-		RadniKalendar kalendar = radniKalendarRepository.findById(zahtevToUpdate.getRadniKalendar().getId()).get();
-		if(zahtevToUpdate.isOdobreno()){
-			for(ZahtevZaGodisnji zahtev : kalendar.getZahteviZaGodisnjiOdmor()){
-				if(zahtev.intersects(zahtevToUpdate) && zahtev.isOdobreno()){
-					throw new Exception("Greška: Već imate odobren zahtev za godišnji odmor u vremenskom intervalu koji se preklapa sa unetim.");
-				}
+		for(ZahtevZaGodisnji zahtev : kalendar.getZahteviZaGodisnjiOdmor()){
+			if(zahtev.intersects(zahtevToUpdate) && zahtev.isOdobreno()){
+				throw new Exception("Greška: Već imate odobren zahtev za godišnji odmor u vremenskom intervalu koji se preklapa sa unetim.");
 			}
-			MedicinskoOsoblje osoblje = kalendar.getMedicinskoOsoblje();
-			if(osoblje instanceof Lekar){
-				Lekar lekar = (Lekar) osoblje;
-				for(Pregled pregled : lekar.getPregledi()){
-					if(pregled.intersects(zahtevToUpdate))
-						throw new Exception("Greška: Ne možete odobriti zahtev za godišnji jer postoji pregled kod lekara u datom vremenskom intervalu.");
-				}
-				for(Pregled pregled : lekar.getDodatneOperacije()){
-					if(pregled.intersects(zahtevToUpdate))
-						throw new Exception("Greška: Ne možete odobriti zahtev za godišnji jer postoji dodatna operacija kod lekara u datom vremenskom intervalu.");
-				}
+		}
+		MedicinskoOsoblje osoblje = kalendar.getMedicinskoOsoblje();
+		if(osoblje instanceof Lekar){
+			Lekar lekar = (Lekar) osoblje;
+			for(Pregled pregled : lekar.getPregledi()){
+				if(pregled.intersects(zahtevToUpdate))
+					throw new Exception("Greška: Ne možete odobriti zahtev za godišnji jer postoji pregled kod lekara u datom vremenskom intervalu.");
+			}
+			for(Pregled pregled : lekar.getDodatneOperacije()){
+				if(pregled.intersects(zahtevToUpdate))
+					throw new Exception("Greška: Ne možete odobriti zahtev za godišnji jer postoji dodatna operacija kod lekara u datom vremenskom intervalu.");
 			}
 		}
 		zahtevToUpdate.setRadniKalendar(kalendar);
 		return zahtevZaGodisnjiRepository.save(zahtevToUpdate);
 	}
-	
+
 	@Async
 	public void sendMail(ZahtevZaGodisnji zahtev){
 		if(zahtev.isOdobreno()){

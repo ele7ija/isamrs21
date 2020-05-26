@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
@@ -22,6 +23,10 @@ public class ZahtevZaGodisnji implements IdentitySerializable{
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
+
+	@Version
+	@Column(name="version", columnDefinition="integer DEFAULT 0", nullable=false)
+	private Long version;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JsonIgnoreProperties(value={"zahteviZaGodisnjiOdmor"}, allowSetters=true)
@@ -117,6 +122,14 @@ public class ZahtevZaGodisnji implements IdentitySerializable{
 
 	public void setAdminObradio(boolean adminObradio) {
 		this.adminObradio = adminObradio;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 
 }

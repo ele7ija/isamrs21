@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -76,7 +77,13 @@ public class ZahtevZaGodisnjiKontroler {
 		ZahtevZaGodisnji zahtev = null;
 		try{
 			zahtev = zahtevZaGodisnjiService.update(idZahtevaZaGodisnji, zahtevToUpdate);
-		}catch(Exception e){
+		}catch(ObjectOptimisticLockingFailureException e){
+			return new ResponseEntity<CustomResponse<ZahtevZaGodisnji>>(
+				new CustomResponse<ZahtevZaGodisnji>(null, false, "Verzija podatka je zastarela. Osvežite stranicu."),
+				HttpStatus.NOT_FOUND
+			);
+		}
+		catch(Exception e){
 			return new ResponseEntity<CustomResponse<ZahtevZaGodisnji>>(
 				new CustomResponse<ZahtevZaGodisnji>(null, false, e.getMessage()),
 				HttpStatus.NOT_FOUND
