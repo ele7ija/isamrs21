@@ -220,7 +220,6 @@ export default {
     save(){
       this.newItem.posetaId = this.posetaId;
       this.newItem.selectedDijagnoza = this.newItem.selectedDijagnoza[0];
-      console.log(this.newItem)
       this.updatePoseta(this.newItem);
       this.close();
     },
