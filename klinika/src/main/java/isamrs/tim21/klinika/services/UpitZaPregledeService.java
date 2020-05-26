@@ -3,7 +3,6 @@ package isamrs.tim21.klinika.services;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import isamrs.tim21.klinika.domain.Klinika;
 import isamrs.tim21.klinika.domain.Lekar;
 import isamrs.tim21.klinika.domain.Pacijent;
+import isamrs.tim21.klinika.domain.Poseta;
 import isamrs.tim21.klinika.domain.Pregled;
 import isamrs.tim21.klinika.domain.Sala;
 import isamrs.tim21.klinika.domain.TipPregleda;
@@ -61,6 +61,9 @@ public class UpitZaPregledeService {
 	
 	@Autowired
 	PacijentRepository pacijentRepository;
+
+	@Autowired
+	MailService mailService;
 
 	@Transactional
 	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdmin(UpitZaPregled u) throws Exception{
@@ -296,7 +299,8 @@ public class UpitZaPregledeService {
 			u.setPotvrdjen(true);
 			u.setPacijentObradio(true);
 			upitZaPregledRepository.save(u);
-			posetaService.kreirajNovuPosetu(u);
+			Poseta p = posetaService.kreirajNovuPosetu(u);
+			mailService.potvrdaRezervacije(p);
 			return new CustomResponse<UpitZaPregled>(u, true, "Upit je potvrđen.");
 		}
 		catch (NoSuchElementException e){

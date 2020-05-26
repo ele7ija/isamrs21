@@ -7,6 +7,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import isamrs.tim21.klinika.domain.Pacijent;
+import isamrs.tim21.klinika.domain.Poseta;
 import isamrs.tim21.klinika.domain.ZahtevZaGodisnji;
 import isamrs.tim21.klinika.domain.ZahtevZaRegistraciju;
 import isamrs.tim21.klinika.dto.ZahtevZaRegistracijuDTO;
@@ -101,4 +102,21 @@ public class MailService {
     javaMailSender.send(mailToSend);
   }
   
+  @Async
+  public void potvrdaRezervacije(Poseta p) {
+    subject = "Potvrda rezervacije pregleda";
+    poruka = "Rezervisali ste pregled:\n" +
+      "\tTip pregleda: " + p.getPregled().getTipPregleda().getNaziv() + "\n" +
+      "\tKlinika: \"" + p.getPregled().getKlinika().getNaziv() + "\", " +
+      p.getPregled().getKlinika().getAdresa() + "\n" + 
+      "\tVreme: " + p.getPregled().getPocetakPregleda().toString() + " - " + 
+      p.getPregled().getKrajPregleda().toString() + "\n" +
+      "\tLekar: " + p.getPregled().getLekar().getIme() + " " + p.getPregled().getLekar().getPrezime();
+    poruka += "\n\n\nSve najbolje Vam želi klinika XYZ.";   
+    SimpleMailMessage mailToSend = new SimpleMailMessage();
+    mailToSend.setTo(p.getZdravstveniKarton().getPacijent().getEmail());
+    mailToSend.setText(poruka);
+    mailToSend.setSubject(subject);
+    javaMailSender.send(mailToSend);
+  }
 }
