@@ -257,12 +257,27 @@ public class Pregled implements IdentitySerializable{
 		cal.set(Calendar.MILLISECOND, 0);
 		kraj = cal.getTime();
 
+		Date pocetak2 = new Date(zahtevzaGodisnji.getPrviDanGodisnjeg().getTime());
+		cal.setTime(pocetak2);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		pocetak2 = cal.getTime();
 
-		if((pocetak.after(zahtevzaGodisnji.getPrviDanGodisnjeg()) || pocetak.equals(zahtevzaGodisnji.getPrviDanGodisnjeg())) && 
-		pocetak.before(zahtevzaGodisnji.getPoslednjiDanGodisnjeg()) || pocetak.equals(zahtevzaGodisnji.getPoslednjiDanGodisnjeg()))
+		Date kraj2 = new Date(zahtevzaGodisnji.getPoslednjiDanGodisnjeg().getTime());
+		cal.setTime(kraj2);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		kraj2 = cal.getTime();
+
+
+
+		if((pocetak.after(pocetak2) || pocetak.equals(pocetak2)) && (pocetak.before(kraj2) || pocetak.equals(kraj2)))
 			return true;
-		if((zahtevzaGodisnji.getPrviDanGodisnjeg().after(pocetak) || zahtevzaGodisnji.getPrviDanGodisnjeg().equals(pocetak)) && 
-				zahtevzaGodisnji.getPrviDanGodisnjeg().before(kraj) || zahtevzaGodisnji.getPrviDanGodisnjeg().equals(kraj))
+		if((pocetak2.after(pocetak) || pocetak2.equals(pocetak)) && pocetak2.before(kraj) || pocetak2.equals(kraj))
 			return true;
 		return false;
 	}

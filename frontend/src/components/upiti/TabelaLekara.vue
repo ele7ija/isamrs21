@@ -64,6 +64,7 @@
       <template v-slot:expanded-item="{ headers, item }">
         <td :colspan="headers.length">
           <Pregledi :pregledi="getPreglediLekara(item)" class="my-5" />
+          <ZahteviZaOdsustvo :zahtevi="getZahteviZaOdsustvo(item)" class="my-5" />
         </td>
       </template>
     </v-data-table>
@@ -75,11 +76,13 @@
 <script>
 import { mapGetters } from 'vuex';
 import Pregledi from "./Pregledi";
+import ZahteviZaOdsustvo from "./ZahteviZaOdsustvo";
 export default {
   name: 'TabelaLekara',
   props: ["upit", "slobodniLekari"],
   components: {
-    Pregledi
+    Pregledi,
+    ZahteviZaOdsustvo
   },
   data: function(){
     return {
@@ -122,7 +125,8 @@ export default {
   computed: {
     ...mapGetters({
       lekari: "osoblje/getLekari",
-      pregledi: "preglediAdmin/getPreglediKlinike"
+      pregledi: "preglediAdmin/getPreglediKlinike",
+      zahtevi: "zahteviZaGodisnjiAdmin/getAllZahtevi"
     }),
     _pocetak: {
       get(){
@@ -213,6 +217,26 @@ export default {
       retval.kraj = this.upit.kraj;
       retval.title = `Kalendar lekara: ${lekar.ime} ${lekar.prezime}`;
       retval.subtitle = "Crvenom bojom su označeni pregledi zbog kojih lekar nije slobodan za datum iz upita";
+      return retval;
+    },
+    getZahteviZaOdsustvo(lekar){
+      let retval = {};
+      retval.lekar = lekar;
+      retval._zahtevi = this.zahtevi.filter(x => x.radniKalendar.medicinskoOsoblje.id == lekar.id && x.odobreno == true);
+      retval._zahtevi = retval._zahtevi.map(x => {
+        let date1 = x.prviDanGodisnjeg;
+        let date2 = x.poslednjiDanGodisnjeg;
+        let obj = {
+          id: x.id,
+          prviDanGodisnjeg: this.$utility.formatDate2(date1),
+          poslednjiDanGodisnjeg: this.$utility.formatDate2(date2),
+        };
+        return obj;
+      })
+      retval.pocetak = this.upit.pocetak;
+      retval.kraj = this.upit.kraj;
+      retval.title = `Termini odsustva lekara: ${lekar.ime} ${lekar.prezime}`;
+      retval.subtitle = "Crvenom bojom su označena odsustva zbog kojih lekar nije slobodan za datum iz upita";
       return retval;
     },
     getPacijent(x){

@@ -257,7 +257,7 @@ export default {
     },
     incStep(object){
       if(this.stepIndex == this.stepperData.length){
-        let upit = this.upiti.filter(x => x.id == this.editableItem.id)[0];
+        let upit = JSON.parse(JSON.stringify(this.upiti.filter(x => x.id == this.editableItem.id)[0]));
         upit.lekar = {id: this.editableItem.lekar.value.id, version: this.editableItem.lekar.value.version, pozicija: 'lekar'};
         upit.sala = {id: this.editableItem.sala.value.id, version: this.editableItem.sala.value.version};
         upit.tipPregleda = {id: this.editableItem.tipPregleda.value.id, version: this.editableItem.tipPregleda.value.version};

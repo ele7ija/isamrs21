@@ -18,6 +18,7 @@ import isamrs.tim21.klinika.domain.Sala;
 import isamrs.tim21.klinika.domain.TipPregleda;
 import isamrs.tim21.klinika.domain.UpitZaPregled;
 import isamrs.tim21.klinika.domain.VrstaTipaPregleda;
+import isamrs.tim21.klinika.domain.ZahtevZaGodisnji;
 import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.repository.OsobljeRepository;
@@ -155,10 +156,11 @@ public class PregledService {
 		
 		/* Da li je lekar slobodan u to vreme? */
 		/* Da li je lekar specijalizovan za dati tip pregleda? */
+		/* Da li je lekar na odustvu u datom terminu pregleda? */
 		if(!validateOsoblje(klinika, pregled)){
 			return new CustomResponse<Pregled>(null, false,
 					"Greska: Lekar ne moze da izvrsi ovaj pregled. "
-					+ "Proverite da li je lekar zauzet u datom vremenskom intervalu, kao i da li je uopste specijalizovan za dati tip pregleda.");
+					+ "Proverite da li je lekar zauzet u datom vremenskom intervalu, da li je uopste specijalizovan za dati tip pregleda i da li je na odsustvu.");
 		}
 		
 		/*
@@ -226,6 +228,14 @@ public class PregledService {
 		//vrati false ukoliko lekar nije specijalizovan za ovaj tip pregleda
 		if(!lekar.getTipovi_pregleda().contains(pregled.getTipPregleda()))
 			return false;
+
+		//vrati false ukoliko je lekar na odsustvu u datom intervalu
+		for(ZahtevZaGodisnji zahtev : lekar.getRadniKalendar().getZahteviZaGodisnjiOdmor()){
+			if(!zahtev.isOdobreno())
+				continue;
+			if(pregled.intersects(zahtev))
+				return false;
+		}
 		return true;
 	}
 

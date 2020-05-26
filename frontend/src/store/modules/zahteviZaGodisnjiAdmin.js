@@ -1,11 +1,13 @@
 import zahteviZaGodisnji from '@/api/zahteviZaGodisnji';
 const state = {
   neobradjeniZahteviZaGodisnji: [], //zahtevi koje admin nije obradio
+  allZahtevi: [], //svi zahtevi
   klinika: null,
 }
 
 const getters = {
-  getNeobradjeniZahteviZaGodisnji: (state) => state.neobradjeniZahteviZaGodisnji
+  getNeobradjeniZahteviZaGodisnji: (state) => state.neobradjeniZahteviZaGodisnji,
+  getAllZahtevi: (state) => state.allZahtevi
 }
 
 const actions = {
@@ -36,6 +38,7 @@ const mutations = {
   setCurrentKlinika: (state, klinika) => state.klinika = klinika,
   setZahteviZaGodisnji: (state, zahteviZaGodisnji) => {
     state.neobradjeniZahteviZaGodisnji = zahteviZaGodisnji.filter(x => !x.adminObradio);
+    state.allZahtevi = zahteviZaGodisnji;
   },
   updateZahtevZaGodisnji: (state, zahtevZaGodisnji) => {
     let index = state.neobradjeniZahteviZaGodisnji.findIndex(x => x.id == zahtevZaGodisnji.id);

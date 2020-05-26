@@ -19,6 +19,7 @@ import isamrs.tim21.klinika.domain.Pregled;
 import isamrs.tim21.klinika.domain.Sala;
 import isamrs.tim21.klinika.domain.TipPregleda;
 import isamrs.tim21.klinika.domain.UpitZaPregled;
+import isamrs.tim21.klinika.domain.ZahtevZaGodisnji;
 import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.dto.UpitZaPregledDTO;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
@@ -29,6 +30,7 @@ import isamrs.tim21.klinika.repository.PregledRepository;
 import isamrs.tim21.klinika.repository.SalaRepository;
 import isamrs.tim21.klinika.repository.TipPregledaRepository;
 import isamrs.tim21.klinika.repository.UpitZaPregledRepository;
+import isamrs.tim21.klinika.repository.ZahtevZaGodisnjiRepository;
 
 @Service
 public class UpitZaPregledeService {
@@ -64,6 +66,9 @@ public class UpitZaPregledeService {
 
 	@Autowired
 	MailService mailService;
+
+	@Autowired
+	ZahtevZaGodisnjiRepository zahtevZaGodisnjiRepository;
 
 	@Transactional
 	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdmin(UpitZaPregled u) throws Exception{
@@ -333,7 +338,7 @@ public class UpitZaPregledeService {
 
 	@Transactional(readOnly=false)
 	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdminCustom(Long idKlinike, Long idUpita,
-			UpitZaPregled upitZaPregledToChange) {
+			UpitZaPregled upitZaPregledToChange) throws Exception{
 		Klinika klinika = klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
 			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
@@ -354,20 +359,10 @@ public class UpitZaPregledeService {
 		
 		//dobavi lekara u PESSIMISTIC_READ rezimu
 		Lekar lekar = osobljeRepository.findLekarByIdKlinikeAndByIdPessimisticRead(idKlinike, upitZaPregledToChange.getLekar().getId());
-		if(lekar.getVersion() != upitZaPregledToChange.getLekar().getVersion()){
-			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-					new CustomResponse<UpitZaPregled>(null, false, "Greska: Verzija lekara je zastarela. Osvezite stranicu."),
-					HttpStatus.OK);
-		}
 		upitZaPregledToChange.setLekar(lekar);
 		
 		//dobavi tip pregleda u PESSIMISTIC_READ rezimu
 		TipPregleda tipPregleda = tipPregledaRepository.findByIdKlinikeAndIdPessimisticRead(idKlinike, upitZaPregledToChange.getTipPregleda().getId());
-		if(tipPregleda.getVersion() != upitZaPregledToChange.getTipPregleda().getVersion()){
-			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-					new CustomResponse<UpitZaPregled>(null, false, "Greska: Tip pregleda je zastareo. Osvezite stranicu."),
-					HttpStatus.OK);
-		}
 		upitZaPregledToChange.setTipPregleda(tipPregleda);
 		
 		//dobavi pacijenta u PESSIMISTIC_READ rezimu
@@ -376,22 +371,14 @@ public class UpitZaPregledeService {
 		
 		//dobavi salu u PESSIMISTIC_READ rezimu
 		Sala sala = salaRepository.findByIdKlinikeAndIdSalePessimisticRead(idKlinike, upitZaPregledToChange.getSala().getId());
-		if(sala.getVersion() != upitZaPregledToChange.getSala().getVersion()){
-			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-					new CustomResponse<UpitZaPregled>(null, false, "Greska: Sale je zastarela. Osvezite stranicu."),
-					HttpStatus.OK);
-		}
 		upitZaPregledToChange.setSala(sala);
 		upit.setSala(sala);
 		
 		for(int i = 0; i < upitZaPregledToChange.getUnapredDefinisaniPregled().getDodatniLekari().size(); i++){
 			Long idOsoblja = upitZaPregledToChange.getUnapredDefinisaniPregled().getDodatniLekari().get(i).getId();
 			Lekar l = osobljeRepository.findLekarByIdKlinikeAndByIdPessimisticRead(klinika.getId(), idOsoblja);
-			if(l == null || l.getVersion() != upitZaPregledToChange.getUnapredDefinisaniPregled().getDodatniLekari().get(i).getVersion()){
-				return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-						new CustomResponse<UpitZaPregled>(null, false, "Greska: Jedan od dodatnih lekara ima zastarelu verziju. Osvezite stranicu."),
-						HttpStatus.OK);
-			}
+			if(l == null)
+				throw new Exception("Jedan od dodatnih lekara nije pronadjen.");
 			upitZaPregledToChange.getUnapredDefinisaniPregled().getDodatniLekari().set(i, l);
 		}
 		
@@ -399,9 +386,7 @@ public class UpitZaPregledeService {
 		Pregled pregled = new Pregled(upitZaPregledToChange);
 		CustomResponse<Pregled> customResponse = pregledService.add(klinika, pregled);
 		if(customResponse.getResult() == null || !customResponse.isSuccess())
-			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-					new CustomResponse<UpitZaPregled>(null, customResponse.isSuccess(), customResponse.getMessage()),
-					HttpStatus.OK);
+			throw new Exception(customResponse.getMessage());
 		
 		//dobavi prethodno kreirani pregled u PESSIMISTIC_READ rezimu
 		pregled = pregledRepository.findByIdKlinikeAndIdPregledaPessimisticRead(idKlinike, customResponse.getResult().getId());

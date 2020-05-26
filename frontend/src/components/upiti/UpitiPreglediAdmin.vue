@@ -97,6 +97,7 @@ export default {
     this.fetchSale();
     this.fetchOsoblje();
     this.fetchUpiti();
+    this.fetchZahteviZaOdsustvo();
     this.$store.commit("salaFilter/reset", {}, {root:true});
   },
   methods: {
@@ -105,6 +106,7 @@ export default {
       fetchSale: "sale/loadSale",
       fetchOsoblje: "osoblje/loadMedicinskoOsoblje",
       fetchPregledi: "preglediAdmin/fetchPreglediKlinike",
+      fetchZahteviZaOdsustvo: 'zahteviZaGodisnjiAdmin/fetchAllZahtevi',
       obradiAdmin: "upitiPreglediAdmin/obradiAdmin",
       obradiAdminCustom: "upitiPreglediAdmin/obradiAdminCustom",
       deleteUpit: "upitiPreglediAdmin/deleteUpit"
@@ -123,11 +125,16 @@ export default {
       }
 
       //PUT zahtev za accept
-      this.obradiAdmin(obj).then(null, (error) => {
-        this.snackbar = true;
-        this.snackbarText = error;
+      this.obradiAdmin(obj).then(
+        () => {
+          this.refreshTables();
+        },
+        (error) => {
+          this.snackbar = true;
+          this.snackbarText = error;
+          this.refreshTables();
       });
-      this.refreshTables();
+      
     },
 
     acceptCustom({upit, cena, popust, konacnaCena, dodatniLekari}){
@@ -140,13 +147,15 @@ export default {
         dodatniLekari
       };
       this.obradiAdminCustom(upit).then(
-        null, (error) => {
+        () => {
+          this.refreshTables();
+        },
+        (error) => {
           this.snackbar = true;
           this.snackbarText = error;
+          this.refreshTables();
         }
       );
-      
-      this.refreshTables();
     },
 
     reject(item){
@@ -164,11 +173,16 @@ export default {
         };
       }
       //PUT zahtev za reject
-      this.obradiAdmin(obj).then(null, (error) => {
-        this.snackbar = true;
-        this.snackbarText = error;
+      this.obradiAdmin(obj).then(
+        () => {
+          this.refreshTables();
+        },
+        (error) => {
+          this.snackbar = true;
+          this.snackbarText = error;
+          this.refreshTables();
       });
-      this.refreshTables();
+      
     },
     deleteItem(item){
       this.deleteUpit({idUpita: item.id, version: item.version}).then(null, (error) => {
