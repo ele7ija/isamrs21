@@ -1,5 +1,7 @@
 package isamrs.tim21.klinika.domain;
 
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +27,10 @@ public class Poseta implements IdentitySerializable{
 	private Long id;
 	
 	@Column(name="bolest")
-	private String bolest;
+	private Sifarnik bolest;
+
+	@Column(name="lekovi")
+	private List<Sifarnik> lekovi;
 	
 	@Column(name="opis")
 	private String opis;
@@ -63,13 +68,22 @@ public class Poseta implements IdentitySerializable{
 		this.id = id;
 	}
 
-	public String getBolest() {
+	public Sifarnik getBolest() {
 		return bolest;
 	}
 
-	public void setBolest(String bolest) {
+	public void setBolest(Sifarnik bolest) {
 		this.bolest = bolest;
 	}
+
+	public List<Sifarnik> getLekovi() {
+		return lekovi;
+	}
+
+	public void setLekovi (List<Sifarnik> lekovi) {
+		this.lekovi = lekovi;
+	}
+
 
 	public String getOpis() {
 		return opis;

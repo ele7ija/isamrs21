@@ -68,7 +68,7 @@ public class PosetaService {
 		}
 		// kreiraj posetu na osnovu kartona, pregleda itd
 		Poseta p = new Poseta();
-		p.setBolest("");
+		p.setBolest(null);
 		p.setOpis(dto.getOpis());
 		p.setPregled(pregled);
 		p.setZdravstveniKarton(zk);
@@ -111,7 +111,7 @@ public class PosetaService {
 		}
 		// kreiraj posetu na osnovu kartona, pregleda itd
 		Poseta p = new Poseta();
-		p.setBolest("");
+		p.setBolest(null);
 		p.setOpis(dto.getOpis());
 		p.setPregled(pregled);
 		p.setZdravstveniKarton(zk);
@@ -158,7 +158,7 @@ public class PosetaService {
 		}
 		// kreiraj posetu na osnovu kartona, pregleda itd
 		Poseta p = new Poseta();
-		p.setBolest("");
+		p.setBolest(null);
 		p.setOpis(u.getOpis());
 		p.setPregled(pregled);
 		p.setZdravstveniKarton(zk);
@@ -226,7 +226,7 @@ public class PosetaService {
 
 	public Poseta updatePoseta (PosetaDTO3 posetaDTO) {
 		Poseta poseta = posetaRepository.findById(posetaDTO.getPosetaId()).orElse(null);
-		
+				
 
 		return null;
 	}
