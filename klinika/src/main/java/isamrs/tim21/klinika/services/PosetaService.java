@@ -226,8 +226,10 @@ public class PosetaService {
 
 	public Poseta updatePoseta (PosetaDTO3 posetaDTO) {
 		Poseta poseta = posetaRepository.findById(posetaDTO.getPosetaId()).orElse(null);
-				
+		poseta.setBolest(posetaDTO.getBolest());
+		poseta.setLekovi(posetaDTO.getLekovi());
+		poseta.setOpis(posetaDTO.getOpis());
 
-		return null;
+		return poseta;
 	}
 }

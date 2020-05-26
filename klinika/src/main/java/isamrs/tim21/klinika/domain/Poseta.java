@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -22,10 +23,12 @@ import isamrs.tim21.klinika.jsonSerialize.ZdravstveniKartonSerializer;
 @Table(name="poseta")
 public class Poseta implements IdentitySerializable{
 	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
+
 	@Column(name="bolest")
 	private Sifarnik bolest;
 
@@ -42,6 +45,11 @@ public class Poseta implements IdentitySerializable{
 	@OneToOne(fetch=FetchType.EAGER)
 	private Pregled pregled;
 	
+	@Version
+	@Column(name="version", columnDefinition="integer DEFAULT 0", nullable=false)
+	private Long version;
+
+
 	public Poseta(){}
 
 	public ZdravstveniKarton getZdravstveniKarton() {
