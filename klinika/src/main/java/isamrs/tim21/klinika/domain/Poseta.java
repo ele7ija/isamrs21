@@ -9,6 +9,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -17,6 +20,7 @@ import javax.persistence.Version;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
+import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
 import isamrs.tim21.klinika.jsonSerialize.ZdravstveniKartonSerializer;
 
 @Entity
@@ -27,12 +31,15 @@ public class Poseta implements IdentitySerializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	
 
-	@Column(name="bolest")
+	@ManyToOne(fetch=FetchType.EAGER)
 	private Sifarnik bolest;
 
-	@Column(name="lekovi")
+	@ManyToMany()
+	@JoinTable(
+		name="prepisani_lekovi",
+		joinColumns = @JoinColumn(name="id_posete", referencedColumnName = "id"),
+		inverseJoinColumns = @JoinColumn(name="id_leka", referencedColumnName = "id"))
 	private List<Sifarnik> lekovi;
 	
 	@Column(name="opis")

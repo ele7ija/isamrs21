@@ -5,12 +5,18 @@ import java.util.List;
 import isamrs.tim21.klinika.domain.Sifarnik;
 
 public class PosetaDTO3 {
+  private String opis;
   private Long posetaId;
   private Sifarnik bolest;
   private List<Sifarnik> lekovi;
-  private String opis;
 
-  public PosetaDTO3(){}
+
+  public PosetaDTO3(String opis, Long posetaId, Sifarnik selectedDijagnoza, List<Sifarnik> selectedLekovi ){
+    this.opis = opis;
+    this.posetaId = posetaId;
+    this.bolest = selectedDijagnoza;
+    this.lekovi = selectedLekovi;
+  }
 
   public Long getPosetaId() {
     return this.posetaId;

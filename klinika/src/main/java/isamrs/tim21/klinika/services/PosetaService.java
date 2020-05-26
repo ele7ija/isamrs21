@@ -229,7 +229,7 @@ public class PosetaService {
 		poseta.setBolest(posetaDTO.getBolest());
 		poseta.setLekovi(posetaDTO.getLekovi());
 		poseta.setOpis(posetaDTO.getOpis());
-
+		posetaRepository.save(poseta);
 		return poseta;
 	}
 }

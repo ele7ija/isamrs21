@@ -47,7 +47,8 @@ const actions = {
   },
 
   async updatePoseta({commit}, poseta){
-    posetaAPI.updatePoseta(poseta);
+    let response = posetaAPI.updatePoseta(poseta);
+    response;
     commit;
   }
 

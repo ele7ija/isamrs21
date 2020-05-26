@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.Poseta;
-import isamrs.tim21.klinika.domain.Pregled;
 import isamrs.tim21.klinika.dto.PosetaDTO;
 import isamrs.tim21.klinika.dto.PosetaDTO2;
 import isamrs.tim21.klinika.dto.PosetaDTO3;
@@ -59,8 +58,10 @@ public class PosetaKontroler {
 	}
 
 	@PutMapping
-	public ResponseEntity<Poseta> updatePoseta(@RequestBody PosetaDTO3 poseta) {
+	public ResponseEntity<?> updatePoseta(@RequestBody PosetaDTO3 posetaDTO) {
 		
-		return null;
+		Poseta pregled = service.updatePoseta(posetaDTO);
+
+		return new ResponseEntity<>(pregled, HttpStatus.OK);
 	}
 }

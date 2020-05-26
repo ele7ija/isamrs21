@@ -120,7 +120,7 @@
         <!-- sacuvati posetu objekat i dodati posetu u zdravstveni karton -->
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1"  text  @click="dialog=false" :disabled="!isFormValid">
+          <v-btn color="blue darken-1"  text  @click="save()" :disabled="!isFormValid">
           Sačuvaj
         </v-btn>
         <v-btn color="blue darken-1" text @click="close()">
@@ -220,6 +220,7 @@ export default {
     save(){
       this.newItem.posetaId = this.posetaId;
       this.newItem.selectedDijagnoza = this.newItem.selectedDijagnoza[0];
+      console.log(this.newItem)
       this.updatePoseta(this.newItem);
       this.close();
     },
