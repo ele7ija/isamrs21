@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import isamrs.tim21.klinika.domain.Pacijent;
 import isamrs.tim21.klinika.domain.Poseta;
+import isamrs.tim21.klinika.domain.UpitZaPregled;
 import isamrs.tim21.klinika.domain.ZahtevZaGodisnji;
 import isamrs.tim21.klinika.domain.ZahtevZaRegistraciju;
 import isamrs.tim21.klinika.dto.ZahtevZaRegistracijuDTO;
@@ -115,6 +116,45 @@ public class MailService {
     poruka += "\n\n\nSve najbolje Vam želi klinika XYZ.";   
     SimpleMailMessage mailToSend = new SimpleMailMessage();
     mailToSend.setTo(p.getZdravstveniKarton().getPacijent().getEmail());
+    mailToSend.setText(poruka);
+    mailToSend.setSubject(subject);
+    javaMailSender.send(mailToSend);
+  }
+
+  @Async
+  public void upitOdobren(UpitZaPregled upit) {
+    subject = "Vaš upit je odobren.";
+    poruka = "Vaš upit za pregled je odobren od strane administratora.\n\n";
+    poruka += "Upit:\n" +
+      "\tTip pregleda: " + upit.getTipPregleda().getNaziv() + "\n" +
+      "\tKlinika: \"" + upit.getKlinika().getNaziv() + "\", " +
+      upit.getKlinika().getAdresa() + "\n" + 
+      "\tVreme: " + upit.getPocetakPregleda().toString() + " - " + 
+      upit.getKrajPregleda().toString() + "\n" +
+      "\tLekar: " + upit.getLekar().getIme() + " " + upit.getLekar().getPrezime();
+    poruka += "\nMolimo vas da upit potvrdite ili odbijete odlaskom na http://localhost:8081/#/pacijent/istorija" + 
+    "\n\nSve najbolje Vam želi klinika XYZ.";   
+    SimpleMailMessage mailToSend = new SimpleMailMessage();
+    mailToSend.setTo(upit.getPacijent().getEmail());
+    mailToSend.setText(poruka);
+    mailToSend.setSubject(subject);
+    javaMailSender.send(mailToSend);
+  }
+
+  public void upitOdbijen(UpitZaPregled upit) {
+    subject = "Vaš upit je ODBIJEN.";
+    poruka = "Vaš upit za pregled je ODBIJEN od strane administratora.\n\n";
+    poruka += "Upit:\n" +
+      "\tTip pregleda: " + upit.getTipPregleda().getNaziv() + "\n" +
+      "\tKlinika: \"" + upit.getKlinika().getNaziv() + "\", " +
+      upit.getKlinika().getAdresa() + "\n" + 
+      "\tVreme: " + upit.getPocetakPregleda().toString() + " - " + 
+      upit.getKrajPregleda().toString() + "\n" +
+      "\tLekar: " + upit.getLekar().getIme() + " " + upit.getLekar().getPrezime();
+    poruka += "\nMolimo vas da potvrdite da ste obavešteni o ovome na adresi: http://localhost:8081/#/pacijent/istorija" + 
+    ".\n\nSve najbolje Vam želi klinika XYZ."; 
+    SimpleMailMessage mailToSend = new SimpleMailMessage();
+    mailToSend.setTo(upit.getPacijent().getEmail());
     mailToSend.setText(poruka);
     mailToSend.setSubject(subject);
     javaMailSender.send(mailToSend);

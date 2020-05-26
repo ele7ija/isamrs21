@@ -115,6 +115,12 @@ public class UpitZaPregledeService {
 			}
 		}
 		upit = upitZaPregledRepository.save(upit);
+		if (upit.getOdobren()) {
+			mailService.upitOdobren(upit);
+		}
+		else{
+			mailService.upitOdbijen(upit);
+		}
 		return new ResponseEntity<CustomResponse<UpitZaPregled>>(
 				new CustomResponse<UpitZaPregled>(upit, true, "OK."),
 				HttpStatus.OK
@@ -424,6 +430,12 @@ public class UpitZaPregledeService {
 			upit = upitZaPregledRepository.save(upit);
 			pregled.getUpiti().add(upit);
 			pregledRepository.save(pregled);
+		}
+		if (upit.getOdobren()) {
+			mailService.upitOdobren(upit);
+		}
+		else{
+			mailService.upitOdbijen(upit);
 		}
 		return new ResponseEntity<CustomResponse<UpitZaPregled>>(
 				new CustomResponse<UpitZaPregled>(upit, true, "OK"),
