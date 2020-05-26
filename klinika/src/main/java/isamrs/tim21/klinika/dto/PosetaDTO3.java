@@ -9,7 +9,6 @@ public class PosetaDTO3 {
   private Sifarnik bolest;
   private List<Sifarnik> lekovi;
   private String opis;
-  private Long zdravstveniKartonId;
 
   public PosetaDTO3(){}
 
@@ -43,14 +42,6 @@ public class PosetaDTO3 {
 
   public void setOpis(String opis) {
     this.opis = opis;
-  }
-
-  public Long getZdravstveniKartonId() {
-    return this.zdravstveniKartonId;
-  }
-
-  public void setZdravstveniKartonId(Long zdravstveniKartonId) {
-    this.zdravstveniKartonId = zdravstveniKartonId;
   }
 
 

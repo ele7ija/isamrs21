@@ -165,6 +165,7 @@ export default {
         },
       ],
       newItem: {
+        posetaId: undefined,
         opis: undefined,
         selectedDijagnoza: [],
         selectedLekovi: [],
@@ -209,26 +210,32 @@ export default {
   methods: {
     ...mapActions({
       fetchSifarnikData: 'sifarnik/fetchDijagnozeLekovi',
+      updatePoseta: 'pacijenti/updatePoseta',
     }),
 
     zapocni(){
       this.dialog = true;
       console.log("pregled poceo");
     },
-
+    save(){
+      this.newItem.posetaId = this.posetaId;
+      this.newItem.selectedDijagnoza = this.newItem.selectedDijagnoza[0];
+      this.updatePoseta(this.newItem);
+      this.close();
+    },
     resetForm(){
       this.$refs.myForm.resetValidation(); //internal vue method
       this.newItem = {
+        posetaId: undefined,
         opis: undefined,
-        dijagnoza: undefined,
+        selectedDijagnoza: [],
+        selectedLekovi: [],
       };
     },
-
     close(){
       this.resetForm();
       this.dialog = false;
     },
-
     getStyle(tip){   
       if(tip=="LEK")
         return {

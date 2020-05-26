@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,7 @@ import isamrs.tim21.klinika.domain.Poseta;
 import isamrs.tim21.klinika.domain.Pregled;
 import isamrs.tim21.klinika.dto.PosetaDTO;
 import isamrs.tim21.klinika.dto.PosetaDTO2;
+import isamrs.tim21.klinika.dto.PosetaDTO3;
 import isamrs.tim21.klinika.services.PosetaService;
 
 @RestController
@@ -54,5 +56,11 @@ public class PosetaKontroler {
 	@PreAuthorize("hasAuthority('pacijent')")
 	public ResponseEntity<List<Poseta>> izlistajNerealizovanePosete() {
 		return new ResponseEntity<List<Poseta>>(service.nadjiNerealizovanePosete(request), HttpStatus.OK);
+	}
+
+	@PutMapping
+	public ResponseEntity<Poseta> updatePoseta(@RequestBody PosetaDTO3 poseta) {
+		
+		return null;
 	}
 }

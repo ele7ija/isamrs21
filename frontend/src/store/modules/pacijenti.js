@@ -1,5 +1,6 @@
 import pacijenti from '@/api/pacijenti'
-import utility from '@/utility/utility';
+import utility from '@/utility/utility'
+import posetaAPI from '@/api/posete'
 const state = {
   pacijenti: [], //svi pacijenti
   odabraniPacijent: null, //pacijent kojem je trenutno pristupio lekar,
@@ -43,6 +44,11 @@ const actions = {
         resolve("Uspesna provera prava pristupa zdravstvenom kartonu");
       });
     });
+  },
+
+  async updatePoseta({commit}, poseta){
+    posetaAPI.updatePoseta(poseta);
+    commit;
   }
 
 }
