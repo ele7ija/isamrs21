@@ -114,25 +114,50 @@
         </v-container>
 
         <!-- izmena zdravstvenog kartona -->
-        <v-container >
-        <v-card class="justify-center">
+        <v-container>
+        <v-card class="justify-center mx-auto" max-width="500px">
           <v-card-title class="green lighten-4 justify-center">
             Izmena zdravstvenog kartona
           </v-card-title>
           <v-card-text>
             <v-text-field
-            label="visina"
+            v-model="newItem.dioptrija"
+            label="dioptrija"
+            ></v-text-field>
+          </v-card-text>
 
+          <v-card-text>
+            <v-select
+            v-model="newItem.krvnaGrupa"
+            :items="krvneGrupe"
+            label="krvna grupa"
+            ></v-select>
+          </v-card-text>
+
+          <v-card-text>
+            <v-text-field
+            v-model="newItem.visina"
+            label="visina"
+            hint="visina u cm"
+            type="number"
+            min="0"
+            max="300"
+            ></v-text-field>
+          </v-card-text>
+
+          <v-card-text>
+          <v-text-field
+            v-model="newItem.tezina"
+            label="tezina"
+            type="number"
             ></v-text-field>
           </v-card-text>
           
         </v-card>
         </v-container>
+
         <!-- zakazivanje dodatnog poregleda ili operacije @Milan -->
         
-
-
-        <!-- sacuvati posetu objekat i dodati posetu u zdravstveni karton -->
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1"  text  @click="save()" :disabled="!isFormValid">
@@ -181,7 +206,12 @@ export default {
         opis: undefined,
         selectedDijagnoza: [],
         selectedLekovi: [],
+        dioptrija: null,
+        visina: null,
+
       },
+
+      krvneGrupe: [ "A", "B", "AB", "0"],
 
       //rules
       opisRule: [
