@@ -28,6 +28,8 @@
     </template>
     <template v-slot:expanded-item="{ headers, item }">
       <td :colspan="headers.length">
+        <!-- Milane ovde mozes da vidis da ucitava lepo item.bolest, ali ne moze item.bolest.naziv iz nekog razloga -->
+        {{item.bolest}}
         <v-text-field v-model="item.bolest" readonly label="Utvrđena bolest" class="mt-5"/>
         <v-textarea
           outlined
@@ -94,7 +96,7 @@ export default {
     _posete(){
       if(this.posete){
         let obavljenePosete = this.posete.filter(x => {
-          return !!x.opis || !!x.bolest
+          return !!x.opis 
         });
         return obavljenePosete.map(x => {
           let date1 = new Date(x.pregled.pocetakPregleda);

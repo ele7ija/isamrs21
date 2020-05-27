@@ -49,7 +49,6 @@ public class TipPregleda implements IdentitySerializable{
 	@ManyToMany(cascade=CascadeType.MERGE)
 	@JoinTable(name="specijalnost_lekara", joinColumns=@JoinColumn(name="id_tipa_pregleda", referencedColumnName="id"),
 	inverseJoinColumns=@JoinColumn(name="id_lekara", referencedColumnName="id"))
-	@JsonSerialize(using=IdentityListSerializer.class)
 	private List<Lekar> lekari;
 	
 	@JoinColumn(nullable=false)

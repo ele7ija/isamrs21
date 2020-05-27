@@ -93,12 +93,11 @@ export default {
     ...mapGetters({
       posete: 'pacijenti/getPoseteOdabranogPacijenta',
       tipoviPregleda: 'tipoviPregleda/getTipoviPregleda',
-      pregledMozeDaSeZapocne: 'pacijenti/pregledMozeDaSeZapocne'
     }),
     _posete(){
       if(this.posete){
         let neobavljenePosete = this.posete.filter(x => {
-          return !x.opis && !x.bolest
+          return !x.opis 
         });
         return neobavljenePosete.map(x => {
           let date1 = new Date(x.pregled.pocetakPregleda);
@@ -131,11 +130,6 @@ export default {
       this.key2 += 1;
     },
 
-    //zapocni pregled
-    zapocni(item){
-      console.log(item)
-
-    }
   }
 }
 </script>
