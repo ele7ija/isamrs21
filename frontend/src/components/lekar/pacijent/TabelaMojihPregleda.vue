@@ -97,7 +97,7 @@ export default {
     _posete(){
       if(this.posete){
         let neobavljenePosete = this.posete.filter(x => {
-          return !x.opis && !x.bolest
+          return !x.opis 
         });
         return neobavljenePosete.map(x => {
           let date1 = new Date(x.pregled.pocetakPregleda);
