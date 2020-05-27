@@ -17,5 +17,11 @@ export default {
       `${process.env.VUE_APP_BACKEND_ROOT}/pacijenti/pravoPristupa?idPacijenta=${idPacijenta}&idLekara=${idLekara}`,
       options
     );
+  },
+  getPacijent(email) {
+    let options = util.prepareOptions();
+    return axios.get(
+      `${process.env.VUE_APP_BACKEND_ROOT}/pacijenti/email/${email}`,
+      options)
   }
 }

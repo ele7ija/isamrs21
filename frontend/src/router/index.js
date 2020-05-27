@@ -16,7 +16,8 @@ import KlinikaAdmin from '@/components/klinike/KlinikaAdmin';
 import Klinike from '@/components/pacijenti/klinike/Klinike';
 import KlinikaPage from '@/components/pacijenti/klinike/KlinikaPage';
 import RezervacijaPregleda from '@/components/pacijenti/klinike/RezervacijaPregleda';
-import Istorija from '@/components/pacijenti/klinike/Istorija';
+import Istorija from '@/components/pacijenti/istorija/Istorija';
+import PacijentProfil from '@/components/pacijenti/profil/PacijentProfil';
 import Lekari from '@/components/pacijenti/klinike/Lekari';
 //admin klinickog centra
 import AdminiKlinickogCentra from '@/components/admin_klinickog_centra/AdminiKlinickogCentra'
@@ -202,7 +203,7 @@ let router = new Router({
     {
       path: '/pacijent/profil',
       name: 'pacijent-profil',
-      component: Pacijenti,
+      component: PacijentProfil,
       meta: {
         authen: true,
         author: 'pacijent'

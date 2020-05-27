@@ -82,12 +82,21 @@ public class PacijentService {
 	}
 
 	public CustomResponse<Pacijent> izmeni(PacijentIzmenaDTO p) {
-		Pacijent retval = (Pacijent) userDetailsService.findUserAndChangePassword(p.getPacijent().getId(), p.getPoslednjaSifra(), p.getPacijent().getSifra());
+		// sifra
+		Pacijent retval = (Pacijent) pacijentRepository.findByEmail(p.getPacijent().getEmail());
 		// retval.setIme(sestra.getSestra().getIme());
 		// retval.setPrezime(sestra.getSestra().getPrezime());
-		if(!p.getPoslednjaSifra().equals(retval.getSifra())){
+		if(!p.getPacijent().getSifra().equals(retval.getSifra())){
 			retval.setPoslednjaPromenaSifre(new Date());
+			retval = (Pacijent) userDetailsService.findUserAndChangePassword(p.getPacijent().getId(), p.getPoslednjaSifra(), p.getPacijent().getSifra());
 		}
+		retval.setAdresa(p.getPacijent().getAdresa());
+		retval.setGrad(p.getPacijent().getGrad());
+		retval.setDrzava(p.getPacijent().getDrzava());
+		retval.setBrojTelefona(p.getPacijent().getBrojTelefona());
+		retval.setIme(p.getPacijent().getIme());
+		retval.setPrezime(p.getPacijent().getPrezime());
+
 		retval = pacijentRepository.save(retval);
 		return new CustomResponse<Pacijent>(retval, true, "OK.");
 	}

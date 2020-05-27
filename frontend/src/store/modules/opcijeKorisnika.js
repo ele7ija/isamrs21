@@ -67,11 +67,6 @@ const state = {
         title: 'Pacijent',
         action: 'mdi-account',
         items: [
-          {
-            title: 'Pacijenti',
-            action: 'mdi-account-circle-outline',
-            componentName: 'pacijenti'
-          },
           { 
             title: 'Klinike',
             action: 'mdi-hospital-building',
