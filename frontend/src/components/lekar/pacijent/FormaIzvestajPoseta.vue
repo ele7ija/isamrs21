@@ -37,7 +37,11 @@
             ></v-textarea>
         </v-card-text> 
 
-
+        <v-container>
+        <v-card>
+        <v-card-title class="green lighten-4 justify-center">
+          Izbor dijagnoze i lekova
+        </v-card-title>
         <!-- izbor dijagnoze -->
         <v-card-text>
           <v-data-table
@@ -72,7 +76,6 @@
             </template>
           </v-data-table>
         </v-card-text>
-
         <!-- izbor lekova -->
         <v-card-text>
           <v-data-table
@@ -86,11 +89,11 @@
             class="elevation-2">
             <template v-slot:top>
               <v-toolbar flat color="white">
-                <v-toolbar-title>Izbor dijagnoze</v-toolbar-title>
+                <v-toolbar-title>Izbor lekova</v-toolbar-title>
                 <v-spacer></v-spacer>       
                 <!-- search bar  -->
                 <v-text-field
-                  v-model="searchDijagnoza"
+                  v-model="searchLekova"
                   append-icon="mdi-magnify"
                   label="Search"
                   single-line
@@ -107,12 +110,24 @@
             </template>
           </v-data-table>
         </v-card-text>
+        </v-card>
+        </v-container>
 
         <!-- izmena zdravstvenog kartona -->
-        <v-card>
-          izmena zdravstvenog kartona
+        <v-container >
+        <v-card class="justify-center">
+          <v-card-title class="green lighten-4 justify-center">
+            Izmena zdravstvenog kartona
+          </v-card-title>
+          <v-card-text>
+            <v-text-field
+            label="visina"
+
+            ></v-text-field>
+          </v-card-text>
+          
         </v-card>
-        
+        </v-container>
         <!-- zakazivanje dodatnog poregleda ili operacije @Milan -->
         
 
@@ -129,9 +144,6 @@
         </v-card-actions>
       </v-card>
     </v-form>
-    <v-card>
-      {{posetaId}}
-    </v-card>
   </v-card>
   </v-dialog>
 

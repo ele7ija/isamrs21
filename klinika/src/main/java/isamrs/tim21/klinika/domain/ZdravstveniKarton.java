@@ -3,6 +3,7 @@ package isamrs.tim21.klinika.domain;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -30,6 +31,19 @@ public class ZdravstveniKarton implements IdentitySerializable{
 	@OneToMany(mappedBy="zdravstveniKarton", cascade=CascadeType.ALL)
 	private List<Poseta> posete;
 
+	@Column(name="dioptrija")
+	private String dioptrija;
+
+	@Column(name="krvna_grupa")
+	private String krvnaGrupa;
+
+	@Column(name="visina")
+	private Float visina;
+
+	@Column(name="tezina")
+	private Float tezina;
+
+
 	public Long getId() {
 		return id;
 	}
@@ -55,6 +69,38 @@ public class ZdravstveniKarton implements IdentitySerializable{
 	}
 	
 	//ostale stvari, pregledi, bolesti...
+
+	public String getDioptrija() {
+		return this.dioptrija;
+	}
+
+	public void setDioptrija(String dioptrija) {
+		this.dioptrija = dioptrija;
+	}
+
+	public String getKrvnaGrupa() {
+		return this.krvnaGrupa;
+	}
+
+	public void setKrvnaGrupa(String krvnaGrupa) {
+		this.krvnaGrupa = krvnaGrupa;
+	}
+
+	public Float getVisina() {
+		return this.visina;
+	}
+
+	public void setVisina(Float visina) {
+		this.visina = visina;
+	}
+
+	public Float getTezina() {
+		return this.tezina;
+	}
+
+	public void setTezina(Float tezina) {
+		this.tezina = tezina;
+	}
 	
 	
 }
