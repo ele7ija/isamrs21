@@ -112,12 +112,7 @@
         </td>
       </template>
 
-<!-- akcije edit and delete -->
-      <template v-slot:item.actions="{ item }">
-        <v-icon small class="mr-2" @click="editItem(item)">
-          mdi-pencil
-        </v-icon>
-      </template> 
+
     </v-data-table>
   </div>
 </template>
@@ -157,12 +152,6 @@ export default {
           text: 'opis',
           value: 'data-table-expand',
         },
-        { 
-          text: 'Actions',
-          value: 'actions',
-          sortable: false,
-          align: 'end'
-        }
       ],
 
       newItem: {

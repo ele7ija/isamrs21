@@ -16,6 +16,7 @@ import isamrs.tim21.klinika.domain.UpitZaPregled;
 import isamrs.tim21.klinika.domain.ZdravstveniKarton;
 import isamrs.tim21.klinika.dto.PosetaDTO;
 import isamrs.tim21.klinika.dto.PosetaDTO2;
+import isamrs.tim21.klinika.dto.PosetaDTO3;
 import isamrs.tim21.klinika.repository.KorisniciRepository;
 import isamrs.tim21.klinika.repository.PosetaRepository;
 import isamrs.tim21.klinika.repository.PregledRepository;
@@ -67,7 +68,7 @@ public class PosetaService {
 		}
 		// kreiraj posetu na osnovu kartona, pregleda itd
 		Poseta p = new Poseta();
-		p.setBolest("");
+		p.setBolest(null);
 		p.setOpis(dto.getOpis());
 		p.setPregled(pregled);
 		p.setZdravstveniKarton(zk);
@@ -110,7 +111,7 @@ public class PosetaService {
 		}
 		// kreiraj posetu na osnovu kartona, pregleda itd
 		Poseta p = new Poseta();
-		p.setBolest("");
+		p.setBolest(null);
 		p.setOpis(dto.getOpis());
 		p.setPregled(pregled);
 		p.setZdravstveniKarton(zk);
@@ -157,7 +158,7 @@ public class PosetaService {
 		}
 		// kreiraj posetu na osnovu kartona, pregleda itd
 		Poseta p = new Poseta();
-		p.setBolest("");
+		p.setBolest(null);
 		p.setOpis(u.getOpis());
 		p.setPregled(pregled);
 		p.setZdravstveniKarton(zk);
@@ -221,5 +222,14 @@ public class PosetaService {
 			}
 		}
 		return nerPosete;
+	}
+
+	public Poseta updatePoseta (PosetaDTO3 posetaDTO) {
+		Poseta poseta = posetaRepository.findById(posetaDTO.getPosetaId()).orElse(null);
+		poseta.setBolest(posetaDTO.getBolest());
+		poseta.setLekovi(posetaDTO.getLekovi());
+		poseta.setOpis(posetaDTO.getOpis());
+		posetaRepository.save(poseta);
+		return poseta;
 	}
 }

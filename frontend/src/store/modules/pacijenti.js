@@ -1,9 +1,12 @@
 import pacijenti from '@/api/pacijenti'
-import utility from '@/utility/utility';
+import utility from '@/utility/utility'
+import posetaAPI from '@/api/posete'
 const state = {
   pacijenti: [], //svi pacijenti
   odabraniPacijent: null, //pacijent kojem je trenutno pristupio lekar,
-  lekarovPacijent: false //da li lekar sme da pristupi zdravstvenom kartonu pacijenta?
+  lekarovPacijent: false, //da li lekar sme da pristupi zdravstvenom kartonu pacijenta?
+  posetePacijenta: [],
+
 }
 const getters = {
   getPacijenti: (state) => {
@@ -11,15 +14,15 @@ const getters = {
   },
   getOdabraniPacijent: (state) => state.odabraniPacijent,
   isLekarovPacijent: (state) => state.lekarovPacijent,
-  getPoseteOdabranogPacijenta: (state) => state.odabraniPacijent.zdravstveniKarton.posete,
+  getPoseteOdabranogPacijenta: (state) => state.posetePacijenta,
   pregledMozeDaSeZapocne: (state) => (idPosete) => {
     var d = new Date()
     let poseta = state.odabraniPacijent.zdravstveniKarton.posete.filter(x => x.id == idPosete)[0];
     let vremePregleda = utility.handleTimeZone(new Date(poseta.pregled.pocetakPregleda));
     var diff = Math.abs(d.getTime() - vremePregleda.getTime());
-    console.log(diff/60000);
-    return (diff / 60000) <= 15; //pregled moze da se zapocne 15 minuta ranije
-    // return true; //radi testiranja
+    diff/60000;
+    // return (diff / 60000) <= 15; //pregled moze da se zapocne 15 minuta ranije
+     return true; //radi testiranja
   }
 }
 const actions = {
@@ -43,6 +46,22 @@ const actions = {
         resolve("Uspesna provera prava pristupa zdravstvenom kartonu");
       });
     });
+  },
+
+  loadPosete({getters, commit}){
+    var pacijent = getters.getOdabraniPacijent;
+    var posete = pacijent.zdravstveniKarton.posete;
+    commit('setPosetePacijenta', posete);
+  },
+
+  async updatePoseta({state,commit}, poseta){
+    let response = await posetaAPI.updatePoseta(poseta);
+    // u response.data je updateovana poseta
+    var updateovanaPoseta = response.data;
+    var posete = state.posetePacijenta;
+    var staraPosetaIndex = posete.findIndex( poseta=> poseta.id == updateovanaPoseta.id);
+    posete[staraPosetaIndex] = updateovanaPoseta;
+    commit("setPosetePacijenta", posete);
   }
 
 }
@@ -50,7 +69,8 @@ const mutations = {
   setPacijenti: (state, _pacijenti) => 
     state.pacijenti = _pacijenti,
   setOdabraniPacijent: (state, pacijent) => state.odabraniPacijent = pacijent,
-  setLekarovPacijent: (state, lekarovPacijent) => state.lekarovPacijent = lekarovPacijent
+  setLekarovPacijent: (state, lekarovPacijent) => state.lekarovPacijent = lekarovPacijent,
+  setPosetePacijenta: (state, posete) =>  state.posetePacijenta = posete,
 }
 
 export default{
