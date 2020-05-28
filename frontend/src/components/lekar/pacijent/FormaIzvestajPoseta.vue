@@ -22,10 +22,11 @@
       <v-card>
         <!-- naslov forme -->
         <v-card-title>
-          <span class="headline">Izvestaj o pregledu</span>
+          <span class="headline">Izveštaj o pregledu </span>
+          <v-spacer></v-spacer>
+          <span class="display-1 text--green"> {{zdravstveniKarton.pacijent.ime}} {{zdravstveniKarton.pacijent.prezime}}</span>
         </v-card-title>
         <hr>
-
         <!-- opis pregleda -->
         <v-card-text>
             <v-textarea
@@ -131,6 +132,7 @@
             v-model="newItem.krvnaGrupa"
             :items="krvneGrupe"
             label="krvna grupa"
+            chips
             ></v-select>
           </v-card-text>
 
@@ -142,14 +144,17 @@
             type="number"
             min="0"
             max="300"
+            :rules="visinaRule"
             ></v-text-field>
           </v-card-text>
 
           <v-card-text>
           <v-text-field
             v-model="newItem.tezina"
-            label="tezina"
+            label="težina"
             type="number"
+            hint="težina u kg"
+            :rules="tezinaRule"
             ></v-text-field>
           </v-card-text>
           
@@ -180,7 +185,7 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'FormaIzvestajPregleda',
-  props: ["posetaId"],
+  props: ["posetaId", "zdravstveniKarton"],
   data () {
     return {
       isFormValid: true,
@@ -206,9 +211,10 @@ export default {
         opis: undefined,
         selectedDijagnoza: [],
         selectedLekovi: [],
-        dioptrija: null,
-        visina: null,
-
+        dioptrija: this.zdravstveniKarton.dioptrija,
+        krvnaGrupa: this.zdravstveniKarton.kvrnaGrupa,
+        visina: this.zdravstveniKarton.visina,
+        tezina: this.zdravstveniKarton.tezina,
       },
 
       krvneGrupe: [ "A", "B", "AB", "0"],
@@ -218,6 +224,15 @@ export default {
         v => !!v || 'Opis trenutne posete je obavezan',
         v => (v && v.length <= 1000) || 'Opis ima najviše 1000 karaktera'
       ],
+      visinaRule: [
+        v => !!v || 'Visina je obavezno polje',
+        v => ( v &&  ( 0<= parseInt(v) && parseInt(v) <= 300) ) || 'Visina mora biti izmedju 0 i 300 cm '
+      ],
+      tezinaRule: [
+        v => !!v || 'Tezina je obavezno polje',
+        v => ( v &&  ( 0<= parseInt(v) && parseInt(v) <= 300) ) || 'Tezina mora biti izmedju 0 i 300 kg '
+      ]
+
     }
   },
 
@@ -272,6 +287,10 @@ export default {
         opis: undefined,
         selectedDijagnoza: [],
         selectedLekovi: [],
+        dioptrija: this.zdravstveniKarton.dioptrija,
+        krvnaGrupa: this.zdravstveniKarton.kvrnaGrupa,
+        visina: this.zdravstveniKarton.visina,
+        tezina: this.zdravstveniKarton.tezina,
       };
     },
     close(){

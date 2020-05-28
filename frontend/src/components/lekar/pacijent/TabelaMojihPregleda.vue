@@ -29,7 +29,7 @@
         </template>
         <template v-slot:item.actions="{ item }">
 
-          <FormaIzvestajPoseta :posetaId="item.id" />
+          <FormaIzvestajPoseta :posetaId="item.id" :zdravstveniKarton="item.zdravstveniKarton" />
         </template>
 
       </v-data-table>
