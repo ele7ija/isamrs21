@@ -54,14 +54,10 @@ const actions = {
     commit('setPosetePacijenta', posete);
   },
 
-  async updatePoseta({state,commit}, poseta){
+  async updatePoseta({commit}, poseta){
     let response = await posetaAPI.updatePoseta(poseta);
     // u response.data je updateovana poseta
-    var updateovanaPoseta = response.data;
-    var posete = state.posetePacijenta;
-    var staraPosetaIndex = posete.findIndex( poseta=> poseta.id == updateovanaPoseta.id);
-    posete[staraPosetaIndex] = updateovanaPoseta;
-    commit("setPosetePacijenta", posete);
+    commit("updatePosetePacijenta", response.data);
   }
 
 }
@@ -71,6 +67,11 @@ const mutations = {
   setOdabraniPacijent: (state, pacijent) => state.odabraniPacijent = pacijent,
   setLekarovPacijent: (state, lekarovPacijent) => state.lekarovPacijent = lekarovPacijent,
   setPosetePacijenta: (state, posete) =>  state.posetePacijenta = posete,
+  updatePosetePacijenta: (state, updateovanaPoseta) => {
+    let staraPosetaIndex = state.posetePacijenta.findIndex( poseta=> poseta.id == updateovanaPoseta.id);
+    state.posetePacijenta.splice(staraPosetaIndex, 1);
+    state.posetePacijenta.splice(staraPosetaIndex, 0, updateovanaPoseta);
+  }
 }
 
 export default{

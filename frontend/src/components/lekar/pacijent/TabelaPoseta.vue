@@ -30,7 +30,7 @@
       <td :colspan="headers.length">
         <!-- Milane ovde mozes da vidis da ucitava lepo item.bolest, ali ne moze item.bolest.naziv iz nekog razloga -->
         {{item.bolest}}
-        <v-text-field v-model="item.bolest" readonly label="Utvrđena bolest" class="mt-5"/>
+        <v-text-field v-model="item.bolest.naziv" readonly label="Utvrđena bolest" class="mt-5"/>
         <v-textarea
           outlined
           :value="item.opis"
