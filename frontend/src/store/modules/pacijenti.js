@@ -6,7 +6,6 @@ const state = {
   odabraniPacijent: null, //pacijent kojem je trenutno pristupio lekar,
   lekarovPacijent: false, //da li lekar sme da pristupi zdravstvenom kartonu pacijenta?
   posetePacijenta: [],
-
 }
 const getters = {
   getPacijenti: (state) => {
@@ -15,6 +14,10 @@ const getters = {
   getOdabraniPacijent: (state) => state.odabraniPacijent,
   isLekarovPacijent: (state) => state.lekarovPacijent,
   getPoseteOdabranogPacijenta: (state) => state.posetePacijenta,
+  getSpecijalizacijeLekara: (state, getters, rootState, rootGetters) => {
+    let profil = rootGetters['profil/getProfil'];
+    return profil.tipovi_pregleda;
+  },
   pregledMozeDaSeZapocne: (state) => (idPosete) => {
     var d = new Date()
     let poseta = state.odabraniPacijent.zdravstveniKarton.posete.filter(x => x.id == idPosete)[0];

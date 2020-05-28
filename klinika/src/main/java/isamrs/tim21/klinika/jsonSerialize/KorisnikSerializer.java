@@ -16,6 +16,7 @@ public class KorisnikSerializer extends JsonSerializer<Korisnik>{
 		arg1.writeNumberField("id", arg0.getId());
 		arg1.writeStringField("ime", arg0.getIme());
 		arg1.writeStringField("prezime", arg0.getPrezime());
+		arg1.writeStringField("email", arg0.getEmail());
 		arg1.writeEndObject();
 	}
 

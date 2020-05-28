@@ -10,11 +10,10 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import isamrs.tim21.klinika.jsonSerialize.PregledListSerializer;
-import isamrs.tim21.klinika.jsonSerialize.TipPregledaListSerializer;
 
 
 @Entity
@@ -27,7 +26,8 @@ public class Lekar extends MedicinskoOsoblje{
 	private static final long serialVersionUID = 4362887523765862539L;
 
 	@ManyToMany(cascade=CascadeType.MERGE, mappedBy="lekari")
-	@JsonSerialize(using=TipPregledaListSerializer.class)
+	//@JsonSerialize(using=TipPregledaListSerializer.class)
+	@JsonIgnoreProperties({"lekari"})
 	private List<TipPregleda> tipovi_pregleda;
 	
 	@Column(name="broj_specijalizacija", columnDefinition="integer DEFAULT 0")
