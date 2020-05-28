@@ -38,10 +38,10 @@ public class ZdravstveniKarton implements IdentitySerializable{
 	private String krvnaGrupa;
 
 	@Column(name="visina")
-	private Float visina;
+	private Integer visina;
 
 	@Column(name="tezina")
-	private Float tezina;
+	private Integer tezina;
 
 
 	public Long getId() {
@@ -86,19 +86,19 @@ public class ZdravstveniKarton implements IdentitySerializable{
 		this.krvnaGrupa = krvnaGrupa;
 	}
 
-	public Float getVisina() {
+	public Integer getVisina() {
 		return this.visina;
 	}
 
-	public void setVisina(Float visina) {
+	public void setVisina(Integer visina) {
 		this.visina = visina;
 	}
 
-	public Float getTezina() {
+	public Integer getTezina() {
 		return this.tezina;
 	}
 
-	public void setTezina(Float tezina) {
+	public void setTezina(Integer tezina) {
 		this.tezina = tezina;
 	}
 	
