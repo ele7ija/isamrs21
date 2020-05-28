@@ -230,6 +230,13 @@ public class PosetaService {
 		poseta.setLekovi(posetaDTO.getLekovi());
 		poseta.setOpis(posetaDTO.getOpis());
 		posetaRepository.save(poseta);
+
+		ZdravstveniKarton k = poseta.getZdravstveniKarton();
+		k.setDioptrija(posetaDTO.getDioptrija());
+		k.setKrvnaGrupa(posetaDTO.getKrvnaGrupa());
+		k.setVisina(posetaDTO.getVisina());
+		k.setTezina(posetaDTO.getTezina());
+		zdravstveniKartonRepository.save(k);
 		return poseta;
 	}
 }

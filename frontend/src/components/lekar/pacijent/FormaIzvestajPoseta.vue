@@ -22,10 +22,11 @@
       <v-card>
         <!-- naslov forme -->
         <v-card-title>
-          <span class="headline">Izvestaj o pregledu</span>
+          <span class="headline">Izveštaj o pregledu </span>
+          <v-spacer></v-spacer>
+          <span class="display-1 text--green"> {{zdravstveniKarton.pacijent.ime}} {{zdravstveniKarton.pacijent.prezime}}</span>
         </v-card-title>
         <hr>
-
         <!-- opis pregleda -->
         <v-card-text>
             <v-textarea
@@ -37,7 +38,11 @@
             ></v-textarea>
         </v-card-text> 
 
-
+        <v-container>
+        <v-card>
+        <v-card-title class="green lighten-4 justify-center">
+          Izbor dijagnoze i lekova
+        </v-card-title>
         <!-- izbor dijagnoze -->
         <v-card-text>
           <v-data-table
@@ -72,7 +77,6 @@
             </template>
           </v-data-table>
         </v-card-text>
-
         <!-- izbor lekova -->
         <v-card-text>
           <v-data-table
@@ -86,11 +90,11 @@
             class="elevation-2">
             <template v-slot:top>
               <v-toolbar flat color="white">
-                <v-toolbar-title>Izbor dijagnoze</v-toolbar-title>
+                <v-toolbar-title>Izbor lekova</v-toolbar-title>
                 <v-spacer></v-spacer>       
                 <!-- search bar  -->
                 <v-text-field
-                  v-model="searchDijagnoza"
+                  v-model="searchLekova"
                   append-icon="mdi-magnify"
                   label="Search"
                   single-line
@@ -107,17 +111,58 @@
             </template>
           </v-data-table>
         </v-card-text>
+        </v-card>
+        </v-container>
 
         <!-- izmena zdravstvenog kartona -->
-        <v-card>
-          izmena zdravstvenog kartona
+        <v-container>
+        <v-card class="justify-center mx-auto" max-width="500px">
+          <v-card-title class="green lighten-4 justify-center">
+            Izmena zdravstvenog kartona
+          </v-card-title>
+          <v-card-text>
+            <v-text-field
+            v-model="newItem.dioptrija"
+            label="dioptrija"
+            ></v-text-field>
+          </v-card-text>
+
+          <v-card-text>
+            <v-select
+            v-model="newItem.krvnaGrupa"
+            :items="krvneGrupe"
+            label="krvna grupa"
+            chips
+            ></v-select>
+          </v-card-text>
+
+          <v-card-text>
+            <v-text-field
+            v-model="newItem.visina"
+            label="visina"
+            hint="visina u cm"
+            type="number"
+            min="0"
+            max="300"
+            :rules="visinaRule"
+            ></v-text-field>
+          </v-card-text>
+
+          <v-card-text>
+          <v-text-field
+            v-model="newItem.tezina"
+            label="težina"
+            type="number"
+            hint="težina u kg"
+            :rules="tezinaRule"
+            ></v-text-field>
+          </v-card-text>
+          
         </v-card>
-        
+        </v-container>
+
         <!-- zakazivanje dodatnog poregleda ili operacije @Milan -->
         
-
-
-        <!-- sacuvati posetu objekat i dodati posetu u zdravstveni karton -->
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1"  text  @click="save()" :disabled="!isFormValid">
@@ -129,9 +174,6 @@
         </v-card-actions>
       </v-card>
     </v-form>
-    <v-card>
-      {{posetaId}}
-    </v-card>
   </v-card>
   </v-dialog>
 
@@ -143,7 +185,7 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'FormaIzvestajPregleda',
-  props: ["posetaId"],
+  props: ["posetaId", "zdravstveniKarton"],
   data () {
     return {
       isFormValid: true,
@@ -169,13 +211,28 @@ export default {
         opis: undefined,
         selectedDijagnoza: [],
         selectedLekovi: [],
+        dioptrija: this.zdravstveniKarton.dioptrija,
+        krvnaGrupa: this.zdravstveniKarton.kvrnaGrupa,
+        visina: this.zdravstveniKarton.visina,
+        tezina: this.zdravstveniKarton.tezina,
       },
+
+      krvneGrupe: [ "A", "B", "AB", "0"],
 
       //rules
       opisRule: [
         v => !!v || 'Opis trenutne posete je obavezan',
         v => (v && v.length <= 1000) || 'Opis ima najviše 1000 karaktera'
       ],
+      visinaRule: [
+        v => !!v || 'Visina je obavezno polje',
+        v => ( v &&  ( 0<= parseInt(v) && parseInt(v) <= 300) ) || 'Visina mora biti izmedju 0 i 300 cm '
+      ],
+      tezinaRule: [
+        v => !!v || 'Tezina je obavezno polje',
+        v => ( v &&  ( 0<= parseInt(v) && parseInt(v) <= 300) ) || 'Tezina mora biti izmedju 0 i 300 kg '
+      ]
+
     }
   },
 
@@ -230,6 +287,10 @@ export default {
         opis: undefined,
         selectedDijagnoza: [],
         selectedLekovi: [],
+        dioptrija: this.zdravstveniKarton.dioptrija,
+        krvnaGrupa: this.zdravstveniKarton.kvrnaGrupa,
+        visina: this.zdravstveniKarton.visina,
+        tezina: this.zdravstveniKarton.tezina,
       };
     },
     close(){
