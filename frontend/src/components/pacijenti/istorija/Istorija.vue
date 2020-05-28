@@ -252,7 +252,7 @@
           <v-col>
             <v-card outlined>
               <v-app-bar 
-                color='black' dark>
+                color='green darken-2' dark>
                 <v-toolbar-title>
                   Posete klinikama
                 </v-toolbar-title>
