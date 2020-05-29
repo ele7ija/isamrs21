@@ -69,6 +69,11 @@ public class UpitZaPregledeService {
 	@Autowired
 	ZahtevZaGodisnjiRepository zahtevZaGodisnjiRepository;
 
+	@Transactional(readOnly=true)
+	public List<UpitZaPregled> sviUpiti(){
+		return upitZaPregledRepository.sviUpitiPessimisticForceIncrement();
+	}
+
 	@Transactional
 	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdmin(UpitZaPregled u) throws Exception{
 		UpitZaPregled upit = upitZaPregledRepository.findById(u.getId()).get();
