@@ -27,6 +27,7 @@ export default {
   created(){
     this.checkLekarovPacijent();
     this.loadPosete();
+    this.loadZdravstveniKarton();
   },
   computed: {
     ...mapGetters({
@@ -41,6 +42,7 @@ export default {
     ...mapActions({
       checkLekarovPacijent: 'pacijenti/checkLekarovPacijent',
       loadPosete: "pacijenti/loadPosete",
+      loadZdravstveniKarton: "pacijenti/loadZdravstveniKarton",
     })
   }
 }

@@ -11,7 +11,7 @@
   <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
   <v-card>
     <v-toolbar dark color="green">
-      <v-btn icon dark @click="dialog = false">
+      <v-btn icon dark @click="close()">
         <v-icon>mdi-close</v-icon>
       </v-btn>
       <v-toolbar-title>Pregled u toku...</v-toolbar-title>
@@ -24,7 +24,7 @@
         <v-card-title>
           <span class="headline">Izveštaj o pregledu </span>
           <v-spacer></v-spacer>
-          <span class="display-1 text--green"> {{zdravstveniKarton.pacijent.ime}} {{zdravstveniKarton.pacijent.prezime}}</span>
+          <span class="display-1 text--green"> {{getZdravstveniKarton.pacijent.ime}} {{getZdravstveniKarton.pacijent.prezime}}</span>
         </v-card-title>
         <hr>
         <!-- opis pregleda -->
@@ -253,7 +253,7 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'FormaIzvestajPregleda',
-  props: ["posetaId", "zdravstveniKarton"],
+  props: ["posetaId"],
   data () {
     return {
       datetimeStart: null,
@@ -283,14 +283,13 @@ export default {
         opis: undefined,
         selectedDijagnoza: [],
         selectedLekovi: [],
-        dioptrija: this.zdravstveniKarton.dioptrija,
-        krvnaGrupa: this.zdravstveniKarton.kvrnaGrupa,
-        visina: this.zdravstveniKarton.visina,
-        tezina: this.zdravstveniKarton.tezina,
+        dioptrija: null,
+        krvnaGrupa: null,
+        visina: null,
+        tezina: null,
       },
 
       krvneGrupe: [ "A", "B", "AB", "0"],
-
       //rules
       opisRule: [
         v => !!v || 'Opis trenutne posete je obavezan',
@@ -303,8 +302,7 @@ export default {
       tezinaRule: [
         v => !!v || 'Tezina je obavezno polje',
         v => ( v &&  ( 0<= parseInt(v) && parseInt(v) <= 300) ) || 'Tezina mora biti izmedju 0 i 300 kg '
-      ]
-
+      ],
     }
   },
 
@@ -312,6 +310,7 @@ export default {
     ...mapGetters({
       pregledMozeDaSeZapocne: 'pacijenti/pregledMozeDaSeZapocne',
       getDijagnozeLekovi: 'sifarnik/getDijagnozeLekovi',
+      getZdravstveniKarton: 'pacijenti/getZdravstveniKarton',
       specijalizacijeLekara: 'pacijenti/getSpecijalizacijeLekara',
       profil: 'profil/getProfil'
     }),
@@ -364,7 +363,6 @@ export default {
       });
     }
   },
-
   created(){
     this.fetchSifarnikData();
   },
@@ -378,7 +376,7 @@ export default {
 
     zapocni(){
       this.dialog = true;
-      console.log("pregled poceo");
+      this.populateNewItem();
     },
     save(){
       this.newItem.posetaId = this.posetaId;
@@ -393,7 +391,7 @@ export default {
               pocetakPregleda: this.datetimeStart,
               krajPregleda: this.$utility.stringToDate(this.datetimeEnd),
               datumKreiranjaUpita: new Date(),
-              pacijent: this.zdravstveniKarton.pacijent.email,
+              pacijent: this.getZdravstveniKarton.pacijent.email,
               lekar: this.profil.id,
               tipPregleda: this.tipPregleda.id,
               klinika: this.profil.klinika.id,
@@ -415,10 +413,10 @@ export default {
         opis: undefined,
         selectedDijagnoza: [],
         selectedLekovi: [],
-        dioptrija: this.zdravstveniKarton.dioptrija,
-        krvnaGrupa: this.zdravstveniKarton.kvrnaGrupa,
-        visina: this.zdravstveniKarton.visina,
-        tezina: this.zdravstveniKarton.tezina,
+        dioptrija: null,
+        krvnaGrupa: null,
+        visina: null,
+        tezina: null,
       };
     },
     close(){
@@ -436,6 +434,13 @@ export default {
           backgroundColor: 'lavender',
           fontSize: '11px',
         }
+    },
+    populateNewItem(){
+      var k = this.getZdravstveniKarton;
+      this.newItem.dioptrija = k.dioptrija;
+      this.newItem.krvnaGrupa = k.krvnaGrupa;
+      this.newItem.visina = k.visina;
+      this.newItem.tezina = k.tezina;
     },
     setKraj(){
       if(this.tipPregleda == null || this.datetimeStart == null)

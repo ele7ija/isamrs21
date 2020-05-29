@@ -11,13 +11,13 @@ import Osoblje from "@/components/osoblje/Osoblje";
 import PreglediMain from "@/components/pregledi/PreglediMain";
 import UpitiPreglediAdmin from "@/components/upiti/UpitiPreglediAdmin";
 import ZahteviZaGodisnji from "@/components/zahtevi_godisnji/ZahteviZaGodisnji";
-import Pacijenti from "@/components/pacijenti/Pacijenti";
 import KlinikaAdmin from '@/components/klinike/KlinikaAdmin';
 import Klinike from '@/components/pacijenti/klinike/Klinike';
 import KlinikaPage from '@/components/pacijenti/klinike/KlinikaPage';
 import RezervacijaPregleda from '@/components/pacijenti/klinike/RezervacijaPregleda';
 import Istorija from '@/components/pacijenti/istorija/Istorija';
 import PacijentProfil from '@/components/pacijenti/profil/PacijentProfil';
+import Karton from '@/components/pacijenti/karton/Karton';
 import Lekari from '@/components/pacijenti/klinike/Lekari';
 //admin klinickog centra
 import AdminiKlinickogCentra from '@/components/admin_klinickog_centra/AdminiKlinickogCentra'
@@ -164,15 +164,15 @@ let router = new Router({
         author: 'admin-klinike'
       },
     },
-    {
-      path: '/pacijenti',
-      name: 'pacijenti',
-      component: Pacijenti,
-      meta: {
-        authen: true,
-        author: 'pacijent'
-      },
-    },
+    // {
+    //   path: '/pacijenti',
+    //   name: 'pacijenti',
+    //   component: Pacijenti,
+    //   meta: {
+    //     authen: true,
+    //     author: 'pacijent'
+    //   },
+    // },
     {
       path: '/pacijent/klinike',
       name: 'pacijent-klinike',
@@ -194,7 +194,7 @@ let router = new Router({
     {
       path: '/pacijent/zdravstveni-karton',
       name: 'pacijent-zdravstveni-karton',
-      component: Pacijenti,
+      component: Karton,
       meta: {
         authen: true,
         author: 'pacijent'

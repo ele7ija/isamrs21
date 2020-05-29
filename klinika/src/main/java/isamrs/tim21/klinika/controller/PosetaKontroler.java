@@ -60,8 +60,8 @@ public class PosetaKontroler {
 	@PutMapping
 	public ResponseEntity<?> updatePoseta(@RequestBody PosetaDTO3 posetaDTO) {
 		
-		Poseta poseta = service.updatePoseta(posetaDTO);
+		List retval = service.updatePoseta(posetaDTO);
 
-		return new ResponseEntity<>(poseta, HttpStatus.OK);
+		return new ResponseEntity<>(retval, HttpStatus.OK);
 	}
 }

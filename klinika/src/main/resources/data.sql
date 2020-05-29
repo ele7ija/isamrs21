@@ -42,6 +42,7 @@ insert into user_authority values(3,4);
 insert into user_authority values(6,4);
 insert into user_authority values(7,2);
 insert into user_authority values(9,1);
+insert into user_authority values(10,1);
 
 insert into sala (id, oznaka, klinika_id) values (1, 'Glavna kardioloska', 1);
 insert into sala (id, oznaka, klinika_id) values (2, 'Sporedna kardioloska', 1);

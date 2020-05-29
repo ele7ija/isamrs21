@@ -98,7 +98,7 @@ public class PacijentService {
 		retval.setPrezime(p.getPacijent().getPrezime());
 
 		retval = pacijentRepository.save(retval);
-		return new CustomResponse<Pacijent>(retval, true, "OK.");
+		return new CustomResponse<Pacijent>(retval, true, "Profil je izmenjen.");
 	}
 	
 }
