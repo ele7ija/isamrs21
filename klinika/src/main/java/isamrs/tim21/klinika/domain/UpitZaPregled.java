@@ -82,7 +82,7 @@ public class UpitZaPregled implements IdentitySerializable {
 	@ManyToOne(fetch=FetchType.EAGER)
 	private Klinika klinika;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JsonSerialize(using=KorisnikSerializer.class)
 	private Pacijent pacijent;
 

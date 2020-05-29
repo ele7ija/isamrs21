@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import isamrs.tim21.klinika.dto.LekarProfilDTO;
 import isamrs.tim21.klinika.dto.SestraProfilDTO;
 import isamrs.tim21.klinika.domain.Lekar;
-import isamrs.tim21.klinika.domain.MedicinskaSestra;
 import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
 import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.services.OsobljeService;

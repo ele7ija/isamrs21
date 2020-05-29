@@ -35,7 +35,7 @@
 <script>
 import {mapGetters} from 'vuex';
 export default {
-  name: "TabelaLekara",
+  name: "TabelaLekaraPrelgedi",
   props: ["index", "currentIndex"],
   data: function(){
     return{

@@ -18,10 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim21.klinika.domain.Klinika;
-import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
 import isamrs.tim21.klinika.dto.KlinikaDTO;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
-import isamrs.tim21.klinika.repository.OsobljeRepository;
 import isamrs.tim21.klinika.services.KlinikaService;
 
 @RestController
@@ -30,9 +28,6 @@ public class KlinikaKontroler {
 	
 	@Autowired
 	private KlinikaRepository klinikaRepository;
-	
-	@Autowired
-	private OsobljeRepository osobljeRepository;
 	
 	@Autowired KlinikaService klinikaService;
 	

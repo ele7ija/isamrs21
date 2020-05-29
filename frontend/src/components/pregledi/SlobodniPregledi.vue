@@ -100,8 +100,8 @@
 import {mapGetters, mapActions} from 'vuex';
 import DatePicker from './DatePicker';
 import TabelaTipovaPregleda from './TabelaTipovaPregleda';
-import TabelaLekara from './TabelaLekara';
-import TabelaSala from './TabelaSala';
+import TabelaLekaraPregledi from './TabelaLekaraPregledi';
+import TabelaSalaPregledi from './TabelaSalaPregledi';
 import PopustPicker from './PopustPicker';
 export default {
   name: "SlobodniPregledi",
@@ -109,8 +109,8 @@ export default {
   components:{
     DatePicker,
     TabelaTipovaPregleda,
-    TabelaLekara,
-    TabelaSala,
+    TabelaLekaraPregledi,
+    TabelaSalaPregledi,
     PopustPicker
   },
   data: function(){
@@ -191,7 +191,7 @@ export default {
         },
         {
           title: "Izaberite vreme pregleda",
-          subtitle: "Izbor vremena pregleda ce uticati na kasniji izbor lekara i sala pregleda",
+          subtitle: "Izbor vremena pregleda ce uticati na kasniji izbor lekara i sala pregleda. Prvi datum od kojeg možete kreirati slobodan termin pregleda je sutrašnji.",
           index: 2,
           componentName: "DatePicker",
           done: false,
@@ -201,7 +201,7 @@ export default {
           title: "Izaberite lekara specijalistu",
           subtitle: "Mozete izabrati samo lekara unutar vase klinike. Lekar mora biti specijalizovan za prethodno odabrani tip pregleda i mora biti slobodan za odabranu satnicu",
           index: 3,
-          componentName: "TabelaLekara",
+          componentName: "TabelaLekaraPregledi",
           done: false,
           unique: 5
         },
@@ -209,7 +209,7 @@ export default {
           title: "Izaberite salu",
           subtitle: "Mozete izabrati samo salu unutar vase klinike. Sala mora biti slobodna za odabranu satnicu",
           index: 4,
-          componentName: "TabelaSala",
+          componentName: "TabelaSalaPregledi",
           done: false,
           unique: 7
         },

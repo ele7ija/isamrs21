@@ -20,7 +20,6 @@ import isamrs.tim21.klinika.domain.Korisnik;
 import isamrs.tim21.klinika.domain.Pacijent;
 import isamrs.tim21.klinika.dto.KorisnikTokenState;
 import isamrs.tim21.klinika.dto.PacijentDTO;
-import isamrs.tim21.klinika.repository.PacijentRepository;
 import isamrs.tim21.klinika.security.TokenUtils;
 import isamrs.tim21.klinika.security.auth.JwtAuthenticationRequest;
 import isamrs.tim21.klinika.services.CustomUserDetailsService;

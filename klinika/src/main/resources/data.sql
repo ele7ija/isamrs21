@@ -14,20 +14,24 @@ insert into klinika (id, naziv, adresa, grad, drzava, opis, slika) values(3, 'Ni
 insert into korisnik (type, email, sifra, ime, prezime, id, enabled, predefinisan) values ('AC', 'admincentra@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'admin', 'admin', 7, 0x01, 1);
 
 -- Administratori klinike
-insert into korisnik (type, klinika_admina_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled) values ('AK', 1, 'admin.admin@yahoo.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'admin_klinike', 'admin_klinike', '1', 'Serbia', 'Novi Sad', 1, 1, 0x01);
+insert into korisnik (type, klinika_admina_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled) values ('AK', 1, 'akisamrs21.1@outlook.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'admin_klinike', 'admin_klinike', '1', 'Serbia', 'Novi Sad', 1, 1, 0x01);
 insert into korisnik (type, klinika_admina_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled) values ('AK', 2, 'admin2.admin2@yahoo.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'admin_klinike', 'admin_klinike', '1', 'Serbia', 'Novi Sad', 1, 4, 0x01);
 insert into korisnik (type, klinika_admina_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled) values ('AK', 1, 'admin3.admin3@yahoo.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'admin_klinike', 'admin_klinike', '1', 'Serbia', 'Novi Sad', 1, 5, 0x01);
 -- Pacijenti
 insert into korisnik (type, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled) values ('PA', 'millan.djuric@hotmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'Milan', 'Djuric', '1', 'Serbia', 'Novi Sad', 2, 2, 0x01);
 insert into korisnik (type, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled) values ('PA', 'isatim21noreply@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'Miki', 'Veliki', '1', 'Serbia', 'Novi Sad', 1, 9, 0x01);
 -- Lekari
-insert into korisnik (type, klinika_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled, broj_specijalizacija) values ('LE', 1, 'lekar@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'Miodrag', 'Lazic', '1', 'Serbia', 'Nis', 3, 3, 0x01, 2);
+insert into korisnik (type, klinika_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled, broj_specijalizacija) values ('LE', 1, 'lekarisamrs21.1@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'Miodrag', 'Lazic', '1', 'Serbia', 'Nis', 3, 3, 0x01, 2);
+insert into korisnik (type, klinika_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled, broj_specijalizacija) values ('LE', 1, 'lekarisamrs21.2@outlook.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'Aca', 'Acic', '1', 'Serbia', 'Nis', 3, 10, 0x01, 2);
+insert into korisnik (type, klinika_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled, broj_specijalizacija) values ('LE', 1, 'lekarisamrs21.3@outlook.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'Ana', 'Anic', '1', 'Serbia', 'Nis', 3, 11, 0x01, 2);
 insert into korisnik (type, klinika_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled, broj_specijalizacija) values ('LE', 2, 'lekar2@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'Marko', 'Mitrovic', '1', 'Serbia', 'Novi Sad', 6, 6, 0x01, 1);
 insert into korisnik (type, klinika_id, email, sifra, ime, prezime, broj_telefona, drzava, grad, jbo, id, enabled, broj_specijalizacija) values ('LE', 3, 'lekar3@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', 'Ognjen', 'Peric', '1', 'Serbia', 'Novi Sad', 8, 8, 0x01, 2);
 
 insert into radni_kalendar(dnevno_radno_vreme, medicinsko_osoblje_id) values(3,3);
 insert into radni_kalendar(dnevno_radno_vreme, medicinsko_osoblje_id) values(6,6);
 insert into radni_kalendar(dnevno_radno_vreme, medicinsko_osoblje_id) values(8,8);
+insert into radni_kalendar(dnevno_radno_vreme, medicinsko_osoblje_id) values(8,10);
+insert into radni_kalendar(dnevno_radno_vreme, medicinsko_osoblje_id) values(8,11);
 
 -- sablon: values (korisnik_id, sifra_entiteta)
 insert into user_authority values(1,3);

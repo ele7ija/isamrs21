@@ -63,8 +63,13 @@
       </template>
       <template v-slot:expanded-item="{ headers, item }">
         <td :colspan="headers.length">
-          <Pregledi :pregledi="getPreglediLekara(item)" class="my-5" />
-          <ZahteviZaOdsustvo :zahtevi="getZahteviZaOdsustvo(item)" class="my-5" />
+          <span v-if="isSpecijalizovan(item, upit.tipPregleda.value.id)">
+            <Pregledi :pregledi="getPreglediLekara(item)" class="my-5" />
+            <ZahteviZaOdsustvo :zahtevi="getZahteviZaOdsustvo(item)" class="my-5" />
+          </span>
+          <span v-else>
+            Lekar nije specijalizovan za ovaj tip pregleda
+          </span>
         </td>
       </template>
     </v-data-table>
@@ -149,7 +154,8 @@ export default {
           ime: lekar.ime,
           prezime: lekar.prezime,
           email: lekar.email,
-          selected: selected
+          selected: selected,
+          tipovi_pregleda: lekar.tipovi_pregleda
         };
         if(this.slobodniLekari.filter(x => x.id == lekar.id).length == 1){          
           temp.slobodan = 'da';
@@ -255,7 +261,10 @@ export default {
         }
       }
       return null;
-    } 
+    },
+    isSpecijalizovan(lekar, idTipaPregleda){
+      return lekar.tipovi_pregleda.filter(x => x.id == idTipaPregleda).length == 1;
+    }
   },
 }
 </script>

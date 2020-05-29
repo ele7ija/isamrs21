@@ -185,6 +185,7 @@
                         v-model="datetimeStart"
                         label="Datum i vreme početka"
                         dateFormat="dd.MM.yyyy"
+                        :datePickerProps="{min: new Date(new Date().getTime()+1000*60*60*24).toISOString()}"
                         :key="datePickerKey"
                       >
                         <template slot="actions" slot-scope="{ parent }">
