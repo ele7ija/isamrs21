@@ -391,7 +391,7 @@ export default {
               pocetakPregleda: this.datetimeStart,
               krajPregleda: this.$utility.stringToDate(this.datetimeEnd),
               datumKreiranjaUpita: new Date(),
-              pacijent: this.zdravstveniKarton.pacijent.email,
+              pacijent: this.getZdravstveniKarton.pacijent.email,
               lekar: this.profil.id,
               tipPregleda: this.tipPregleda.id,
               klinika: this.profil.klinika.id,
