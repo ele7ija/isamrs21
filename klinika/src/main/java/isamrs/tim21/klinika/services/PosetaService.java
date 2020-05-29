@@ -224,7 +224,7 @@ public class PosetaService {
 		return nerPosete;
 	}
 
-	public Poseta updatePoseta (PosetaDTO3 posetaDTO) {
+	public List<?> updatePoseta (PosetaDTO3 posetaDTO) {
 		Poseta poseta = posetaRepository.findById(posetaDTO.getPosetaId()).orElse(null);
 		poseta.setBolest(posetaDTO.getBolest());
 		poseta.setLekovi(posetaDTO.getLekovi());
@@ -237,6 +237,9 @@ public class PosetaService {
 		k.setVisina(posetaDTO.getVisina());
 		k.setTezina(posetaDTO.getTezina());
 		zdravstveniKartonRepository.save(k);
-		return poseta;
+		List lista = new ArrayList();
+		lista.add(poseta);
+		lista.add(k);
+		return  lista;
 	}
 }

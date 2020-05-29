@@ -29,8 +29,9 @@
     <template v-slot:expanded-item="{ headers, item }">
       <td :colspan="headers.length">
         <!-- Milane ovde mozes da vidis da ucitava lepo item.bolest, ali ne moze item.bolest.naziv iz nekog razloga -->
-        {{item.bolest}}
-        <v-text-field v-model="item.bolest.naziv" readonly label="Utvrđena bolest" class="mt-5"/>
+        <div v-if="null != item.bolest">
+          <v-text-field v-model="item.bolest.naziv" readonly label="Utvrđena bolest" class="mt-5"/>
+        </div>
         <v-textarea
           outlined
           :value="item.opis"

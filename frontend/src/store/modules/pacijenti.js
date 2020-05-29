@@ -6,6 +6,7 @@ const state = {
   odabraniPacijent: null, //pacijent kojem je trenutno pristupio lekar,
   lekarovPacijent: false, //da li lekar sme da pristupi zdravstvenom kartonu pacijenta?
   posetePacijenta: [],
+  kartonPacijenta: [],
 
 }
 const getters = {
@@ -23,7 +24,8 @@ const getters = {
     diff/60000;
     // return (diff / 60000) <= 15; //pregled moze da se zapocne 15 minuta ranije
      return true; //radi testiranja
-  }
+  },
+  getZdravstveniKarton: (state) => state.kartonPacijenta,
 }
 const actions = {
   async loadPacijenti({commit}){
@@ -48,6 +50,7 @@ const actions = {
     });
   },
 
+
   loadPosete({getters, commit}){
     var pacijent = getters.getOdabraniPacijent;
     var posete = pacijent.zdravstveniKarton.posete;
@@ -56,9 +59,19 @@ const actions = {
 
   async updatePoseta({commit}, poseta){
     let response = await posetaAPI.updatePoseta(poseta);
-    // u response.data je updateovana poseta
-    commit("updatePosetePacijenta", response.data);
-  }
+    // u response.data je updateovana poseta i updateovan karton;
+    console.log(response.data);
+    var retPoseta = response.data[0];
+    var retKarton = response.data[1];
+    commit("updatePosetePacijenta", retPoseta);
+    commit("setZdravstveniKarton", retKarton);
+  },
+
+  async loadZdravstveniKarton({getters, commit}){
+    var pacijent = getters.getOdabraniPacijent;
+    var karton = pacijent.zdravstveniKarton;
+    commit('setZdravstveniKarton', karton);
+  },
 
 }
 const mutations = {
@@ -71,7 +84,8 @@ const mutations = {
     let staraPosetaIndex = state.posetePacijenta.findIndex( poseta=> poseta.id == updateovanaPoseta.id);
     state.posetePacijenta.splice(staraPosetaIndex, 1);
     state.posetePacijenta.splice(staraPosetaIndex, 0, updateovanaPoseta);
-  }
+  },
+  setZdravstveniKarton: (state, karton) => state.kartonPacijenta = karton,
 }
 
 export default{

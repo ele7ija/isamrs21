@@ -29,7 +29,7 @@
         </template>
         <template v-slot:item.actions="{ item }">
 
-          <FormaIzvestajPoseta :posetaId="item.id" :zdravstveniKarton="item.zdravstveniKarton" />
+          <FormaIzvestajPoseta :posetaId="item.id"/>
         </template>
 
       </v-data-table>
@@ -111,7 +111,6 @@ export default {
             tipPregleda: x.pregled.tipPregleda.naziv,
             bolest: x.bolest,
             opis: x.opis,
-            zdravstveniKarton : x.zdravstveniKarton,
           };
         });
       }else
