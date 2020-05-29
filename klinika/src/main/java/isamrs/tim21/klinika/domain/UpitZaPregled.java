@@ -23,7 +23,6 @@ import isamrs.tim21.klinika.dto.UpitZaPregledDTO;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
 import isamrs.tim21.klinika.jsonSerialize.KorisnikSerializer;
-import isamrs.tim21.klinika.services.PacijentService;
 
 /** 
  * Pacijent pravi UpitZaPregled kada zeli da rezervise pregled.
