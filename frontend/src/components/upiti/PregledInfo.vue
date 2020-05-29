@@ -44,6 +44,16 @@
           <v-col cols=12 md="4">
             <p class="mt-6 ml-4">Cena: {{ukupnaCena}}</p>
           </v-col>
+          <v-col cols="12" md="12" v-if="upit.vrsta=='operacija'">
+            <v-select
+              label="Dodatni lekari za operaciju"
+              :items="_dodatniLekari"
+              v-model="dodatniLekari"
+              chips
+              deletable-chips
+              multiple
+            ></v-select>
+          </v-col>
         </v-row>
         <v-btn color="primary" @click="add()" :disabled="!isFormValid">Odobri upit</v-btn>
         <v-btn class="ml-3" @click="close()">Odustani</v-btn>
@@ -72,6 +82,7 @@ export default {
         appendIcon: 'event'
       },
       popust: 0,
+      dodatniLekari: [],
       isFormValid: true,
       dialog1: false
     };
@@ -85,6 +96,15 @@ export default {
       pregledi: "preglediAdmin/getPreglediKlinike",
       lekari: "osoblje/getLekari",
     }),
+    _dodatniLekari(){
+      let filteredLekari = this.lekari.filter(x => x.id != this.upit.lekar.value.id && this.isLekarValidMethod(x, false));
+      return filteredLekari.map(x => {
+        return{
+          text: `${x.ime} ${x.prezime}`,
+          value: x
+        };
+      });
+    },
     ukupnaCena(){
       return this.upit.cena - 0.01 * this.popust * this.upit.cena;
     },
@@ -105,12 +125,12 @@ export default {
     },
     isLekarValid(){
       let lekar = this.upit.lekar.value;
-      return this.isLekarValidMethod(lekar);
+      return this.isLekarValidMethod(lekar, true); 
     },
     slobodniLekari(){
       let retval = [];
       for(let lekar of this.lekari){
-        if(this.isLekarValidMethod(lekar)){
+        if(this.isLekarValidMethod(lekar, true)){
           retval.push(lekar);
         }
       }
@@ -136,11 +156,11 @@ export default {
     }
   },
   methods: {
-    isLekarValidMethod(lekar){
+    isLekarValidMethod(lekar, proveriSpecijalizacije){
       let tipPregleda = this.upit.tipPregleda.value;
 
       //proveri da li je lekar specijalizovan za ovaj tip pregleda
-      if(lekar.tipovi_pregleda.filter(x => x.id == tipPregleda.id).length == 0)
+      if(proveriSpecijalizacije && lekar.tipovi_pregleda.filter(x => x.id == tipPregleda.id).length == 0)
         return false;
       
       //proveri da li je lekar slobodan za ovo vreme(u odnosu na pregled)
@@ -204,7 +224,7 @@ export default {
       let obj = {
         popust: this.popust,
         konacnaCena: this.ukupnaCena,
-        dodatniLekari: [] //ZA SAD OVAKO
+        dodatniLekari: this.dodatniLekari
       };
       this.$emit('incStep', obj);
     }

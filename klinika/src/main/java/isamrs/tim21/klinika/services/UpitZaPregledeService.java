@@ -19,7 +19,6 @@ import isamrs.tim21.klinika.domain.Pregled;
 import isamrs.tim21.klinika.domain.Sala;
 import isamrs.tim21.klinika.domain.TipPregleda;
 import isamrs.tim21.klinika.domain.UpitZaPregled;
-import isamrs.tim21.klinika.domain.ZahtevZaGodisnji;
 import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.dto.UpitZaPregledDTO;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
@@ -121,7 +120,8 @@ public class UpitZaPregledeService {
 		}
 		upit = upitZaPregledRepository.save(upit);
 		if (upit.getOdobren()) {
-			mailService.upitOdobren(upit);
+			mailService.upitOdobren(upit, false);
+			mailService.obavestiLekara(upit, upit.getLekar(), true, false);
 		}
 		else{
 			mailService.upitOdbijen(upit);
@@ -329,6 +329,10 @@ public class UpitZaPregledeService {
 			u.setPotvrdjen(false);
 			u.setPacijentObradio(true);
 			upitZaPregledRepository.save(u);
+			mailService.odustajanjeOdRezervacije(u, u.getUnapredDefinisaniPregled().getLekar());
+			for(Lekar lekar : u.getUnapredDefinisaniPregled().getDodatniLekari()){
+				mailService.odustajanjeOdRezervacije(u, lekar);
+			}
 			return new CustomResponse<UpitZaPregled>(u, true, "Upit je izbrisan.");
 		}
 		catch (NoSuchElementException e){
@@ -417,7 +421,17 @@ public class UpitZaPregledeService {
 			pregledRepository.save(pregled);
 		}
 		if (upit.getOdobren()) {
-			mailService.upitOdobren(upit);
+			UpitZaPregled toSend = upit;
+			boolean izmenjen = false;
+			if(upit.getIzmenjeniPregled() != null){
+				toSend = upit.getIzmenjeniPregled();
+				izmenjen = true;
+			}
+			mailService.upitOdobren(toSend, izmenjen);
+			mailService.obavestiLekara(toSend, pregled.getLekar(), true, izmenjen);
+			for(Lekar l : pregled.getDodatniLekari()){
+				mailService.obavestiLekara(toSend, l, false, izmenjen);
+			}
 		}
 		else{
 			mailService.upitOdbijen(upit);

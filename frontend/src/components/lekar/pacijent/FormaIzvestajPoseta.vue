@@ -38,130 +38,198 @@
             ></v-textarea>
         </v-card-text> 
 
-        <v-container>
-        <v-card>
-        <v-card-title class="green lighten-4 justify-center">
-          Izbor dijagnoze i lekova
-        </v-card-title>
-        <!-- izbor dijagnoze -->
-        <v-card-text>
-          <v-data-table
-            :headers="headers"
-            :items="dijagnozaItems"
-            :search="searchDijagnoza"
-            v-model="newItem.selectedDijagnoza"
-            :single-select="true"
-            item-key="sifra"
-            show-select
-            class="elevation-2">
-            <template v-slot:top>
-              <v-toolbar flat color="white">
-                <v-toolbar-title>Izbor dijagnoze</v-toolbar-title>
-                <v-spacer></v-spacer>       
-                <!-- search bar  -->
-                <v-text-field
-                  v-model="searchDijagnoza"
-                  append-icon="mdi-magnify"
-                  label="Search"
-                  single-line
-                  hide-details
-                ></v-text-field>
-              </v-toolbar>
-            </template>
+        <v-container fluid class="mt-n8">
+          <v-card>
+            <v-card-title class="green lighten-2 justify-center">
+              Izbor dijagnoze i lekova
+            </v-card-title>
+            <v-card-text>
+              <v-row>
+                <v-col cols="12" md="6">
+                  <!-- izbor dijagnoze -->
+                  <v-data-table
+                    :headers="headers"
+                    :items="dijagnozaItems"
+                    :search="searchDijagnoza"
+                    v-model="newItem.selectedDijagnoza"
+                    :single-select="true"
+                    item-key="sifra"
+                    show-select
+                    class="elevation-2">
+                    <template v-slot:top>
+                      <v-toolbar flat color="green lighten-4">
+                        <v-toolbar-title>Izbor dijagnoze</v-toolbar-title>
+                        <v-spacer></v-spacer>       
+                        <!-- search bar  -->
+                        <v-text-field
+                          v-model="searchDijagnoza"
+                          append-icon="mdi-magnify"
+                          label="Search"
+                          single-line
+                          hide-details
+                        ></v-text-field>
+                      </v-toolbar>
+                    </template>
 
-            <!-- tipovi -->
-            <template v-slot:item.tip = "{ item }">
-              <v-chip :style="getStyle(item.tip)" light>
-                {{item.tip}}
-              </v-chip>
-            </template>
-          </v-data-table>
-        </v-card-text>
-        <!-- izbor lekova -->
-        <v-card-text>
-          <v-data-table
-            :headers="headers"
-            :items="lekItems"
-            :search="searchLekova"
-            v-model="newItem.selectedLekovi"
-            :single-select="false"
-            item-key="sifra"
-            show-select
-            class="elevation-2">
-            <template v-slot:top>
-              <v-toolbar flat color="white">
-                <v-toolbar-title>Izbor lekova</v-toolbar-title>
-                <v-spacer></v-spacer>       
-                <!-- search bar  -->
-                <v-text-field
-                  v-model="searchLekova"
-                  append-icon="mdi-magnify"
-                  label="Search"
-                  single-line
-                  hide-details
-                ></v-text-field>
-              </v-toolbar>
-            </template>
+                    <!-- tipovi -->
+                    <template v-slot:item.tip = "{ item }">
+                      <v-chip :style="getStyle(item.tip)" light>
+                        {{item.tip}}
+                      </v-chip>
+                    </template>
+                  </v-data-table>
+                </v-col>
+                <!-- izbor lekova -->
+                <v-col cols="12" md="6">
+                  <v-data-table
+                    :headers="headers"
+                    :items="lekItems"
+                    :search="searchLekova"
+                    v-model="newItem.selectedLekovi"
+                    :single-select="false"
+                    item-key="sifra"
+                    show-select
+                    class="elevation-2">
+                    <template v-slot:top>
+                      <v-toolbar flat color="green lighten-4">
+                        <v-toolbar-title>Izbor lekova</v-toolbar-title>
+                        <v-spacer></v-spacer>       
+                        <!-- search bar  -->
+                        <v-text-field
+                          v-model="searchLekova"
+                          append-icon="mdi-magnify"
+                          label="Search"
+                          single-line
+                          hide-details
+                        ></v-text-field>
+                      </v-toolbar>
+                    </template>
 
-            <!-- tipovi -->
-            <template v-slot:item.tip = "{ item }">
-              <v-chip :style="getStyle(item.tip)" light>
-                {{item.tip}}
-              </v-chip>
-            </template>
-          </v-data-table>
-        </v-card-text>
-        </v-card>
+                    <!-- tipovi -->
+                    <template v-slot:item.tip = "{ item }">
+                      <v-chip :style="getStyle(item.tip)" light>
+                        {{item.tip}}
+                      </v-chip>
+                    </template>
+                  </v-data-table>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
         </v-container>
 
-        <!-- izmena zdravstvenog kartona -->
-        <v-container>
-        <v-card class="justify-center mx-auto" max-width="500px">
-          <v-card-title class="green lighten-4 justify-center">
-            Izmena zdravstvenog kartona
-          </v-card-title>
-          <v-card-text>
-            <v-text-field
-            v-model="newItem.dioptrija"
-            label="dioptrija"
-            ></v-text-field>
-          </v-card-text>
-
-          <v-card-text>
-            <v-select
-            v-model="newItem.krvnaGrupa"
-            :items="krvneGrupe"
-            label="krvna grupa"
-            chips
-            ></v-select>
-          </v-card-text>
-
-          <v-card-text>
-            <v-text-field
-            v-model="newItem.visina"
-            label="visina"
-            hint="visina u cm"
-            type="number"
-            min="0"
-            max="300"
-            :rules="visinaRule"
-            ></v-text-field>
-          </v-card-text>
-
-          <v-card-text>
-          <v-text-field
-            v-model="newItem.tezina"
-            label="težina"
-            type="number"
-            hint="težina u kg"
-            :rules="tezinaRule"
-            ></v-text-field>
-          </v-card-text>
-          
-        </v-card>
+        <v-container fluid>
+          <v-card>
+            <v-card-title class="blue lighten-2 justify-center">
+              Zdravstveni karton i dodatni pregledi ili operacije
+            </v-card-title>
+            <v-card-text>
+              <v-row>
+                <v-col cols="12" md="6">
+                  <!-- izmena zdravstvenog kartona -->
+                  <v-card class="justify-center mx-auto" max-width="500px">
+                    <v-card-title class="blue lighten-4 justify-center">
+                      Izmena zdravstvenog kartona
+                    </v-card-title>
+                    <v-card-text class="mt-2">
+                      <v-text-field
+                      v-model="newItem.dioptrija"
+                      label="dioptrija"
+                      ></v-text-field>
+                    </v-card-text>
+                    <v-card-text class="mt-n8">
+                      <v-select
+                      v-model="newItem.krvnaGrupa"
+                      :items="krvneGrupe"
+                      label="krvna grupa"
+                      chips
+                      ></v-select>
+                    </v-card-text>
+                    <v-row class="mt-n10">
+                      <v-col cols="12" md="6">
+                        <v-card-text>
+                          <v-text-field
+                          v-model="newItem.visina"
+                          label="visina"
+                          hint="visina u cm"
+                          type="number"
+                          min="0"
+                          max="300"
+                          :rules="visinaRule"
+                          ></v-text-field>
+                        </v-card-text>
+                      </v-col>
+                      <v-col cols="12" md="6">
+                        <v-card-text>
+                        <v-text-field
+                          v-model="newItem.tezina"
+                          label="težina"
+                          type="number"
+                          hint="težina u kg"
+                          :rules="tezinaRule"
+                          ></v-text-field>
+                        </v-card-text>
+                      </v-col>
+                    </v-row>
+                  </v-card>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <!-- zakazivanje dodatnog pregleda ili operacije @Milan -->
+                  <v-card class="justify-center mx-auto" max-width="500px">
+                    <v-card-title class="blue lighten-4 justify-center">
+                      Zakazivanje dodatnih pregleda i operacija
+                    </v-card-title>
+                    <v-card-text>
+                      <v-datetime-picker
+                        class="mt-1"
+                        v-model="datetimeStart"
+                        label="Datum i vreme početka"
+                        dateFormat="dd.MM.yyyy"
+                        :datePickerProps="{min: new Date(new Date().getTime()+1000*60*60*24).toISOString()}"
+                        :key="datePickerKey"
+                      >
+                        <template slot="actions" slot-scope="{ parent }">
+                          <v-btn color="error darken-1" @click="parent.clearHandler">Clear</v-btn>
+                          <v-btn color="success darken-1" @click="parent.okHandler">Done</v-btn>
+                        </template>
+                      </v-datetime-picker>
+                      <v-text-field
+                        v-model="datetimeEnd"
+                        label="Datum i vreme kraja"
+                        readonly
+                      ></v-text-field>
+                      <v-select
+                        v-model="tipPregleda"
+                        :items="_specijalizacijeLekara"
+                        label="Tip pregleda"
+                        chips
+                      >
+                        <template v-slot:item="{item}">
+                          <v-icon v-if="item.value.vrsta=='pregled'" class="mr-2">
+                            mdi-magnify
+                          </v-icon>
+                          <v-icon v-else class="mr-2">
+                            mdi-knife
+                          </v-icon>
+                          {{ item.text }}
+                        </template>
+                      </v-select>
+                    </v-card-text> 
+                    <v-card-actions>
+                      <v-btn
+                        @click="reset"
+                        color="red darken-1"
+                        class="mt-n8 ml-2"
+                      >
+                        Resetuj
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
         </v-container>
-
-        <!-- zakazivanje dodatnog poregleda ili operacije @Milan -->
         
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -188,6 +256,10 @@ export default {
   props: ["posetaId"],
   data () {
     return {
+      datetimeStart: null,
+      tipPregleda: null,
+      datePickerKey: 0,
+
       isFormValid: true,
       dialog: false,
       searchDijagnoza: '',
@@ -239,7 +311,30 @@ export default {
       pregledMozeDaSeZapocne: 'pacijenti/pregledMozeDaSeZapocne',
       getDijagnozeLekovi: 'sifarnik/getDijagnozeLekovi',
       getZdravstveniKarton: 'pacijenti/getZdravstveniKarton',
+      specijalizacijeLekara: 'pacijenti/getSpecijalizacijeLekara',
+      profil: 'profil/getProfil'
     }),
+
+    datetimeEnd() {
+      if(this.tipPregleda == null || this.datetimeStart == null)
+        return null;
+      let temp = null;
+      temp = new Date(this.datetimeStart.getTime() + this.tipPregleda.trajanjeMinuti*60000);
+      let day = temp.getDate();
+      let month = temp.getMonth() + 1;
+      let hour = temp.getHours();
+      let minute = temp.getMinutes();
+      if((String(day)).length==1)
+        day='0'+day;
+      if((String(month)).length==1)
+        month='0'+month;
+      if((String(hour)).length==1)
+        hour='0'+hour;
+      if((String(minute)).length==1)
+        minute='0'+minute;
+
+      return `${day}.${month}.${temp.getFullYear()} ${hour}:${minute}`;
+    },
 
     dijagnozaItems: function () {
       var dijagnoze = this.getDijagnozeLekovi.filter(
@@ -257,6 +352,16 @@ export default {
       );
       return lekovi;
     },
+    _specijalizacijeLekara(){
+      if(!this.specijalizacijeLekara)
+        return [];
+      return this.specijalizacijeLekara.map(x => {
+        return{
+          text: `${x.naziv}`,
+          value: x
+        };
+      });
+    }
   },
   created(){
     this.fetchSifarnikData();
@@ -266,6 +371,7 @@ export default {
     ...mapActions({
       fetchSifarnikData: 'sifarnik/fetchDijagnozeLekovi',
       updatePoseta: 'pacijenti/updatePoseta',
+      addUpitZaPregled: 'upitZaPregled/kreirajUpit'
     }),
 
     zapocni(){
@@ -275,7 +381,29 @@ export default {
     save(){
       this.newItem.posetaId = this.posetaId;
       this.newItem.selectedDijagnoza = this.newItem.selectedDijagnoza[0];
-      this.updatePoseta(this.newItem);
+      this.updatePoseta(this.newItem).then(
+        () => {
+          //rezervisi pregled
+          if(this.datetimeEnd){
+            let upitZaPregled = {
+              odobren: false,
+              potvrdjen: false,
+              pocetakPregleda: this.datetimeStart,
+              krajPregleda: this.$utility.stringToDate(this.datetimeEnd),
+              datumKreiranjaUpita: new Date(),
+              pacijent: this.zdravstveniKarton.pacijent.email,
+              lekar: this.profil.id,
+              tipPregleda: this.tipPregleda.id,
+              klinika: this.profil.klinika.id,
+              opis: 'Lekarov upit',
+              lekarVerzija: this.profil.version,
+              tipPregledaVerzija: this.tipPregleda.version
+            };
+            this.addUpitZaPregled(upitZaPregled);
+          }
+        },
+        null
+      );
       this.close();
     },
     resetForm(){
@@ -313,11 +441,41 @@ export default {
       this.newItem.krvnaGrupa = k.krvnaGrupa;
       this.newItem.visina = k.visina;
       this.newItem.tezina = k.tezina;
+    },
+    setKraj(){
+      if(this.tipPregleda == null || this.datetimeStart == null)
+        return;
+      let temp = null;
+      temp = new Date(this.datetimeStart.getTime() + this.tipPregleda.trajanjeMinuti*60000);
+      let day = temp.getDate();
+      let month = temp.getMonth() + 1;
+      let hour = temp.getHours();
+      let minute = temp.getMinutes();
+      if((String(day)).length==1)
+        day='0'+day;
+      if((String(month)).length==1)
+        month='0'+month;
+      if((String(hour)).length==1)
+        hour='0'+hour;
+      if((String(minute)).length==1)
+        minute='0'+minute;
+
+      this.datetimeEnd=`${day}.${month}.${temp.getFullYear()} ${hour}:${minute}`;
+    },
+    reset(){
+      this.tipPregleda = null;
+      this.datetimeStart = null;
+      this.datePickerKey += 1;
     }
   }
 }
 </script>
 
 <style>
-
+.pregled{
+  background-color: #E6EE9C;
+}
+.operacija{
+  background-color: #FFAB91;
+}
 </style>
