@@ -143,7 +143,7 @@ public class MailService {
       upit.getKlinika().getAdresa() + "\n" + 
       "\tVreme: " + upit.getPocetakPregleda().toString() + " - " + 
       upit.getKrajPregleda().toString() + "\n" +
-      "\nPacijent: " + upit.getPacijent().getIme() + " " + upit.getPacijent().getPrezime();
+      "\tPacijent: " + upit.getPacijent().getIme() + " " + upit.getPacijent().getPrezime();
     poruka += ".\n\nSve najbolje Vam želi klinika XYZ."; 
     SimpleMailMessage mailToSend = new SimpleMailMessage();
     mailToSend.setTo(lekar.getEmail());
