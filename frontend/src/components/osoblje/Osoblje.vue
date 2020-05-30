@@ -352,7 +352,7 @@ export default {
         email: '',
         sifra: '',
         pozicija: '',
-        tipoviPregleda: [],
+        tipovi_pregleda: [],
         radniKalendar: {
           dnevnoRadnoVremeSati: 8
         }
@@ -367,7 +367,10 @@ export default {
     save(){
       this.newItem.pozicija = this.newItem.pozicija == 'sestra' ? 'medicinska sestra' : 'lekar';
       this.newItem.tipovi_pregleda = this.newItem.tipovi_pregleda.map(x => {return {id: x.id}});
-      this.addMedicinskaOsoba(this.newItem);
+      this.addMedicinskaOsoba(this.newItem).then(null, (error) => {
+        this.snackbarText = error;
+        this.snackbar = true;
+      });
       this.close();
     },
 

@@ -33,11 +33,7 @@ public class OsobljeKontroler {
 	@GetMapping
 	public ResponseEntity<List<MedicinskoOsoblje>> getAllOsoblje(@PathVariable("idKlinike") Long idKlinike){
 		List<MedicinskoOsoblje> osoblje = osobljeService.findAllByIdKlinike(idKlinike);
-		if(osoblje == null){
-			return new ResponseEntity<List<MedicinskoOsoblje>>(HttpStatus.NOT_FOUND);
-		}else{
-			return new ResponseEntity<List<MedicinskoOsoblje>>(osoblje, HttpStatus.OK);
-		}
+		return new ResponseEntity<List<MedicinskoOsoblje>>(osoblje, HttpStatus.OK);
 	}
 
 	@GetMapping(path="/lekari")
@@ -46,25 +42,12 @@ public class OsobljeKontroler {
 		return new ResponseEntity<CustomResponse<List<Lekar>>>(lekari, HttpStatus.OK);
 	}
 	
-	@GetMapping(path="/{idOsoblja}")
-	public ResponseEntity<MedicinskoOsoblje> getOsoblje(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idOsoblja") Long idOsoblja){
-		MedicinskoOsoblje osoba = osobljeService.findByIdKlinikeAndById(idKlinike, idOsoblja);
-		if(osoba == null){
-			return new ResponseEntity<MedicinskoOsoblje>(HttpStatus.NOT_FOUND);
-		}else{
-			return new ResponseEntity<MedicinskoOsoblje>(osoba, HttpStatus.OK);
-		}
-	}
-	
 	@PostMapping
 	@PreAuthorize("hasAuthority('admin-klinike')")
-	public ResponseEntity<MedicinskoOsoblje> addOsoblje(@PathVariable("idKlinike") Long idKlinike, @RequestBody MedicinskoOsoblje osobljeToAdd){
+	public ResponseEntity<CustomResponse<MedicinskoOsoblje>> addOsoblje(@PathVariable("idKlinike") Long idKlinike, @RequestBody MedicinskoOsoblje osobljeToAdd){
 		MedicinskoOsoblje osoblje = osobljeService.add(idKlinike, osobljeToAdd);
-		if(osoblje == null){
-			return new ResponseEntity<MedicinskoOsoblje>(HttpStatus.NOT_FOUND);
-		}else{
-			return new ResponseEntity<MedicinskoOsoblje>(osoblje, HttpStatus.OK);
-		}
+		return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(
+			new CustomResponse<MedicinskoOsoblje>(osoblje, true, "OK"), HttpStatus.OK);
 	}
 	
 	@PutMapping(value="/specijalnosti/{idOsoblja}")
@@ -72,15 +55,8 @@ public class OsobljeKontroler {
 	public ResponseEntity<CustomResponse<MedicinskoOsoblje>> addSpecijalnostOsoblja(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idOsoblja") Long idOsoblja, @RequestBody List<Long> idTipovaPregleda,
 			@RequestParam(name="version") Long version){
-		ResponseEntity<CustomResponse<MedicinskoOsoblje>> retval = null;
-		try{
-			retval = osobljeService.updateSpecijalnosti(idKlinike, idOsoblja, idTipovaPregleda, version); 
-		}catch(Exception e){
-			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(
-					new CustomResponse<MedicinskoOsoblje>(null, false, "Greska: Verzija podatka je zastarela. Osvezite stranicu"),
-					HttpStatus.OK);
-		}
-		return retval;
+		CustomResponse<MedicinskoOsoblje> retval = osobljeService.addSpecijalnostOsoblja(idKlinike, idOsoblja, idTipovaPregleda, version);
+		return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(retval, HttpStatus.OK);
 	}
 	
 	@PutMapping(value="lekar/profil")
@@ -115,30 +91,16 @@ public class OsobljeKontroler {
 	public ResponseEntity<CustomResponse<MedicinskoOsoblje>> deleteSpecijalnostOsoblja(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idOsoblja") Long idOsoblja, @PathVariable("idTipaPregleda") Long idTipaPregleda,
 			@RequestParam(name="version") Long version){
-		ResponseEntity<CustomResponse<MedicinskoOsoblje>> retval = null;
-		try{
-			retval = osobljeService.deleteSpecijalnostOsoblja(idKlinike, idOsoblja, idTipaPregleda, version); 
-		}catch(Exception e){
-			return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(
-					new CustomResponse<MedicinskoOsoblje>(null, false, "Greska: Verzija podatka je zastarela. Osvezite stranicu"),
-					HttpStatus.OK);
-		}
-		return retval;
+		CustomResponse<MedicinskoOsoblje> retval = osobljeService.deleteSpecijalnostOsoblja(idKlinike, idOsoblja, idTipaPregleda, version);
+		return new ResponseEntity<CustomResponse<MedicinskoOsoblje>>(retval, HttpStatus.OK);
 	}
 	
 	@DeleteMapping(value="/{idOsoblja}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<Boolean>> deleteOsoblje(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idOsoblja") Long idOsoblja,
 			@RequestParam(name="version") Long version){	
-		ResponseEntity<CustomResponse<Boolean>> retval = null;
-		try{
-			retval = osobljeService.deleteMain(idKlinike, idOsoblja, version); 
-		}catch(Exception e){
-			return new ResponseEntity<CustomResponse<Boolean>>(
-					new CustomResponse<Boolean>(true, false, "Greska: Verzija podatka je zastarela. Osvezite stranicu"),
-					HttpStatus.OK);
-		}
-		return retval;
+		CustomResponse<Boolean> retval =  osobljeService.delete(idKlinike, idOsoblja, version);
+		return new ResponseEntity<CustomResponse<Boolean>>(retval, HttpStatus.OK);
 	}
 	
 }

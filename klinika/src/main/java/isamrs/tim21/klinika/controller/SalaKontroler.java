@@ -30,21 +30,7 @@ public class SalaKontroler {
 	@GetMapping
 	public ResponseEntity<List<Sala>> getAllSale(@PathVariable("idKlinike") Long idKlinike){
 		List<Sala> sale = salaService.getAllSale(idKlinike);
-		if(sale == null){
-			return new ResponseEntity<List<Sala>>(HttpStatus.NOT_FOUND);
-		}else{
-			return new ResponseEntity<List<Sala>>(sale, HttpStatus.OK);
-		}
-	}
-
-	@GetMapping(value="/{idSale}")
-	public ResponseEntity<Sala> getSala(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idSale") Long idSale){
-		Sala sala = salaService.getSala(idKlinike, idSale);
-		if(sala == null){
-			return new ResponseEntity<Sala>(HttpStatus.NOT_FOUND);
-		}else{
-			return new ResponseEntity<Sala>(sala, HttpStatus.OK);
-		}
+		return new ResponseEntity<List<Sala>>(sale, HttpStatus.OK);
 	}
 	
 	@PostMapping
@@ -57,14 +43,7 @@ public class SalaKontroler {
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<Sala>> updateSala(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idSale") Long idSale, @RequestBody Sala salaToChange){
-		ResponseEntity<CustomResponse<Sala>> retval = null;
-		try{
-			retval = salaService.update(idKlinike, idSale, salaToChange);
-		}catch(Exception e){
-			return new ResponseEntity<CustomResponse<Sala>>(
-					new CustomResponse<Sala>(null, false, "Greska: Vasa verzija je zastarela. Osvezite stranicu"),
-					HttpStatus.OK);
-		}
+		ResponseEntity<CustomResponse<Sala>> retval = salaService.update(idKlinike, idSale, salaToChange);
 		return retval;
 	}
 	
@@ -72,14 +51,7 @@ public class SalaKontroler {
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<Boolean>> deleteSala(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idSale") Long idSale,
 			@RequestParam(name="version") Long version){
-		ResponseEntity<CustomResponse<Boolean>> retval = null;
-		try{
-			retval = salaService.deleteMain(idKlinike, idSale, version);
-		}catch(Exception e){
-			return new ResponseEntity<CustomResponse<Boolean>>(
-					new CustomResponse<Boolean>(true, false, "Greska: Vasa verzija je zastarela. Osvezite stranicu"),
-					HttpStatus.OK);
-		}
-		return retval;
+		CustomResponse<Boolean> retval = salaService.delete(idKlinike, idSale, version);
+		return new ResponseEntity<CustomResponse<Boolean>>(retval, HttpStatus.OK);
 	}
 }

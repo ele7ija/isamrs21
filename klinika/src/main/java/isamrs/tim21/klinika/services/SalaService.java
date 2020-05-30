@@ -9,13 +9,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim21.klinika.domain.Klinika;
 import isamrs.tim21.klinika.domain.Pregled;
 import isamrs.tim21.klinika.domain.Sala;
 import isamrs.tim21.klinika.dto.CustomResponse;
+import isamrs.tim21.klinika.exceptions.BusinessLogicException;
+import isamrs.tim21.klinika.exceptions.EntityNotFoundException;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.repository.PregledRepository;
 import isamrs.tim21.klinika.repository.SalaRepository;
@@ -31,54 +32,44 @@ public class SalaService {
 	@Autowired
 	private KlinikaRepository klinikaRepository;
 
-	 
-	/* Zbog phantom read-a i unrepeatable read-a nad pregledima koristimo SERIALIZABLE
-	 * Zbog toga sto je ova metoda pozvana iz transakcije sa manje striktnim isolation parametrom koristimo REQUIRES_NEW
-	 * */
-	@Transactional(readOnly=false, propagation=Propagation.REQUIRES_NEW, isolation=Isolation.SERIALIZABLE)
-	public CustomResponse<Boolean> delete(Long idKlinike, Long idSale, Long version) throws Exception{
-		if(!pregledRepository.findByIdSale(idSale).isEmpty()){
-			return new CustomResponse<Boolean>(true, false, "Greska: Ne mozete obrisati salu za koju postoji pregled");
-		}
-		Sala sala = salaRepository.findByIdKlinikeAndIdSale(idKlinike, idSale);
-		if(sala == null){
-			return new CustomResponse<Boolean>(false, false, "Greska: Sala nije pronadjena.");
-		}
-		Sala salaToDelete = new Sala();
-		salaToDelete.setId(idSale);
-		salaToDelete.setVersion(version);
-		salaRepository.delete(salaToDelete); //ovde moze da dodje do nepoklapanja verzija usled optimistickog zakljucavanja
+	@Transactional(readOnly=false, isolation=Isolation.READ_COMMITTED)
+	public CustomResponse<Boolean> delete(Long idKlinike, Long idSale, Long version)
+		throws EntityNotFoundException, BusinessLogicException{
+		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
+		if(klinika == null)
+			throw new EntityNotFoundException("Klinika");
+		
+		//dobavi salu u pessimistic write rezimu kako bi sprecio metode za dodavanje pregleda sa ovom salom da se izvrsavaju konkurentno sa ovom metodom
+		Sala sala = salaRepository.findByIdKlinikeAndIdSalePessimisticWrite(idKlinike, idSale);
+		if(sala == null)
+			throw new EntityNotFoundException("Sala");
+		
+			//kako je sala zakljucana u pessimistic write rezimu, mozemo mu rucno porediti verzije
+		if(sala.getVersion() != version)
+			throw new BusinessLogicException("Greška. Vaš podatak ima zastarelu verziju. Osvežite stranicu.");
+		
+		if(!pregledRepository.findByIdSale(idSale).isEmpty())
+			throw new BusinessLogicException("Greška: Ne možete obrisati salu za koju postoji pregled");
+	
+		salaRepository.delete(sala); //ovde moze da dodje do nepoklapanja verzija usled optimistickog zakljucavanja
 		return new CustomResponse<Boolean>(true, true, "OK");
 	}
 
-	@Transactional(readOnly=true)
-	public List<Sala> getAllSale(Long idKlinike) {
+	@Transactional(readOnly=true, isolation = Isolation.READ_COMMITTED)
+	public List<Sala> getAllSale(Long idKlinike) throws EntityNotFoundException{
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
-		if(klinika == null){
-			return null;
-		}else{
-			List<Sala> retval = salaRepository.findAllByIdKlinike(klinika.getId());
-			return retval;
-		}
+		if(klinika == null)
+			throw new EntityNotFoundException("Klinika");
+		else
+			return salaRepository.findAllByIdKlinike(klinika.getId());
 	}
 
-	@Transactional(readOnly=true)
-	public Sala getSala(Long idKlinike, Long idSale) {
+	@Transactional(readOnly=false, isolation = Isolation.READ_COMMITTED)
+	public ResponseEntity<Sala> addSala(Long idKlinike, Sala salaToAdd) throws EntityNotFoundException{
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
-		if(klinika == null){
-			return null;
-		}else{
-			Sala retval = salaRepository.findByIdKlinikeAndIdSale(idKlinike, idSale);
-			return retval;
-		}
-	}
-
-	@Transactional(readOnly=false)
-	public ResponseEntity<Sala> addSala(Long idKlinike, Sala salaToAdd) {
-		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
-		if(klinika == null){
-			return new ResponseEntity<Sala>(HttpStatus.NOT_FOUND);
-		}else{
+		if(klinika == null)
+			throw new EntityNotFoundException("Klinika");
+		else{
 			salaToAdd.setKlinika(klinika);
 			salaToAdd.setId(null);
 			salaToAdd.setPregledi(new ArrayList<Pregled>());
@@ -88,38 +79,27 @@ public class SalaService {
 	}
 
 	@Transactional(readOnly=false, isolation=Isolation.READ_COMMITTED)
-	public ResponseEntity<CustomResponse<Sala>> update(Long idKlinike, Long idSale, Sala salaToChange) throws Exception{
+	public ResponseEntity<CustomResponse<Sala>> update(Long idKlinike, Long idSale, Sala salaToChange) throws EntityNotFoundException{
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
-		if(klinika == null){
-			return new ResponseEntity<CustomResponse<Sala>>(
-					new CustomResponse<Sala>(null, false, "Greska: Klinika nije pronadjena."),
-					HttpStatus.NOT_FOUND);
-		}else{
+		if(klinika == null)
+			throw new EntityNotFoundException("Klinika");
+		else{
 			salaToChange.setId(idSale);
-			salaToChange.setKlinika(klinika);			
-			Sala sala = salaRepository.findByIdKlinikeAndIdSale(idKlinike, idSale);
-			if(sala == null){
-				return new ResponseEntity<CustomResponse<Sala>>(
-						new CustomResponse<Sala>(null, false, "Greska: Sala nije pronadjena."),
-						HttpStatus.NOT_FOUND);
-			}	
-			salaToChange.setPregledi(sala.getPregledi()); //potencijalni dirty read sprecen sa READ_COMMITTED
-			Sala retval = salaRepository.save(salaToChange); //ovde moze da dodje do nepoklapanja verzija
+			salaToChange.setKlinika(klinika);
+
+			//kako bi sprecili konkurentno brisanje pregleda da ide sa ovom metodom
+			//jer linija 102 moze da settuje preglede sali, koje zatim metoda za brisanja pregleda izbrise
+			//a mi zatim u liniji 104 opet dodamo te preglede
+			Sala sala = salaRepository.findByIdKlinikeAndIdSalePessimisticWrite(idKlinike, idSale);
+			if(sala == null)
+				throw new EntityNotFoundException("Sala");
+
+			salaToChange.setPregledi(sala.getPregledi());
+
+			Sala retval = salaRepository.save(salaToChange); 
 			return new ResponseEntity<CustomResponse<Sala>>(
 					new CustomResponse<Sala>(retval, true, "OK."),
 					HttpStatus.OK);	
 		}
 	}
-
-	@Transactional(readOnly=false)
-	public ResponseEntity<CustomResponse<Boolean>> deleteMain(Long idKlinike, Long idSale, Long version) throws Exception{
-		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
-		if(klinika == null){
-			return new ResponseEntity<CustomResponse<Boolean>>(new CustomResponse<Boolean>(false, false, "Greska. Klinika ne postoji"), HttpStatus.NOT_FOUND);
-		}else{
-			CustomResponse<Boolean> customResponse = delete(idKlinike, idSale, version);
-			return new ResponseEntity<CustomResponse<Boolean>>(customResponse, customResponse.getResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
-		}
-	}
-
 }

@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim21.klinika.domain.Cenovnik;
@@ -15,6 +14,8 @@ import isamrs.tim21.klinika.domain.Klinika;
 import isamrs.tim21.klinika.domain.Lekar;
 import isamrs.tim21.klinika.domain.TipPregleda;
 import isamrs.tim21.klinika.dto.CustomResponse;
+import isamrs.tim21.klinika.exceptions.BusinessLogicException;
+import isamrs.tim21.klinika.exceptions.EntityNotFoundException;
 import isamrs.tim21.klinika.repository.CenovnikRepository;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.repository.PregledRepository;
@@ -35,105 +36,93 @@ public class TipPregledaService {
 	@Autowired
 	CenovnikRepository cenovnikRepository;
 
-	@Transactional(readOnly=false, propagation=Propagation.REQUIRES_NEW, isolation=Isolation.SERIALIZABLE)
-	public CustomResponse<Boolean> delete(Long idKlinike, Long idTipaPregleda, Long version) throws Exception{
-		/* Zbog phantom read-a i unrepeatable read-a nad pregledima koristimo SERIALIZABLE
-		 * Zbog toga sto je ova metoda pozvana iz transakcije sa manje striktnim isolation parametrom koristimo REQUIRES_NEW
-		 * */
-		if(!pregledRepository.findByIdTipaPregleda(idTipaPregleda).isEmpty()){
-			return new CustomResponse<Boolean>(true, false, "Greska: Ne mozete obrisati tip pregleda za koji postoji pregled");
-		}
-		TipPregleda tipPregleda = tipPregledaRepository.findByIdKlinikeAndIdTipaPregleda(idKlinike, idTipaPregleda);
-		if(tipPregleda == null){
-			return new CustomResponse<Boolean>(false, false, "Greska: Tip pregleda nije pronadjen.");
-		}
-		TipPregleda tipPregledaToDelete = new TipPregleda();
-		tipPregledaToDelete.setId(idTipaPregleda);
-		tipPregledaToDelete.setVersion(version);
-		tipPregledaRepository.delete(tipPregledaToDelete); //ovde moze da dodje do nepoklapanja verzija
-		return new CustomResponse<Boolean>(true, true, "OK");
+	@Transactional(readOnly=false, isolation = Isolation.READ_COMMITTED)
+	public ResponseEntity<CustomResponse<Boolean>> delete(Long idKlinike, Long idTipaPregleda, Long version)
+		throws EntityNotFoundException, BusinessLogicException{
+
+		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
+		if(klinika == null)
+			throw new EntityNotFoundException("Klinika");
+		
+		//dobavi pessimistic write nad tipom pregleda - ovo ce spreciti konkurentne pokusaje dodavanja pregleda
+		TipPregleda tipPregleda = tipPregledaRepository.findByIdKlinikeAndIdPessimisticWrite(idKlinike, idTipaPregleda);
+		if(tipPregleda == null)
+			throw new EntityNotFoundException("Tip pregleda");
+
+		//kako je tip pregleda zakljucan u pessimistic write rezimu, mozemo mu rucno porediti verzije
+		if(tipPregleda.getVersion() != version)
+			throw new BusinessLogicException("Greška. Vaš podatak ima zastarelu verziju. Osvežite stranicu.");
+
+		if(!pregledRepository.findByIdTipaPregleda(idTipaPregleda).isEmpty())
+			throw new BusinessLogicException("Greška: Ne možete obrisati tip pregleda za koji postoji pregled");
+		
+		if(tipPregleda.getLekari().size() != 0)
+		throw new BusinessLogicException("Greška: Ne možete obrisati tip pregleda za koji postoji specijalizacija lekara.");
+
+		tipPregledaRepository.delete(tipPregleda);
+		return new ResponseEntity<CustomResponse<Boolean>>(
+			new CustomResponse<Boolean>(true, true, "OK"),
+			HttpStatus.OK);
 	}
 
-	@Transactional(readOnly=true)
-	public List<TipPregleda> getAllTipoviPregleda(Long idKlinike) {
+	@Transactional(readOnly=true, isolation=Isolation.READ_COMMITTED)
+	public List<TipPregleda> getAllTipoviPregleda(Long idKlinike) throws EntityNotFoundException{
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
-			return null;
+			throw new EntityNotFoundException("Klinika");
 		}else{
 			return tipPregledaRepository.findAllByIdKlinike(klinika.getId());
 		}
 	}
-	
-	@Transactional(readOnly=true)
-	public TipPregleda getTipPRegleda(Long idKlinike, Long idTipaPregleda) {
-		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
-		if(klinika == null){
-			return null;
-		}else{
-			return tipPregledaRepository.findByIdKlinikeAndIdTipaPregleda(idKlinike, idTipaPregleda);
-		}
-	}
 
-	@Transactional(readOnly=false)
-	public ResponseEntity<TipPregleda> add(Long idKlinike, TipPregleda tipPregledaToAdd) {
+	@Transactional(readOnly=false, isolation=Isolation.READ_COMMITTED)
+	public ResponseEntity<TipPregleda> add(Long idKlinike, TipPregleda tipPregledaToAdd) throws EntityNotFoundException{
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
-		if(klinika == null){
-			return new ResponseEntity<TipPregleda>(HttpStatus.NOT_FOUND);
-		}else{
+		if(klinika == null)
+			throw new EntityNotFoundException("Klinika");
+		else{
 			tipPregledaToAdd.setKlinika(klinika);
 			tipPregledaToAdd.setId(null);
-			ArrayList<Lekar> lekari = new ArrayList<Lekar>();
-			tipPregledaToAdd.setLekari(lekari);
-			Cenovnik cenovnik = cenovnikRepository.findById(tipPregledaToAdd.getCenovnik().getId()).orElse(null);
+			tipPregledaToAdd.setLekari(new ArrayList<Lekar>());
+
+			//pessimistic read kako bi uveli shared lock nad cenovnikom i sprecili konkurentno brisanje cenovnika
+			Cenovnik cenovnik = cenovnikRepository.findByIdKlinikeAndIdCenovnikaPessimisticRead(idKlinike, tipPregledaToAdd.getCenovnik().getId());
+			
 			if(cenovnik == null){
-				return new ResponseEntity<TipPregleda>(HttpStatus.NOT_FOUND);
+				throw new EntityNotFoundException("Cenovnik");
 			}
 			cenovnik.getTipoviPregleda().add(tipPregledaToAdd);
 			tipPregledaToAdd.setCenovnik(cenovnik);
-			TipPregleda retval = tipPregledaRepository.save(tipPregledaToAdd);
-			return new ResponseEntity<TipPregleda>(retval, HttpStatus.OK);
+			return new ResponseEntity<TipPregleda>(tipPregledaRepository.save(tipPregledaToAdd), HttpStatus.OK);
 		}
 	}
 
 	@Transactional(readOnly=false, isolation=Isolation.READ_COMMITTED)
 	public ResponseEntity<CustomResponse<TipPregleda>> update(Long idKlinike, Long idTipaPregleda, TipPregleda tipPregledaToChange)
-			throws Exception{
+			throws EntityNotFoundException{
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
-		if(klinika == null){
-			return new ResponseEntity<CustomResponse<TipPregleda>>(
-					new CustomResponse<TipPregleda>(null, false, "Greska: Klinika nije pronadjena"),
-					HttpStatus.NOT_FOUND);
-		}else{
+		if(klinika == null)
+			throw new EntityNotFoundException("Klinika");
+		else{
 			tipPregledaToChange.setId(idTipaPregleda);
 			tipPregledaToChange.setKlinika(klinika);
 			
+			//pessimistic read kako bi uveli shared lock nad cenovnikom i sprecili konkurentno brisanje cenovnika
 			Cenovnik cenovnik = cenovnikRepository.findByIdKlinikeAndIdCenovnikaPessimisticRead(
-					idKlinike, tipPregledaToChange.getCenovnik().getId()); //spreci konkurentno brisanje cenovnika
+					idKlinike, tipPregledaToChange.getCenovnik().getId());
 			tipPregledaToChange.setCenovnik(cenovnik);
 			
-			TipPregleda tipPregleda = tipPregledaRepository.findById(idTipaPregleda).orElse(null);
-			if(tipPregleda == null){
-				return new ResponseEntity<CustomResponse<TipPregleda>>(
-						new CustomResponse<TipPregleda>(null, false, "Greska: Tip pregleda nije pronadjen"),
-						HttpStatus.NOT_FOUND);
-			}
-			tipPregledaToChange.setLekari(tipPregleda.getLekari()); //potencijalni dirty read sprecen sa READ_COMMITTED
+			//pessimistic write kako bi sprecili brisanje specijalnosti lekara da ide paraleleno sa ovom metodom
+			TipPregleda tipPregleda = tipPregledaRepository.findByIdKlinikeAndIdPessimisticWrite(idKlinike, idTipaPregleda);
+			if(tipPregleda == null)
+				throw new EntityNotFoundException("Tip pregleda");
 			
-			TipPregleda retval = tipPregledaRepository.save(tipPregledaToChange); //ovde moze da dodje do nepoklapanja verzija
+			tipPregledaToChange.setLekari(tipPregleda.getLekari());
+			
+			TipPregleda retval = tipPregledaRepository.save(tipPregledaToChange);
 			return new ResponseEntity<CustomResponse<TipPregleda>>(
 					new CustomResponse<TipPregleda>(retval, true, "OK."),
 					HttpStatus.OK);		
-		}
-	}
-
-	@Transactional(readOnly=false)
-	public ResponseEntity<CustomResponse<Boolean>> deleteMain(Long idKlinike, Long idTipaPregleda, Long version) throws Exception{
-		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null); //ovo ce verovatno ici u aspekt
-		if(klinika == null){
-			return new ResponseEntity<CustomResponse<Boolean>>(new CustomResponse<Boolean>(false, false, "Greska. Klinika ne postoji"), HttpStatus.NOT_FOUND);
-		}else{
-			CustomResponse<Boolean> customResponse = delete(idKlinike, idTipaPregleda, version);
-			return new ResponseEntity<CustomResponse<Boolean>>(customResponse, customResponse.getResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
 		}
 	}
 	

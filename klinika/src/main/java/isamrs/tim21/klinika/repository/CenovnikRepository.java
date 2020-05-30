@@ -28,4 +28,10 @@ public interface CenovnikRepository extends JpaRepository<Cenovnik, Long> {
 			+ "WHERE c.klinika.id = :idKlinike "
 			+ "AND c.id = :idCenovnika")
 	public Cenovnik findByIdKlinikeAndIdCenovnikaPessimisticRead(@Param("idKlinike") long idKlinike, @Param("idCenovnika") long idCenovnika);
+
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	@Query("SELECT c from Cenovnik c "
+			+ "WHERE c.klinika.id = :idKlinike "
+			+ "AND c.id = :idCenovnika")
+	public Cenovnik findByIdKlinikeAndIdCenovnikaPessimisticWrite(@Param("idKlinike") long idKlinike, @Param("idCenovnika") long idCenovnika);
 }

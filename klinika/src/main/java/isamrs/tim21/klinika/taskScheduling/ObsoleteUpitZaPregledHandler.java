@@ -6,11 +6,10 @@ import org.springframework.stereotype.Component;
 import isamrs.tim21.klinika.services.UpitZaPregledeService;
 import isamrs.tim21.klinika.services.SalaService;
 import isamrs.tim21.klinika.domain.UpitZaPregled;
-import isamrs.tim21.klinika.domain.Sala;
 import java.util.List;
 import java.util.Date;
 
-@Component
+//@Component
 public class ObsoleteUpitZaPregledHandler {
 
 
