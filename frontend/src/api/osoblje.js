@@ -10,14 +10,13 @@ export default{
     );
     return response.data;
   },
-  async addMedicinskaOsoba(idKlinike, osoba){
+  addMedicinskaOsoba(idKlinike, osoba){
     let options = util.prepareOptions();
-    let response = await axios.post(
+    return axios.post(
       `${process.env.VUE_APP_BACKEND_ROOT}/medicinskaOsoba/${idKlinike}`,
       osoba,
       options
     );
-    return response.data;
   },
   
   addSpecijalnostiMedicinskaOsoba(idKlinike, {idLekara, idTipovaPregleda, version}){

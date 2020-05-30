@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import isamrs.tim21.klinika.domain.Cenovnik;
 import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.services.CenovnikService;
@@ -31,45 +31,21 @@ public class CenovnikKontroler {
 	@GetMapping
 	public ResponseEntity<List<Cenovnik>> getAllCenovnici(@PathVariable("idKlinike") Long idKlinike){
 		List<Cenovnik> cenovnici = cenovnikService.findAllByIdKlinike(idKlinike);
-		if(cenovnici == null){
-			return new ResponseEntity<List<Cenovnik>>(HttpStatus.NOT_FOUND);
-		}else{
-			return new ResponseEntity<List<Cenovnik>>(cenovnici, HttpStatus.OK);
-		}
-	}
-
-	@GetMapping(value="/{idCenovnika}")
-	public ResponseEntity<Cenovnik> getCenovnik(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idCenovnika") Long idCenovnika){
-		Cenovnik cenovnik = cenovnikService.findByIdKlinike(idKlinike, idCenovnika);
-		if(cenovnik == null){
-			return new ResponseEntity<Cenovnik>(HttpStatus.NOT_FOUND);
-		}else{
-			return new ResponseEntity<Cenovnik>(cenovnik, HttpStatus.OK);
-		}
+		return new ResponseEntity<List<Cenovnik>>(cenovnici, HttpStatus.OK);
 	}
 	
 	@PostMapping
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<Cenovnik> addCenovnik(@PathVariable("idKlinike") Long idKlinike, @RequestBody Cenovnik cenovnikToAdd){
 		Cenovnik cenovnik = cenovnikService.add(idKlinike, cenovnikToAdd);
-		if(cenovnik == null){
-			return new ResponseEntity<Cenovnik>(HttpStatus.NOT_FOUND);
-		}else{
-			return new ResponseEntity<Cenovnik>(cenovnik, HttpStatus.OK);
-		}
+		return new ResponseEntity<Cenovnik>(cenovnik, HttpStatus.OK);
 	}
 	
 	@PutMapping(value="/{idCenovnika}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<Cenovnik>> updateCenovnik(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idCenovnika") Long idCenovnika, @RequestBody Cenovnik cenovnikToChange) throws Exception{
-		ResponseEntity<CustomResponse<Cenovnik>> retval = null;
-		try{
-			retval = cenovnikService.update(idKlinike, idCenovnika, cenovnikToChange);
-		}catch(Exception e){
-			retval = new ResponseEntity<CustomResponse<Cenovnik>>(new CustomResponse<Cenovnik>(
-					null, false, "Greska usled optimistickog zakljucavanja. Pokusajte ponovo."), HttpStatus.OK);
-		}
+		ResponseEntity<CustomResponse<Cenovnik>> retval = cenovnikService.update(idKlinike, idCenovnika, cenovnikToChange);
 		return retval;
 	}
 	
@@ -77,14 +53,7 @@ public class CenovnikKontroler {
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<Boolean>> deleteCenovnik(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idCenovnika") Long idCenovnika,
 			@RequestParam(name="version") Long version){
-		ResponseEntity<CustomResponse<Boolean>> retval = null;
-		try{
-			retval = cenovnikService.delete(idKlinike, idCenovnika, version);
-		}catch(Exception e){
-			return new ResponseEntity<CustomResponse<Boolean>>(
-					new CustomResponse<Boolean>(true, false, "Greska. Verzija podatka je zastaela. Osvezite stranicu."),
-					HttpStatus.OK);
-		}
+		ResponseEntity<CustomResponse<Boolean>> retval = cenovnikService.delete(idKlinike, idCenovnika, version);
 		return retval;
 	}
 }

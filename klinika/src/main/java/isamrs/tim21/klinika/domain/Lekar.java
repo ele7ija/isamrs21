@@ -26,8 +26,7 @@ public class Lekar extends MedicinskoOsoblje{
 	private static final long serialVersionUID = 4362887523765862539L;
 
 	@ManyToMany(cascade=CascadeType.MERGE, mappedBy="lekari")
-	//@JsonSerialize(using=TipPregledaListSerializer.class)
-	@JsonIgnoreProperties({"lekari"})
+	@JsonIgnoreProperties(value={"lekari"}, allowSetters = true)
 	private List<TipPregleda> tipovi_pregleda;
 	
 	@Column(name="broj_specijalizacija", columnDefinition="integer DEFAULT 0")

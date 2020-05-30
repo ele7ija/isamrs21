@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import isamrs.tim21.klinika.domain.TipPregleda;
 import isamrs.tim21.klinika.dto.CustomResponse;
-
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import isamrs.tim21.klinika.services.TipPregledaService;
 
 @RestController
@@ -29,21 +29,7 @@ public class TipPregledaKontroler {
 	@GetMapping
 	public ResponseEntity<List<TipPregleda>> getAllTipoviPregleda(@PathVariable("idKlinike") Long idKlinike){
 		List<TipPregleda> tipoviPregleda = tipPregledaService.getAllTipoviPregleda(idKlinike);
-		if(tipoviPregleda == null){
-			return new ResponseEntity<List<TipPregleda>>(HttpStatus.NOT_FOUND);
-		}else{
-			return new ResponseEntity<List<TipPregleda>>(tipoviPregleda, HttpStatus.OK);
-		}
-	}
-
-	@GetMapping(value="/{idTipaPregleda}")
-	public ResponseEntity<TipPregleda> getTipPregleda(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idTipaPregleda") Long idTipaPregleda){
-		TipPregleda tipPregleda = tipPregledaService.getTipPRegleda(idKlinike, idTipaPregleda);
-		if(tipPregleda == null){
-			return new ResponseEntity<TipPregleda>(HttpStatus.NOT_FOUND);
-		}else{
-			return new ResponseEntity<TipPregleda>(tipPregleda, HttpStatus.OK);
-		}
+		return new ResponseEntity<List<TipPregleda>>(tipoviPregleda, HttpStatus.OK);
 	}
 	
 	@PostMapping
@@ -56,14 +42,7 @@ public class TipPregledaKontroler {
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<TipPregleda>> updateTipPregleda(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idTipaPregleda") Long idTipaPregleda, @RequestBody TipPregleda tipPregledaToChange){
-		ResponseEntity<CustomResponse<TipPregleda>> retval = null;
-		try{
-			retval = tipPregledaService.update(idKlinike, idTipaPregleda, tipPregledaToChange); 
-		}catch(Exception e){
-			return new ResponseEntity<CustomResponse<TipPregleda>>(
-					new CustomResponse<TipPregleda>(null, false, "Verzije nekih podataka se ne poklapaju. Osvezite stranicu i pokusajte ponovo."),
-					HttpStatus.OK);
-		}
+		ResponseEntity<CustomResponse<TipPregleda>> retval = tipPregledaService.update(idKlinike, idTipaPregleda, tipPregledaToChange);
 		return retval;
 	}
 	
@@ -71,14 +50,7 @@ public class TipPregledaKontroler {
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<Boolean>> deleteTipPregleda(@PathVariable("idKlinike") Long idKlinike,
 			@PathVariable("idTipaPregleda") Long idTipaPregleda, @RequestParam(name="version") Long version){
-		ResponseEntity<CustomResponse<Boolean>> retval = null;
-		try {
-			retval = tipPregledaService.deleteMain(idKlinike, idTipaPregleda, version);
-		} catch (Exception e) {
-			return new ResponseEntity<CustomResponse<Boolean>>(
-					new CustomResponse<Boolean>(true, false, "Greska: Vasa verzija je zastarela. Osvezite stranicu"),
-					HttpStatus.OK);
-		}
+		ResponseEntity<CustomResponse<Boolean>> retval = tipPregledaService.delete(idKlinike, idTipaPregleda, version);
 		return retval;
 	}
 }

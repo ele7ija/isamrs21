@@ -8,5 +8,5 @@ import isamrs.tim21.klinika.domain.Klinika;
 
 @Repository
 public interface KlinikaRepository extends JpaRepository<Klinika, Long> {
-	
+  
 }

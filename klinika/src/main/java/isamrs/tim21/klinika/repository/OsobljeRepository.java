@@ -31,12 +31,27 @@ public interface OsobljeRepository extends JpaRepository<MedicinskoOsoblje, Long
 			+ "AND k.id= :idOsoblja")
 	MedicinskoOsoblje findByIdKlinikeAndById(@Param("idKlinike") Long idKlinike, @Param("idOsoblja") Long idOsoblja);
 
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	@Query("SELECT k from Korisnik k "
+			+ "WHERE (TYPE(k)='MS' OR TYPE(k)='LE') "
+			+ "AND k.klinika.id= :idKlinike "
+			+ "AND k.id= :idOsoblja")
+	MedicinskoOsoblje findByIdKlinikeAndByIdPessimisticWrite(@Param("idKlinike") Long idKlinike, @Param("idOsoblja") Long idOsoblja);
+
 	@Lock(LockModeType.PESSIMISTIC_READ)
 	@Query("SELECT k FROM Korisnik k "
 			+ "WHERE TYPE(k)='LE' "
 			+ "AND k.klinika.id = :idKlinike "
 			+ "AND k.id = :idOsoblja")
 	Lekar findLekarByIdKlinikeAndByIdPessimisticRead(@Param("idKlinike") Long idKlinike, @Param("idOsoblja") Long idOsoblja);
+
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	@Query("SELECT k FROM Korisnik k "
+			+ "WHERE TYPE(k)='LE' "
+			+ "AND k.klinika.id = :idKlinike "
+			+ "AND k.id = :idOsoblja")
+	Lekar findLekarByIdKlinikeAndByIdPessimisticWrite(@Param("idKlinike") Long idKlinike, @Param("idOsoblja") Long idOsoblja);
+
 
 	@Lock(LockModeType.PESSIMISTIC_READ)
 	@Query("SELECT k FROM Korisnik k "

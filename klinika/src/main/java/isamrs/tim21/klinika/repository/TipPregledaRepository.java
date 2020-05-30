@@ -30,7 +30,12 @@ public interface TipPregledaRepository extends JpaRepository<TipPregleda, Long> 
 			+ "AND t.id = :idTipaPregleda")
 	public TipPregleda findByIdKlinikeAndIdPessimisticRead(@Param("idKlinike") long idKlinike, @Param("idTipaPregleda") long idTipaPregleda);
 
-	
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	@Query("SELECT t from TipPregleda t "
+			+ "WHERE t.klinika.id = :idKlinike "
+			+ "AND t.id = :idTipaPregleda")
+	public TipPregleda findByIdKlinikeAndIdPessimisticWrite(@Param("idKlinike") long idKlinike, @Param("idTipaPregleda") long idTipaPregleda);
+
 	@Query("SELECT t FROM TipPregleda t "
 			+ "WHERE t.cenovnik.id = :idCenovnika")
 	public List<TipPregleda> findByIdCenovnika(@Param("idCenovnika") Long idCenovnika);

@@ -45,10 +45,21 @@ const actions = {
   },
 
   async addMedicinskaOsoba({state, commit, dispatch}, osoba){
-    let response = await osoblje.addMedicinskaOsoba(state.klinika.id, osoba);
-    commit('addNewMedicinskaOsoba', response);
-    dispatch('korisnici/addKorisnik', response, {root: true});
-    console.log(response);
+    return new Promise((resolve, reject) => {
+      osoblje.addMedicinskaOsoba(state.klinika.id, osoba)
+      .then(({data: {result, success, message}}) => {
+        if(success){
+          if(result.tipovi_pregleda)
+            result.pozicija = "lekar";
+          else
+            result.pozicija = "medicinska sestra";
+          commit('addNewMedicinskaOsoba', result);
+          dispatch('korisnici/addKorisnik', result, {root: true});
+          resolve(message);
+        }else
+          reject(message);
+      });
+    });
   },
 
   async updateMedicinskaOsoba({state, commit}, osoba){

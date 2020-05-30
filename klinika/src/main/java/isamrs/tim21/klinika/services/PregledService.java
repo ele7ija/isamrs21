@@ -28,6 +28,9 @@ import isamrs.tim21.klinika.repository.SalaRepository;
 import isamrs.tim21.klinika.repository.TipPregledaRepository;
 import isamrs.tim21.klinika.repository.UpitZaPregledRepository;
 
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+
 @Service
 public class PregledService {
 
@@ -52,27 +55,27 @@ public class PregledService {
 	@Autowired
 	UpitZaPregledRepository upitZaPregledRepository;
 
-	@Transactional(readOnly=false)
+	@Transactional(readOnly=false, isolation = Isolation.READ_COMMITTED)
 	public CustomResponse<Pregled> add(Klinika klinika, Pregled pregled) {
 		pregled.setId(null);
 		pregled.setKlinika(klinika);
 		pregled.setUpiti(new ArrayList<UpitZaPregled>());
 		
-		Lekar lekar = (Lekar)osobljeRepository.findByIdKlinikeAndById(klinika.getId(), pregled.getLekar().getId());
+		Lekar lekar = (Lekar)osobljeRepository.findLekarByIdKlinikeAndByIdPessimisticRead(klinika.getId(), pregled.getLekar().getId());
 		if(lekar == null){
 			return new CustomResponse<Pregled>(null, false,
 					"Greska: Trazeni lekar nije pronadjen u klinici.");
 		}
 		pregled.setLekar(lekar);
 		
-		TipPregleda tipPregleda = tipPregledaRepository.findByIdKlinikeAndIdTipaPregleda(klinika.getId(), pregled.getTipPregleda().getId());
+		TipPregleda tipPregleda = tipPregledaRepository.findByIdKlinikeAndIdPessimisticRead(klinika.getId(), pregled.getTipPregleda().getId());
 		if(tipPregleda == null){
 			return new CustomResponse<Pregled>(null, false,
 					"Greska: Trazeni tip pregleda nije pronadjen u klinici.");
 		}
 		pregled.setTipPregleda(tipPregleda);
 		
-		Sala sala = salaRepository.findByIdKlinikeAndIdSale(klinika.getId(), pregled.getSala().getId());
+		Sala sala = salaRepository.findByIdKlinikeAndIdSalePessimisticRead(klinika.getId(), pregled.getSala().getId());
 		if(sala == null){
 			return new CustomResponse<Pregled>(null, false,
 					"Greska: Trazena sala nije pronadjen u klinici.");
@@ -80,7 +83,7 @@ public class PregledService {
 		pregled.setSala(sala);
 		
 		for(int i = 0; i < pregled.getDodatniLekari().size(); i++){
-			Lekar l = (Lekar)osobljeRepository.findByIdKlinikeAndById(klinika.getId(), pregled.getDodatniLekari().get(i).getId());
+			Lekar l = (Lekar)osobljeRepository.findLekarByIdKlinikeAndByIdPessimisticRead(klinika.getId(), pregled.getDodatniLekari().get(i).getId());
 			if(l == null){
 				return new CustomResponse<Pregled>(null, false,
 						"Greska: Jedan od dodatnih lekara nije pronadjen u klinici.");
@@ -143,8 +146,13 @@ public class PregledService {
 				new CustomResponse<Boolean>(true, true, "OK"), HttpStatus.OK);
 	}
 	
-	@Transactional(readOnly=false)
+	@Transactional(readOnly=false, propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
 	private CustomResponse<Pregled> validateAll(Klinika klinika, Pregled pregled) {
+		/*
+			Serialiazble zato sto je potrebno zalkjucati tabelu pregleda za dodavanje dok se ne izvrse sve provere koje su neophodne
+			za dodavanje ovog pregleda.
+		*/
+
 		/* VALIDACIJE: */
 		/* Da li su svi entiteti unutar iste klinike kao i pregled koji se dodaje? ODRADJENO UNUTAR OSTALIH METODA*/
 
@@ -173,6 +181,7 @@ public class PregledService {
 		return new CustomResponse<Pregled>(pregledRepository.save(pregled), true, "OK"); 
 	}
 	
+	@Transactional(propagation = Propagation.MANDATORY, isolation = Isolation.SERIALIZABLE)
 	private boolean validateSala(Klinika klinika, Pregled pregled) {
 		Sala sala = salaRepository.findByIdKlinikeAndIdSale(klinika.getId(), pregled.getSala().getId());
 		if(sala == null){
@@ -190,6 +199,7 @@ public class PregledService {
 		return true;
 	}
 
+	@Transactional(propagation = Propagation.MANDATORY, isolation = Isolation.SERIALIZABLE)
 	private boolean validateDodatnoOsoblje(Klinika klinika, Pregled pregled){
 		for(Lekar lekar : pregled.getDodatniLekari()){
 			for(Pregled p : lekar.getPregledi()){
@@ -206,10 +216,18 @@ public class PregledService {
 					return false;
 				}
 			}
+			//vrati false ukoliko je lekar na odsustvu u datom intervalu
+			for(ZahtevZaGodisnji zahtev : lekar.getRadniKalendar().getZahteviZaGodisnjiOdmor()){
+				if(!zahtev.isOdobreno())
+					continue;
+				if(pregled.intersects(zahtev))
+					return false;
+			}
 		}
 		return true;
 	}
 	
+	@Transactional(propagation = Propagation.MANDATORY, isolation = Isolation.SERIALIZABLE)
 	private boolean validateOsoblje(Klinika klinika, Pregled pregled) {
 		MedicinskoOsoblje osoblje = osobljeRepository.findByIdKlinikeAndById(klinika.getId(), pregled.getLekar().getId());
 		if(osoblje == null || osoblje instanceof MedicinskaSestra)
@@ -218,6 +236,15 @@ public class PregledService {
 		
 		//vrati false ukoliko postoji pregled koji vodi ovaj lekar
 		for(Pregled p : lekar.getPregledi()){
+			if(p.getId() == pregled.getId())
+				continue;
+			if(p.intersects(pregled)){
+				return false;
+			}
+		}
+
+		//vrati false ukoliko postoji dodatna operacija na kojoj je angazovan ovaj lekar
+		for(Pregled p : lekar.getDodatneOperacije()){
 			if(p.getId() == pregled.getId())
 				continue;
 			if(p.intersects(pregled)){
