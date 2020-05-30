@@ -1,4 +1,5 @@
 <template>
+<div>
   <v-data-table
     :items="_posete"
     :headers="headers"
@@ -28,7 +29,6 @@
     </template>
     <template v-slot:expanded-item="{ headers, item }">
       <td :colspan="headers.length">
-        <!-- Milane ovde mozes da vidis da ucitava lepo item.bolest, ali ne moze item.bolest.naziv iz nekog razloga -->
         <div v-if="null != item.bolest">
           <v-text-field v-model="item.bolest.naziv" readonly label="Utvrđena bolest" class="mt-5"/>
         </div>
@@ -40,13 +40,56 @@
         ></v-textarea>
       </td>
     </template>
+
+    <!-- za izmenu pregleda -->
+    <template v-slot:item.actions=" {item} ">
+        <v-icon
+          small
+          class="mr-2 green--text text--darken-1"
+          @click="editItem(item)">
+        mdi-pencil
+        </v-icon>
+    </template>
   </v-data-table>
+  <!-- dialog za izmenu pregleda-->
+  <v-dialog v-model="dialogZaIzmenu" width="500" >
+    <v-form v-model="isFormValid" ref="myForm">
+      <v-card>
+        <v-card-title>
+          <span class="headline"> Izmeni opis </span>
+        </v-card-title>
+        
+        <!-- opis pregleda -->
+        <v-card-text>
+        <v-textarea
+        outlined
+        label="Opis pregleda" 
+        hint="Napisati opis pregleda i kakve probleme pacijent ima."
+        :rules=opisRule
+        v-model="newItem.opis"
+        ></v-textarea>
+        </v-card-text> 
+ 
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1"  text  @click="save()" :disabled="!isFormValid">
+          Sačuvaj
+        </v-btn>
+        <v-btn color="blue darken-1" text @click="close()">
+          Poništi
+        </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-form>
+  </v-dialog>
+</div>
 </template>
 
 <script>
-import {mapGetters} from 'vuex';
+import {mapGetters, mapActions} from 'vuex';
 export default {
   name: 'TabelaPoseta',
+
   data: function(){
     return {
       key1: 0,
@@ -85,8 +128,25 @@ export default {
             return value == this.tipPregleda;
           }
         },
-        { text: 'Detalji', value: 'data-table-expand' }
-      ]
+        { text: 'Detalji', value: 'data-table-expand' },
+        {
+          text: 'Izmeni',
+          value: 'actions',
+          sortable: false,
+        },
+      ],
+
+      //izmena posete
+      dialogZaIzmenu: false,
+      isFormValid: true,
+      newItem: {
+        opis: undefined,
+        posetaId: undefined,
+      },
+      opisRule: [
+        v => !!v || 'Opis trenutne posete je obavezan',
+        v => (v && v.length <= 1000) || 'Opis ima najviše 1000 karaktera'
+      ],
     };
   },
   computed: {
@@ -120,14 +180,39 @@ export default {
       return this.tipoviPregleda.map(x => x.naziv);
     },
   },
+
   methods: {
+    ...mapActions({
+      updatePoseta: 'pacijenti/updatePoseta',
+    }),
     ponisti(){
       this.pocetak = null;
       this.kraj = null;
       this.tipPregleda = '';
       this.key1 += 1;
       this.key2 += 1;
-    }
+    },
+
+    //izmena posete
+    editItem(item){
+      this.newItem.opis = item.opis;
+      this.newItem.posetaId = item.id;
+      this.dialogZaIzmenu = true;
+    },
+    save(){
+      this.updatePoseta(this.newItem);
+      this.close();
+    },
+    close(){
+      this.dialogZaIzmenu = false;
+    },
+    resetForm(){
+      this.$refs.myForm.resetValidation(); //internal vue method
+      this.newItem = {
+        posetaId: undefined,
+        opis: undefined,
+      };
+    },
   }
 }
 </script>

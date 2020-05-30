@@ -225,21 +225,41 @@ public class PosetaService {
 	}
 
 	public List<?> updatePoseta (PosetaDTO3 posetaDTO) {
-		Poseta poseta = posetaRepository.findById(posetaDTO.getPosetaId()).orElse(null);
-		poseta.setBolest(posetaDTO.getBolest());
-		poseta.setLekovi(posetaDTO.getLekovi());
-		poseta.setOpis(posetaDTO.getOpis());
-		posetaRepository.save(poseta);
+		//ako je visina null, to znaci da je radjena samo izmena opisa pregleda na frontu
+		//tada treba samo opis pregleda izmeniti  
+		if( null == posetaDTO.getVisina()){
+			Poseta poseta = posetaRepository.findById(posetaDTO.getPosetaId()).orElse(null);
+			poseta.setOpis(posetaDTO.getOpis());
+			posetaRepository.save(poseta);
+			ZdravstveniKarton k = poseta.getZdravstveniKarton();
 
-		ZdravstveniKarton k = poseta.getZdravstveniKarton();
-		k.setDioptrija(posetaDTO.getDioptrija());
-		k.setKrvnaGrupa(posetaDTO.getKrvnaGrupa());
-		k.setVisina(posetaDTO.getVisina());
-		k.setTezina(posetaDTO.getTezina());
-		zdravstveniKartonRepository.save(k);
-		List lista = new ArrayList();
-		lista.add(poseta);
-		lista.add(k);
-		return  lista;
+			//vraca listu u kojoj se nalaze i poseta i karton
+			List lista = new ArrayList();
+			lista.add(poseta);
+			lista.add(k);
+			return  lista;
+		}
+		else{
+		 	Poseta poseta = posetaRepository.findById(posetaDTO.getPosetaId()).orElse(null);
+			poseta.setBolest(posetaDTO.getBolest());
+			poseta.setLekovi(posetaDTO.getLekovi());
+			poseta.setOpis(posetaDTO.getOpis());
+			posetaRepository.save(poseta);
+			ZdravstveniKarton k = poseta.getZdravstveniKarton();
+			k.setDioptrija(posetaDTO.getDioptrija());
+			k.setKrvnaGrupa(posetaDTO.getKrvnaGrupa());
+			k.setVisina(posetaDTO.getVisina());
+			k.setTezina(posetaDTO.getTezina());
+			zdravstveniKartonRepository.save(k);
+
+			//vraca listu u kojoj se nalaze i poseta i karton
+			List lista = new ArrayList();
+			lista.add(poseta);
+			lista.add(k);
+			return  lista;
+		}
+
+
+
 	}
 }
