@@ -193,15 +193,12 @@ public class UpitZaPregledController {
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdmin(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idUpita") Long idUpita, @RequestBody UpitZaPregled upitZaPregledToChange) throws Exception{
-		ResponseEntity<CustomResponse<UpitZaPregled>> retval = null;
-		try{
-			retval = upitZaPregledeService.obradiAdminMain(idKlinike, idUpita, upitZaPregledToChange);
-		}catch(Exception e){
-			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-					new CustomResponse<UpitZaPregled>(null, false, "Greska. Verzija podatka je zastarela. Osvezite stranicu"),
-					HttpStatus.OK);
-		}
-		return retval;
+		CustomResponse<UpitZaPregled> retval = null;
+		if(upitZaPregledToChange.getOdobren())
+			retval = upitZaPregledeService.odobriUnapredDefinisani(idKlinike, idUpita, upitZaPregledToChange);
+		else
+			retval = upitZaPregledeService.odbiUnapredDefinisani(idKlinike, idUpita, upitZaPregledToChange);
+		return new ResponseEntity<CustomResponse<UpitZaPregled>>(retval, HttpStatus.OK);
 		
 	}
 	
@@ -210,29 +207,19 @@ public class UpitZaPregledController {
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdminCustom(@PathVariable("idKlinike") Long idKlinike, 
 			@PathVariable("idUpita") Long idUpita, @RequestBody UpitZaPregled upitZaPregledToChange){
-		ResponseEntity<CustomResponse<UpitZaPregled>> retval = null;
-		try{
-			retval = upitZaPregledeService.obradiAdminCustom(idKlinike, idUpita, upitZaPregledToChange);
-		}catch(Exception e){
-			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-					new CustomResponse<UpitZaPregled>(null, false, e.getMessage()),
-					HttpStatus.OK);
-		}
-		return retval;
+		CustomResponse<UpitZaPregled> retval = null;
+		if(upitZaPregledToChange.getOdobren())
+			retval = upitZaPregledeService.odobriCustom(idKlinike, idUpita, upitZaPregledToChange);
+		else
+			retval = upitZaPregledeService.odbiCustom(idKlinike, idUpita);
+		return new ResponseEntity<CustomResponse<UpitZaPregled>>(retval, HttpStatus.OK);
 		
 	}
 	
 	@DeleteMapping(value="/{idKlinike}/{idUpita}")
 	public ResponseEntity<CustomResponse<Boolean>> delete(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idUpita") Long idUpita,
 			@RequestParam(name="version") Long version){
-		ResponseEntity<CustomResponse<Boolean>> retval = null;
-		try{
-			retval = upitZaPregledeService.deleteMain(idKlinike, idUpita, version); 
-		}catch(Exception e){
-			return new ResponseEntity<CustomResponse<Boolean>>(
-					new CustomResponse<Boolean>(true, false, "Greska. Verzija podatka je zastarela. Osvezite stranicu"),
-					HttpStatus.OK);
-		}
-		return retval;
+		CustomResponse<Boolean> retval = upitZaPregledeService.delete(idUpita, version);
+		return new ResponseEntity<CustomResponse<Boolean>>(retval, HttpStatus.OK);
 	}
 }

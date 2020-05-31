@@ -68,7 +68,7 @@ public class CenovnikService {
 		else{
 			cenovnikToChange.setId(idCenovnika);
 			cenovnikToChange.setKlinika(klinika);
-			Cenovnik cenovnik = cenovnikRepository.findByIdKlinikeAndIdCenovnika(idKlinike, idCenovnika);
+			Cenovnik cenovnik = cenovnikRepository.findByIdKlinikeAndIdCenovnikaPessimisticWrite(idKlinike, idCenovnika);
 			if(cenovnik == null)
 				throw new EntityNotFoundException("Cenovnik");
 			cenovnikToChange.setTipoviPregleda(cenovnik.getTipoviPregleda()); //potencijalni dirty read sprecen sa READ_COMMITTED

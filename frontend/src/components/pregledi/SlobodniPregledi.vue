@@ -269,7 +269,10 @@ export default {
         dodatniLekari: [],
         poseta: null
       };
-      this.addPregled(this.newItem);
+      this.addPregled(this.newItem).then(null, (error) => {
+        this.snackbarText = error;
+        this.snackbar = true;
+      });
       this.reset();
     },
     reset(){

@@ -35,11 +35,7 @@ public class PregledKontroler {
 	@PreAuthorize("hasAnyAuthority('pacijent', 'lekar', 'admin-klinike')")
 	public ResponseEntity<List<Pregled>> getAll(@PathVariable("idKlinike") Long idKlinike){
 		List<Pregled> pregledi = pregledService.getAll(idKlinike);
-		if(pregledi == null){
-			return new ResponseEntity<List<Pregled>>(HttpStatus.NOT_FOUND);
-		}else{
-			return new ResponseEntity<List<Pregled>>(pregledi, HttpStatus.OK);
-		}		
+		return new ResponseEntity<List<Pregled>>(pregledi, HttpStatus.OK);
 	}
 	
 	@GetMapping(value="/slobodni")
@@ -65,26 +61,11 @@ public class PregledKontroler {
 		return pregledService.add(idKlinike, pregled);
 	}
 	
-	@PutMapping(value="/{idPregleda}")
-	@PreAuthorize("hasAuthority('admin-klinike')")
-	public ResponseEntity<CustomResponse<Pregled>> update(@PathVariable("idKlinike") Long idKlinike, @PathVariable("idPregleda") Long idPregleda,
-			@RequestBody Pregled pregled){
-		//TODO: promeniti tako da radi sa verzionisnjem
-		return pregledService.update(idKlinike, idPregleda, pregled);
-	}
-	
 	@DeleteMapping(value="/{idPregleda}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<Boolean>> delete(@PathVariable("idKlinike") Long idKlinike,
 			@PathVariable("idPregleda") Long idPregleda, @RequestParam(name="version") Long version) throws Exception{
-		ResponseEntity<CustomResponse<Boolean>> customResponse = null;
-		try{
-			customResponse = pregledService.delete(idKlinike, idPregleda, version);
-		}catch(Exception e){
-			return new ResponseEntity<CustomResponse<Boolean>>(
-					new CustomResponse<Boolean>(true, false, "Greska. Verzija podatka je zastarela. Osvezite stranicu"),
-					HttpStatus.OK);
-		}
-		return customResponse;
+		ResponseEntity<CustomResponse<Boolean>> retval = pregledService .delete(idKlinike, idPregleda, version);
+		return retval;
 	}
 }

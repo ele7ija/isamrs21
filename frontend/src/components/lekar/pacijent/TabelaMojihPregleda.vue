@@ -91,13 +91,14 @@ export default {
   },
   computed: {
     ...mapGetters({
+      profil: 'profil/getProfil',
       posete: 'pacijenti/getPoseteOdabranogPacijenta',
       tipoviPregleda: 'tipoviPregleda/getTipoviPregleda',
     }),
     _posete(){
       if(this.posete){
         let neobavljenePosete = this.posete.filter(x => {
-          return !x.opis 
+          return !x.opis && this.profil.id == x.pregled.lekar.id
         });
         return neobavljenePosete.map(x => {
           let date1 = new Date(x.pregled.pocetakPregleda);

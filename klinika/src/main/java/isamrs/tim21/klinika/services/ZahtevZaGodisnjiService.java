@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim21.klinika.domain.Lekar;
@@ -14,6 +13,9 @@ import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
 import isamrs.tim21.klinika.domain.Pregled;
 import isamrs.tim21.klinika.domain.RadniKalendar;
 import isamrs.tim21.klinika.domain.ZahtevZaGodisnji;
+import isamrs.tim21.klinika.exceptions.BusinessLogicException;
+import isamrs.tim21.klinika.exceptions.EntityNotFoundException;
+import isamrs.tim21.klinika.repository.OsobljeRepository;
 import isamrs.tim21.klinika.repository.RadniKalendarRepository;
 import isamrs.tim21.klinika.repository.ZahtevZaGodisnjiRepository;
 
@@ -26,6 +28,9 @@ public class ZahtevZaGodisnjiService {
 	
 	@Autowired
 	RadniKalendarRepository radniKalendarRepository;
+
+	@Autowired
+	OsobljeRepository osobljeRepository;
 
 	@Autowired
 	MailService mailService;
@@ -51,41 +56,43 @@ public class ZahtevZaGodisnjiService {
 		zahtevToAdd.setRadniKalendar(kalendar);
 		return zahtevZaGodisnjiRepository.save(zahtevToAdd);
 	}
-
-	@Transactional(readOnly=false)
-	public ZahtevZaGodisnji update(Long idZahtevaZaGodisnji, ZahtevZaGodisnji zahtevToUpdate) throws Exception {
-		RadniKalendar kalendar = radniKalendarRepository.findById(zahtevToUpdate.getRadniKalendar().getId()).get();
-		if(zahtevToUpdate.isOdobreno()){
-			return approve(zahtevToUpdate, kalendar);
-		}else{
-			zahtevToUpdate.setRadniKalendar(kalendar);
-			return zahtevZaGodisnjiRepository.save(zahtevToUpdate);
-		}
-	}
 	
-	@Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-	private ZahtevZaGodisnji approve(ZahtevZaGodisnji zahtevToUpdate, RadniKalendar kalendar)throws Exception{
-		//serializable jer je potrebno spreciti neku drugu transakciju koju izvrsava da odobri zahtev za godisnji u istom vremenskom periodu
+	@Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE)
+	public ZahtevZaGodisnji approve(ZahtevZaGodisnji zahtevToUpdate) throws EntityNotFoundException, BusinessLogicException{
+		//serializable jer je potrebno spreciti neku drugu transakciju da odobri neki drugi zahtev za godisnji 
+		//koji se poklapa sa ovim zahtevom za godisnji
 		//odnosno, moramo da sprecimo phantom read
-		//medjutim, kako je dozvoljeno dodavati samo neodobrene zahteve za godisnji paralelno sa ovom metodom, REPEATABLE_READ je dovoljan nivo izolacije
-		//ostavljamo serializable ipak zbog provere pregleda
-		for(ZahtevZaGodisnji zahtev : kalendar.getZahteviZaGodisnjiOdmor()){
-			if(zahtev.intersects(zahtevToUpdate) && zahtev.isOdobreno()){
-				throw new Exception("Greška: Već imate odobren zahtev za godišnji odmor u vremenskom intervalu koji se preklapa sa unetim.");
+
+		MedicinskoOsoblje osoblje = osobljeRepository.findById(zahtevToUpdate.getRadniKalendar().getMedicinskoOsoblje().getId()).get();
+		if(osoblje == null)
+			throw new EntityNotFoundException("Medicinsko osoblje");
+
+		for(ZahtevZaGodisnji z : osoblje.getRadniKalendar().getZahteviZaGodisnjiOdmor()){
+			if(z.intersects(zahtevToUpdate) && z.isOdobreno()){
+				throw new BusinessLogicException("Greška: Već imate odobren zahtev za godišnji odmor u vremenskom intervalu koji se preklapa sa unetim.");
 			}
 		}
-		MedicinskoOsoblje osoblje = kalendar.getMedicinskoOsoblje();
 		if(osoblje instanceof Lekar){
 			Lekar lekar = (Lekar) osoblje;
 			for(Pregled pregled : lekar.getPregledi()){
 				if(pregled.intersects(zahtevToUpdate))
-					throw new Exception("Greška: Ne možete odobriti zahtev za godišnji jer postoji pregled kod lekara u datom vremenskom intervalu.");
+					throw new BusinessLogicException("Greška: Ne možete odobriti zahtev za godišnji jer postoji pregled kod lekara u datom vremenskom intervalu.");
 			}
 			for(Pregled pregled : lekar.getDodatneOperacije()){
 				if(pregled.intersects(zahtevToUpdate))
-					throw new Exception("Greška: Ne možete odobriti zahtev za godišnji jer postoji dodatna operacija kod lekara u datom vremenskom intervalu.");
+					throw new BusinessLogicException("Greška: Ne možete odobriti zahtev za godišnji jer postoji dodatna operacija kod lekara u datom vremenskom intervalu.");
 			}
 		}
+		zahtevToUpdate.setRadniKalendar(osoblje.getRadniKalendar());
+		return zahtevZaGodisnjiRepository.save(zahtevToUpdate);
+	}
+
+	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
+	public ZahtevZaGodisnji reject(ZahtevZaGodisnji zahtevToUpdate){
+		/*
+		pri odbijanju zahteva ne moramo da vrsimo nikakve provere
+		*/
+		RadniKalendar kalendar = radniKalendarRepository.findById(zahtevToUpdate.getRadniKalendar().getId()).get();
 		zahtevToUpdate.setRadniKalendar(kalendar);
 		return zahtevZaGodisnjiRepository.save(zahtevToUpdate);
 	}
@@ -100,8 +107,10 @@ public class ZahtevZaGodisnjiService {
 	}
 
 	@Transactional(readOnly=false)
-	public ZahtevZaGodisnji obradiOsoblje(Long idZahtevaZaGodisnji) {
-		ZahtevZaGodisnji zahtev = zahtevZaGodisnjiRepository.findByIdPessimisticWrite(idZahtevaZaGodisnji); //pessimistic write nad zahtevom za godisnji koji se menja
+	public ZahtevZaGodisnji obradiOsoblje(Long idZahtevaZaGodisnji) throws EntityNotFoundException{
+		ZahtevZaGodisnji zahtev = zahtevZaGodisnjiRepository.findById(idZahtevaZaGodisnji).get();
+		if(zahtev == null)
+			throw new EntityNotFoundException("Zahtev za odsustvo.");
 		zahtev.setOsobljeObradilo(true);
 		return zahtevZaGodisnjiRepository.save(zahtev);
 	}

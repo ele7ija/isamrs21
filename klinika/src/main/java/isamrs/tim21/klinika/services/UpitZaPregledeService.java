@@ -21,6 +21,8 @@ import isamrs.tim21.klinika.domain.TipPregleda;
 import isamrs.tim21.klinika.domain.UpitZaPregled;
 import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.dto.UpitZaPregledDTO;
+import isamrs.tim21.klinika.exceptions.BusinessLogicException;
+import isamrs.tim21.klinika.exceptions.EntityNotFoundException;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.repository.KorisniciRepository;
 import isamrs.tim21.klinika.repository.OsobljeRepository;
@@ -79,7 +81,100 @@ public class UpitZaPregledeService {
 		return upitZaPregledRepository.save(upit);
 	}
 
-	@Transactional
+	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
+	public CustomResponse<UpitZaPregled> odobriUnapredDefinisani(Long idKlinike, Long idUpitaZaPregled, UpitZaPregled u)
+		throws EntityNotFoundException, BusinessLogicException{	
+		/*
+			Pregled se dobavlja u pessimistic write rezimu 
+			kako bi sprecili paralelnu obradu(odobravanje ili odbijanje) dva ISTA ili RAZLICITA upita za ISTI pregled
+		*/
+		Pregled p = pregledRepository.findByIdKlinikeAndIdPregledaPessimisticWrite(idKlinike, u.getUnapredDefinisaniPregled().getId());
+		
+		//kako je pregled vec zakljucan sa exclusive lock-om, zakljucavanje i upita bi bio nepotreban overhead
+		UpitZaPregled upit = upitZaPregledRepository.findById(u.getId()).get();
+		if(upit == null)
+			throw new EntityNotFoundException("Upit za pregled");
+		
+		//smemo ovo da radimo posto je PREGLED pod exclusive lock-om
+		if(upit.getAdminObradio())
+			throw new BusinessLogicException("Greska. Upit je vec obradjen. Osvezite stranicu");
+		
+		//proveri da li je pregled vec rezervisan i potvrdjen od strane pacijenta
+		if(p.getPoseta() != null){
+			upit.setAdminObradio(true);
+			upit.setOdobren(false);
+			upit = upitZaPregledRepository.save(upit);
+			//ne bacamo exception kako se transakcija ne bi rollback-ovala
+			return new CustomResponse<UpitZaPregled>(upit, false, "Obavestenje: Ovaj pregled je vec rezervisan, te je iz tog razloga upit ipak odbijen.");
+		}
+
+		//ukoliko pregled vec ima odobren upit, admin nije smeo da odobri ovaj upit
+		for(UpitZaPregled drugiUpit: p.getUpiti()){
+			if(drugiUpit.getId() == upit.getId())
+				continue;
+
+			//ovaj if je redundantan jer bi za ovaj pregled onda postojala poseta, al aj nek ostane
+			if(drugiUpit.getOdobren() && drugiUpit.getPotvrdjen()){
+				upit.setAdminObradio(true);
+				upit.setOdobren(false);
+				upit = upitZaPregledRepository.save(upit);
+				//ne bacamo exception kako se transakcija ne bi rollback-ovala
+				return new CustomResponse<UpitZaPregled>(upit, false, "Obavestenje: Ovaj pregled je vec rezervisan, te je iz tog razloga upit ipak odbijen.");
+			}
+			if(drugiUpit.getOdobren() && !drugiUpit.getPacijentObradio()){
+				upit.setAdminObradio(false);
+				upit.setOdobren(false);
+				upit = upitZaPregledRepository.save(upit);
+				//e sad ipak treba otkazati transakciju, baci exception
+				throw new BusinessLogicException("Obavestenje: Ovaj pregled je vec odobren. Mocicete da odobrite ovaj pregled samo u slucaju da pacijent kojem je ovaj pregled odobren ipak odluci da ne potvrdi rezervaciju.");
+			}
+		}
+		
+		//sve je ok, sacuvaj pregled
+		upit.setAdminObradio(true);
+		upit.setOdobren(true);
+		upit = upitZaPregledRepository.save(upit);
+		
+		//slanje mejlova pacijentu i lekaru
+		mailService.upitOdobren(upit, false);
+		mailService.obavestiLekara(upit, upit.getLekar(), true, false);
+		
+		return new CustomResponse<UpitZaPregled>(upit, true, "OK.");
+	}
+
+	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
+	public CustomResponse<UpitZaPregled> odbiUnapredDefinisani(Long idKlinike, Long idUpitaZaPregled, UpitZaPregled u)
+		throws EntityNotFoundException, BusinessLogicException{	
+		/*
+			Pregled se dobavlja u pessimistic read rezimu
+			Na ovaj nacin dozvoljavamo vise transakcija koje vrse odbijanje RAZLICITH ili ISTIH upita za ISTI pregled da rade u paraleli
+			Ako dve transakcije vrse odbijanje ISTOG upita za ISTI pregled, to ne narusava konzistentnost podataka
+			Transakcije koje rade 
+		*/
+		pregledRepository.findByIdKlinikeAndIdPregledaPessimisticRead(idKlinike, u.getUnapredDefinisaniPregled().getId());
+		
+		//kako je pregled vec zakljucan sa exclusive lock-om, zakljucavanje i upita bi bio nepotreban overhead
+		UpitZaPregled upit = upitZaPregledRepository.findById(u.getId()).get();
+		if(upit == null)
+			throw new EntityNotFoundException("Upit za pregled");
+		
+		//provera ispod nece uvek raditi kako treba, jer je pregled pod shared lock-om
+		//moguce je da vise admina istovremeno odbija isti upit, sto ima za rezultat visestruko slanje maila pacijentu, ali to nije tako strasno
+		if(upit.getAdminObradio())
+			throw new BusinessLogicException("Greska. Ovaj upit za pregled je vec obradjen. Osvezite stranicu.");
+
+		//sve je ok, sacuvaj pregled
+		upit.setAdminObradio(true);
+		upit.setOdobren(false);
+		upit = upitZaPregledRepository.save(upit);
+		
+		//slanje mejla pacijentu
+		mailService.upitOdbijen(upit);
+
+		return new CustomResponse<UpitZaPregled>(upit, true, "OK.");
+	}
+
+	/*@Transactional
 	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdmin(UpitZaPregled u) throws Exception{
 		UpitZaPregled upit = upitZaPregledRepository.findById(u.getId()).get();
 		if(upit == null){
@@ -140,41 +235,30 @@ public class UpitZaPregledeService {
 				new CustomResponse<UpitZaPregled>(upit, true, "OK."),
 				HttpStatus.OK
 		);
-	}
+	}*/
 
-	@Transactional(readOnly=false)
-	public CustomResponse<Boolean> delete(Long idUpita, Long version) throws Exception{
-		UpitZaPregled upit = upitZaPregledRepository.findById(idUpita).get();
+	@Transactional(readOnly=false, isolation = Isolation.READ_COMMITTED)
+	public CustomResponse<Boolean> delete(Long idUpita, Long version) throws EntityNotFoundException, BusinessLogicException{
+		UpitZaPregled upit = upitZaPregledRepository.findById(idUpita).orElse(null);
 		CustomResponse<Boolean> retval;
-		if(upit == null){
-			retval = new CustomResponse<Boolean>(false, false, "Greska. Trazeni upit ne postoji");
-		}
-		else if(!upit.getPacijentObradio()){
-			retval = new CustomResponse<Boolean>(true, false, "Greska. Pacijent jos uvek nije video odgovor na vas upit.");
-		}else{
+		if(upit == null)
+			throw new EntityNotFoundException("Upit za pregled.");
+		else if(!upit.getPacijentObradio())
+			throw new BusinessLogicException("Greska. Pacijent jos uvek nije video odgovor na vas upit.");
+		else{
 			if(upit.getOriginalniPregled() != null){
 				UpitZaPregled originalniUpit = upit.getOriginalniPregled();
 				originalniUpit.setIzmenjeniPregled(null);
 				upit.setOriginalniPregled(null);
-				upitZaPregledRepository.delete(originalniUpit); //ovde moze da dodje do nepoklapanja verzija
+				upitZaPregledRepository.delete(originalniUpit);
 			}
 			UpitZaPregled upToDelete = new UpitZaPregled();
 			upToDelete.setId(idUpita);
 			upToDelete.setVersion(version);
-			upitZaPregledRepository.delete(upToDelete); //ovde moze da dodje do nepoklapanja verzija
+			upitZaPregledRepository.delete(upToDelete);
 			retval = new CustomResponse<Boolean>(true, true, "OK.");
 		}
 		return retval;
-	}
-
-	public ResponseEntity<CustomResponse<Boolean>> deleteMain(Long idKlinike, Long idUpita, Long version) throws Exception{
-		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
-		if(klinika == null){
-			return new ResponseEntity<CustomResponse<Boolean>>(new CustomResponse<Boolean>(false, false, "Greska. Klinika ne postoji"), HttpStatus.NOT_FOUND);
-		}else{
-			CustomResponse<Boolean> customResponse = delete(idUpita, version);
-			return new ResponseEntity<CustomResponse<Boolean>>(customResponse, customResponse.getResult() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
-		}
 	}
 	
 	@Transactional(readOnly=true)
@@ -184,23 +268,6 @@ public class UpitZaPregledeService {
 			return null;
 		}else{
 			return upitZaPregledRepository.findAllByIdKlinike(klinika.getId());
-		}
-	}
-
-	@Transactional(readOnly=false)
-	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdminMain(Long idKlinike, Long idUpita,
-			UpitZaPregled upitZaPregledToChange) throws Exception{
-		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
-		if(klinika == null){
-			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-					new CustomResponse<UpitZaPregled>(null, false, "Greska: Klinika nije pronadjena."),
-					HttpStatus.NOT_FOUND
-			);
-		}else{
-			upitZaPregledToChange.setId(idUpita);
-			upitZaPregledToChange.setKlinika(klinika);
-			ResponseEntity<CustomResponse<UpitZaPregled>> retval = obradiAdmin(upitZaPregledToChange);
-			return retval;
 		}
 	}
 
@@ -350,65 +417,49 @@ public class UpitZaPregledeService {
 		}
 	}
 
-	@Transactional(readOnly=false)
-	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdminCustom(Long idKlinike, Long idUpita,
-			UpitZaPregled upitZaPregledToChange) throws Exception{
+	@Transactional(readOnly=false, isolation = Isolation.READ_COMMITTED)
+	public CustomResponse<UpitZaPregled> odobriCustom(Long idKlinike, Long idUpita,
+			UpitZaPregled upitZaPregledToChange) throws EntityNotFoundException, BusinessLogicException{
+		//postavi kliniku upitu
 		Klinika klinika = klinikaRepository.findById(idKlinike).orElse(null);
-		if(klinika == null){
-			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-					new CustomResponse<UpitZaPregled>(null, false, "Greska: Klinika nije pronadjena"),
-					HttpStatus.NOT_FOUND);
-		}
-		
+		if(klinika == null)
+			throw new EntityNotFoundException("Klinika");
+		upitZaPregledToChange.setKlinika(klinika);
+
 		//dobavi upit za pregled i zakljucaj ga u PESSIMISTIC_FORCE_INCREMENT rezimu
 		UpitZaPregled upit = upitZaPregledRepository.findByIdKlinikeAndByIdPessimisticForceIncrement(idKlinike, idUpita);
-		if(upit.getAdminObradio()){
-			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-					new CustomResponse<UpitZaPregled>(null, false, "Greska: Ovaj upit za pregled je vec obradjen od strane administratora klinike."),
-					HttpStatus.OK);
+		if(upit.getAdminObradio())
+			throw new BusinessLogicException("Greska: Ovaj upit za pregled je vec obradjen od strane administratora klinike.");
+
+		//kreiraj pregled
+		Pregled pregled = new Pregled(upitZaPregledToChange);
+		pregled = pregledService.add(klinika, pregled).getResult(); //kreira pregled, baca exception ako ne uspe
+
+		//lekar je vec dobavljen u pessimistic write rezimu
+		upitZaPregledToChange.setLekar(pregled.getLekar());
+		
+		//dodatni lekari su vec dobavljeni u pessimistic write rezimu
+		int i = 0;
+		for(Lekar l: pregled.getDodatniLekari()){
+			upitZaPregledToChange.getUnapredDefinisaniPregled().getDodatniLekari().set(i, l);
+			i += 1;
 		}
 		
-		//postavi kliniku upitu
-		upitZaPregledToChange.setKlinika(klinika);
+		//tip pregleda je vec dobavljen u pessimistic read rezimu
+		upitZaPregledToChange.setTipPregleda(pregled.getTipPregleda());
 		
-		//dobavi lekara u PESSIMISTIC_READ rezimu
-		Lekar lekar = osobljeRepository.findLekarByIdKlinikeAndByIdPessimisticRead(idKlinike, upitZaPregledToChange.getLekar().getId());
-		upitZaPregledToChange.setLekar(lekar);
-		
-		//dobavi tip pregleda u PESSIMISTIC_READ rezimu
-		TipPregleda tipPregleda = tipPregledaRepository.findByIdKlinikeAndIdPessimisticRead(idKlinike, upitZaPregledToChange.getTipPregleda().getId());
-		upitZaPregledToChange.setTipPregleda(tipPregleda);
-		
+		//sala je vec dobavljena u pessimistic write rezimu
+		upitZaPregledToChange.setSala(pregled.getSala());
+		upit.setSala(pregled.getSala()); //upit za custom pregled nije imao postavljenu salu, postavi je sad
+
 		//dobavi pacijenta u PESSIMISTIC_READ rezimu
 		Pacijent pacijent = pacijentRepository.findByIdPacijentaPessimisticRead(upitZaPregledToChange.getPacijent().getId());
 		upitZaPregledToChange.setPacijent(pacijent);
-		
-		//dobavi salu u PESSIMISTIC_READ rezimu
-		Sala sala = salaRepository.findByIdKlinikeAndIdSalePessimisticRead(idKlinike, upitZaPregledToChange.getSala().getId());
-		upitZaPregledToChange.setSala(sala);
-		upit.setSala(sala);
-		
-		for(int i = 0; i < upitZaPregledToChange.getUnapredDefinisaniPregled().getDodatniLekari().size(); i++){
-			Long idOsoblja = upitZaPregledToChange.getUnapredDefinisaniPregled().getDodatniLekari().get(i).getId();
-			Lekar l = osobljeRepository.findLekarByIdKlinikeAndByIdPessimisticRead(klinika.getId(), idOsoblja);
-			if(l == null)
-				throw new Exception("Jedan od dodatnih lekara nije pronadjen.");
-			upitZaPregledToChange.getUnapredDefinisaniPregled().getDodatniLekari().set(i, l);
-		}
-		
-		//kreiraj pregled
-		Pregled pregled = new Pregled(upitZaPregledToChange);
-		CustomResponse<Pregled> customResponse = pregledService.add(klinika, pregled);
-		if(customResponse.getResult() == null || !customResponse.isSuccess())
-			throw new Exception(customResponse.getMessage());
-		
-		//dobavi prethodno kreirani pregled u PESSIMISTIC_READ rezimu
-		pregled = pregledRepository.findByIdKlinikeAndIdPregledaPessimisticRead(idKlinike, customResponse.getResult().getId());
 
 		upitZaPregledToChange.setUnapredDefinisaniPregled(pregled);
 		upit.setUnapredDefinisaniPregled(pregled);
 		
-		upit.setOdobren(upitZaPregledToChange.getOdobren());
+		upit.setOdobren(true);
 		upit.setAdminObradio(true);
 		
 		if(upitZaPregledToChange.differsFrom(upit)){
@@ -430,24 +481,31 @@ public class UpitZaPregledeService {
 			pregled.getUpiti().add(upit);
 			pregledRepository.save(pregled);
 		}
-		if (upit.getOdobren()) {
-			UpitZaPregled toSend = upit;
-			boolean izmenjen = false;
-			if(upit.getIzmenjeniPregled() != null){
-				toSend = upit.getIzmenjeniPregled();
-				izmenjen = true;
-			}
-			mailService.upitOdobren(toSend, izmenjen);
-			mailService.obavestiLekara(toSend, pregled.getLekar(), true, izmenjen);
-			for(Lekar l : pregled.getDodatniLekari()){
-				mailService.obavestiLekara(toSend, l, false, izmenjen);
-			}
+
+		UpitZaPregled toSend = upit;
+		boolean izmenjen = false;
+		if(upit.getIzmenjeniPregled() != null){
+			toSend = upit.getIzmenjeniPregled();
+			izmenjen = true;
 		}
-		else{
-			mailService.upitOdbijen(upit);
+		mailService.upitOdobren(toSend, izmenjen); //obavesti pacijenta da je upit odobren
+		mailService.obavestiLekara(toSend, pregled.getLekar(), true, izmenjen); //obavesti lekara da je upit odobren
+		for(Lekar l : pregled.getDodatniLekari()){ //obavesti sve dodatne lekare da je upit odobren
+			mailService.obavestiLekara(toSend, l, false, izmenjen);
 		}
-		return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-				new CustomResponse<UpitZaPregled>(upit, true, "OK"),
-				HttpStatus.OK);
+		
+		return new CustomResponse<UpitZaPregled>(upit, true, "OK");
+	}
+
+	@Transactional(readOnly=false, isolation = Isolation.READ_COMMITTED)
+	public CustomResponse<UpitZaPregled> odbiCustom(Long idKlinike, Long idUpita) throws BusinessLogicException{
+		UpitZaPregled upit = upitZaPregledRepository.findByIdKlinikeAndByIdPessimisticForceIncrement(idKlinike, idUpita);
+		if(upit.getAdminObradio())
+			throw new BusinessLogicException("Greska: Ovaj upit za pregled je vec obradjen od strane administratora klinike.");
+		upit.setAdminObradio(true);
+		upit.setOdobren(false);
+		upit = upitZaPregledRepository.save(upit);
+		mailService.upitOdbijen(upit); //obavesti pacijenta na mail da je upit odbijen
+		return new CustomResponse<UpitZaPregled>(upit, true, "OK");
 	}
 }

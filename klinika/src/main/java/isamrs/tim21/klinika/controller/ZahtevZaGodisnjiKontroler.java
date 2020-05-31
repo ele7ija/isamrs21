@@ -64,31 +64,17 @@ public class ZahtevZaGodisnjiKontroler {
 	@PreAuthorize("hasAuthority('lekar') or hasAuthority('medicinska-sestra')")
 	public ResponseEntity<ZahtevZaGodisnji> addZahtevZaGodisnji(@RequestBody ZahtevZaGodisnji zahtevToAdd){
 		ZahtevZaGodisnji zahtev = zahtevZaGodisnjiService.add(zahtevToAdd);
-		if(zahtev == null){
-			return new ResponseEntity<ZahtevZaGodisnji>(HttpStatus.NOT_FOUND);
-		}else{
-			return new ResponseEntity<ZahtevZaGodisnji>(zahtev, HttpStatus.OK);
-		}
+		return new ResponseEntity<ZahtevZaGodisnji>(zahtev, HttpStatus.OK);
 	}
 	
 	@PutMapping(value="/{idZahtevaZaGodisnji}")
 	@PreAuthorize("hasAuthority('admin-klinike')")
 	public ResponseEntity<CustomResponse<ZahtevZaGodisnji>> updateZahtevZaGodisnji(@PathVariable("idZahtevaZaGodisnji") Long idZahtevaZaGodisnji, @RequestBody ZahtevZaGodisnji zahtevToUpdate){
 		ZahtevZaGodisnji zahtev = null;
-		try{
-			zahtev = zahtevZaGodisnjiService.update(idZahtevaZaGodisnji, zahtevToUpdate);
-		}catch(ObjectOptimisticLockingFailureException e){
-			return new ResponseEntity<CustomResponse<ZahtevZaGodisnji>>(
-				new CustomResponse<ZahtevZaGodisnji>(null, false, "Verzija podatka je zastarela. Osvežite stranicu."),
-				HttpStatus.NOT_FOUND
-			);
-		}
-		catch(Exception e){
-			return new ResponseEntity<CustomResponse<ZahtevZaGodisnji>>(
-				new CustomResponse<ZahtevZaGodisnji>(null, false, e.getMessage()),
-				HttpStatus.NOT_FOUND
-			);
-		}
+		if(zahtevToUpdate.isOdobreno())
+			zahtev = zahtevZaGodisnjiService.approve(zahtevToUpdate);
+		else
+			zahtev = zahtevZaGodisnjiService.reject(zahtevToUpdate);
 		zahtevZaGodisnjiService.sendMail(zahtev);
 		return new ResponseEntity<CustomResponse<ZahtevZaGodisnji>>(
 			new CustomResponse<ZahtevZaGodisnji>(zahtev, true, "Zahtev je uspešno obrađen."),

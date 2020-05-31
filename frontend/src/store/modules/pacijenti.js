@@ -25,7 +25,8 @@ const getters = {
     let vremePregleda = utility.handleTimeZone(new Date(poseta.pregled.pocetakPregleda));
     var diff = Math.abs(d.getTime() - vremePregleda.getTime());
     diff/60000;
-    return (diff / 60000) <= 15; //pregled moze da se zapocne 15 minuta ranije
+    /*return*/ (diff / 60000) <= 15; //pregled moze da se zapocne 15 minuta ranije
+    return true; //za testiranje
   },
   getZdravstveniKarton: (state) => state.kartonPacijenta,
 }
