@@ -171,17 +171,30 @@ export default {
         obj.unapredDefinisaniPregled = {
           id: updatedItem.unapredDefinisaniPregled.id
         };
+        //PUT zahtev za reject upita za unapred definisani pregled
+        this.obradiAdmin(obj).then(
+          () => {
+            this.refreshTables();
+          },
+          (error) => {
+            this.snackbar = true;
+            this.snackbarText = error;
+            this.refreshTables();
+        });
+      }else{
+        //PUT zahtev za reject upita za custom pregled
+         this.obradiAdminCustom(obj).then(
+          () => {
+            this.refreshTables();
+          },
+          (error) => {
+            this.snackbar = true;
+            this.snackbarText = error;
+            this.refreshTables();
+          }
+        );
       }
-      //PUT zahtev za reject
-      this.obradiAdmin(obj).then(
-        () => {
-          this.refreshTables();
-        },
-        (error) => {
-          this.snackbar = true;
-          this.snackbarText = error;
-          this.refreshTables();
-      });
+      
       
     },
     deleteItem(item){

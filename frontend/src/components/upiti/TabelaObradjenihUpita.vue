@@ -39,12 +39,17 @@
         </tr>
       </template>
       <template v-slot:expanded-item="{ headers, item }">
-        <td :colspan="headers.length">
+        <td :colspan="headers.length" v-if="item.pregled!=null">
           <p class="text-center mt-2 mb-n4 pb-n4">Jos neki podaci o ovom pregledu</p>
           <br>
           Cena: {{item.pregled.cena}} <br>
           Popust: {{item.pregled.popust}} <br>
           KonacnaCena: {{item.pregled.konacnaCena}} <br>
+          Obradjen od strane pacijenta (preduslov za brisanje ovog upita): {{item.pacijentObradio}} <br>
+        </td>
+        <td :colspan="headers.length" v-else>
+          <p class="text-center mt-2 mb-n4 pb-n4">Jos neki podaci o ovom pregledu</p>
+          <br>
           Obradjen od strane pacijenta (preduslov za brisanje ovog upita): {{item.pacijentObradio}} <br>
         </td>
       </template>

@@ -63,6 +63,9 @@ public interface UpitZaPregledRepository extends JpaRepository<UpitZaPregled, Lo
 	@Query("SELECT u FROM UpitZaPregled u")
 	List<UpitZaPregled> sviUpitiPessimisticForceIncrement();
 
+	@Query("SELECT u FROM UpitZaPregled u")
+	List<UpitZaPregled> sviUpiti();
+
 	@Lock(LockModeType.PESSIMISTIC_READ)
 	@Query("SELECT u FROM UpitZaPregled u "
 			+ "WHERE u.klinika.id = :idKlinike "

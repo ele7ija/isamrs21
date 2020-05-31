@@ -73,7 +73,7 @@ public class UpitZaPregledeService {
 
 	@Transactional(readOnly=true)
 	public List<UpitZaPregled> sviUpiti(){
-		return upitZaPregledRepository.sviUpitiPessimisticForceIncrement();
+		return upitZaPregledRepository.sviUpiti();
 	}
 
 	@Transactional(readOnly=false)
