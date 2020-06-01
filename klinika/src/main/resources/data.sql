@@ -36,6 +36,8 @@ insert into radni_kalendar(dnevno_radno_vreme, medicinsko_osoblje_id) values(8,1
 -- medicinske sestre
 insert into korisnik (type, klinika_id, email, sifra, ime, prezime, id, enabled) values ('MS', 1, 'sestra@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', "Jovanka", "Sestrica", 20,  0x01);
 
+insert into radni_kalendar(dnevno_radno_vreme, medicinsko_osoblje_id) values (8,20);
+
 -- sablon: values (korisnik_id, sifra_entiteta)
 insert into user_authority values(1,3);
 insert into user_authority values(4,3);
