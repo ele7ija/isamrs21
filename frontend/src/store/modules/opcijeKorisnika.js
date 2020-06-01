@@ -207,7 +207,7 @@ const state = {
           { 
             title: 'Odsustvo',
             action: 'mdi-beach',
-            componentName: 'OdsustvoLekar'
+            componentName: 'odsustvo_sestra'
           },
         ]
       } 
