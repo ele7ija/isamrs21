@@ -75,12 +75,10 @@ export default {
   },
   created(){
     this.fetchPacijenti();
-    this.fetchTipoviPregled();
   },
   methods: {
     ...mapActions({
       fetchPacijenti: 'pacijenti/loadPacijenti',
-      fetchTipoviPregled: 'tipoviPregleda/loadTipoviPregleda'
     }),
     viewProfile(item){
       let pacijent = this.pacijenti.filter(x => x.id == item.id)[0];

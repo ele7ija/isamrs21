@@ -329,7 +329,7 @@ let router = new Router({
 
     //medicinska sestra
     {
-      path: '/pacijetni_klinike',
+      path: '/lista_pacijenata_klinike',
       name: 'lista_pacijenata',
       component: ListaPacijenata,
       meta: {
