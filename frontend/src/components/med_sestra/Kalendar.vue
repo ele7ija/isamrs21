@@ -123,7 +123,7 @@
       selectedOpen: false,
       events: [],
       colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
-      names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
+      names: ["Kardioloski pregled", "Gastroenteroloski"],
     }),
     computed: {
       title () {
@@ -164,7 +164,6 @@
         return WeekDayString;
       },
 
-
       //vuetify methods
       viewDay ({ date }) {
         this.focus = date
@@ -199,7 +198,7 @@
         nativeEvent.stopPropagation()
       },
       updateRange ({ start, end }) {
-        const events = []
+         const events = []
 
         const min = new Date(`${start.date}T00:00:00`)
         const max = new Date(`${end.date}T23:59:59`)
@@ -222,8 +221,7 @@
         }
 
         this.start = start
-        this.end = end
-        this.events = events
+        this.end = end        
       },
       nth (d) {
         return d > 3 && d < 21
@@ -234,6 +232,8 @@
         return Math.floor((b - a + 1) * Math.random()) + a
       },
       formatDate (a, withTime) {
+        console.log("a", a);
+        console.log("with time", withTime);
         return withTime
           ? `${a.getFullYear()}-${a.getMonth() + 1}-${a.getDate()} ${a.getHours()}:${a.getMinutes()}`
           : `${a.getFullYear()}-${a.getMonth() + 1}-${a.getDate()}`
