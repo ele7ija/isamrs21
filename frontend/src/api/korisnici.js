@@ -65,10 +65,6 @@ export default {
       url += 'pacijenti';
       obj.pacijent = profil;
     }
-    else if (role=='medicinska-sestra'){
-      url += 'medicinska_sestra/profil';
-      obj.medicinskaSestra = profil;
-    }
 
     return axios.put(
       url,

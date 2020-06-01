@@ -16,7 +16,7 @@ import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "pozicija")
 @JsonSubTypes({
     @JsonSubTypes.Type(value=Lekar.class, name = "lekar"),
-    @JsonSubTypes.Type(value=MedicinskaSestra.class, name = "medicinska-sestra")
+    @JsonSubTypes.Type(value=MedicinskaSestra.class, name = "medicinska sestra")
 })
 public abstract class MedicinskoOsoblje extends Korisnik{
 	
