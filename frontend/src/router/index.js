@@ -36,6 +36,7 @@ import PacijentiHomePage from '@/components/pacijenti/PacijentiHomePage';
 //medicinska sestra
 import ListaPacijenata from '@/components/med_sestra/ListaPacijenata'
 import OdsustvoSestra from '@/components/med_sestra/OdsustvoSestra'
+import KalendarSestra from '@/components/med_sestra/Kalendar'
 
 import store from '@/store/index';
 
@@ -342,6 +343,15 @@ let router = new Router({
       path: '/odsustvo_sestra',
       name: 'odsustvo_sestra',
       component: OdsustvoSestra,
+      meta: {
+        authen: true,
+        author: 'medicinska-sestra',
+      }
+    },
+    {
+      path: '/kalendar_sestra',
+      name: 'kalendar_sestra',
+      component: KalendarSestra,
       meta: {
         authen: true,
         author: 'medicinska-sestra',

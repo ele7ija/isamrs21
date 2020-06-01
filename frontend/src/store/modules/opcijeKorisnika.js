@@ -202,7 +202,7 @@ const state = {
           { 
             title: 'Radni kalendar',
             action: 'mdi-calendar',
-            componentName: 'RadniKalendarLekar'
+            componentName: 'kalendar_sestra'
           },
           { 
             title: 'Odsustvo',
