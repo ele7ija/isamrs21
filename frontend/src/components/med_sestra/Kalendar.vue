@@ -48,11 +48,12 @@
         <v-calendar
           ref="calendar"
           v-model="focus"
-          color="primary"
+          color="info"
           :events="events"
           :event-color="getEventColor"
           :now="today"
           :type="type"
+          :weekday-format="daniUNedelji"
           @click:event="showEvent"
           @click:more="viewDay"
           @click:date="viewDay"
@@ -106,6 +107,7 @@
 </template>
 
 <script>
+ 
   export default {
     data: () => ({
       focus: '',
@@ -155,6 +157,15 @@
       this.$refs.calendar.checkChange()
     },
     methods: {
+      //my methods
+      
+      daniUNedelji(day){
+        var WeekDayString = new Date(day.date).toLocaleString("sr-Latn-RS", {weekday: "long"});
+        return WeekDayString;
+      },
+
+
+      //vuetify methods
       viewDay ({ date }) {
         this.focus = date
         this.type = 'day'
