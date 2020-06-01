@@ -33,6 +33,9 @@ insert into radni_kalendar(dnevno_radno_vreme, medicinsko_osoblje_id) values(8,8
 insert into radni_kalendar(dnevno_radno_vreme, medicinsko_osoblje_id) values(8,10);
 insert into radni_kalendar(dnevno_radno_vreme, medicinsko_osoblje_id) values(8,11);
 
+-- medicinske sestre
+insert into korisnik (type, klinika_id, email, sifra, ime, prezime, id, enabled) values ('MS', 1, 'sestra@gmail.com', '$2a$10$cVG9lUTjhiB2j8HqrSk6B.PifdUlXCPZ6IDOIq.LrltVTXWSuVRqS', "Jovanka", "Sestrica", 20,  0x01);
+
 -- sablon: values (korisnik_id, sifra_entiteta)
 insert into user_authority values(1,3);
 insert into user_authority values(4,3);
@@ -43,6 +46,7 @@ insert into user_authority values(6,4);
 insert into user_authority values(7,2);
 insert into user_authority values(9,1);
 insert into user_authority values(10,1);
+insert into user_authority values(20,5);
 
 insert into sala (id, oznaka, klinika_id) values (1, 'Glavna kardioloska', 1);
 insert into sala (id, oznaka, klinika_id) values (2, 'Sporedna kardioloska', 1);

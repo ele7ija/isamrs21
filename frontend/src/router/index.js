@@ -33,6 +33,9 @@ import OdsustvoLekar from '@/components/lekar/OdsustvoLekar';
 import ProfilPacijenta from "@/components/lekar/pacijent/ProfilPacijenta";
 import PacijentiHomePage from '@/components/pacijenti/PacijentiHomePage';
 
+//medicinska sestra
+import ListaPacijenata from '@/components/med_sestra/ListaPacijenata'
+
 import store from '@/store/index';
 
 //Plugins
@@ -322,7 +325,28 @@ let router = new Router({
         authen: true,
         author: 'lekar'
       }
-    }
+    },
+
+    //medicinska sestra
+    {
+      path: '/pacijetni_klinike',
+      name: 'lista_pacijenata',
+      component: ListaPacijenata,
+      meta: {
+        authen: true,
+        author: 'medicinska-sestra'
+      }
+    },
+    {
+      path: '/pacijetni_lista',
+      name: 'PacijentiLista',
+      component: PacijentiSearch,
+      meta: {
+        authen: true,
+        author: 'medicinska-sestra'
+      },
+    },
+
   ]
 });
 

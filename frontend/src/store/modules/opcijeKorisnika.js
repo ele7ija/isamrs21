@@ -175,7 +175,43 @@ const state = {
           },
         ]
       } 
-    ]
+    ],
+
+    'medicinska-sestra' : [
+      {
+        title: 'Dashboard',
+        action: 'mdi-view-dashboard',
+        componentName: "home",
+        items: []
+      },
+      { 
+        title: 'Profil',
+        action: 'mdi-account',
+        componentName: 'profil',
+        items: []
+      },
+      {
+        title: 'Klinika',
+        action: 'mdi-hospital-building',
+        items: [
+          { 
+            title: ' moja Lista pacijenata',
+            action: 'mdi-account-search',
+            componentName: 'lista_pacijenata'
+          },
+          { 
+            title: 'Lista pacijenata',
+            action: 'mdi-calendar',
+            componentName: 'PacijentiLista'
+          },
+          { 
+            title: 'Odsustvo',
+            action: 'mdi-beach',
+            componentName: 'OdsustvoLekar'
+          },
+        ]
+      } 
+    ],
   }
 }
 const getters = {

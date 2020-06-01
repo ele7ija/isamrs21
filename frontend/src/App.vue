@@ -11,6 +11,7 @@ import {mapGetters} from 'vuex';
 import PacijentiLayout from '@/layouts/PacijentiLayout.vue';
 import AdminKlinickogCentraLayout from '@/layouts/AdminKlinickogCentraLayout.vue';
 import LekarLayout from "@/layouts/LekarLayout";
+import MedSestraLayout from "@/layouts/MedSestraLayout"
 export default {
   name: 'App',
   computed: mapGetters({globalLayout: 'layout/getGlobalLayout'}),
@@ -19,7 +20,8 @@ export default {
     'neulogovani-korisnik-layout': NeulogovanKorisnikLayout,
     'pacijent-layout': PacijentiLayout,
     'admin-klinickog-centra-layout': AdminKlinickogCentraLayout,
-    'lekar-layout': LekarLayout
+    'lekar-layout': LekarLayout,
+    'medicinska-sestra-layout': MedSestraLayout,
     // Mesto za nove layoute
   }
 }
