@@ -337,15 +337,6 @@ let router = new Router({
         author: 'medicinska-sestra'
       }
     },
-    {
-      path: '/pacijetni_lista',
-      name: 'PacijentiLista',
-      component: PacijentiSearch,
-      meta: {
-        authen: true,
-        author: 'medicinska-sestra'
-      },
-    },
 
   ]
 });

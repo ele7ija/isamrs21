@@ -195,14 +195,14 @@ const state = {
         action: 'mdi-hospital-building',
         items: [
           { 
-            title: ' moja Lista pacijenata',
+            title: 'Lista pacijenata',
             action: 'mdi-account-search',
             componentName: 'lista_pacijenata'
           },
           { 
-            title: 'Lista pacijenata',
+            title: 'Radni kalendar',
             action: 'mdi-calendar',
-            componentName: 'PacijentiLista'
+            componentName: 'RadniKalendarLekar'
           },
           { 
             title: 'Odsustvo',

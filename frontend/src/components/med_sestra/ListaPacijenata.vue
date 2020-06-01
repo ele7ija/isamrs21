@@ -23,15 +23,6 @@
           </td>
         </tr>
       </template>
-      <template  v-if="role != 'medicinska-sestra'" v-slot:item.actions="{ item }">
-        <v-icon
-          small
-          class="mr-2"
-          @click="viewProfile(item)"
-        >
-          mdi-account
-        </v-icon>
-      </template>
 
     </v-data-table>
   </v-container>
@@ -68,7 +59,6 @@ export default {
   computed: {
     ...mapGetters({
       pacijenti: 'pacijenti/getPacijenti',
-      role: 'korisnici/getKorisnikRole',
     }),
     _pacijenti(){
       if(this.pacijenti) //vue caveats
