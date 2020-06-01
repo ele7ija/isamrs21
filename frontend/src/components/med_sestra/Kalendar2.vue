@@ -108,6 +108,7 @@
 <script>
   export default {
     data: () => ({
+      today: '2019-01-08',
       focus: '',
       type: 'month',
       typeToLabel: {
@@ -129,22 +130,19 @@
         if (!start || !end) {
           return ''
         }
+
         // options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
         var datum = new Date(start.date);
         var mesec = datum.toLocaleString("sr-Latn-RS", {month: "long"});
         var godina = datum.toLocaleString("sr-Latn-RS", {year: "numeric"});
         var dan = datum.toLocaleString("sr-Latn-RS", {day: "numeric"});
-      
-        //end datum
-        var endMesec = new Date(end.date).toLocaleString("sr-Latn-RS", {month: "long"});
-        var endDan = new Date(end.date).toLocaleString("sr-Latn-RS", {day: "numeric"});
-
+        // var datum = new Date().toLocaleString("sr-Latn-RS", options);
+        
         switch (this.type) {
           case 'month':
             return `${mesec} ${godina}`;
           case 'week':
-            console.log(datum);
-            return `${dan} ${mesec} - ${endDan} ${endMesec}`;
+            return `${mesec} ${godina}`;
           case 'day':
             return `${dan} ${mesec} ${godina}`;
         }
