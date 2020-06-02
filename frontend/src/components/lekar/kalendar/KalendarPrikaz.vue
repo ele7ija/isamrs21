@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="pa-3">
   <v-row class="fill-height">
     <v-col>
       <v-sheet height="64">
@@ -44,7 +44,7 @@
       </v-sheet>
 
       <!-- sam kalendar -->
-      <v-sheet height="600">
+      <v-sheet height="500">
         <v-calendar
           ref="calendar"
           v-model="focus"
@@ -67,34 +67,32 @@
         >
           <v-card
             color="grey lighten-4"
-            min-width="350px"
-            flat
-          >
+            width="350px"
+            flat>
             <v-toolbar
               :color="selectedEvent.color"
-              dark
-            >
-              <v-btn icon>
-                <v-icon>mdi-pencil</v-icon>
-              </v-btn>
-              <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
-              <v-spacer></v-spacer>
-              <v-btn icon>
-                <v-icon>mdi-heart</v-icon>
-              </v-btn>
-              <v-btn icon>
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
+              dark>
+              <v-toolbar-title>{{selectedEvent.name}}</v-toolbar-title>
             </v-toolbar>
             <v-card-text>
-              <span v-html="selectedEvent.details"></span>
+              <span class="headline black--text"> pacijent: {{selectedEvent.details}} </span>
             </v-card-text>
+            <v-card-text>
+              pocetak u: {{selectedEvent.start}}
+            </v-card-text>
+            <v-card-text>
+              kraj u: {{selectedEvent.end}}
+            </v-card-text>
+
             <v-card-actions>
-              <v-btn
-                text
-                color="secondary"
-                @click="selectedOpen = false"
-              >
+              <!-- zapocni pregled ako pregled vec nije uradjen-->
+              
+              <FormaIzvestajPoseta 
+              v-if=" null !=  null"
+              :posetaId="selectedEvent.posetaId" 
+              @click.native="spremiFormu()"/>
+              <v-spacer></v-spacer>
+              <v-btn text color="secondary"  @click="selectedOpen = false">
                 Cancel
               </v-btn>
             </v-card-actions>
@@ -107,8 +105,12 @@
 </template>
 
 <script>
- 
+import FormaIzvestajPoseta from '../pacijent/FormaIzvestajPoseta'
 export default {
+  props: ["events", "today"],
+  components: {
+    FormaIzvestajPoseta,
+  },
   data: () => ({
     focus: '',
     type: 'month',
@@ -121,7 +123,6 @@ export default {
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
-    events: [],
     colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
     names: ["Kardioloski pregled", "Gastroenteroloski"],
   }),
@@ -145,7 +146,6 @@ export default {
         case 'month':
           return `${mesec} ${godina}`;
         case 'week':
-          console.log(datum);
           return `${dan} ${mesec} - ${endDan} ${endMesec}`;
         case 'day':
           return `${dan} ${mesec} ${godina}`;
@@ -156,17 +156,19 @@ export default {
   mounted () {
     this.$refs.calendar.checkChange()
   },
-
-
   methods: {
     //my methods
-    
     daniUNedelji(day){
       var WeekDayString = new Date(day.date).toLocaleString("sr-Latn-RS", {weekday: "long"});
       return WeekDayString;
     },
+    async spremiFormu(){
+      //setuj odabranog pacijenta i loaduj zdravstveni karton
+      await this.$store.commit("pacijenti/setOdabraniPacijent", this.selectedEvent.pacijentObject, {root: true});
+      await this.$store.dispatch("pacijenti/loadZdravstveniKarton", {root:true});
+    },
 
-    //vuetify methods
+//vuetify methods
     viewDay ({ date }) {
       this.focus = date
       this.type = 'day'
@@ -200,45 +202,8 @@ export default {
       nativeEvent.stopPropagation()
     },
     updateRange ({ start, end }) {
-        const events = []
-
-      const min = new Date(`${start.date}T00:00:00`)
-      const max = new Date(`${end.date}T23:59:59`)
-      const days = (max.getTime() - min.getTime()) / 86400000
-      const eventCount = this.rnd(days, days + 20)
-
-      for (let i = 0; i < eventCount; i++) {
-        const allDay = this.rnd(0, 3) === 0
-        const firstTimestamp = this.rnd(min.getTime(), max.getTime())
-        const first = new Date(firstTimestamp - (firstTimestamp % 900000))
-        const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000
-        const second = new Date(first.getTime() + secondTimestamp)
-
-        events.push({
-          name: this.names[this.rnd(0, this.names.length - 1)],
-          start: this.formatDate(first, !allDay),
-          end: this.formatDate(second, !allDay),
-          color: this.colors[this.rnd(0, this.colors.length - 1)],
-        })
-      }
-
       this.start = start
       this.end = end        
-    },
-    nth (d) {
-      return d > 3 && d < 21
-        ? 'th'
-        : ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th'][d % 10]
-    },
-    rnd (a, b) {
-      return Math.floor((b - a + 1) * Math.random()) + a
-    },
-    formatDate (a, withTime) {
-      console.log("a", a);
-      console.log("with time", withTime);
-      return withTime
-        ? `${a.getFullYear()}-${a.getMonth() + 1}-${a.getDate()} ${a.getHours()}:${a.getMinutes()}`
-        : `${a.getFullYear()}-${a.getMonth() + 1}-${a.getDate()}`
     },
   },
 }

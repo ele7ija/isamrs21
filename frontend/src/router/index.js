@@ -28,7 +28,7 @@ import Sifarnik from '@/components/admin_klinickog_centra/Sifarnik'
 
 //lekar
 import PacijentiSearch from '@/components/lekar/PacijentiSearch';
-import RadniKalendarLekar from '@/components/lekar/RadniKalendarLekar';
+import RadniKalendarLekar from '@/components/lekar/kalendar/RadniKalendarLekar';
 import OdsustvoLekar from '@/components/lekar/OdsustvoLekar';
 import ProfilPacijenta from "@/components/lekar/pacijent/ProfilPacijenta";
 import PacijentiHomePage from '@/components/pacijenti/PacijentiHomePage';

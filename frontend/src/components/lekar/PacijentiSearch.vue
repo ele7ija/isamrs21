@@ -82,7 +82,6 @@ export default {
   },
   created(){
     this.fetchPacijenti();
-    console.log(this.fetchPacijenti());
     this.fetchTipoviPregled();
   },
   methods: {

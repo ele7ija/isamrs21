@@ -211,17 +211,23 @@
           const first = new Date(firstTimestamp - (firstTimestamp % 900000))
           const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000
           const second = new Date(first.getTime() + secondTimestamp)
-
+          console.log("startt", this.formatDate(first, !allDay));
           events.push({
             name: this.names[this.rnd(0, this.names.length - 1)],
             start: this.formatDate(first, !allDay),
             end: this.formatDate(second, !allDay),
             color: this.colors[this.rnd(0, this.colors.length - 1)],
+            
           })
         }
+        
 
         this.start = start
         this.end = end        
+         
+        var x =  this.formatDate(new Date(), true);
+        console.log("x", x);
+        
       },
       nth (d) {
         return d > 3 && d < 21
@@ -232,8 +238,6 @@
         return Math.floor((b - a + 1) * Math.random()) + a
       },
       formatDate (a, withTime) {
-        console.log("a", a);
-        console.log("with time", withTime);
         return withTime
           ? `${a.getFullYear()}-${a.getMonth() + 1}-${a.getDate()} ${a.getHours()}:${a.getMinutes()}`
           : `${a.getFullYear()}-${a.getMonth() + 1}-${a.getDate()}`

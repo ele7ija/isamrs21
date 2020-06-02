@@ -1,15 +1,22 @@
 <template>
-  <h1>kalendar</h1>
+<div>
+  <h1 class="display-2">Moj kalendar</h1>
+  <KalendarPrikaz :events="this.posete" :today="this.today"/>
+</div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
-
+import KalendarPrikaz from './KalendarPrikaz'
 export default {
+  components:{
+    KalendarPrikaz,
+  },
   data (){
     return {
       lekaroviPacijenti: [],
-      events: [],
+      posete: [],
+      today: undefined,
     }
   },
 
@@ -24,8 +31,6 @@ export default {
   methods: {
     ...mapActions({
       fetchPacijenti: 'pacijenti/loadPacijenti',
-      //TODO: UCITATI SAMO POSETE KOD TOG LEKARA. 
-      //PRODJI KROZ SVE PACIJENTE I UCITAJ POSETE SAMO KOD IZABRANOG LEKARA
     }),
 
     async init(){
@@ -35,7 +40,7 @@ export default {
         PRODJI KROZ SVE PACIJENTE I UCITAJ POSETE SAMO KOD IZABRANOG LEKARA
         simuliraj setovanje odabranog pacijenta da bi mogla da se pozove checkLekarovPacijentMetoda
         zatim proveri da li pacijent pripada tom lekaru
-        ako pripada dodaj njegove posete u listu eventova.
+        ako pripada dodaj njegove posete u listu poseta.
         */
         this.$store.commit("pacijenti/setOdabraniPacijent", pacijent, {root: true});
         await this.$store.dispatch("pacijenti/checkLekarovPacijent",{root: true});
@@ -43,20 +48,28 @@ export default {
         if( isLekarovPacijent){
           this.lekaroviPacijenti.push(pacijent);
           for (var poseta of pacijent.zdravstveniKarton.posete){
-            console.log("pocetak pregleda: ",poseta.pregled);
-            this.events.push({
+            this.posete.push({
               name: poseta.pregled.tipPregleda.naziv,
-              start: poseta.pregled.pocetakPregleda,
-              end: poseta.pregled.krajPregleda,
-              details: `${pacijent.ime}  ${pacijent.prezime}`,
+              start: this.formatDate(poseta.pregled.pocetakPregleda),
+              end: this.formatDate(poseta.pregled.krajPregleda),
+              details: `${pacijent.ime} ${pacijent.prezime}`,
+              posetaId: poseta.id,
+              pacijentObject: pacijent,
+              color: "blue",
             })
           }
         }
-      }
-      console.log(this.events);      
-      //TODO: dodaj eventove u kalendar
+      }  
+      //setuj trenutni datum
+      var a = new Date();
+      this.today = `${a.getFullYear()}-${a.getMonth() + 1}-${a.getDate()} ${a.getHours()}:${a.getMinutes()}`;
+    },
 
-    }
+    formatDate (datum) {
+      var a = new Date(datum);
+      a = this.$utility.handleTimeZone(a);
+      return `${a.getFullYear()}-${a.getMonth() + 1}-${a.getDate()} ${a.getHours()}:${a.getMinutes()}`;
+    },
   }
 }
 </script>
