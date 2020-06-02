@@ -1,10 +1,30 @@
 <template>
   <v-card>
-    <v-card-title :class='pretrazeniPregledi.length==0 ? "disabled" : ""'>
+    <v-card-title :class='pretrazeniPregledi.length==0 ? "disabled " : "green lighten-2"'>
       {{lekar.ime}} {{lekar.prezime}}
     </v-card-title>
-    <v-card-subtitle :class='pretrazeniPregledi.length==0 ? "disabled" : ""'>
+    <v-card-subtitle :class='pretrazeniPregledi.length==0 ? "disabled pb-2" : "green lighten-2 pb-2"'>
       {{lekar.email}}
+    </v-card-subtitle>
+    <v-card-subtitle :class='pretrazeniPregledi.length==0 ? "disabled pt-0" : "green lighten-2 pt-0"'>
+      <v-container fluid class='pa-0'>
+        <v-row no-gutters justify="center">
+          <v-col cols=8 class='pa-0'>
+            <v-rating
+              background-color="grey darken-1"
+              dense
+              v-model='prosecnaOcena'
+              small
+              readonly=""
+              length=10>
+            </v-rating>
+          </v-col>
+            
+          <v-col cols=2 align-self="center" class='font-weight-bold'>
+            {{prosecnaOcena==0 ? '--' : prosecnaOcena.toFixed(2)}}
+          </v-col>
+        </v-row>
+      </v-container>
     </v-card-subtitle>
     <v-divider></v-divider>
     <v-card-text :class='pretrazeniPregledi.length==0 ? "disabled pb-2" : "pb-2"'>
@@ -134,6 +154,8 @@
 
 <script>
 import {mapGetters, mapState, mapMutations} from 'vuex';
+import oceneAPI from '@/api/ocene';
+
 export default {
   name: 'LekarCard',
   props: ['lekar'],
@@ -147,6 +169,7 @@ export default {
         v => !!v || 'TipPregleda je obavezan',
         v => (v && v!=='Svi') || 'Tip pregleda ne sme biti `Svi`'
       ],
+      ocene: []
     }
   },
   computed: {
@@ -209,6 +232,13 @@ export default {
     },
     validAggregate: function() {
       return this.valid && this.datetimeStart != null;
+    },
+    prosecnaOcena: function() {
+      let sum = 0;
+      for (let ocena of this.ocene) {
+        sum = sum + ocena.vrednost;
+      }
+      return this.ocene.length != 0 ? sum / this.ocene.length : 0;
     }
   },
   methods: {
@@ -277,8 +307,17 @@ export default {
     rezervisiPostojeci: function(pregled) {
       this.setOdabraniPregled(pregled);
       this.$router.push('/pacijent/rezervacija-pregleda');
-    }
+    },
+    dobavi: function(id) {
+      oceneAPI.pronadjiOceneLekara(id)
+      .then(({data}) => {
+        this.ocene = data;
+      })
+    },
   },
+  created() {
+    this.dobavi(this.lekar.id)
+  }
 }
 </script>
 

@@ -307,6 +307,28 @@
                       {{poseta.pregled.klinika.drzava}}
                     </v-list-item-subtitle>
                     </v-list-item-content>
+                    <v-list-item-action>
+                      <v-list-item-action-text>
+                        <v-btn
+                          @click='oceniLekara(poseta.pregled.lekar)'
+                          color='primary'
+                          width='240'
+                          class='mb-2'>
+                          <v-icon>mdi-star</v-icon>
+                          Oceni lekara (sada: {{ocenaLekara(poseta.pregled.lekar.id)}})
+                        </v-btn>
+                      </v-list-item-action-text>
+                      <v-list-item-action-text>
+                        <v-btn
+                          @click='oceniKliniku(poseta.pregled.klinika)'
+                          color='primary'
+                          width='240'
+                          >
+                          <v-icon>mdi-star</v-icon>
+                          Oceni kliniku (sada: {{ocenaKlinike(poseta.pregled.klinika.id)}})
+                        </v-btn>
+                      </v-list-item-action-text>
+                    </v-list-item-action>
                   </v-list-item>
                 </template>
               </v-list>
@@ -353,24 +375,47 @@
         Close
       </v-btn>
     </v-snackbar>
+    <OcenaLekaraDialog
+      v-bind:dialog='ocenaLekaraDialog'
+      v-bind:lekar='odabraniLekar'
+      @update-dialog='zavrsiDijalog'>
+    </OcenaLekaraDialog>
+    <OcenaKlinikeDialog
+      v-bind:dialog='ocenaKlinikeDialog'
+      v-bind:klinika='odabranaKlinika'
+      @update-dialog='zavrsiDijalog'>
+    </OcenaKlinikeDialog>
   </v-container>
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex';
+import oceneAPI from '@/api/ocene';
+import OcenaLekaraDialog from './OcenaLekaraDialog';
+import OcenaKlinikeDialog from './OcenaKlinikeDialog';
+
 export default {
   name: 'Istorija',
+  components: {OcenaLekaraDialog, OcenaKlinikeDialog},
   data: function() {
     return {
       snackbarErr: false,
       snackbarSucc: false,
       snackbarTimeout: 2000,
       snackbarText: null,
+      ocenaLekaraDialog: false,
+      odabraniLekar: null,
+      ocenaKlinikeDialog: false,
+      odabranaKlinika: null,
+      ocene: []
     }
   },
   computed: {
     ...mapState('klinike', [
       'posete']),
+    ...mapState('korisnici', [
+      '_korisnik'
+    ]),
     ...mapState('upitZaPregled', [
       'neodobreniNeodradjeniUpiti',
       'neodobreniOdradjeniUpiti',
@@ -443,6 +488,45 @@ export default {
       let date = new Date(poseta.pregled.pocetakPregleda);
       let danas = new Date();
       return date < danas;
+    },
+    oceniLekara: function(lekar) {
+      this.odabraniLekar = lekar;
+      this.ocenaLekaraDialog=true;
+    },
+    oceniKliniku: function(klinika) {
+      this.odabranaKlinika = klinika;
+      this.ocenaKlinikeDialog=true;
+    },
+    dobaviOcenePacijenta: function(email) {
+      oceneAPI.pronadjiOcenePacijenta(email)
+      .then(({data}) => {
+        this.ocene = data;
+      })
+    },
+    ocenaLekara: function(lekarId) {
+      for (let ocena of this.ocene) {
+        if (ocena.lekar != null) {
+          if (ocena.lekar.id == lekarId) {
+            return ocena.vrednost;
+          }
+        }
+      }
+      return '--';
+    },
+    ocenaKlinike: function(klinikaId) {
+      for (let ocena of this.ocene) {
+        if (ocena.klinika != null) {
+          if (ocena.klinika.id == klinikaId) {
+            return ocena.vrednost;
+          }
+        }
+      }
+      return '--';
+    },
+    zavrsiDijalog: function() {
+      this.ocenaKlinikeDialog=false;
+      this.ocenaLekaraDialog=false;
+      this.dobaviOcenePacijenta(this._korisnik.username);
     }
   },
   created() {
@@ -450,6 +534,7 @@ export default {
     this.dobaviNeodobreneNeodradjeneUpite();
     this.dobaviNeodobreneOdradjeneUpite();
     this.dobaviNepotvrdjeneUpite();
+    this.dobaviOcenePacijenta(this._korisnik.username);
   }
 }
 </script>

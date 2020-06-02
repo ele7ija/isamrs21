@@ -68,6 +68,18 @@ public class Klinika implements IdentitySerializable{
 	@JsonSerialize(using=IdentityListSerializer.class)
 	private List<Cenovnik> cenovnici;
 	
+	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.MERGE, mappedBy = "klinika")
+	@JsonSerialize(using=IdentityListSerializer.class)
+	private List<Ocena> ocene;
+
+	public List<Ocena> getOcene() {
+		return this.ocene;
+	}
+
+	public void setOcene(List<Ocena> ocene) {
+		this.ocene = ocene;
+	}
+
 	public Klinika(){}
 
 	public Klinika(KlinikaDTO klinikaDTO){

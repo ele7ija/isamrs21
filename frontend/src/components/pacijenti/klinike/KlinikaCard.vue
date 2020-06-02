@@ -40,7 +40,7 @@
           <v-list-item-content>
             <v-list-item-title class='subtitle-2'>
               Prosečna ocena: <span class='subtitle-2 font-weight-bold'>
-                {{minimalnaCena}}
+                {{prosecnaOcena==0 ? '--' : prosecnaOcena.toFixed(2)}}
               </span>
             </v-list-item-title>
           </v-list-item-content>
@@ -74,6 +74,7 @@
 <script>
 import PreglediDialog from './PreglediDialog'
 import { mapGetters, mapMutations} from 'vuex';
+import oceneAPI from '@/api/ocene';
 
 export default {
   name: 'KlinikaCard',
@@ -83,7 +84,8 @@ export default {
   },
   data: function(){
     return {
-      dialog: false
+      dialog: false,
+      ocene: []
     }
   },
   computed: {
@@ -108,6 +110,13 @@ export default {
         } 
       })
       return min;
+    },
+    prosecnaOcena: function() {
+      let sum = 0;
+      for (let ocena of this.ocene) {
+        sum = sum + ocena.vrednost;
+      }
+      return this.ocene.length != 0 ? sum / this.ocene.length : 0;
     }
   },
   methods: {
@@ -124,9 +133,16 @@ export default {
     },
     navigate: function(klinikaId) {
       this.$router.push({ name: 'pacijent-lekari', params: { klinikaId } })
-    }
+    },
+    dobavi: function(id) {
+      oceneAPI.pronadjiOceneKlinike(id)
+      .then(({data}) => {
+        this.ocene = data;
+      })
+    },
   },
   created() {
+    this.dobavi(this.klinika.id)
   }
 }
 </script>

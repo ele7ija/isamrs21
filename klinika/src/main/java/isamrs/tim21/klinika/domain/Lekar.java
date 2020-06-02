@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import isamrs.tim21.klinika.jsonSerialize.IdentityListSerializer;
 import isamrs.tim21.klinika.jsonSerialize.PregledListSerializer;
 
 
@@ -39,6 +40,18 @@ public class Lekar extends MedicinskoOsoblje{
 	@ManyToMany(cascade=CascadeType.MERGE, mappedBy="dodatniLekari")
 	private List<Pregled> dodatneOperacije;
 	
+	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy = "lekar")
+	@JsonSerialize(using=IdentityListSerializer.class)
+	private List<Ocena> ocene;
+
+	public List<Ocena> getOcene() {
+		return this.ocene;
+	}
+
+	public void setOcene(List<Ocena> ocene) {
+		this.ocene = ocene;
+	}
+
 	public List<TipPregleda> getTipovi_pregleda() {
 		return tipovi_pregleda;
 	}

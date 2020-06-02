@@ -9,6 +9,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -16,6 +17,7 @@ import org.springframework.security.core.GrantedAuthority;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import isamrs.tim21.klinika.dto.PacijentDTO;
+import isamrs.tim21.klinika.jsonSerialize.IdentityListSerializer;
 import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
 
 @Entity
@@ -48,6 +50,18 @@ public class Pacijent extends Korisnik{
 	@OneToOne(cascade=CascadeType.ALL)
 	private ZahtevZaRegistraciju zahtev;
 	
+	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.MERGE, mappedBy = "pacijent")
+	@JsonSerialize(using=IdentityListSerializer.class)
+	private List<Ocena> ocene;
+
+	public List<Ocena> getOcene() {
+		return this.ocene;
+	}
+
+	public void setOcene(List<Ocena> ocene) {
+		this.ocene = ocene;
+	}
+
 	public Pacijent() {
 		super();
 	}
