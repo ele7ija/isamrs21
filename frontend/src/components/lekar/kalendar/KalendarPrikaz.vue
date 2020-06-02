@@ -75,7 +75,7 @@
               <v-toolbar-title>{{selectedEvent.name}}</v-toolbar-title>
             </v-toolbar>
             <v-card-text>
-              <span class="headline black--text"> pacijent: {{selectedEvent.details}} </span>
+              <span class="headline black--text"> pacijent: {{selectedEvent.ime}} </span>
             </v-card-text>
             <v-card-text>
               pocetak u: {{selectedEvent.start}}
@@ -85,12 +85,10 @@
             </v-card-text>
 
             <v-card-actions>
-              <!-- zapocni pregled ako pregled vec nije uradjen-->
-              
+              <!-- zapocni pregled ako pregled vec nije uradjen, tj ako bolest ne postoji-->
               <FormaIzvestajPoseta 
-              v-if=" null !=  null"
-              :posetaId="selectedEvent.posetaId" 
-              @click.native="spremiFormu()"/>
+              v-if="selectedEvent.opis==null"
+              :posetaId="selectedEvent.posetaId" />
               <v-spacer></v-spacer>
               <v-btn text color="secondary"  @click="selectedOpen = false">
                 Cancel
@@ -115,6 +113,7 @@ export default {
     focus: '',
     type: 'month',
     typeToLabel: {
+      day: 'Dan',
       month: 'Mesec',
       week: 'Nedelja',
     },
@@ -198,12 +197,19 @@ export default {
       } else {
         open()
       }
-
-      nativeEvent.stopPropagation()
+      nativeEvent.stopPropagation();
+      //cim se otvori poseta, spremi formu
+      this.spremiFormu();
     },
     updateRange ({ start, end }) {
       this.start = start
       this.end = end        
+      // this.events = [{
+      //   name: "asdf",
+      //   start: "2020-6-1",
+      //   end: "2020-6-1",
+      //   color:" green"
+      // }];
     },
   },
 }

@@ -48,18 +48,21 @@ export default {
         if( isLekarovPacijent){
           this.lekaroviPacijenti.push(pacijent);
           for (var poseta of pacijent.zdravstveniKarton.posete){
+            console.log(poseta);
             this.posete.push({
               name: poseta.pregled.tipPregleda.naziv,
               start: this.formatDate(poseta.pregled.pocetakPregleda),
               end: this.formatDate(poseta.pregled.krajPregleda),
-              details: `${pacijent.ime} ${pacijent.prezime}`,
+              ime: `${pacijent.ime} ${pacijent.prezime}`,
               posetaId: poseta.id,
               pacijentObject: pacijent,
+              opis: poseta.opis,
               color: "blue",
             })
           }
         }
       }  
+      
       //setuj trenutni datum
       var a = new Date();
       this.today = `${a.getFullYear()}-${a.getMonth() + 1}-${a.getDate()} ${a.getHours()}:${a.getMinutes()}`;
