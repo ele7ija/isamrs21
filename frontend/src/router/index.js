@@ -28,10 +28,15 @@ import Sifarnik from '@/components/admin_klinickog_centra/Sifarnik'
 
 //lekar
 import PacijentiSearch from '@/components/lekar/PacijentiSearch';
-import RadniKalendarLekar from '@/components/lekar/RadniKalendarLekar';
+import RadniKalendarLekar from '@/components/lekar/kalendar/RadniKalendarLekar';
 import OdsustvoLekar from '@/components/lekar/OdsustvoLekar';
 import ProfilPacijenta from "@/components/lekar/pacijent/ProfilPacijenta";
 import PacijentiHomePage from '@/components/pacijenti/PacijentiHomePage';
+
+//medicinska sestra
+import ListaPacijenata from '@/components/med_sestra/ListaPacijenata'
+import OdsustvoSestra from '@/components/med_sestra/OdsustvoSestra'
+import KalendarSestra from '@/components/med_sestra/Kalendar'
 
 import store from '@/store/index';
 
@@ -322,7 +327,37 @@ let router = new Router({
         authen: true,
         author: 'lekar'
       }
-    }
+    },
+
+    //medicinska sestra
+    {
+      path: '/lista_pacijenata_klinike',
+      name: 'lista_pacijenata',
+      component: ListaPacijenata,
+      meta: {
+        authen: true,
+        author: 'medicinska-sestra'
+      }
+    },
+    {
+      path: '/odsustvo_sestra',
+      name: 'odsustvo_sestra',
+      component: OdsustvoSestra,
+      meta: {
+        authen: true,
+        author: 'medicinska-sestra',
+      }
+    },
+    {
+      path: '/kalendar_sestra',
+      name: 'kalendar_sestra',
+      component: KalendarSestra,
+      meta: {
+        authen: true,
+        author: 'medicinska-sestra',
+      }
+    },
+
   ]
 });
 

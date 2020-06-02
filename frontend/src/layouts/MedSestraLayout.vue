@@ -11,7 +11,7 @@
 
     <v-app-bar  app color="indigo" dark >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-toolbar-title>Administrator kliničkog centra</v-toolbar-title>
+      <v-toolbar-title>Medicinska sestra</v-toolbar-title>
     </v-app-bar>
     
     <!-- ovo je centralni meni -->
@@ -26,7 +26,7 @@ import OpcijeKorisnika from '../components/user_options/OpcijeKorisnika';
 import {mapGetters} from 'vuex';
 //import {mapActions} from 'vuex';
 export default {
-  name: "AdminCentraLayout",
+  name: "MedSestraLayout",
   components: {
     OpcijeKorisnika
   },
