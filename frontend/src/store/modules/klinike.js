@@ -30,6 +30,8 @@ const state = {
   odabraniGrad: null,
   minOcena: 0,
   maxOcena: 10,
+  minOcenaLekara: 0,
+  maxOcenaLekara: 10,
   // Pregled za rez
   odabranaKlinika: null,
   odabraniPregled: null,
@@ -337,7 +339,11 @@ const mutations = {
     state.maxOcena = max,
   setOceneKlinike: (state, obj) => {
     state.ocene[obj.klinikaId] = obj.ocene;
-  }
+  },
+  setMinOcenaLekara: (state, min) => 
+    state.minOcenaLekara = min,
+  setMaxOcenaLekara: (state, max) => 
+    state.maxOcenaLekara = max,
 }
 
 export default{

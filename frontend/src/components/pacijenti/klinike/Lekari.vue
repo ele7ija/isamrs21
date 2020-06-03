@@ -56,8 +56,15 @@ export default {
     }
   },
   computed: {
+    ...mapState('klinike', [
+      'minOcenaLekara',
+      'maxOcenaLekara'
+    ]),
     ...mapState('osobljePacijent', [
       'lekari'
+    ]),
+    ...mapGetters('osobljePacijent', [
+      'getProsecnaOcenaLekara'
     ]),
     ...mapGetters('klinike', [
       'getPretrazeniPregledi'
@@ -77,7 +84,15 @@ export default {
       retval.forEach((id) => {
         r.push(this.lekari.filter((x) => x.id === id)[0]);
       });
-      return r;
+      let r2 = [];
+      for (let lekar of r) {
+        let po = this.getProsecnaOcenaLekara(lekar.id);
+        if (po < this.minOcenaLekara || po > this.maxOcenaLekara) {
+          continue;
+        }
+        r2.push(lekar);
+      }
+      return r2;
     },
     nepretrazeniLekari: function() {
       return this.lekari.filter((x) => {
@@ -92,10 +107,11 @@ export default {
   },
   methods: {
     ...mapActions('osobljePacijent', [
-      'pronadjiLekare'
+      'pronadjiLekare',
+      'loadAllOcene'
     ]),
     ...mapActions('klinike', [
-      'dobaviPodatkeKlinikaPage'
+      'dobaviPodatkeKlinikaPage',
     ]),
     getPreglediLekara: function(lekarId) {
       let retval = [];
@@ -107,9 +123,10 @@ export default {
       return retval;
     }
   },
-  created() {
+  async created() {
     this.dobaviPodatkeKlinikaPage(this.klinikaId);
-    this.pronadjiLekare(this.klinikaId);
+    await this.pronadjiLekare(this.klinikaId);
+    await this.loadAllOcene();
   }
 }
 </script>

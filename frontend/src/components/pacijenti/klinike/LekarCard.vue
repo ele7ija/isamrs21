@@ -1,12 +1,12 @@
 <template>
   <v-card>
-    <v-card-title :class='pretrazeniPregledi.length==0 ? "disabled " : "green lighten-2"'>
+    <v-card-title :class='!lekarPretrazen ? "disabled " : "green lighten-2"'>
       {{lekar.ime}} {{lekar.prezime}}
     </v-card-title>
-    <v-card-subtitle :class='pretrazeniPregledi.length==0 ? "disabled pb-2" : "green lighten-2 pb-2"'>
+    <v-card-subtitle :class='!lekarPretrazen ? "disabled pb-2" : "green lighten-2 pb-2"'>
       {{lekar.email}}
     </v-card-subtitle>
-    <v-card-subtitle :class='pretrazeniPregledi.length==0 ? "disabled pt-0" : "green lighten-2 pt-0"'>
+    <v-card-subtitle :class='!lekarPretrazen ? "disabled pt-0" : "green lighten-2 pt-0"'>
       <v-container fluid class='pa-0'>
         <v-row no-gutters justify="center">
           <v-col cols=8 class='pa-0'>
@@ -27,7 +27,7 @@
       </v-container>
     </v-card-subtitle>
     <v-divider></v-divider>
-    <v-card-text :class='pretrazeniPregledi.length==0 ? "disabled pb-2" : "pb-2"'>
+    <v-card-text :class='!lekarPretrazen ? "disabled pb-2" : "pb-2"'>
       <v-list>
         <v-list-item
           v-for='pregled in pretrazeniPregledi'
@@ -173,6 +173,21 @@ export default {
     }
   },
   computed: {
+    ...mapState('klinike', [
+      'minOcenaLekara',
+      'maxOcenaLekara'
+    ]),
+    lekarPretrazen: function() {
+      console.log('sth')
+      if (this.pretrazeniPregledi.length==0) {
+        return false;
+      }
+      let po = this.getProsecnaOcenaLekara(this.lekar.id);
+      if (po < this.minOcenaLekara || po > this.maxOcenaLekara) {
+        return false;
+      }
+      return true;
+    },
     cdatetimeStart: {
       get: function() {
         if (this.datetimeStart == null) {
@@ -197,6 +212,9 @@ export default {
     ]),
     ...mapState('klinike', [
       'odabraniTipPregleda'
+    ]),
+    ...mapGetters('osobljePacijent', [
+      'getProsecnaOcenaLekara'
     ]),
     pretrazeniPregledi: function() {
       return this.getPretrazeniPreglediLekara({klinikaId: this.lekar.klinika.id, lekarId: this.lekar.id})
@@ -251,6 +269,7 @@ export default {
       'setOdabraniTipPregleda',
       'setOdabraniPregled'
     ]),
+    
     formatDate: function(date) {
       let temp = new Date(date);
       let day = temp.getDate();
