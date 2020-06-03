@@ -19,6 +19,14 @@ export default{
     );
   },
 
+  pronadjiLekareKlinike(idKlinike){
+    let options = util.prepareOptions();
+    return axios.get(
+      `${process.env.VUE_APP_BACKEND_ROOT}/medicinskaOsoba/${idKlinike}/lekari`,
+      options
+    );
+  },
+
   pronadjiOceneLekara(idLekara){
     let options = util.prepareOptions();
     return axios.get(

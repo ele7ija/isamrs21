@@ -52,6 +52,11 @@ const state = {
             action: 'mdi-beach',
             componentName: 'zahtevi_godisnji'
           },
+          {
+            title: 'Izveštaji poslovanja',
+            action: 'mdi-file-chart',
+            componentName: 'izvestaji'
+          },
         ]
       }
       

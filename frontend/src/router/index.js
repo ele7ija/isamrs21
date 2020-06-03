@@ -11,6 +11,7 @@ import Osoblje from "@/components/osoblje/Osoblje";
 import PreglediMain from "@/components/pregledi/PreglediMain";
 import UpitiPreglediAdmin from "@/components/upiti/UpitiPreglediAdmin";
 import ZahteviZaGodisnji from "@/components/zahtevi_godisnji/ZahteviZaGodisnji";
+import Izvestaji from "@/components/izvestaji/Izvestaji";
 import KlinikaAdmin from '@/components/klinike/KlinikaAdmin';
 import Klinike from '@/components/pacijenti/klinike/Klinike';
 import KlinikaPage from '@/components/pacijenti/klinike/KlinikaPage';
@@ -154,6 +155,15 @@ let router = new Router({
       path: '/zahtevi_godisnji',
       name: 'zahtevi_godisnji',
       component: ZahteviZaGodisnji,
+      meta: {
+        authen: true,
+        author: 'admin-klinike'
+      }
+    },
+    {
+      path: '/izvestaji',
+      name: 'izvestaji',
+      component: Izvestaji,
       meta: {
         authen: true,
         author: 'admin-klinike'

@@ -47,6 +47,13 @@ public class PregledKontroler {
 		List<Pregled> pregledi = pregledService.findSlobodni(idKlinike);
 		return new ResponseEntity<List<Pregled>>(pregledi, HttpStatus.OK);
 	}
+
+	@GetMapping(value="/odrzani")
+	@PreAuthorize("hasAnyAuthority('admin-klinike')")
+	public ResponseEntity<List<Pregled>> getOdrzani(@PathVariable("idKlinike") Long idKlinike){
+		List<Pregled> pregledi = pregledService.findOdrzani(idKlinike);
+		return new ResponseEntity<List<Pregled>>(pregledi, HttpStatus.OK);
+	}
 	
 	@GetMapping(value="/{idPregleda}")
 	@PreAuthorize("hasAnyAuthority('pacijent', 'lekar', 'admin-klinike')")

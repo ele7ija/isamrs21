@@ -20,6 +20,7 @@ import createPersistedState from 'vuex-persistedstate'
 import zahteviZaRegistraciju from './modules/zahteviZaRegistraciju'
 import sifarnik from './modules/sifarnik';
 import profil from './modules/profil';
+import izvestaji from './modules/izvestaji';
 import adminiCentra from './modules/adminiCentra'
 import zahteviZaGodisnjiOsoblje from './modules/zahteviZaGodisnjiOsoblje';
 import zahteviZaGodisnjiAdmin from './modules/zahteviZaGodisnjiAdmin';
@@ -49,7 +50,8 @@ export default new Vuex.Store({
     profil,
     adminiCentra,
     zahteviZaGodisnjiOsoblje,
-    zahteviZaGodisnjiAdmin
+    zahteviZaGodisnjiAdmin,
+    izvestaji
   },
 
   plugins: [

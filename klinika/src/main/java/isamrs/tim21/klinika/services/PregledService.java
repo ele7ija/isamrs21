@@ -197,7 +197,6 @@ public class PregledService {
 		return true;
 	}
 
-	@Transactional(propagation = Propagation.MANDATORY, isolation = Isolation.SERIALIZABLE)
 	private boolean validateDodatnoOsoblje(Klinika klinika, Pregled pregled){
 		/*
 			Svaki lekar je vec zakljucan exclusive lock-om i dobavljen u radnu memoriju
@@ -230,7 +229,6 @@ public class PregledService {
 		return true;
 	}
 	
-	@Transactional(propagation = Propagation.MANDATORY, isolation = Isolation.SERIALIZABLE)
 	private boolean validateOsoblje(Klinika klinika, Pregled pregled) {
 		/*
 			Lekar je vec zakljucan exclusive lock-om i dobavljen u radnu memoriju
@@ -296,6 +294,20 @@ public class PregledService {
 			if (!flag) {
 				r.add(p);
 			}
+		}
+		return r;
+	}
+
+	@Transactional(readOnly=true, isolation = Isolation.READ_COMMITTED)
+	public List<Pregled> findOdrzani(Long idKlinike) throws EntityNotFoundException{
+		Klinika k = klinikaRepository.findById(idKlinike).orElse(null);
+		if(k == null)
+			throw new EntityNotFoundException("Klinika");
+		List<Pregled> retval = pregledRepository.findAllByIdKlinike(idKlinike);
+		List<Pregled> r = new ArrayList<Pregled>();
+		for (Pregled p : retval) {
+			if(p.getPoseta() != null) //ako postoji poseta, znaci da je pacijent potvrdio rezervaciju
+				r.add(p);
 		}
 		return r;
 	}

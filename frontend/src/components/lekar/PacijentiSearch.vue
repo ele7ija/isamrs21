@@ -13,10 +13,10 @@
       <template v-slot:body.prepend>
         <tr>
           <td>
-            <v-text-field v-model="imePrezime" label="Filtriraj"></v-text-field>
+            <v-text-field v-model="imePrezime" label="Filtriraj" clearable></v-text-field>
           </td>
           <td>
-            <v-text-field v-model="jbo" label="Filtriraj"></v-text-field>
+            <v-text-field v-model="jbo" label="Filtriraj" clearable></v-text-field>
           </td>
           <td>
             <v-btn @click="resetFilters">Poništi</v-btn>

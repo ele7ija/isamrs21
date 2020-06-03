@@ -20,6 +20,15 @@ export default{
     return response.data;
   },
 
+  async getOdrzaniPregledi(idKlinike){
+    let options = util.prepareOptions();
+    let response = await axios.get(
+      `${process.env.VUE_APP_BACKEND_ROOT}/pregled/${idKlinike}/odrzani`,
+      options
+    )
+    return response.data;
+  },
+
   addPregled(idKlinike, pregled){
     let options = util.prepareOptions();
     return axios.post(

@@ -15,6 +15,7 @@ import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.repository.KorisniciRepository;
 import isamrs.tim21.klinika.repository.OcenaRepository;
 import isamrs.tim21.klinika.repository.PacijentRepository;
+import isamrs.tim21.klinika.repository.OsobljeRepository;
 
 @Service
 public class OcenaService {
@@ -25,6 +26,9 @@ public class OcenaService {
     private KorisniciRepository korisniciRepository;
 
     @Autowired
+    private OsobljeRepository osobljeRepository;
+
+    @Autowired
     private PacijentRepository pacijentRepository;
 
     @Autowired
@@ -33,12 +37,12 @@ public class OcenaService {
 	public List<Ocena> pronadjiOceneKlinike(Long idKlinike) {
         Klinika k = klinikaRepository.findById(idKlinike).get();
         return k.getOcene();
-	}
+    }
 
 	public List<Ocena> pronadjiOceneLekara(Long idLekara) {
         Lekar l = (Lekar) korisniciRepository.findById(idLekara).get();
         return l.getOcene();
-	}
+    }
     
     public Ocena kreirajOcenu(Ocena o) {
         Pacijent p = pacijentRepository.findById(o.getPacijent().getId()).get();

@@ -41,7 +41,7 @@ public class Lekar extends MedicinskoOsoblje{
 	private List<Pregled> dodatneOperacije;
 	
 	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy = "lekar")
-	@JsonSerialize(using=IdentityListSerializer.class)
+	@JsonIgnoreProperties(value={"lekar"}, allowSetters = true)
 	private List<Ocena> ocene;
 
 	public List<Ocena> getOcene() {
