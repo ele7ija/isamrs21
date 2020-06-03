@@ -4,7 +4,7 @@
       Pretraga pregleda
     </v-card-title>
     <v-card-subtitle>
-      Pretražite vreme, mesto i tip pregleda koji želite da obavite.
+      Unesite podatke o pregledu koji želite da obavite.
     </v-card-subtitle>
     <v-card-text>
       <v-list subheader>
@@ -70,12 +70,42 @@
         </v-list-item>
         <v-list-item>
           <v-list-item-content>
-            <v-select outlined
+            <v-select
+              class='mb-6' 
+              outlined
+              hide-details=""
               v-model='iOdabraniTipPregleda'
               :items='iDostupniTipoviPregleda'
               label='Tip pregleda'
               >
             </v-select>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item >
+          <v-list-item-content>
+            <v-select 
+              hide-details=""
+              outlined
+              v-model='iOdabraniGrad'
+              :items='dostupniGradovi'
+              label='Lokacija'
+              >
+            </v-select>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-content>
+            <v-range-slider
+              class='mt-6 pr-2'
+              v-model='iMinMaxOcena'
+              label='Ocena klinike'
+              thumb-label="always"
+              :thumb-size="26"
+              min=0
+              max=10
+              step=0.1
+              >
+            </v-range-slider>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -141,10 +171,14 @@ export default {
       'tipPregleda',
       'sortiranjeKlinika',
       'dostupnaSortiranja',
-      'odabraniTipPregleda'
+      'odabraniTipPregleda',
+      'odabraniGrad',
+      'minOcena',
+      'maxOcena'
     ]),
     ...mapGetters('klinike', [
       'dostupniTipoviPregleda',
+      'dostupniGradovi',
     ]),
     iDostupniTipoviPregleda: {
       get: function() {
@@ -230,7 +264,19 @@ export default {
     //     }
     //     this.setSortiranja(retval);
     //   }
-    // }
+    // },
+    iOdabraniGrad: {
+      get: function() { return this.odabraniGrad; },
+      set: function(val) { this.setOdabraniGrad(val); }
+    },
+    iMinMaxOcena: {
+      get: function() { return [this.minOcena, this.maxOcena]; },
+      set: function(val) { this.setMinOcena(val[0]); this.setMaxOcena(val[1]) }
+    },
+    iMaxOcena: {
+      get: function() { return this.maxOcena; },
+      set: function(val) { this.setMaxOcena(val); }
+    }
   },
   methods: {
     ...mapMutations('klinike', [
@@ -239,7 +285,10 @@ export default {
       'setTipPregleda',
       'setSortiranjeKlinika',
       'setPretrage',
-      'setOdabraniTipPregleda'
+      'setOdabraniTipPregleda',
+      'setOdabraniGrad',
+      'setMinOcena',
+      'setMaxOcena'
     ]),
     dodajSort: function() {
       let sort = this.dostupnaSortiranja.filter(

@@ -1,6 +1,7 @@
 import klinikeAPI from '@/api/klinike';
 import preglediAPI from '@/api/pregledi'
 import utility from '@/utility/utility';
+import oceneAPI from '@/api/ocene';
 
 const state = {
   // Main data
@@ -8,6 +9,7 @@ const state = {
   pregledi: {},
   klinikaAdmina: null,
   klinikaOsoblja: null,
+  ocene: {},
   // Pretraga i sortiranje klinika
   pocetniDatum: null,
   krajnjiDatum: null,
@@ -25,6 +27,9 @@ const state = {
     }
   ],
   sortiranjeKlinika: null,
+  odabraniGrad: null,
+  minOcena: 0,
+  maxOcena: 10,
   // Pregled za rez
   odabranaKlinika: null,
   odabraniPregled: null,
@@ -66,6 +71,14 @@ const getters = {
     let retval = [];
     for (let klinika of state.klinike) {
       let pretrazeniPregledi = getters.getPretrazeniPregledi(klinika.id);
+      if (state.odabraniGrad != null &&
+        klinika.grad !== state.odabraniGrad) {
+        continue;
+      }
+      let po = getters.getProsecnaOcenaKlinike(klinika.id);
+      if (po < state.minOcena || po > state.maxOcena) {
+        continue;
+      }
       if (pretrazeniPregledi.length !== 0) {
         retval.push(klinika);
       }
@@ -150,7 +163,36 @@ const getters = {
       }
     }
     return retval;
-  }
+  },
+  dostupniGradovi: (state) => {
+    let myset = new Set();
+    let retval = [];
+    for (let klinika of state.klinike) {
+      if (!myset.has(klinika.grad)) {
+        retval.push(klinika.grad);
+      }
+    }
+    return retval;
+  },
+  getOceneKlinike: (state) => (klinikaId) => {
+    if (klinikaId in state.ocene){
+      return state.ocene[klinikaId];  
+    }
+    return [];
+  },
+  getProsecnaOcenaKlinike: (state) => (klinikaId) => {
+    if (klinikaId in state.ocene){
+      let suma = 0;
+      for (let ocena of state.ocene[klinikaId]) {
+        suma += ocena.vrednost;
+      }
+      if (state.ocene[klinikaId].length != 0) {
+        return suma / state.ocene[klinikaId].length;
+      }
+      return 0;
+    }
+    
+  },
 }
 const actions = {
   async loadKlinike({commit}) {
@@ -214,11 +256,19 @@ const actions = {
     let data = await preglediAPI.getSlobodniPregledi(klinikaId);
       commit('setPreglediKlinike', {id: klinikaId, data: data})
   },
+  async loadAllOcene({commit, state}) {
+    for (let klinika of state.klinike) {
+      oceneAPI.pronadjiOceneKlinike(klinika.id).then(({data}) => {
+        commit('setOceneKlinike', {klinikaId: klinika.id, ocene: data});
+      })
+    }
+  },
   async dobaviPodatkeKlinike({dispatch}) {
     // dobavi klinike
     // dobavi preglede
     await dispatch('loadKlinike');
     await dispatch('loadAllSlobodniPregledi');
+    await dispatch('loadAllOcene');
   },
   async loadKlinika({commit}, klinikaId){
     let data = await klinikeAPI.getKlinika(klinikaId);
@@ -278,7 +328,16 @@ const mutations = {
   setNerealizovanePosete: (state, data) =>
     state.nerealizovanePosete = data,
   setOdabraniTipPregleda: (state, tip) =>
-    state.odabraniTipPregleda = tip
+    state.odabraniTipPregleda = tip,
+  setOdabraniGrad: (state, grad) => 
+    state.odabraniGrad = grad,
+  setMinOcena: (state, min) => 
+    state.minOcena = min,
+  setMaxOcena: (state, max) => 
+    state.maxOcena = max,
+  setOceneKlinike: (state, obj) => {
+    state.ocene[obj.klinikaId] = obj.ocene;
+  }
 }
 
 export default{
