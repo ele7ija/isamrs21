@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -29,21 +30,15 @@ public class Klinika implements IdentitySerializable{
 	@Column(name="naziv")
 	private String naziv;
 	
-	@Column(name="adresa")
-	private String adresa;
-	
-	@Column(name="grad")
-	private String grad;
-	
-	@Column(name="drzava")
-	private String drzava;
-	
 	@Column(name="slika", length=1000)
 	private String slika;
 	
 	@Column(name="opis", length=3000)
 	private String opis;
-	
+
+	@OneToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	private Lokacija lokacija;
+
 	@OneToMany(mappedBy="klinika", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JsonSerialize(using=IdentityListSerializer.class)
 	private List<Sala> sale;
@@ -84,9 +79,7 @@ public class Klinika implements IdentitySerializable{
 
 	public Klinika(KlinikaDTO klinikaDTO){
 		naziv = klinikaDTO.naziv;
-		adresa = klinikaDTO.adresa;
-		grad = klinikaDTO.grad;
-		drzava = klinikaDTO.drzava;
+		lokacija = new Lokacija(klinikaDTO.adresa, klinikaDTO.grad, klinikaDTO.drzava, klinikaDTO.geografskaDuzina, klinikaDTO.geografskaSirina);
 		opis = klinikaDTO.opis;
 	}
 
@@ -146,36 +139,12 @@ public class Klinika implements IdentitySerializable{
 		this.naziv = naziv;
 	}
 
-	public String getAdresa() {
-		return adresa;
-	}
-
-	public void setAdresa(String adresa) {
-		this.adresa = adresa;
-	}
-
 	public List<Cenovnik> getCenovnici() {
 		return cenovnici;
 	}
 
 	public void setCenovnici(List<Cenovnik> cenovnici) {
 		this.cenovnici = cenovnici;
-	}
-
-	public String getGrad() {
-		return grad;
-	}
-
-	public void setGrad(String grad) {
-		this.grad = grad;
-	}
-
-	public String getDrzava() {
-		return drzava;
-	}
-
-	public void setDrzava(String drzava) {
-		this.drzava = drzava;
 	}
 
 	public String getOpis() {
@@ -194,5 +163,11 @@ public class Klinika implements IdentitySerializable{
 		this.slika = slika;
 	}
 	
-	
+	public Lokacija getLokacija() {
+		return lokacija;
+	}
+
+	public void setLokacija(Lokacija lokacija) {
+		this.lokacija = lokacija;
+	}
 }

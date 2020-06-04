@@ -23,9 +23,9 @@
             </v-container>
           </v-card-title>
           <v-card-subtitle class='pb-0'>
-            {{odabranaKlinika.adresa}}, 
-            {{odabranaKlinika.grad}},
-            {{odabranaKlinika.drzava}}
+            {{odabranaKlinika.lokacija.adresa}}, 
+            {{odabranaKlinika.lokacija.grad}},
+            {{odabranaKlinika.lokacija.drzava}}
           </v-card-subtitle>
           <v-card-subtitle>
             <v-container fluid class='pa-0'>
@@ -55,7 +55,7 @@
                     color='primary'
                     outlined
                     @click.stop='dialog=true'
-                    class='mr-4'>
+                    class='mr-2'>
                     <v-icon left>mdi-calendar</v-icon>
                     Pregledi
                   </v-btn>
@@ -66,9 +66,17 @@
                   </PreglediDialog>
                   <v-btn
                     outlined
+                    class='mr-2'
                     @click='navigate(klinikaId)'>
                     <v-icon left>mdi-account-group</v-icon>
                     Lekari
+                  </v-btn>
+                  <v-btn
+                    outlined
+                    @click='dialogLocation=true'
+                  >
+                    <v-icon left>mdi-map-marker</v-icon>
+                    Lokacija
                   </v-btn>
                 </v-col>
               </v-row>
@@ -82,6 +90,11 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-dialog v-model="dialogLocation">
+      <v-card height=640>
+        <Map :klinika="odabranaKlinika"/>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -90,19 +103,22 @@ import { mapState, mapActions, mapGetters } from 'vuex'
 import PretragaKlinike from './PretragaKlinike'
 import PreglediDialog from './PreglediDialog'
 import oceneAPI from '@/api/ocene';
+import Map from '../../maps/Map';
 
 export default {
   name: 'KlinikaPage',
   props: ['klinikaId'],
   data: function() {
     return {
+      dialogLocation: false,
       dialog: false,
       ocene: []
     }
   },
   components: {
     PretragaKlinike,
-    PreglediDialog
+    PreglediDialog,
+    Map
   },
   computed: {
     ...mapState('klinike', [
@@ -134,7 +150,7 @@ export default {
       .then(({data}) => {
         this.ocene = data;
       })
-    },
+    }
   },
   created() {
     this.dobaviPodatkeKlinikaPage(this.klinikaId);

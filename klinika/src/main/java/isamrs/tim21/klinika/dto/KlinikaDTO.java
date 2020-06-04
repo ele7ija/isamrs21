@@ -6,6 +6,8 @@ public class KlinikaDTO {
   public String grad;
   public String drzava;
   public String opis;
+	public Double geografskaDuzina;
+	public Double geografskaSirina;
 
   public KlinikaDTO(){}
 
@@ -37,4 +39,20 @@ public class KlinikaDTO {
   public String getOpis() {
     return this.opis;
   }
+
+  public Double getGeografskaDuzina() {
+		return geografskaDuzina;
+	}
+
+	public void setGeografskaDuzina(Double geografskaDuzina) {
+		this.geografskaDuzina = geografskaDuzina;
+	}
+
+	public Double getGeografskaSirina() {
+		return geografskaSirina;
+	}
+
+	public void setGeografskaSirina(Double geografskaSirina) {
+		this.geografskaSirina = geografskaSirina;
+	}
 }

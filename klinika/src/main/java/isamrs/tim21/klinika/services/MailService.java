@@ -112,7 +112,7 @@ public class MailService {
     String poruka = "Rezervisali ste pregled:\n" +
       "\tTip pregleda: " + p.getPregled().getTipPregleda().getNaziv() + "\n" +
       "\tKlinika: \"" + p.getPregled().getKlinika().getNaziv() + "\", " +
-      p.getPregled().getKlinika().getAdresa() + "\n" + 
+      p.getPregled().getKlinika().getLokacija().getAdresa() + "\n" + 
       "\tVreme: " + p.getPregled().getPocetakPregleda().toString() + " - " + 
       p.getPregled().getKrajPregleda().toString() + "\n" +
       "\tLekar: " + p.getPregled().getLekar().getIme() + " " + p.getPregled().getLekar().getPrezime() + "\n" +
@@ -140,7 +140,7 @@ public class MailService {
       poruka += "Pregled:\n" + "\tTip pregleda: " + upit.getTipPregleda().getNaziv() + "\n";
     }
     poruka += "\tKlinika: \"" + upit.getKlinika().getNaziv() + "\", " +
-      upit.getKlinika().getAdresa() + "\n" + 
+      upit.getKlinika().getLokacija().getAdresa() + "\n" + 
       "\tVreme: " + upit.getPocetakPregleda().toString() + " - " + 
       upit.getKrajPregleda().toString() + "\n" +
       "\tPacijent: " + upit.getPacijent().getIme() + " " + upit.getPacijent().getPrezime();
@@ -162,7 +162,7 @@ public class MailService {
       poruka += "Upit:\n" +
         "\tTip pregleda: " + upit.getTipPregleda().getNaziv() + "\n" +
         "\tKlinika: \"" + upit.getKlinika().getNaziv() + "\", " +
-        upit.getKlinika().getAdresa() + "\n" + 
+        upit.getKlinika().getLokacija().getAdresa() + "\n" + 
         "\tVreme: " + upit.getPocetakPregleda().toString() + " - " + 
         upit.getKrajPregleda().toString() + "\n" +
         "\tLekar: " + upit.getLekar().getIme() + " " + upit.getLekar().getPrezime() + "\n" +
@@ -180,14 +180,14 @@ public class MailService {
       poruka += "Novi podaci upita:\n" +
         "\tTip pregleda: " + upit.getTipPregleda().getNaziv() + "\n" +
         "\tKlinika: \"" + upit.getKlinika().getNaziv() + "\", " +
-        upit.getKlinika().getAdresa() + "\n" + 
+        upit.getKlinika().getLokacija().getAdresa() + "\n" + 
         "\tVreme: " + upit.getPocetakPregleda().toString() + " - " + 
         upit.getKrajPregleda().toString() + "\n" +
         "\tLekar: " + upit.getLekar().getIme() + " " + upit.getLekar().getPrezime();
       poruka += "\n\nStari podaci upita:\n" +
         "\tTip pregleda: " + upit.getOriginalniPregled().getTipPregleda().getNaziv() + "\n" +
         "\tKlinika: \"" + upit.getOriginalniPregled().getKlinika().getNaziv() + "\", " +
-      upit.getOriginalniPregled().getKlinika().getAdresa() + "\n" + 
+      upit.getOriginalniPregled().getKlinika().getLokacija().getAdresa() + "\n" + 
         "\tVreme: " + upit.getOriginalniPregled().getPocetakPregleda().toString() + " - " + 
       upit.getOriginalniPregled().getKrajPregleda().toString() + "\n" +
         "\tLekar: " + upit.getOriginalniPregled().getLekar().getIme() + " " + upit.getOriginalniPregled().getLekar().getPrezime() + "\n" +
@@ -212,7 +212,7 @@ public class MailService {
     poruka += "Upit:\n" +
       "\tTip pregleda: " + upit.getTipPregleda().getNaziv() + "\n" +
       "\tKlinika: \"" + upit.getKlinika().getNaziv() + "\", " +
-      upit.getKlinika().getAdresa() + "\n" + 
+      upit.getKlinika().getLokacija().getAdresa() + "\n" + 
       "\tVreme: " + upit.getPocetakPregleda().toString() + " - " + 
       upit.getKrajPregleda().toString() + "\n" +
       "\tLekar: " + upit.getLekar().getIme() + " " + upit.getLekar().getPrezime();
@@ -243,7 +243,7 @@ public class MailService {
       poruka += "Pregled:\n" + "\tTip pregleda: " + upit.getTipPregleda().getNaziv() + "\n";
     }
     poruka += "\tKlinika: \"" + upit.getKlinika().getNaziv() + "\", " +
-      upit.getKlinika().getAdresa() + "\n" + 
+      upit.getKlinika().getLokacija().getAdresa() + "\n" + 
       "\tVreme: " + upit.getPocetakPregleda().toString() + " - " + 
       upit.getKrajPregleda().toString() + "\n" +
       "\tPacijent: " + upit.getPacijent().getIme() + " " + upit.getPacijent().getPrezime() + "\n" + 
