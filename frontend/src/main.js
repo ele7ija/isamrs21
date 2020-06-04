@@ -3,7 +3,8 @@ import vuetify from './vuetify';
 import store from './store';
 import router from './router';
 import App from './App.vue';
-import 'material-design-icons-iconfont/dist/material-design-icons.css'
+import 'material-design-icons-iconfont/dist/material-design-icons.css';
+import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete';
 import axios from 'axios';
 import DatetimePicker from 'vuetify-datetime-picker';
 import utility from './utility/utility';
@@ -11,6 +12,9 @@ import utility from './utility/utility';
 Vue.config.productionTip = false
 
 Vue.use(DatetimePicker);
+Vue.use(VuetifyGoogleAutocomplete, {
+  apiKey: `${process.env.VUE_APP_GOOGLE_APIKEY}`,
+});
 Vue.prototype.$utility = utility;
 
 function createAxiosResponseInterceptor() {

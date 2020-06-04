@@ -171,7 +171,7 @@ const getters = {
     let retval = [];
     for (let klinika of state.klinike) {
       if (!myset.has(klinika.grad)) {
-        retval.push(klinika.grad);
+        retval.push(klinika.lokacija.grad);
       }
     }
     return retval;

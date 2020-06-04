@@ -10,7 +10,7 @@
           Klinika "{{klinika.naziv}}"
         </v-card-title>
         <v-card-subtitle class='white--text caption'>
-            {{klinika.adresa}}, {{klinika.grad}}, {{klinika.drzava}}
+            {{klinika.lokacija.adresa}}, {{klinika.lokacija.grad}}, {{klinika.lokacija.drzava}}
         </v-card-subtitle>
       </v-img>
     </router-link>
@@ -45,19 +45,31 @@
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item class='pr-0 pl-0' dense>
+          <v-list-item-avatar class='mt-0 mb-0'>
+            <v-icon left @click='openLocation'>mdi-map-marker</v-icon>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class='subtitle-2'>
+              Prikaz lokacije
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-card-text>
     <v-card-actions>
       <v-btn 
         color='primary'
         outlined
+        small
         @click.stop='dialogStartup'>
-      <v-icon left>mdi-calendar</v-icon>
-      Pregledi
+        <v-icon left>mdi-calendar</v-icon>
+        Pregledi
       </v-btn>
       <v-btn
         outlined
         @click='navigate(klinika.id)'
+        small
         class=''>
         <v-icon left>mdi-account-group</v-icon>
         Lekari
@@ -68,6 +80,11 @@
         @update-dialog='dialog=false'>
       </PreglediDialog>
     </v-card-actions>
+    <v-dialog v-model="dialogLocation">
+      <v-card height=640>
+        <Map :klinika="klinika" :key="mapKey"/>
+      </v-card>
+    </v-dialog>
     </v-card>
 </template>
 
@@ -75,16 +92,19 @@
 import PreglediDialog from './PreglediDialog'
 import { mapGetters, mapMutations} from 'vuex';
 import oceneAPI from '@/api/ocene';
-
+import Map from '../../maps/Map';
 export default {
   name: 'KlinikaCard',
   props: ['klinika'],
   components: {
-    PreglediDialog
+    PreglediDialog,
+    Map
   },
   data: function(){
     return {
+      dialogLocation: false,
       dialog: false,
+      mapKey: 0,
       ocene: []
     }
   },
@@ -140,6 +160,10 @@ export default {
         this.ocene = data;
       })
     },
+    openLocation(){
+      this.mapKey += 1;
+      this.dialogLocation = true;
+    }
   },
   created() {
     this.dobavi(this.klinika.id)

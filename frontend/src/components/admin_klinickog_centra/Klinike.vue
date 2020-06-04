@@ -57,29 +57,18 @@
                     :rules="nazivRule"
                     required
                     ></v-text-field>
-                    
-                    <v-text-field
-                    label="adresa"
-                    v-model="newItem.adresa"
-                    :rules="adresaRule"
-                    required
-                    ></v-text-field>
 
-                    <v-text-field
-                    label="grad"
-                    v-model="newItem.grad"
-                    :rules="gradRule"
-                    required
-                    ></v-text-field>
-
-
-                    <v-text-field
-                    label="drzava"
-                    v-model="newItem.drzava"
-                    :rules="drzavaRule"
-                    required
-                    ></v-text-field>
-
+                    <vuetify-google-autocomplete
+                      id='map2'
+                      ref='lokacija'
+                      append-icon='mdi-map-marker'
+                      v-bind:disable='true'
+                      placeholder="Lokacija"
+                      v-on:placechanged="getAddressData"
+                      :options="{fields: ['geometry', 'address_components', 
+                        'formatted_address']}"
+                    >
+                    </vuetify-google-autocomplete>
 
                     <v-text-field
                     label="opis"
@@ -105,26 +94,44 @@
         </v-toolbar>
       </template>
 
-<!-- opis klinike ide na expand -->
-      <template v-slot:expanded-item="{ headers, item }">
-        <td :colspan="headers.length" style="padding:15px " class="grey--text ">
-        {{item.opis}} 
-        </td>
+      <template v-slot:item.actions="{ item }">
+        <v-icon
+          small
+          class="mr-2"
+          @click="openLocation(item)"
+        >
+          mdi-map-marker
+        </v-icon>
       </template>
 
-
+<!-- opis klinike ide na expand -->
+      <template v-slot:expanded-item="{ headers, item }">
+        <td :colspan="headers.length">
+          <v-textarea class="mt-4" label="Opis" readonly outlined v-model="item.opis"></v-textarea>
+        </td>
+      </template>
     </v-data-table>
+
+    <v-dialog v-model="dialogLocation">
+      <v-card height=640>
+        <Map :klinika="locationKlinika" :key="mapKey"/>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import {mapGetters, mapActions} from 'vuex';
-
+import Map from '../maps/Map';
 export default {
   name: "Klinike",
+  components: {Map},
   data: function(){
     return {
       dialog: false,
+      dialogLocation: false,
+      locationKlinika: null,
+      mapKey: 0,
       search: '',
       isFormValid: true,
       headers: [
@@ -135,22 +142,27 @@ export default {
         },
         {
           text: 'Adresa',
-          value: 'adresa',
+          value: 'lokacija.adresa',
           sortable: true,
         },
         {
           text: 'Grad',
-          value: 'grad',
+          value: 'lokacija.grad',
           sortable: true,
         },
         {
           text: 'Drzava',
-          value: 'drzava',
+          value: 'lokacija.drzava',
           sortable: true,
         },
         {
           text: 'opis',
           value: 'data-table-expand',
+        },
+        {
+          text: 'mapa',
+          value: 'actions',
+          sortable: 'false'
         },
       ],
 
@@ -160,6 +172,8 @@ export default {
         grad: '',
         drzava: '',
         opis: '',
+        geografskaDuzina: '',
+        geografskaSirina: ''
       },
       update: false,
 
@@ -167,22 +181,7 @@ export default {
       nazivRule: [
         v => !!v || 'Naziv je obavezan',
         v => (v && v.length <= 50) || 'Naziv ima najviše 50 karaktera'
-      ],
-      adresaRule: [
-        v => !!v || 'Adresa je obavezna',
-        v => (v && v.length <= 50) || 'Adresa ima najviše 50 karaktera'
-      ],
-      gradRule: [
-        v => !!v || 'Grad je obavezan',
-        v => (v && v.length <= 50) || 'Grad ima najviše 50 karaktera'
-      ],
-      // drzava je ostavljeno za autocomplete
-      drzave: ['Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Anguilla', 'Antigua &amp; Barbuda', 'Argentina', 'Armenia', 'Aruba', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bermuda', 'Bhutan', 'Bolivia', 'Bosnia &amp; Herzegovina', 'Botswana', 'Brazil', 'British Virgin Islands', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cambodia', 'Cameroon', 'Cape Verde', 'Cayman Islands', 'Chad', 'Chile', 'China', 'Colombia', 'Congo', 'Cook Islands', 'Costa Rica', 'Cote D Ivoire', 'Croatia', 'Cruise Ship', 'Cuba', 'Cyprus', 'Czech Republic', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Ecuador', 'Egypt', 'El Salvador', 'Equatorial Guinea', 'Estonia', 'Ethiopia', 'Falkland Islands', 'Faroe Islands', 'Fiji', 'Finland', 'France', 'French Polynesia', 'French West Indies', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Gibraltar', 'Greece', 'Greenland', 'Grenada', 'Guam', 'Guatemala', 'Guernsey', 'Guinea', 'Guinea Bissau', 'Guyana', 'Haiti', 'Honduras', 'Hong Kong', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Isle of Man', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Jersey', 'Jordan', 'Kazakhstan', 'Kenya', 'Kuwait', 'Kyrgyz Republic', 'Laos', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Macau', 'Macedonia', 'Madagascar', 'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Mauritania', 'Mauritius', 'Mexico', 'Moldova', 'Monaco', 'Mongolia', 'Montenegro', 'Montserrat', 'Morocco', 'Mozambique', 'Namibia', 'Nepal', 'Netherlands', 'Netherlands Antilles', 'New Caledonia', 'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'Norway', 'Oman', 'Pakistan', 'Palestine', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Puerto Rico', 'Qatar', 'Reunion', 'Romania', 'Russia', 'Rwanda', 'Saint Pierre &amp; Miquelon', 'Samoa', 'San Marino', 'Satellite', 'Saudi Arabia', 'Senegal', 'Serbia', 'Seychelles', 'Sierra Leone', 'Singapore', 'Slovakia', 'Slovenia', 'South Africa', 'South Korea', 'Spain', 'Sri Lanka', 'St Kitts &amp; Nevis', 'St Lucia', 'St Vincent', 'St. Lucia', 'Sudan', 'Suriname', 'Swaziland', 'Sweden', 'Switzerland', 'Syria', 'Taiwan', 'Tajikistan', 'Tanzania', 'Thailand', "Timor L'Este", 'Togo', 'Tonga', 'Trinidad &amp; Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Turks &amp; Caicos', 'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Venezuela', 'Vietnam', 'Virgin Islands (US)', 'Yemen', 'Zambia', 'Zimbabwe'],
-      drzavaRule: [
-        v => !!v || 'Drzava je obavezna',
-        v => (v && v.length <= 50) || 'Drzava ima najviše 50 karaktera'
-      ],
-
+      ]
     };
   },
 
@@ -217,6 +216,15 @@ export default {
       }
     ),
 
+    getAddressData(data){
+      this.newItem.adresa = data.route;
+      if(data.street_number)
+        this.newItem.adresa += " " + data.street_number;
+      this.newItem.grad = data.locality;
+      this.newItem.drzava = data.country;
+      this.newItem.geografskaDuzina = data.longitude;
+      this.newItem.geografskaSirina = data.latitude;
+    },
 
     resetNewItem(){
       this.newItem = {
@@ -225,7 +233,10 @@ export default {
         grad: '',
         drzava: '',
         opis: '',
-      }
+        geografskaDuzina: '',
+        geografskaSirina: ''
+      };
+      this.$refs.lokacija.clear();
     },
     close(){
       this.resetNewItem();
@@ -234,7 +245,6 @@ export default {
     },
     save(){
       if(this.update){
-        
         this.updateKlinika(this.newItem);
       }else{
         //adding klinika
@@ -256,6 +266,11 @@ export default {
       }
       this.dialog = true;
     },
+    openLocation(klinika){
+      this.locationKlinika = klinika;
+      this.mapKey += 1;
+      this.dialogLocation = true;
+    }
   }
 }
 </script>

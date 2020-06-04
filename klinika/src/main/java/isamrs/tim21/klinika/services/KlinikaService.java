@@ -11,9 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 import isamrs.tim21.klinika.domain.AdministratorKlinike;
 import isamrs.tim21.klinika.domain.Klinika;
 import isamrs.tim21.klinika.domain.Korisnik;
+import isamrs.tim21.klinika.domain.Lokacija;
 import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
 import isamrs.tim21.klinika.dto.KlinikaDTO;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
+import isamrs.tim21.klinika.repository.LokacijaRepository;
 import isamrs.tim21.klinika.security.TokenUtils;
 
 @Service
@@ -25,6 +27,9 @@ public class KlinikaService {
 	
 	@Autowired
 	private KlinikaRepository klinikaRepository;
+
+	@Autowired
+	private LokacijaRepository lokacijaRepository;
 	
 	@Autowired
 	private CustomUserDetailsService userDetailsService;
@@ -52,6 +57,8 @@ public class KlinikaService {
 	@Transactional(readOnly=false)
 	public Klinika addKlinika(KlinikaDTO klinikaDTO){
 		Klinika klinika = new Klinika(klinikaDTO);
+		Lokacija lokacija = lokacijaRepository.save(klinika.getLokacija());
+		klinika.setLokacija(lokacija);
 		klinikaRepository.save(klinika);
 		return klinika;
 	}
@@ -60,9 +67,9 @@ public class KlinikaService {
 	public Klinika updateKlinikaFromAdminCentra(Long idKlinike, KlinikaDTO klinikaDTO){
 		Klinika klinika = klinikaRepository.findById(idKlinike).orElse(null);
 		klinika.setNaziv(klinikaDTO.getNaziv());
-		klinika.setAdresa(klinikaDTO.getAdresa());
-		klinika.setGrad(klinikaDTO.getGrad());
-		klinika.setDrzava(klinikaDTO.getDrzava());
+		klinika.getLokacija().setAdresa(klinikaDTO.getAdresa());
+		klinika.getLokacija().setGrad(klinikaDTO.getGrad());
+		klinika.getLokacija().setDrzava(klinikaDTO.getDrzava());
 		klinika.setOpis(klinikaDTO.getOpis());
 		return klinika;
 	}
