@@ -11,4 +11,13 @@ export default{
     );
     return response;
   },
+  deletePoseta(poseta) {
+    poseta.pregled.klinika = null;
+    let options = util.prepareOptions();
+    options.data = poseta;
+    return axios.delete(
+      `${process.env.VUE_APP_BACKEND_ROOT}/posete`,
+      options
+    )
+  }
 }

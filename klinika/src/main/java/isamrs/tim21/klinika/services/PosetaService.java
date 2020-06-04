@@ -39,6 +39,15 @@ public class PosetaService {
 	
 	@Autowired
 	TokenUtils tokenUtils;	// Za generisanje username-a od tokena
+
+	@Autowired
+	ZdravstveniKartonService zdravstveniKartonService;
+
+	@Autowired
+	UpitZaPregledeService upitZaPregledeService;
+
+	@Autowired
+	PregledService pregledService;
 	
 	//@SuppressWarnings("rawtypes")
 	public Poseta kreirajNovuPosetu(PosetaDTO dto, HttpServletRequest req) {
@@ -261,5 +270,21 @@ public class PosetaService {
 
 
 
+	}
+
+	public Poseta izbrisiPosetu(Poseta p) {
+		// pronadjiPosetu
+		Poseta poseta = posetaRepository.findById(p.getId()).get();
+		// izbrisi iz kartona
+		zdravstveniKartonService.izbrisiPosetu(poseta);
+		poseta.setZdravstveniKarton(null);
+		// izbrisi upit
+		upitZaPregledeService.izbrisiPosetu(poseta);
+		// izbrisi iz pregleda
+		pregledService.izbrisiPosetu(poseta);
+		poseta.setPregled(null);
+
+		posetaRepository.delete(poseta);
+		return null;
 	}
 }

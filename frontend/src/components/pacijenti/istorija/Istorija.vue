@@ -283,6 +283,17 @@
                       {{poseta.pregled.klinika.drzava}}
                     </v-list-item-subtitle>
                     </v-list-item-content>
+                    <v-list-item-action v-if='!manje24Sata(poseta)'>
+                      <v-list-item-action-text>
+                        <v-btn
+                          @click='odustaniPoseta(poseta)'
+                          color='primary'
+                          class='mb-2'>
+                          <v-icon>mdi-cancel</v-icon>
+                          Odustani
+                        </v-btn>
+                      </v-list-item-action-text>
+                    </v-list-item-action>
                   </v-list-item>
                 </template>
                 <v-subheader>Prošle</v-subheader>
@@ -393,6 +404,7 @@ import { mapActions, mapState } from 'vuex';
 import oceneAPI from '@/api/ocene';
 import OcenaLekaraDialog from './OcenaLekaraDialog';
 import OcenaKlinikeDialog from './OcenaKlinikeDialog';
+import poseteAPI from '@/api/posete'
 
 export default {
   name: 'Istorija',
@@ -442,6 +454,12 @@ export default {
       'potvrdiUpit',
       'odustaniUpit'
     ]),
+    manje24Sata: function(poseta) {
+      let danas = new Date();
+      danas.setDate(danas.getDate() + 1);
+      let pocetak = new Date(poseta.pregled.pocetakPregleda);
+      return pocetak < danas;
+    },
     potvrdi: function(upitId, verzija) {
       this.potvrdiUpit({upitId, verzija}).then((message) => {
         this.snackbarText = message;
@@ -527,6 +545,16 @@ export default {
       this.ocenaKlinikeDialog=false;
       this.ocenaLekaraDialog=false;
       this.dobaviOcenePacijenta(this._korisnik.username);
+    },
+    odustaniPoseta: function(poseta) {
+      poseteAPI.deletePoseta(poseta)
+      .then(() => {
+        this.snackbarText = "Uspesno obrisan pregled.";
+        this.snackbarSucc = true;
+      }, () => {
+        this.snackbarText = "Greška pri brisanju pregleda.";
+        this.snackbarErr = true;
+      })
     }
   },
   created() {

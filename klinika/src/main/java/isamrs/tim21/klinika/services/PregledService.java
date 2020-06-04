@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim21.klinika.domain.Klinika;
 import isamrs.tim21.klinika.domain.Lekar;
+import isamrs.tim21.klinika.domain.Poseta;
 import isamrs.tim21.klinika.domain.Pregled;
 import isamrs.tim21.klinika.domain.Sala;
 import isamrs.tim21.klinika.domain.TipPregleda;
@@ -338,5 +339,11 @@ public class PregledService {
 			CustomResponse<Pregled> customResponse = add(klinika, pregled);
 			return new ResponseEntity<CustomResponse<Pregled>>(customResponse, HttpStatus.OK);
 		}
+	}
+
+	public void izbrisiPosetu(Poseta poseta) {
+		Pregled p = pregledRepository.findById(poseta.getPregled().getId()).get();
+		p.setPoseta(null);
+		pregledRepository.save(p);
 	}
 }

@@ -508,4 +508,19 @@ public class UpitZaPregledeService {
 		mailService.upitOdbijen(upit); //obavesti pacijenta na mail da je upit odbijen
 		return new CustomResponse<UpitZaPregled>(upit, true, "OK");
 	}
+
+	public void izbrisiPosetu(Poseta poseta) {
+		Pregled p = pregledRepository.findById(poseta.getPregled().getId()).get();
+		for (UpitZaPregled u : p.getUpiti()) {
+			UpitZaPregled pravi = upitZaPregledRepository.findById(u.getId()).get();
+			if (pravi.getPotvrdjen()) {
+				p.getUpiti().remove(u);
+				pravi.setOriginalniPregled(null);
+				pravi.setIzmenjeniPregled(null);
+				pregledRepository.save(p);
+				upitZaPregledRepository.delete(pravi);
+				break;
+			}
+		}
+	}
 }
