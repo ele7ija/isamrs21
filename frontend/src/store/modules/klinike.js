@@ -74,7 +74,7 @@ const getters = {
     for (let klinika of state.klinike) {
       let pretrazeniPregledi = getters.getPretrazeniPregledi(klinika.id);
       if (state.odabraniGrad != null &&
-        klinika.grad !== state.odabraniGrad) {
+        klinika.lokacija.grad !== state.odabraniGrad) {
         continue;
       }
       let po = getters.getProsecnaOcenaKlinike(klinika.id);
