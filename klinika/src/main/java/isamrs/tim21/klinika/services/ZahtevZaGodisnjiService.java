@@ -57,13 +57,12 @@ public class ZahtevZaGodisnjiService {
 		return zahtevZaGodisnjiRepository.save(zahtevToAdd);
 	}
 	
-	@Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE)
+	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
 	public ZahtevZaGodisnji approve(ZahtevZaGodisnji zahtevToUpdate) throws EntityNotFoundException, BusinessLogicException{
-		//serializable jer je potrebno spreciti neku drugu transakciju da odobri neki drugi zahtev za godisnji 
-		//koji se poklapa sa ovim zahtevom za godisnji
-		//odnosno, moramo da sprecimo phantom read
+		//pessimistic write kako bi sprecio paralelno odobravanje istog razlicitih zahteva za odsustvo za istog lekara
+		//dodavanje pregleda isto koristi pessimistic_write za dobavljanje lekara, tako da je i to reseno
 
-		MedicinskoOsoblje osoblje = osobljeRepository.findById(zahtevToUpdate.getRadniKalendar().getMedicinskoOsoblje().getId()).get();
+		MedicinskoOsoblje osoblje = osobljeRepository.findLekarByIdPessimisticWrite(zahtevToUpdate.getRadniKalendar().getMedicinskoOsoblje().getId());
 		if(osoblje == null)
 			throw new EntityNotFoundException("Medicinsko osoblje");
 
@@ -88,12 +87,16 @@ public class ZahtevZaGodisnjiService {
 	}
 
 	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
-	public ZahtevZaGodisnji reject(ZahtevZaGodisnji zahtevToUpdate){
+	public ZahtevZaGodisnji reject(ZahtevZaGodisnji zahtevToUpdate) throws EntityNotFoundException{
 		/*
 		pri odbijanju zahteva ne moramo da vrsimo nikakve provere
+		al opet treba da sprecimo paralelnu obradu istog zahteva
 		*/
-		RadniKalendar kalendar = radniKalendarRepository.findById(zahtevToUpdate.getRadniKalendar().getId()).get();
-		zahtevToUpdate.setRadniKalendar(kalendar);
+		ZahtevZaGodisnji zahtev = zahtevZaGodisnjiRepository.findById(zahtevToUpdate.getId()).orElse(null);
+		if(zahtev == null)
+			throw new EntityNotFoundException("Zahtev za odsustvo");
+		zahtev.setOdobreno(false);
+		zahtev.setAdminObradio(true);
 		return zahtevZaGodisnjiRepository.save(zahtevToUpdate);
 	}
 
