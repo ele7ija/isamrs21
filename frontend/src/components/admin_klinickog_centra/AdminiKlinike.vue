@@ -190,17 +190,17 @@ export default {
         },
         {
           text: 'Adresa',
-          value: 'adresa',
+          value: 'lokacija.adresa',
           sortable: false,
         },
         {
           text: 'Grad',
-          value: 'grad',
+          value: 'lokacija.grad',
           sortable: false,
         },
         {
           text: 'Drzava',
-          value: 'drzava',
+          value: 'lokacija.drzava',
           sortable: false,
         },
       ],
