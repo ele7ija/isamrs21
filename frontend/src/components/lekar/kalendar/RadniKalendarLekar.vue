@@ -31,9 +31,18 @@ export default {
   methods: {
     ...mapActions({
       fetchPacijenti: 'pacijenti/loadPacijenti',
+      fetchZahteviZaGodisnji: 'zahteviZaGodisnjiOsoblje/fetchMojiZahtevi',
     }),
 
     async init(){
+      await this.loadPosete();
+      await this.loadGodisnjiOdmor();
+      //setuj trenutni datum
+      var a = new Date();
+      this.today = `${a.getFullYear()}-${a.getMonth() + 1}-${a.getDate()} ${a.getHours()}:${a.getMinutes()}`;
+    },
+
+    async loadPosete(){
       await this.fetchPacijenti();
       for ( var pacijent of this.pacijenti){
         /*UCITATI SAMO POSETE KOD TOG LEKARA. 
@@ -48,7 +57,6 @@ export default {
         if( isLekarovPacijent){
           this.lekaroviPacijenti.push(pacijent);
           for (var poseta of pacijent.zdravstveniKarton.posete){
-            console.log(poseta);
             this.posete.push({
               name: poseta.pregled.tipPregleda.naziv,
               start: this.formatDate(poseta.pregled.pocetakPregleda),
@@ -62,10 +70,28 @@ export default {
           }
         }
       }  
-      
-      //setuj trenutni datum
-      var a = new Date();
-      this.today = `${a.getFullYear()}-${a.getMonth() + 1}-${a.getDate()} ${a.getHours()}:${a.getMinutes()}`;
+    },
+
+    async loadGodisnjiOdmor(){
+      await this.fetchZahteviZaGodisnji();
+      var godisnji = this.$store.getters["zahteviZaGodisnjiOsoblje/getNeobradjeniZahteviZaGodisnji"]
+      for(var g of godisnji){
+        console.log(g);
+        this.posete.push({
+          name: "Odsustvo",
+          start: this.formatDate(g.prviDanGodisnjeg),
+          end: getPoslednjiDanGodisnjeg(g.poslednjiDanGodisnjeg),
+          opis:"godisnji odmor",
+          color: "pink",
+        })
+      }
+
+      function getPoslednjiDanGodisnjeg(poslednjiDanGodisnjeg){
+        var a = new Date(poslednjiDanGodisnjeg);
+        a.setHours(23);
+        a.setMinutes(59);
+        return  `${a.getFullYear()}-${a.getMonth() + 1}-${a.getDate()} ${a.getHours()}:${a.getMinutes()}`;
+      }
     },
 
     formatDate (datum) {
