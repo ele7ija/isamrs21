@@ -1,5 +1,7 @@
 package isamrs.tim21.klinika.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,5 +20,10 @@ public class ReceptService {
     recept.setPoseta(poseta);
     return receptRepository.save(recept);
   }
+
+public List<Recept> findAllRecepti() {
+  List<Recept> recepti =  receptRepository.findAll();
+	return recepti;
+}
   
 }

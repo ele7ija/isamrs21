@@ -24,6 +24,7 @@ import izvestaji from './modules/izvestaji';
 import adminiCentra from './modules/adminiCentra'
 import zahteviZaGodisnjiOsoblje from './modules/zahteviZaGodisnjiOsoblje';
 import zahteviZaGodisnjiAdmin from './modules/zahteviZaGodisnjiAdmin';
+import recepti from './modules/recepti'
 //Plugins
 Vue.use(Vuex);
 
@@ -51,7 +52,8 @@ export default new Vuex.Store({
     adminiCentra,
     zahteviZaGodisnjiOsoblje,
     zahteviZaGodisnjiAdmin,
-    izvestaji
+    izvestaji,
+    recepti
   },
 
   plugins: [

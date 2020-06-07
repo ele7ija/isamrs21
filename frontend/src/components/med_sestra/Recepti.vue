@@ -7,8 +7,24 @@
 </template>
 
 <script>
-export default {
+import { mapActions } from 'vuex';
 
+export default {
+  data(){
+    return {
+
+    }
+  },
+
+  created() {
+    this.fetchRecepti();
+  },
+
+  methods:{
+    ...mapActions({
+      fetchRecepti: 'recepti/loadRecepti',
+    }),
+  }
 }
 </script>
 
