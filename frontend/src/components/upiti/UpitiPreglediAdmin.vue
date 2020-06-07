@@ -159,7 +159,6 @@ export default {
     },
 
     reject(item){
-      //SAMO za UPIT ZA UNAPRED DEFINISAN PREGLED
       let updatedItem = this.upiti.filter(x => x.id == item.id)[0];
       let obj = {
         id: updatedItem.id,

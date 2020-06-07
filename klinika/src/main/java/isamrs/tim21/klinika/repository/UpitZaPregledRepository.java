@@ -71,4 +71,8 @@ public interface UpitZaPregledRepository extends JpaRepository<UpitZaPregled, Lo
 			+ "WHERE u.klinika.id = :idKlinike "
 			+ "AND u.id = :idUpita")
 	UpitZaPregled findByIdKlinikeAndByIdPessimisticRead(@Param("idKlinike") long idKlinike, @Param("idUpita") long idUpita);
+
+	@Query("SELECT u FROM UpitZaPregled u "
+			+ "WHERE u.lekar.id = :idLekara")
+	List<UpitZaPregled> findByIdLekara(@Param("idLekara") Long idLekara);
 }

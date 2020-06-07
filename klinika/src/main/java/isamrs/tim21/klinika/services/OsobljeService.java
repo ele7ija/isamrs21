@@ -30,6 +30,8 @@ import isamrs.tim21.klinika.repository.OsobljeRepository;
 import isamrs.tim21.klinika.repository.PregledRepository;
 import isamrs.tim21.klinika.repository.RadniKalendarRepository;
 import isamrs.tim21.klinika.repository.TipPregledaRepository;
+import isamrs.tim21.klinika.repository.ZahtevZaGodisnjiRepository;
+import isamrs.tim21.klinika.repository.UpitZaPregledRepository;
 
 @Service
 public class OsobljeService {
@@ -53,6 +55,12 @@ public class OsobljeService {
 	
 	@Autowired
 	public KlinikaRepository klinikaRepository;
+
+	@Autowired
+	public ZahtevZaGodisnjiRepository zahtevZaGodisnjiRepository;
+
+	@Autowired
+	public UpitZaPregledRepository upitZaPregledRepository;
 	
 	@Autowired
 	public CustomUserDetailsService userDetailsService;
@@ -188,10 +196,13 @@ public class OsobljeService {
 		}
 		else{
 			if(!pregledRepository.findByIdLekara(idOsoblja).isEmpty()){
-				return new CustomResponse<Boolean>(true, false, "Greska: Ne mozete obrisati lekara za kojeg postoji pregled");
+				throw new BusinessLogicException("Greska: Ne mozete obrisati lekara za kojeg postoji pregled");
 			}
 			if(!pregledRepository.findByIdDodatnogLekara(idOsoblja).isEmpty()){
-				return new CustomResponse<Boolean>(true, false, "Greska: Ne mozete obrisati lekara koji asistira na nekoj operaciji.");
+				throw new BusinessLogicException("Greska: Ne mozete obrisati lekara koji asistira na nekoj operaciji.");
+			}
+			if(!upitZaPregledRepository.findByIdLekara(idOsoblja).isEmpty()){
+				throw new BusinessLogicException("Greska: Ne mozete obrisati lekara za kojeg postoji upit za pregled");
 			}
 			Lekar lekar = (Lekar) osobaToDelete;
 			for(TipPregleda tp : lekar.getTipovi_pregleda()){

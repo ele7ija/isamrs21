@@ -177,7 +177,7 @@ export default{
           id: profil.radniKalendar.id,
           medicinskoOsoblje: {
             id: profil.id,
-            pozicija: 'medicinska-sestra'
+            pozicija: 'medicinska sestra'
           }
         },
         prviDanGodisnjeg: this.pocetakDate,
