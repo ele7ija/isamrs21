@@ -69,7 +69,7 @@
                   v-on="on"
                 ></v-text-field>
               </template>
-              <v-date-picker v-model="kraj" no-title scrollable min="00010101T000000-0500">
+              <v-date-picker v-model="kraj" no-title scrollable>
                 <v-spacer></v-spacer>
                 <v-btn text color="red lighten-1" @click="menu2 = false">Odustani</v-btn>
                 <v-btn text color="green lighten-1" @click="$refs.menu2.save(kraj)">Potvrdi</v-btn>
