@@ -15,31 +15,72 @@
             obaviti traženi pregled. 
           </v-card-subtitle>
           <v-card-text>
-            <v-container fluid>
-              <v-row>
-                <v-col 
-                  v-for='klinika in klinike'
-                  :key='klinika.id'
-                  lg=4
-                  md=6
-                  sm=6>
-                  <KlinikaCard v-bind:klinika='klinika'>
-                  </KlinikaCard>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col 
-                  v-for='klinika in nepretrazeneKlinike'
-                  :key='klinika.id'
-                  lg=4
-                  md=6
-                  sm=6>
-                  <KlinikaCard class='disabled' v-bind:klinika='klinika'>
-                  </KlinikaCard>
-                </v-col>
-              </v-row>
-            </v-container>
-            
+            <v-tabs>
+              <v-tab>
+                Pretraženi pregledi
+              </v-tab>
+              <v-tab>
+                Pretraženi tip pregleda
+              </v-tab>
+              <v-tab>
+                Nepretražene klinike
+              </v-tab>
+              <v-tab-item>
+                <v-container fluid>
+                  <v-row
+                    v-if='klinike.length!=0' >
+                    <v-col
+                      v-for='klinika in klinike'
+                      :key='klinika.id'
+                      lg=4
+                      md=6
+                      sm=6>
+                      <KlinikaCard v-bind:klinika='klinika'>
+                      </KlinikaCard>
+                    </v-col>
+                  </v-row>
+                  <v-row
+                    v-if='klinike.length==0'>
+                    <v-col :cols=12>
+                        <v-alert type="error">
+                          Ne postoji klinika sa odgovarajućim pregledom.
+                        </v-alert>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-tab-item>
+              <v-tab-item>
+                <v-container fluid>
+                  <v-row>
+                    <v-col 
+                      v-for='klinika in moguceKlinike'
+                      :key='klinika.id'
+                      lg=4
+                      md=6
+                      sm=6>
+                      <KlinikaCard v-bind:klinika='klinika'>
+                      </KlinikaCard>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-tab-item>
+              <v-tab-item>
+                <v-container fluid>
+                  <v-row>
+                    <v-col 
+                      v-for='klinika in nedostupneKlinike'
+                      :key='klinika.id'
+                      lg=4
+                      md=6
+                      sm=6>
+                      <KlinikaCard class='disabled' v-bind:klinika='klinika'>
+                      </KlinikaCard>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-tab-item>
+            </v-tabs>
+
           </v-card-text>
         </v-card>
       </v-col>
@@ -64,7 +105,8 @@ export default {
   computed: {
     ...mapGetters('klinike', [
       'pretrazeneKlinike',
-      'nepretrazeneKlinike'
+      'nedostupneKlinike',
+      'moguceKlinike'
     ]),
     klinike: function(){ 
       return this.pretrazeneKlinike;
