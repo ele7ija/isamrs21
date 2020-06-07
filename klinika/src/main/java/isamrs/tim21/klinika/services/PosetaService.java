@@ -48,6 +48,9 @@ public class PosetaService {
 
 	@Autowired
 	PregledService pregledService;
+
+	@Autowired
+	ReceptService receptService;
 	
 	//@SuppressWarnings("rawtypes")
 	public Poseta kreirajNovuPosetu(PosetaDTO dto, HttpServletRequest req) {
@@ -249,17 +252,21 @@ public class PosetaService {
 			return  lista;
 		}
 		else{
+			//update poseta
 		 	Poseta poseta = posetaRepository.findById(posetaDTO.getPosetaId()).orElse(null);
 			poseta.setBolest(posetaDTO.getBolest());
 			poseta.setLekovi(posetaDTO.getLekovi());
 			poseta.setOpis(posetaDTO.getOpis());
 			posetaRepository.save(poseta);
+			//update zdravstveni karton
 			ZdravstveniKarton k = poseta.getZdravstveniKarton();
 			k.setDioptrija(posetaDTO.getDioptrija());
 			k.setKrvnaGrupa(posetaDTO.getKrvnaGrupa());
 			k.setVisina(posetaDTO.getVisina());
 			k.setTezina(posetaDTO.getTezina());
 			zdravstveniKartonRepository.save(k);
+			//kreiraj recept
+			receptService.saveRecept(poseta);
 
 			//vraca listu u kojoj se nalaze i poseta i karton
 			List lista = new ArrayList();

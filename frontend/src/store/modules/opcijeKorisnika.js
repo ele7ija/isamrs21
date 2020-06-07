@@ -214,8 +214,14 @@ const state = {
             action: 'mdi-beach',
             componentName: 'odsustvo_sestra'
           },
+          {
+            title: 'Recepti',
+            action: 'mdi-file-document-edit',
+            componentName: 'recepti',
+          },
         ]
-      } 
+      } ,
+      
     ],
   }
 }

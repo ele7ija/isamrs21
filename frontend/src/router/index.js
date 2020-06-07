@@ -38,6 +38,7 @@ import PacijentiHomePage from '@/components/pacijenti/PacijentiHomePage';
 import ListaPacijenata from '@/components/med_sestra/ListaPacijenata'
 import OdsustvoSestra from '@/components/med_sestra/OdsustvoSestra'
 import KalendarSestra from '@/components/med_sestra/Kalendar'
+import Recepti from '@/components/med_sestra/Recepti'
 
 import store from '@/store/index';
 
@@ -367,6 +368,15 @@ let router = new Router({
         author: 'medicinska-sestra',
       }
     },
+    {
+      path: '/recepti',
+      name: 'recepti',
+      component: Recepti,
+      meta: {
+        authen: true,
+        author: 'medicinska-sestra',
+      }
+    }
 
   ]
 });
