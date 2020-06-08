@@ -1,12 +1,16 @@
 package isamrs.tim21.klinika.dto;
 
+import isamrs.tim21.klinika.domain.MedicinskaSestra;
+
 public class ReceptDTO {
   private Long id;
   private Boolean overen;
+  private MedicinskaSestra medicinskaSestra;
 
-  public ReceptDTO(Long id, Boolean overen){
+  public ReceptDTO(Long id, Boolean overen, MedicinskaSestra medicinskaSestra){
     this.id = id;
     this.overen = overen;
+    this.medicinskaSestra = medicinskaSestra;
   }
 
   public Long getId() {
@@ -27,6 +31,14 @@ public class ReceptDTO {
 
   public void setOveren(Boolean overen) {
     this.overen = overen;
+  }
+
+  public MedicinskaSestra getMedicinskaSestra() {
+    return this.medicinskaSestra;
+  }
+
+  public void setMedicinskaSestra(MedicinskaSestra medicinskaSestra) {
+    this.medicinskaSestra = medicinskaSestra;
   }
 
 }

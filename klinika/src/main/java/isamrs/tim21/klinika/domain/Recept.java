@@ -23,10 +23,20 @@ public class Recept {
   @OneToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
   private Poseta poseta;
 
+  @OneToOne
+  private MedicinskaSestra medicinskaSestra;
 
   @Column(name = "overen")
   private Boolean overen = false;
 
+
+  public Long getId() {
+    return this.id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
 
   public Boolean isOveren() {
     return this.overen;
@@ -51,5 +61,16 @@ public class Recept {
   public List<Sifarnik> getRecepti(Poseta poseta) {
     return poseta.getLekovi();
   }
+
+
+  public MedicinskaSestra getMedicinskaSestra() {
+    return this.medicinskaSestra;
+  }
+
+  public void setMedicinskaSestra(MedicinskaSestra medicinskaSestra) {
+    this.medicinskaSestra = medicinskaSestra;
+  }
+
+
 
 }

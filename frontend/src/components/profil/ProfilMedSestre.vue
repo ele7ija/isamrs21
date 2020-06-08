@@ -2,7 +2,7 @@
   <v-container>
     <v-card>
       <v-card-title class="justify-center headline">
-        Profil lekara
+        Profil sestre
       </v-card-title>
       <v-card-text>
         <v-form v-model="isFormValid">

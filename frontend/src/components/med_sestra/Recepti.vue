@@ -112,10 +112,6 @@ export default {
       searchOvereni: '',
       headers: [
         {
-          text: 'id',
-          value: 'id'
-        },
-        {
           text: 'Ime',
           value: 'poseta.zdravstveniKarton.pacijent.ime',
           sortable: true,
@@ -162,6 +158,7 @@ export default {
     ...mapGetters({
       getOvereniRecepti: 'recepti/getOvereniRecepti',
       getNeovereniRecepti: 'recepti/getNeovereniRecepti',
+      profil: "profil/getProfil",
     })
   },
 
@@ -179,7 +176,9 @@ export default {
       var recept = {
         id: item.id,
         overen: true,
+        medicinskaSestra: this.profil,
       }
+      
       this.overiRecept(recept);
     }
 
