@@ -4,7 +4,7 @@
     :headers="headers"
     :items="getNeovereniRecepti"
     :search="searchNeovereni"
-    class="elevation-1 mx-4"
+    class="elevation-1 ma-4"
     item-key="poseta.id"
     show-expand  >
     <template v-slot:top>
@@ -59,7 +59,7 @@
     :headers="headers"
     :items="getMojiOvereniRecepti"
     :search="searchOvereni"
-    class="elevation-1 mx-4"
+    class="elevation-1 ma-4"
     show-expand  >
     <template v-slot:top>
       <v-toolbar flat color="green lighten-5">
