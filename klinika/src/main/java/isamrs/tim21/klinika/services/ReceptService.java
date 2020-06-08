@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import isamrs.tim21.klinika.domain.Poseta;
 import isamrs.tim21.klinika.domain.Recept;
+import isamrs.tim21.klinika.dto.ReceptDTO;
 import isamrs.tim21.klinika.repository.ReceptRepository;
 
 @Service
@@ -25,5 +26,10 @@ public List<Recept> findAllRecepti() {
   List<Recept> recepti =  receptRepository.findAll();
 	return recepti;
 }
-  
+
+public Recept overiRecept(ReceptDTO receptDTO) {
+  Recept recept = receptRepository.findById(receptDTO.getPosetaId()).orElse(null);
+  return receptRepository.save(recept);
+
+}  
 }
