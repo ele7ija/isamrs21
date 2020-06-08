@@ -1,20 +1,20 @@
 package isamrs.tim21.klinika.dto;
 
 public class ReceptDTO {
-  private Long posetaId;
+  private Long id;
   private Boolean overen;
 
-  public ReceptDTO(Long posetaId, Boolean overen){
-    this.posetaId = posetaId;
+  public ReceptDTO(Long id, Boolean overen){
+    this.id = id;
     this.overen = overen;
   }
 
-  public Long getPosetaId() {
-    return this.posetaId;
+  public Long getId() {
+    return this.id;
   }
 
-  public void setPosetaId(Long posetaId) {
-    this.posetaId = posetaId;
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public Boolean isOveren() {

@@ -23,7 +23,7 @@ public class ReceptController {
   private ReceptService receptService;
 
   @GetMapping
-  public ResponseEntity<?> getAllRecepti(){
+  public ResponseEntity<List<Recept>> getAllRecepti(){
     List<Recept> recepti = receptService.findAllRecepti();
     return new ResponseEntity<>(recepti, HttpStatus.OK);
   }

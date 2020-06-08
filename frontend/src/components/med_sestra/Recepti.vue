@@ -177,7 +177,7 @@ export default {
 
     overi(item){
       var recept = {
-        posetaId: item.poseta.id,
+        id: item.id,
         overen: true,
       }
       this.overiRecept(recept);

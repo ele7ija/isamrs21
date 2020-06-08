@@ -28,7 +28,7 @@ public List<Recept> findAllRecepti() {
 }
 
 public Recept overiRecept(ReceptDTO receptDTO) {
-  Recept recept = receptRepository.findById(receptDTO.getPosetaId()).orElse(null);
+  Recept recept = receptRepository.findById(receptDTO.getId()).orElse(null);
   return receptRepository.save(recept);
 
 }  
