@@ -16,13 +16,11 @@ const getters = {
 const actions = {
   async loadRecepti({commit}) {
     var response = await receptiAPI.fetchAllRecepti();
-    console.log(response.data);
     commit('setRecepti', response.data);
   },
 
   async overiRecept({commit}, recept){
     var response = await receptiAPI.overiRecept(recept);
-    console.log(response.data);
     commit('updateRecepti', response.data)
   }
 }

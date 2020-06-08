@@ -57,13 +57,13 @@
 
   <v-data-table
     :headers="headers"
-    :items="getOvereniRecepti"
+    :items="getMojiOvereniRecepti"
     :search="searchOvereni"
     class="elevation-1 mx-4"
     show-expand  >
     <template v-slot:top>
       <v-toolbar flat color="green lighten-5">
-        <v-toolbar-title> Overeni Recepti</v-toolbar-title>
+        <v-toolbar-title>Moji Overeni Recepti</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -159,7 +159,15 @@ export default {
       getOvereniRecepti: 'recepti/getOvereniRecepti',
       getNeovereniRecepti: 'recepti/getNeovereniRecepti',
       profil: "profil/getProfil",
-    })
+    }),
+
+    getMojiOvereniRecepti(){
+      var mojiOvereni = this.getOvereniRecepti.filter( (recept) => recept.medicinskaSestra.id == this.mojId);
+      return mojiOvereni;
+    },
+    mojId(){
+      return this.profil.id;
+    }
   },
 
   created() {
