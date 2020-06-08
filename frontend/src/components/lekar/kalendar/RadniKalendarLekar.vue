@@ -31,7 +31,7 @@ export default {
   methods: {
     ...mapActions({
       fetchPacijenti: 'pacijenti/loadPacijenti',
-      fetchZahteviZaGodisnji: 'zahteviZaGodisnjiOsoblje/fetchMojiZahtevi',
+      fetchZahteviZaGodisnji: 'zahteviZaGodisnjiOsoblje/fetchAllZahtevi',
     }),
 
     async init(){
@@ -74,9 +74,8 @@ export default {
 
     async loadGodisnjiOdmor(){
       await this.fetchZahteviZaGodisnji();
-      var godisnji = this.$store.getters["zahteviZaGodisnjiOsoblje/getNeobradjeniZahteviZaGodisnji"]
+      var godisnji = this.$store.getters["zahteviZaGodisnjiOsoblje/getMojiOdobreniZahtevi"]
       for(var g of godisnji){
-        console.log(g);
         this.posete.push({
           name: "Odsustvo",
           start: this.formatDate(g.prviDanGodisnjeg),

@@ -3,12 +3,14 @@ import zahteviZaGodisnji from '@/api/zahteviZaGodisnji';
 const state = {
   poslatiZahteviZaGodisnji: [], //zahteve koje je clan osoblja poslao adminu, a admin ih jos nije obradio
   neobradjeniZahteviZaGodisnji: [], //zahteve koje je admin obradio, ali clan osoblja jos nije video odgovor
-  idOsoblja: null
+  idOsoblja: null,
+  mojiOdobreniZahtevi: [],
 }
 
 const getters = {
   getPoslatiZahteviZaGodisnji: (state) => state.poslatiZahteviZaGodisnji,
-  getNeobradjeniZahteviZaGodisnji: (state) => state.neobradjeniZahteviZaGodisnji
+  getNeobradjeniZahteviZaGodisnji: (state) => state.neobradjeniZahteviZaGodisnji,
+  getMojiOdobreniZahtevi: (state) => state.mojiOdobreniZahtevi,
 }
 
 const actions = {
@@ -31,6 +33,16 @@ const actions = {
   async obradiOsoblje({commit}, idZahteva){
     await zahteviZaGodisnji.obradiOsoblje(idZahteva);
     commit('obradi', idZahteva);
+  },
+
+  async fetchAllZahtevi({commit, rootGetters}){
+    //setuj id lekara ili sestre kako bi se pravilno filtrirali zahtevi
+    let resp = rootGetters['profil/getProfil'].id;
+    commit('setIdOsoblja', resp);
+    //ucitaj sve zahteve i sortiraj ih u mutacijama
+    let klinikaId = rootGetters['klinike/getKlinikaOsoblja'].id;
+    var data = await zahteviZaGodisnji.fetchAllZahtevi(klinikaId);  
+    commit('setMojiOdobreniZahtevi', data);
   }
 }
 
@@ -43,7 +55,11 @@ const mutations = {
     if(index != -1)
       state.neobradjeniZahteviZaGodisnji.splice(index, 1);
   },
-  addNewZahtev: (state, zahtev) => state.poslatiZahteviZaGodisnji.push(zahtev)
+  addNewZahtev: (state, zahtev) => state.poslatiZahteviZaGodisnji.push(zahtev),
+  setMojiOdobreniZahtevi: (state, zahtevi) => 
+    state.mojiOdobreniZahtevi = zahtevi.filter( (zahtev) => 
+      zahtev.odobreno == true && zahtev.radniKalendar.id == state.idOsoblja )
+  ,  
 }
 
 export default{

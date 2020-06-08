@@ -28,7 +28,7 @@ public class ZahtevZaGodisnjiKontroler {
 	ZahtevZaGodisnjiService zahtevZaGodisnjiService;
 	
 	@GetMapping(value="/{idKlinike}")
-	@PreAuthorize("hasAuthority('admin-klinike')")
+	@PreAuthorize("hasAuthority('admin-klinike') or hasAuthority('lekar') or hasAuthority('medicinska-sestra')")
 	public ResponseEntity<List<ZahtevZaGodisnji>> getAllZahtevZaGodisnji(@PathVariable("idKlinike") Long idKlinike){
 		List<ZahtevZaGodisnji> zahtevi = zahtevZaGodisnjiService.findAllByIdKlinike(idKlinike);
 		if(zahtevi == null){
