@@ -2,6 +2,7 @@ import klinikeAPI from '@/api/klinike';
 import preglediAPI from '@/api/pregledi'
 import utility from '@/utility/utility';
 import oceneAPI from '@/api/ocene';
+import tipoviPregledaAPI from '@/api/tipoviPregleda'
 
 const state = {
   // Main data
@@ -10,6 +11,7 @@ const state = {
   klinikaAdmina: null,
   klinikaOsoblja: null,
   ocene: {},
+  tipoviPregleda: {},
   // Pretraga i sortiranje klinika
   pocetniDatum: null,
   krajnjiDatum: null,
@@ -90,11 +92,29 @@ const getters = {
       state.sortiranjeKlinika
     )
   },
-  nepretrazeneKlinike: (state, getters) => {
+  nedostupneKlinike: (state, getters) => {
     let retval = [];
     for (let k of state.klinike) {
-      let l = getters.pretrazeneKlinike.filter(x => x.id == k.id);
+      let l = getters.moguceKlinike.filter(x => x.id == k.id);
       if (l.length == 0) {
+        retval.push(k);
+      }
+    }
+    return retval;
+  },
+  moguceKlinike: (state) => {
+    let retval = [];
+    for (let k of state.klinike) {
+      if (state.odabraniTipPregleda != null) {
+        if (state.tipoviPregleda[k.id] != undefined) {
+          for (let tp of state.tipoviPregleda[k.id]) {
+            if (tp.id == state.odabraniTipPregleda.id) {
+              retval.push(k);
+            }
+          }
+        }
+      }
+      else {
         retval.push(k);
       }
     }
@@ -153,17 +173,28 @@ const getters = {
     let myset = new Set();
     let retval = [];
     for (let klinika of state.klinike) {
-      if (state.pregledi[klinika.id] == undefined) {
+      if (state.tipoviPregleda[klinika.id] == undefined) {
         continue;
       }
-      for (let pregled of state.pregledi[klinika.id]) {
-        if (!myset.has(pregled.tipPregleda.naziv)) {
-          retval.push(pregled.tipPregleda);
-          myset.add(pregled.tipPregleda.naziv)
+      for (let tipPregleda of state.tipoviPregleda[klinika.id]) {
+        if (!myset.has(tipPregleda.naziv)) {
+          retval.push(tipPregleda);
+          myset.add(tipPregleda.naziv);
         }
-        
       }
     }
+    // for (let klinika of state.klinike) {
+    //   if (state.pregledi[klinika.id] == undefined) {
+    //     continue;
+    //   }
+    //   for (let pregled of state.pregledi[klinika.id]) {
+    //     if (!myset.has(pregled.tipPregleda.naziv)) {
+    //       retval.push(pregled.tipPregleda);
+    //       myset.add(pregled.tipPregleda.naziv)
+    //     }
+        
+    //   }
+    // }
     return retval;
   },
   dostupniGradovi: (state) => {
@@ -248,6 +279,10 @@ const actions = {
     let data = await preglediAPI.getAllPregledi(klinikaId);
       commit('setPreglediKlinike', {id: klinikaId, data: data})
   },
+  async loadTipoviPregleda({commit}, klinikaId) {
+    let data = await tipoviPregledaAPI.getAllTipoviPregleda(klinikaId);
+    commit ('setTipoviPregleda', {id: klinikaId, data: data});
+  },
   async loadAllSlobodniPregledi({commit, state}){
     for (let klinika of state.klinike){
       let data = await preglediAPI.getSlobodniPregledi(klinika.id);
@@ -265,11 +300,18 @@ const actions = {
       })
     }
   },
+  async loadAllTipoviPregleda({commit, state}) {
+    for (let klinika of state.klinike) {
+      let data = await tipoviPregledaAPI.getAllTipoviPregleda(klinika.id);
+      commit ('setTipoviPregleda', {id: klinika.id, data: data});
+    }
+  },
   async dobaviPodatkeKlinike({dispatch}) {
     // dobavi klinike
     // dobavi preglede
     await dispatch('loadKlinike');
     await dispatch('loadAllSlobodniPregledi');
+    await dispatch('loadAllTipoviPregleda');
     await dispatch('loadAllOcene');
   },
   async loadKlinika({commit}, klinikaId){
@@ -344,6 +386,8 @@ const mutations = {
     state.minOcenaLekara = min,
   setMaxOcenaLekara: (state, max) => 
     state.maxOcenaLekara = max,
+  setTipoviPregleda: (state, obj) => 
+    state.tipoviPregleda[obj.id] = obj.data
 }
 
 export default{

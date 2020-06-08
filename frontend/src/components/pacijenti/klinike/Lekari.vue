@@ -82,7 +82,12 @@ export default {
       }
       let r = [];
       retval.forEach((id) => {
-        r.push(this.lekari.filter((x) => x.id === id)[0]);
+        this.lekari.forEach((lekar) => {
+          if (lekar.id == id) {
+            r.push(lekar)
+          }
+        })
+        // r.push(this.lekari.filter((x) => x.id === id)[0]);
       });
       let r2 = [];
       for (let lekar of r) {
@@ -123,9 +128,9 @@ export default {
       return retval;
     }
   },
-  async created() {
-    this.dobaviPodatkeKlinikaPage(this.klinikaId);
+  async mounted() {
     await this.pronadjiLekare(this.klinikaId);
+    await this.dobaviPodatkeKlinikaPage(this.klinikaId);
     await this.loadAllOcene();
   }
 }

@@ -145,15 +145,9 @@ public class UpitZaPregledeService {
 	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
 	public CustomResponse<UpitZaPregled> odbiUnapredDefinisani(Long idKlinike, Long idUpitaZaPregled, UpitZaPregled u)
 		throws EntityNotFoundException, BusinessLogicException{	
-		/*
-			Pregled se dobavlja u pessimistic read rezimu
-			Na ovaj nacin dozvoljavamo vise transakcija koje vrse odbijanje RAZLICITH ili ISTIH upita za ISTI pregled da rade u paraleli
-			Ako dve transakcije vrse odbijanje ISTOG upita za ISTI pregled, to ne narusava konzistentnost podataka
-			Transakcije koje rade 
-		*/
+		//kako bi sprecili da isti upit za pregled bude simultano i odbijen i prihvacen
 		pregledRepository.findByIdKlinikeAndIdPregledaPessimisticRead(idKlinike, u.getUnapredDefinisaniPregled().getId());
 		
-		//kako je pregled vec zakljucan sa exclusive lock-om, zakljucavanje i upita bi bio nepotreban overhead
 		UpitZaPregled upit = upitZaPregledRepository.findById(u.getId()).get();
 		if(upit == null)
 			throw new EntityNotFoundException("Upit za pregled");
@@ -426,10 +420,11 @@ public class UpitZaPregledeService {
 			throw new EntityNotFoundException("Klinika");
 		upitZaPregledToChange.setKlinika(klinika);
 
-		//dobavi upit za pregled i zakljucaj ga u PESSIMISTIC_FORCE_INCREMENT rezimu
 		UpitZaPregled upit = upitZaPregledRepository.findByIdKlinikeAndByIdPessimisticForceIncrement(idKlinike, idUpita);
+		if(upit == null)
+			throw new EntityNotFoundException("Upit za pregled");
 		if(upit.getAdminObradio())
-			throw new BusinessLogicException("Greska: Ovaj upit za pregled je vec obradjen od strane administratora klinike.");
+			throw new BusinessLogicException("Ovaj upit za pregled je već obrađen od strane administratora klinike");
 
 		//kreiraj pregled
 		Pregled pregled = new Pregled(upitZaPregledToChange);
@@ -498,10 +493,12 @@ public class UpitZaPregledeService {
 	}
 
 	@Transactional(readOnly=false, isolation = Isolation.READ_COMMITTED)
-	public CustomResponse<UpitZaPregled> odbiCustom(Long idKlinike, Long idUpita) throws BusinessLogicException{
+	public CustomResponse<UpitZaPregled> odbiCustom(Long idKlinike, Long idUpita) throws EntityNotFoundException, BusinessLogicException{
 		UpitZaPregled upit = upitZaPregledRepository.findByIdKlinikeAndByIdPessimisticForceIncrement(idKlinike, idUpita);
+		if(upit == null)
+			throw new EntityNotFoundException("Upit za pregled");
 		if(upit.getAdminObradio())
-			throw new BusinessLogicException("Greska: Ovaj upit za pregled je vec obradjen od strane administratora klinike.");
+			throw new BusinessLogicException("Ovaj upit za pregled je već obrađen od strane administratora klinike");
 		upit.setAdminObradio(true);
 		upit.setOdobren(false);
 		upit = upitZaPregledRepository.save(upit);

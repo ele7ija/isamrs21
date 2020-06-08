@@ -62,7 +62,7 @@ public class ZahtevZaGodisnjiService {
 		//pessimistic write kako bi sprecio paralelno odobravanje istog razlicitih zahteva za odsustvo za istog lekara
 		//dodavanje pregleda isto koristi pessimistic_write za dobavljanje lekara, tako da je i to reseno
 
-		MedicinskoOsoblje osoblje = osobljeRepository.findLekarByIdPessimisticWrite(zahtevToUpdate.getRadniKalendar().getMedicinskoOsoblje().getId());
+		MedicinskoOsoblje osoblje = osobljeRepository.findByIdPessimisticWrite(zahtevToUpdate.getRadniKalendar().getMedicinskoOsoblje().getId());
 		if(osoblje == null)
 			throw new EntityNotFoundException("Medicinsko osoblje");
 
@@ -83,6 +83,8 @@ public class ZahtevZaGodisnjiService {
 			}
 		}
 		zahtevToUpdate.setRadniKalendar(osoblje.getRadniKalendar());
+		zahtevToUpdate.setAdminObradio(true);
+		zahtevToUpdate.setOdobreno(true);
 		return zahtevZaGodisnjiRepository.save(zahtevToUpdate);
 	}
 
@@ -95,8 +97,8 @@ public class ZahtevZaGodisnjiService {
 		ZahtevZaGodisnji zahtev = zahtevZaGodisnjiRepository.findById(zahtevToUpdate.getId()).orElse(null);
 		if(zahtev == null)
 			throw new EntityNotFoundException("Zahtev za odsustvo");
-		zahtev.setOdobreno(false);
-		zahtev.setAdminObradio(true);
+		zahtevToUpdate.setOdobreno(false);
+		zahtevToUpdate.setAdminObradio(true);
 		return zahtevZaGodisnjiRepository.save(zahtevToUpdate);
 	}
 

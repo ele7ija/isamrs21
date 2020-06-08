@@ -53,6 +53,12 @@ public interface OsobljeRepository extends JpaRepository<MedicinskoOsoblje, Long
 
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query("SELECT k FROM Korisnik k "
+			+ "WHERE (TYPE(k)='LE' OR TYPE(k)='MS') "
+			+ "AND k.id = :idOsoblja")
+	MedicinskoOsoblje findByIdPessimisticWrite(@Param("idOsoblja") Long idOsoblja);
+
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	@Query("SELECT k FROM Korisnik k "
 			+ "WHERE TYPE(k)='LE' "
 			+ "AND k.klinika.id = :idKlinike "
 			+ "AND k.id = :idOsoblja")
