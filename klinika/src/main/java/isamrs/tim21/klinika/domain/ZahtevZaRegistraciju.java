@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -18,6 +19,10 @@ import isamrs.tim21.klinika.jsonSerialize.IdentitySerializable;
 @Entity
 @Table(name="zahtev_za_registraciju")
 public class ZahtevZaRegistraciju implements IdentitySerializable{
+	@Version
+	@Column(name="version", columnDefinition="integer DEFAULT 0", nullable=false)
+	private Long version;
+	
 	@Id
 	private Long id;
 	

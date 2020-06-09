@@ -75,13 +75,6 @@ public class ZahtevZaRegistracijuController {
     }
   }
 
-  // @GetMapping("/registruj/{id}")
-  // public RedirectView registrujKorisnika(@PathVariable Long id) {
-  //   zahtevService.registrujKorisnika(id); 
-  //   RedirectView r = new RedirectView("http://localhost:8081");
-  //   return r;
-  // }
-
   @GetMapping ("/registruj/{id}")
   public String registrujKorisnika(@PathVariable Long id) {
     String s = zahtevService.registrujKorisnika(id);

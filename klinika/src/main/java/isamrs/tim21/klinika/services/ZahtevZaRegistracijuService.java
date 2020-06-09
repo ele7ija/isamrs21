@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim21.klinika.domain.Pacijent;
 import isamrs.tim21.klinika.domain.ZahtevZaRegistraciju;
@@ -29,14 +31,15 @@ public class ZahtevZaRegistracijuService {
     return new CustomResponse<ZahtevZaRegistraciju>(z, true, "Zahtev kreiran");
   }
 
-  public ZahtevZaRegistraciju delete(ZahtevZaRegistracijuDTO zahtevZaRegistracijuDTO) {
+  public ZahtevZaRegistraciju delete(ZahtevZaRegistracijuDTO zahtevZaRegistracijuDTO) throws Exception{
     ZahtevZaRegistraciju zahtevZaRegistraciju = 
       zahtevRepo.findById(zahtevZaRegistracijuDTO.getId()).orElse(null);
     zahtevRepo.delete(zahtevZaRegistraciju);
     return zahtevZaRegistraciju;
   }
 
-  public ZahtevZaRegistraciju update(ZahtevZaRegistracijuDTO zahtevZaRegistracijuDTO) {
+  @Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
+  public ZahtevZaRegistraciju update(ZahtevZaRegistracijuDTO zahtevZaRegistracijuDTO) throws Exception{
     ZahtevZaRegistraciju zahtevZaRegistraciju = 
     zahtevRepo.findById(zahtevZaRegistracijuDTO.getId()).orElse(null);    
     zahtevZaRegistraciju.setDatumOdobrenja(zahtevZaRegistracijuDTO.getDatumOdobrenja());
