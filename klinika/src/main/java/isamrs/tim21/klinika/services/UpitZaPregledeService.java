@@ -342,6 +342,12 @@ public class UpitZaPregledeService {
 		try {
 			UpitZaPregled u = upitZaPregledRepository.findById(id).get();
 			u.setPacijentObradio(true);
+			if (u.getOriginalniPregled() != null) {
+				u.getOriginalniPregled().setPacijentObradio(true);
+			}
+			if (u.getIzmenjeniPregled() != null) {
+				u.getIzmenjeniPregled().setPacijentObradio(true);
+			}
 			upitZaPregledRepository.save(u);
 			return new CustomResponse<UpitZaPregled>(u, true, "Upit uspešno obrađen.");
 		}
