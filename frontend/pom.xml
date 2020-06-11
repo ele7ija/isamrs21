@@ -6,7 +6,7 @@
 
     <parent>
         <groupId>isa-mrs.tim21</groupId>
-        <artifactId>klinika</artifactId>
+        <artifactId>isamrs</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
