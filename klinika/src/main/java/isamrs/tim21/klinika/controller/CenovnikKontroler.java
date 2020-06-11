@@ -28,6 +28,11 @@ public class CenovnikKontroler {
 	@Autowired
 	private CenovnikService cenovnikService;
 	
+	@GetMapping(value="/dummy")
+	public String dummy(){
+		return "Serve me!";
+	}
+
 	@GetMapping
 	public ResponseEntity<List<Cenovnik>> getAllCenovnici(@PathVariable("idKlinike") Long idKlinike){
 		List<Cenovnik> cenovnici = cenovnikService.findAllByIdKlinike(idKlinike);
