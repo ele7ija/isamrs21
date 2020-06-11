@@ -31,6 +31,7 @@ public class ZahtevZaRegistracijuService {
     return new CustomResponse<ZahtevZaRegistraciju>(z, true, "Zahtev kreiran");
   }
 
+  @Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
   public ZahtevZaRegistraciju delete(ZahtevZaRegistracijuDTO zahtevZaRegistracijuDTO) throws Exception{
     ZahtevZaRegistraciju zahtevZaRegistraciju = 
       zahtevRepo.findById(zahtevZaRegistracijuDTO.getId()).orElse(null);
