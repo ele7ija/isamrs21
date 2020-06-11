@@ -33,6 +33,12 @@ public class CenovnikKontroler {
 		return "Serve me!";
 	}
 
+	@GetMapping(value="/dummyDatabase")
+	public List<Cenovnik> dummy2(){
+		return cenovnikService.findAll();
+	}
+
+
 	@GetMapping
 	public ResponseEntity<List<Cenovnik>> getAllCenovnici(@PathVariable("idKlinike") Long idKlinike){
 		List<Cenovnik> cenovnici = cenovnikService.findAllByIdKlinike(idKlinike);

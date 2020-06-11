@@ -35,6 +35,11 @@ public class CenovnikService {
 	TipPregledaRepository tipPregledaRepository;
 	
 	@Transactional(readOnly=true, isolation=Isolation.READ_COMMITTED)
+	public List<Cenovnik> findAll(){
+		return cenovnikRepository.findAll();
+	}
+
+	@Transactional(readOnly=true, isolation=Isolation.READ_COMMITTED)
 	public List<Cenovnik> findAllByIdKlinike(Long idKlinike) throws EntityNotFoundException{
 		Klinika klinika =  klinikaRepository.findById(idKlinike).orElse(null);
 		if(klinika == null){
