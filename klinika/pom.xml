@@ -108,7 +108,9 @@
 														<resource>
 																<directory>${project.parent.basedir}/frontend/dist</directory>
 																<includes>
-																		<include>static/</include>
+																		<include>js/</include>
+																		<include>css/</include>
+																		<include>fonts/</include>
 																		<include>index.html</include>
 																		<include>favicon.ico</include>
 																</includes>
