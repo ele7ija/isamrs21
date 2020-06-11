@@ -95,7 +95,8 @@ public class UpitZaPregledeService {
 		if(upit == null)
 			throw new EntityNotFoundException("Upit za pregled");
 		
-		//smemo ovo da radimo posto je PREGLED pod exclusive lock-om
+		//smemo ovo da radimo posto je PREGLED pod exclusive lock-om, prakticno optimisticko zakljucavanje se ovde ni ne koristi
+		//jer nikad 2 transakcije koje konkurentno obradjuju isti upit nece proci liniju 91
 		if(upit.getAdminObradio())
 			throw new BusinessLogicException("Greska. Upit je vec obradjen. Osvezite stranicu");
 		
@@ -145,15 +146,14 @@ public class UpitZaPregledeService {
 	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
 	public CustomResponse<UpitZaPregled> odbiUnapredDefinisani(Long idKlinike, Long idUpitaZaPregled, UpitZaPregled u)
 		throws EntityNotFoundException, BusinessLogicException{	
-		//kako bi sprecili da isti upit za pregled bude simultano i odbijen i prihvacen
-		pregledRepository.findByIdKlinikeAndIdPregledaPessimisticRead(idKlinike, u.getUnapredDefinisaniPregled().getId());
+		//pregledRepository.findByIdKlinikeAndIdPregledaPessimisticRead(idKlinike, u.getUnapredDefinisaniPregled().getId());
 		
 		UpitZaPregled upit = upitZaPregledRepository.findById(u.getId()).get();
 		if(upit == null)
 			throw new EntityNotFoundException("Upit za pregled");
 		
-		//provera ispod nece uvek raditi kako treba, jer je pregled pod shared lock-om
-		//moguce je da vise admina istovremeno odbija isti upit, sto ima za rezultat visestruko slanje maila pacijentu, ali to nije tako strasno
+		//provera ispod sluzi samo ako na primer admin nije osvezio stranicu jako dugo pa je pokusao da odbije vec obradjen upit
+		//ako se zaista konkurentno obradjuju 2 upita(odbija-dobija ili prihvata-odbija), to detektuje hibernate u liniji 162
 		if(upit.getAdminObradio())
 			throw new BusinessLogicException("Greska. Ovaj upit za pregled je vec obradjen. Osvezite stranicu.");
 
@@ -342,6 +342,12 @@ public class UpitZaPregledeService {
 		try {
 			UpitZaPregled u = upitZaPregledRepository.findById(id).get();
 			u.setPacijentObradio(true);
+			if (u.getOriginalniPregled() != null) {
+				u.getOriginalniPregled().setPacijentObradio(true);
+			}
+			if (u.getIzmenjeniPregled() != null) {
+				u.getIzmenjeniPregled().setPacijentObradio(true);
+			}
 			upitZaPregledRepository.save(u);
 			return new CustomResponse<UpitZaPregled>(u, true, "Upit uspešno obrađen.");
 		}
@@ -420,9 +426,13 @@ public class UpitZaPregledeService {
 			throw new EntityNotFoundException("Klinika");
 		upitZaPregledToChange.setKlinika(klinika);
 
-		UpitZaPregled upit = upitZaPregledRepository.findByIdKlinikeAndByIdPessimisticForceIncrement(idKlinike, idUpita);
+		//upit za pregled ne moramo da zakljucavamo pesimisticki
+		//prepusticemo hibernate-u da pri save-zu proveri verzije
+		UpitZaPregled upit = upitZaPregledRepository.findByIdKlinikeAndById(idKlinike, idUpita);
 		if(upit == null)
 			throw new EntityNotFoundException("Upit za pregled");
+		//kao i kod upita za unapred definisani pregled, ovo samo sluzi ukoliko admin npr dugo nije osvezavao stranicu
+		//prava provera verzija izvrsava se u linijama 473 tj. 479
 		if(upit.getAdminObradio())
 			throw new BusinessLogicException("Ovaj upit za pregled je već obrađen od strane administratora klinike");
 
@@ -494,9 +504,10 @@ public class UpitZaPregledeService {
 
 	@Transactional(readOnly=false, isolation = Isolation.READ_COMMITTED)
 	public CustomResponse<UpitZaPregled> odbiCustom(Long idKlinike, Long idUpita) throws EntityNotFoundException, BusinessLogicException{
-		UpitZaPregled upit = upitZaPregledRepository.findByIdKlinikeAndByIdPessimisticForceIncrement(idKlinike, idUpita);
+		UpitZaPregled upit = upitZaPregledRepository.findByIdKlinikeAndById(idKlinike, idUpita);
 		if(upit == null)
 			throw new EntityNotFoundException("Upit za pregled");
+		//prava odbrana od stetnog preplitanja transakcija je u liniji 509, ovo samo ako admin nije refreshovao dugo svoju stranicu
 		if(upit.getAdminObradio())
 			throw new BusinessLogicException("Ovaj upit za pregled je već obrađen od strane administratora klinike");
 		upit.setAdminObradio(true);

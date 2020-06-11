@@ -3,10 +3,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.6.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<groupId>isa-mrs.tim21</groupId>
+    <artifactId>isamrs</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>isa-mrs.tim21</groupId>
 	<artifactId>klinika</artifactId>
@@ -89,11 +88,38 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+				<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+				</plugin>
+				<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<executions>
+								<execution>
+										<id>copy frontend content</id>
+										<phase>generate-resources</phase>
+										<goals>
+												<goal>copy-resources</goal>
+										</goals>
+										<configuration>
+												<outputDirectory>src/main/resources/public</outputDirectory>
+												<overwrite>true</overwrite>
+												<resources>
+														<resource>
+																<directory>${project.parent.basedir}/frontend/dist</directory>
+																<includes>
+																		<include>static/</include>
+																		<include>index.html</include>
+																		<include>favicon.ico</include>
+																</includes>
+														</resource>
+												</resources>
+										</configuration>
+								</execution>
+						</executions>
+				</plugin>
+
+			</plugins>
+    </build>
 
 </project>
