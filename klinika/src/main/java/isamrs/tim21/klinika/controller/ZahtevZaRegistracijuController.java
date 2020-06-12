@@ -21,7 +21,7 @@ import isamrs.tim21.klinika.services.MailService;
 import isamrs.tim21.klinika.services.ZahtevZaRegistracijuService;
 
 @RestController
-@RequestMapping(path="/zahtevi_za_registraciju")
+@RequestMapping(path="/api/zahtevi_za_registraciju")
 public class ZahtevZaRegistracijuController {
   @Autowired
   private ZahtevZaRegistracijuService zahtevService;

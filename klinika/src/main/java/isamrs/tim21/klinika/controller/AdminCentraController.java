@@ -21,7 +21,7 @@ import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.services.AdminCentraService;
 
 @RestController
-@RequestMapping("/admin_centra")
+@RequestMapping("/api/admin_centra")
 public class AdminCentraController {
   
   @Autowired

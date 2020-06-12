@@ -20,7 +20,7 @@ import isamrs.tim21.klinika.dto.PacijentIzmenaDTO;
 import isamrs.tim21.klinika.services.PacijentService;
 
 @RestController
-@RequestMapping(path="/pacijenti")
+@RequestMapping(path="/api/pacijenti")
 public class PacijentKontroler {
 	
 	@Autowired

@@ -15,7 +15,7 @@ import isamrs.tim21.klinika.domain.Korisnik;
 import isamrs.tim21.klinika.repository.KorisniciRepository;
 
 @RestController
-@RequestMapping(path="/korisnici")
+@RequestMapping(path="/api/korisnici")
 public class KorisnikKontroler {
 	@Autowired
 	KorisniciRepository korisnikRepository;

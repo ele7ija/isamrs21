@@ -71,10 +71,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and()
 
 				// svim korisnicima dopusti da pristupe putanjama /auth/**, (/h2-console/** ako se koristi H2 baza) i /api/foo
-				.authorizeRequests().antMatchers("/auth/**").permitAll().antMatchers("/h2-console/**").permitAll().antMatchers("/api/foo").permitAll()
-				.antMatchers("/api/zahtevi_za_registraciju/podnesi").permitAll().antMatchers("/zahtevi_za_registraciju/registruj/{id}").permitAll()
-				.antMatchers("/cenovnik/{idKlinike}/dummy").permitAll()
-				.antMatchers("/cenovnik/{idKlinike}/dummyDatabase").permitAll()
+				.authorizeRequests().antMatchers("/api/auth/**").permitAll().antMatchers("/api/h2-console/**").permitAll().antMatchers("/api/foo").permitAll()
+				.antMatchers("/api/zahtevi_za_registraciju/podnesi").permitAll().antMatchers("/api/zahtevi_za_registraciju/registruj/{id}").permitAll()
+				.antMatchers("/api/cenovnik/{idKlinike}/dummy").permitAll()
+				.antMatchers("/api/cenovnik/{idKlinike}/dummyDatabase").permitAll()
 				
 				// za svaki drugi zahtev korisnik mora biti autentifikovan
 				.anyRequest().authenticated().and()
@@ -92,10 +92,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		// TokenAuthenticationFilter ce ignorisati sve ispod navedene putanje
-		web.ignoring().antMatchers(HttpMethod.POST, "/auth/login", "/zahtevi_za_registraciju/podnesi");
+		web.ignoring().antMatchers(HttpMethod.POST, "/api/auth/login", "/api/zahtevi_za_registraciju/podnesi");
 		web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "/favicon.ico", "/**/*.html",
-				"/**/*.css", "/**/*.js", "/api/zahtevi_za_registraciju/registruj/{id}", "/cenovnik/{idKlinike}/dummy", 
-				"/cenovnik/{idKlinike}/dummyDatabase");
+				"/**/*.css", "/**/*.js", "/**/*.ttf", "/**/*.woff", "/**/*.woff2",
+				"/api/zahtevi_za_registraciju/registruj/{id}", "/api/cenovnik/{idKlinike}/dummy", 
+				"/api/cenovnik/{idKlinike}/dummyDatabase");
 	}
 
 }

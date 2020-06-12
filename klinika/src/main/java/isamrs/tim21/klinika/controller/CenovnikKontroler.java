@@ -22,7 +22,7 @@ import isamrs.tim21.klinika.services.CenovnikService;
 
 
 @RestController
-@RequestMapping(path="/cenovnik/{idKlinike}")
+@RequestMapping(path="/api/cenovnik/{idKlinike}")
 public class CenovnikKontroler {
 	
 	@Autowired

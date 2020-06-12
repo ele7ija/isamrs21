@@ -15,7 +15,7 @@ import isamrs.tim21.klinika.domain.Sifarnik;
 import isamrs.tim21.klinika.services.SifarnikService;
 
 @RestController
-@RequestMapping("/sifarnik")
+@RequestMapping("/api/sifarnik")
 public class SifarnikController {
   
   @Autowired

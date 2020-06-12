@@ -23,7 +23,7 @@ import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.services.KlinikaService;
 
 @RestController
-@RequestMapping(path="/klinika")
+@RequestMapping(path="/api/klinika")
 public class KlinikaKontroler {
 	
 	@Autowired

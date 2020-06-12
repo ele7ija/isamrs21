@@ -26,7 +26,7 @@ import isamrs.tim21.klinika.services.CustomUserDetailsService;
 import isamrs.tim21.klinika.services.PacijentService;
 
 @RestController
-@RequestMapping(path="/auth")
+@RequestMapping(path="/api/auth")
 public class AutentifikacijaController {
 	@Autowired
 	private PacijentService pacijentService;

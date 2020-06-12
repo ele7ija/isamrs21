@@ -21,7 +21,7 @@ import isamrs.tim21.klinika.services.ZahtevZaGodisnjiService;
 
 
 @RestController
-@RequestMapping(path="/zahtevZaGodisnji")
+@RequestMapping(path="/api/zahtevZaGodisnji")
 public class ZahtevZaGodisnjiKontroler {
 
 	@Autowired

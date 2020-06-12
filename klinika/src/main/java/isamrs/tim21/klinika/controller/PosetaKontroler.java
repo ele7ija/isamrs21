@@ -23,7 +23,7 @@ import isamrs.tim21.klinika.dto.PosetaDTO3;
 import isamrs.tim21.klinika.services.PosetaService;
 
 @RestController
-@RequestMapping(path="/posete")
+@RequestMapping(path="/api/posete")
 public class PosetaKontroler {
 	@Autowired
 	PosetaService service;

@@ -27,7 +27,7 @@ import isamrs.tim21.klinika.services.PosetaService;
 import isamrs.tim21.klinika.services.UpitZaPregledeService;
 
 @RestController
-@RequestMapping(path="/upit")
+@RequestMapping(path="/api/upit")
 public class UpitZaPregledController {
 	@Autowired
 	UpitZaPregledRepository upitZaPregledRepository;

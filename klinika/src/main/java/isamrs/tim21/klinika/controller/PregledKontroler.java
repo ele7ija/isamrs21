@@ -22,7 +22,7 @@ import isamrs.tim21.klinika.repository.KlinikaRepository;
 import isamrs.tim21.klinika.services.PregledService;
 
 @RestController
-@RequestMapping(path="/pregled/{idKlinike}")
+@RequestMapping(path="/api/pregled/{idKlinike}")
 public class PregledKontroler {
 	
 	@Autowired

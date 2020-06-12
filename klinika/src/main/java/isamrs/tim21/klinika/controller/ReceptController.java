@@ -16,7 +16,7 @@ import isamrs.tim21.klinika.dto.ReceptDTO;
 import isamrs.tim21.klinika.services.ReceptService;
 
 @Controller
-@RequestMapping("recept")
+@RequestMapping("/api/recept")
 public class ReceptController {
   
   @Autowired

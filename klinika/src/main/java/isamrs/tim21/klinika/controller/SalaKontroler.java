@@ -21,7 +21,7 @@ import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.services.SalaService;
 
 @RestController
-@RequestMapping(path="/sala/{idKlinike}")
+@RequestMapping(path="/api/sala/{idKlinike}")
 public class SalaKontroler {
 	
 	@Autowired

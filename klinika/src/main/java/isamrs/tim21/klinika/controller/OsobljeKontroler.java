@@ -24,7 +24,7 @@ import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.services.OsobljeService;
 
 @RestController
-@RequestMapping(path="/medicinskaOsoba/{idKlinike}")
+@RequestMapping(path="/api/medicinskaOsoba/{idKlinike}")
 public class OsobljeKontroler {
 			
 	@Autowired

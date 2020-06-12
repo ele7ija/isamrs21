@@ -16,7 +16,7 @@ import isamrs.tim21.klinika.domain.Ocena;
 import isamrs.tim21.klinika.services.OcenaService;
 
 @RestController
-@RequestMapping(path="/ocena")
+@RequestMapping(path="/api/ocena")
 public class OcenaKontroler {
     @Autowired
     OcenaService ocenaService;

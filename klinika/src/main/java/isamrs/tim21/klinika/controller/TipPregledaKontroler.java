@@ -20,7 +20,7 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import isamrs.tim21.klinika.services.TipPregledaService;
 
 @RestController
-@RequestMapping(path="/tipPregleda/{idKlinike}")
+@RequestMapping(path="/api/tipPregleda/{idKlinike}")
 public class TipPregledaKontroler {
 	
 	@Autowired

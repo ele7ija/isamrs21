@@ -20,7 +20,7 @@ import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.services.AdminKlinikeService;
 
 @RestController
-@RequestMapping(path="/admin_klinike")
+@RequestMapping(path="/api/admin_klinike")
 public class AdminKlinikeController {
   @Autowired
   private AdminKlinikeService adminKlinikeService;
