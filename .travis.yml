@@ -14,3 +14,13 @@ deploy:
   provider: heroku
   api_key: dcc1f6dd-6490-4188-9ec1-d9aab6ce5f39
   app: klinike
+
+addons:
+  sonarcloud:
+    organization: "ele7ija"
+    token:
+      secure: "DP7Nrf63aJat2wBPQof6+jfO1InbnaINMCUc/tLigM7uVFlD78k1Qf0hy88UBjeV25OtIQy5pDHgbyJFlXwHfPZ9HT5Y5f4IEmrhCK6Kiy4+ixoUMy3y1gI6YKZn4nVgeBVunbmtxC+AfuEMFuhnQQ2Z6sMc74uFG/K1nq910mURI3x2v9U/orP5QKMGokejehC0ieZq5hw7oqN0QUPov50ToN9JYgaeVc1pg7m1+DTgCRtY5Bft2ZEaV9bmRw6Caf+VMIwcx15O++wQ54vVOhnGIYE0d3a+y5HeW55BXUW/gQw3h3G+9YtHbrkSxQ0Cy39kIIOpS7JRfg7d7n8peuTU6o0Dp+Qjp0wmRBV1sjy4fuJvmbwoRRAFNvw1J22Qh9RgnmcwPnqMrCSGTfseIPK/TiaYEA5jceRvWoKUfpskvhbiws9aCqL+Dwt/noW9aCYyGIwJu/fdrGh1+kyu4uRN/cZATIS9jgYE48wdqULeuuPPqtcMne8NU7whwRMFWbZZ+CWaJZXEJP2Ek4jWFtIKfHghteKUOU8kTbHqHtfc9ccFvBwUROKllvxfzDNpA4acLqcUBTXHrWexpsq/ppfPjtAmi5eksB5oyWqeJW+eqjLxfPzKIRdqfIZ3M/0Kxub1T0B7U6+j/7kANqiZpvSjMX5mNwZWdDDCeLsA35E=" # encrypted value of your token
+
+script:
+  # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=ele7ija_isamrs21
