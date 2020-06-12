@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim21.klinika.domain.Klinika;
 import isamrs.tim21.klinika.domain.Lekar;
@@ -44,14 +46,15 @@ public class OcenaService {
         return l.getOcene();
     }
     
+    @Transactional(readOnly=false, isolation=Isolation.READ_COMMITTED)
     public Ocena kreirajOcenu(Ocena o) {
-        Pacijent p = pacijentRepository.findById(o.getPacijent().getId()).get();
+        Pacijent p = pacijentRepository.findByIdPacijentaPessimisticWrite(o.getPacijent().getId());
         if (p.getOcene() == null) {
             p.setOcene(new ArrayList<Ocena>());
         }
         o.setPacijent(pacijentRepository.findById(o.getPacijent().getId()).get());
         if (o.getKlinika() != null) {
-            Klinika k = klinikaRepository.findById(o.getKlinika().getId()).get();
+            Klinika k = klinikaRepository.findByIdPessimisticWrite(o.getKlinika().getId());
             for (Ocena oc : p.getOcene()) {
                 if (oc.getKlinika() != null) {
                     if (oc.getKlinika().getId()==k.getId()) {
@@ -66,7 +69,7 @@ public class OcenaService {
             o.getKlinika().getOcene().add(o);
         }
         else{
-            Lekar le = (Lekar) korisniciRepository.findById(o.getLekar().getId()).get();
+            Lekar le = (Lekar) korisniciRepository.findByIdPessimisticWrite(o.getLekar().getId());
             // izbrisi pacijentovu ocenu za tog lekara
             for (Ocena oc : p.getOcene()) {
                 if (oc.getLekar() != null) {

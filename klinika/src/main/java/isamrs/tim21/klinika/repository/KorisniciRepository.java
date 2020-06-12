@@ -38,4 +38,9 @@ public interface KorisniciRepository extends JpaRepository<Korisnik, Long> {
 	@Query("SELECT k from Korisnik k "
 			+ "WHERE k.id = :id")
 	Korisnik findByIdPessimisticRead(@Param("id") Long id);
+
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	@Query("SELECT k from Korisnik k "
+			+ "WHERE k.id = :id")
+	Korisnik findByIdPessimisticWrite(@Param("id") Long id);
 }
