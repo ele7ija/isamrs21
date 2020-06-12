@@ -1,0 +1,19 @@
+sudo: required
+language: java
+jdk: oraclejdk8
+
+services:
+  - mysql
+
+before_install:
+  - chmod +x mvnw
+
+script:
+  - ./mvnw clean install -DskipTests=false -B
+
+dist: trusty
+
+deploy:
+  provider: heroku
+  api_key: dcc1f6dd-6490-4188-9ec1-d9aab6ce5f39
+  app: klinike
