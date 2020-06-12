@@ -14,7 +14,7 @@ public class CorsConfiguration
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("http://localhost:8081", "https://klinike.herokuapp.com/").allowedMethods("GET", "POST","PUT", "DELETE");
+                registry.addMapping("/**").allowedOrigins("http://localhost:8081", "http://klinike.herokuapp.com/", "https://klinike.herokuapp.com/").allowedMethods("GET", "POST","PUT", "DELETE");
             }
         };
     }
