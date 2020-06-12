@@ -20,5 +20,11 @@ public interface PacijentRepository extends JpaRepository<Pacijent, Long> {
 			+ "WHERE TYPE(k)='PA' "
 			+ "AND k.id = :idPacijenta")
 	Pacijent findByIdPacijentaPessimisticRead(@Param("idPacijenta") long idPacijenta);
+
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	@Query("SELECT k from Korisnik k "
+			+ "WHERE TYPE(k)='PA' "
+			+ "AND k.id = :idPacijenta")
+	Pacijent findByIdPacijentaPessimisticWrite(@Param("idPacijenta") long idPacijenta);
 	
 }
