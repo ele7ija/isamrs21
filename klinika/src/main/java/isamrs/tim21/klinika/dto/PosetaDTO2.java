@@ -5,6 +5,8 @@ public class PosetaDTO2 {
 	private String opis;
 	private String email;
 	
+	public PosetaDTO2(){}
+
 	public Long getPregledId() {
 		return pregledId;
 	}

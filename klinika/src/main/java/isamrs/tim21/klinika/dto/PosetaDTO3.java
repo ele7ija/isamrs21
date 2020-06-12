@@ -14,6 +14,8 @@ public class PosetaDTO3 {
   private Integer visina;
   private Integer tezina;
 
+  public PosetaDTO3(){}
+
   public PosetaDTO3(
     String opis, Long posetaId, Sifarnik selectedDijagnoza, List<Sifarnik> selectedLekovi,
      String dioptrija, String krvnaGrupa, Integer visina, Integer tezina ){

@@ -5,6 +5,8 @@ public class CustomResponse<T> {
 	private boolean success;
 	private String message;
 	
+	public CustomResponse(){}
+
 	public CustomResponse(T result, boolean success, String message){
 		this.result = result;
 		this.success = success;

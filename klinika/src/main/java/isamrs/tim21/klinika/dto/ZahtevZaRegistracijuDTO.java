@@ -18,6 +18,8 @@ public class ZahtevZaRegistracijuDTO {
   public String tekst;
   public Boolean odobren;
 
+  public ZahtevZaRegistracijuDTO(){}
+
   public ZahtevZaRegistracijuDTO
   (Long id, Timestamp datumOdobrenja, String tekst, Boolean odobren) {
     this.id = id;

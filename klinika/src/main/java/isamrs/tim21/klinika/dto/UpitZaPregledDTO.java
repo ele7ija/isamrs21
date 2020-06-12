@@ -22,6 +22,8 @@ public class UpitZaPregledDTO {
 	private Long tipPregledaVerzija;
 	private Long lekarVerzija;
 
+	public UpitZaPregledDTO(){}
+
 	public Long getPregledVerzija() {
 		return this.pregledVerzija;
 	}

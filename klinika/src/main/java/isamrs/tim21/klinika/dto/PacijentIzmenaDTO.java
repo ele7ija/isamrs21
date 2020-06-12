@@ -6,6 +6,8 @@ public class PacijentIzmenaDTO {
     Pacijent pacijent;
     String poslednjaSifra;
 
+    public PacijentIzmenaDTO(){}
+
     public PacijentIzmenaDTO(Pacijent p, String s) {
         this.pacijent = p;
         this.poslednjaSifra = s;

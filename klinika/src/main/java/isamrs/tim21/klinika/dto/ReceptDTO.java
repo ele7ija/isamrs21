@@ -7,6 +7,8 @@ public class ReceptDTO {
   private Boolean overen;
   private MedicinskaSestra medicinskaSestra;
 
+  public ReceptDTO(){}
+
   public ReceptDTO(Long id, Boolean overen, MedicinskaSestra medicinskaSestra){
     this.id = id;
     this.overen = overen;

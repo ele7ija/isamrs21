@@ -4,6 +4,8 @@ public class PosetaDTO {
 	private Long pregledId;
 	private String opis;
 	
+	public PosetaDTO(){}
+
 	public Long getPregledId() {
 		return pregledId;
 	}

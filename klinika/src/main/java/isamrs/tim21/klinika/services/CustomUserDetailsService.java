@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim21.klinika.domain.Korisnik;
-import isamrs.tim21.klinika.domain.Lekar;
 import isamrs.tim21.klinika.repository.KorisniciRepository;
 
 
