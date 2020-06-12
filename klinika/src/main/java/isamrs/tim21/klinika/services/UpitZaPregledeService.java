@@ -265,31 +265,31 @@ public class UpitZaPregledeService {
 		}
 	}
 
-	@Transactional(readOnly=false, isolation=Isolation.SERIALIZABLE)
+	@Transactional(readOnly=false, isolation=Isolation.READ_COMMITTED)
 	public CustomResponse<UpitZaPregled> kreirajUpitZaPregled(UpitZaPregledDTO u)
 		throws Exception {
 		UpitZaPregled u2 = new UpitZaPregled(u);
 		try {
 			u2.setKlinika(klinikaRepository.findById(u.getKlinika()).get());
-			// TODO provera vezije
 		}
 		catch(NoSuchElementException e) {
 			return new CustomResponse<UpitZaPregled>(null, false, "Klinika ne postoji.");
 		}
 		try {
-			u2.setTipPregleda(tipPregledaRepository.findById(u.getTipPregleda()).get());
-			if (u2.getTipPregleda().getVersion() != u.getTipPregledaVerzija()) {
-				throw new ObjectOptimisticLockingFailureException(TipPregleda.class, u2.getTipPregleda());
-			}
+			/* SPRECAVA KONKURENTNU IZMENU TIPA PREGLEDA */
+			u2.setTipPregleda(tipPregledaRepository.findByIdPessimisticRead(u.getTipPregleda()));
+			// if (u2.getTipPregleda().getVersion() != u.getTipPregledaVerzija()) {
+			// 	throw new ObjectOptimisticLockingFailureException(TipPregleda.class, u2.getTipPregleda());
+			// }
 		}
 		catch(NoSuchElementException e) {
 			return new CustomResponse<UpitZaPregled>(null, false, "Tip pregleda ne postoji.");
 		}		
 		try {
-			u2.setLekar((Lekar) korisniciRepository.findById(u.getLekar()).get());
-			if (u2.getLekar().getVersion() != u.getLekarVerzija()) {
-				throw new ObjectOptimisticLockingFailureException(Lekar.class, u2.getLekar());
-			}		
+			u2.setLekar((Lekar) korisniciRepository.findByIdPessimisticRead(u.getLekar()));
+			// if (u2.getLekar().getVersion() != u.getLekarVerzija()) {
+			// 	throw new ObjectOptimisticLockingFailureException(Lekar.class, u2.getLekar());
+			// }		
 		}
 		catch(NoSuchElementException e) {
 			return new CustomResponse<UpitZaPregled>(null, false, "Lekar ne postoji.");
@@ -303,12 +303,12 @@ public class UpitZaPregledeService {
 		try {
 			// Upit je nastao na osnovu unapred def pregleda
 			if (u.getPregled() != null) {
-				Pregled pregled = pregledRepository.findById(u.getPregled()).get();
+				Pregled pregled = pregledRepository.findByIdPessimisticWrite(u.getPregled());
 				u2.setUnapredDefinisaniPregled(pregled);
 				u2.setSala(pregled.getSala());
-				if (u2.getUnapredDefinisaniPregled().getVersion() != u.getPregledVerzija()) {
-					throw new ObjectOptimisticLockingFailureException(Pregled.class, u2.getUnapredDefinisaniPregled());
-				}
+				// if (u2.getUnapredDefinisaniPregled().getVersion() != u.getPregledVerzija()) {
+				// 	throw new ObjectOptimisticLockingFailureException(Pregled.class, u2.getUnapredDefinisaniPregled());
+				// }
 			}
 		}
 		catch(NoSuchElementException e) {
