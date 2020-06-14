@@ -102,7 +102,7 @@ public class CenovnikService {
 		}
 
 		//kako je cenovnik zakljucan u pessimistic write rezimu, mozemo mu rucno porediti verzije
-		if(cenovnik.getVersion() != version)
+		if(!version.equals(cenovnik.getVersion()))
 			throw new BusinessLogicException("Greska. Vas podatak ima zastarelu verziju. Osvezite stranicu.");
 
 		if(tipPregledaRepository.findByIdCenovnika(idCenovnika).size() != 0){

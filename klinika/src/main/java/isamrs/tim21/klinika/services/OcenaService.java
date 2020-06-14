@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import isamrs.tim21.klinika.domain.Klinika;
 import isamrs.tim21.klinika.domain.Lekar;
-import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
 import isamrs.tim21.klinika.domain.Ocena;
 import isamrs.tim21.klinika.domain.Pacijent;
 import isamrs.tim21.klinika.repository.KlinikaRepository;
@@ -70,7 +69,7 @@ public class OcenaService {
             // izbrisi pacijentovu ocenu za tog lekara
             for (Ocena oc : p.getOcene()) {
                 if (oc.getLekar() != null) {
-                    if (oc.getLekar().getId()==le.getId()) {
+                    if (oc.getLekar().getId().equals(le.getId())) {
                         p.getOcene().remove(oc);
                         ocenaRepository.delete(oc);
                         p.getOcene().add(o);

@@ -45,7 +45,7 @@ public class SalaService {
 			throw new EntityNotFoundException("Sala");
 		
 			//kako je sala zakljucana u pessimistic write rezimu, mozemo mu rucno porediti verzije
-		if(sala.getVersion() != version)
+		if(!version.equals(sala.getVersion()))
 			throw new BusinessLogicException("Greška. Vaš podatak ima zastarelu verziju. Osvežite stranicu.");
 		
 		if(!pregledRepository.findByIdSale(idSale).isEmpty())

@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -115,7 +113,7 @@ public class OsobljeService {
 		
 		Lekar lekar = (Lekar) osoblje;
 		//poredjenje verzija je bezbedno raditi ovako jer smo uzeli exclusive lock
-		if(version != lekar.getVersion()){
+		if(!version.equals(lekar.getVersion())){
 			throw new BusinessLogicException("Greška. Vaš podatak ima zastarelu verziju. Osvežite stranicu.");
 		}
 		int brojSpecijalizacija = lekar.getBrojSpecijalizacija();
@@ -129,7 +127,7 @@ public class OsobljeService {
 				throw new EntityNotFoundException("Tip pregleda");
 			
 			for(TipPregleda tp : lekar.getTipovi_pregleda()){
-				if(tp.getId() == tipPregleda.getId())
+				if(tp.getId().equals(tipPregleda.getId()))
 					throw new BusinessLogicException("Greska: Tip pregleda vec postoji kao specijalnost lekara. Osvezite stranicu.");
 			}
 
@@ -187,7 +185,7 @@ public class OsobljeService {
 		if(osobaToDelete == null){
 			throw new EntityNotFoundException("Medicinska osoba");
 		}
-		if(osobaToDelete.getVersion() != version)
+		if(!version.equals(osobaToDelete.getVersion()))
 				throw new BusinessLogicException("Greška. Vaš podatak ima zastarelu verziju. Osvežite stranicu.");
 		if(osobaToDelete instanceof MedicinskaSestra){
 			MedicinskaSestra sestra = (MedicinskaSestra) osobaToDelete;

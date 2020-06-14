@@ -35,7 +35,7 @@ public class KlinikaService {
 	private CustomUserDetailsService userDetailsService;
 	
 	@Transactional(readOnly=true)
-	private List<Klinika> findAll() {
+	public List<Klinika> findAll() {
 		return klinikaRepository.findAll();
 	}
 
@@ -66,7 +66,9 @@ public class KlinikaService {
 	@Transactional(readOnly=false)
 	public Klinika updateKlinikaFromAdminCentra(Long idKlinike, KlinikaDTO klinikaDTO){
 		Klinika klinika = klinikaRepository.findById(idKlinike).orElse(null);
-		klinika.setNaziv(klinikaDTO.getNaziv());
+		if(null== klinika) 
+			return klinika; //kako ne bi probao dalje da setuje naziv na null
+		klinika.setNaziv(klinikaDTO.getNaziv()); 
 		klinika.getLokacija().setAdresa(klinikaDTO.getAdresa());
 		klinika.getLokacija().setGrad(klinikaDTO.getGrad());
 		klinika.getLokacija().setDrzava(klinikaDTO.getDrzava());

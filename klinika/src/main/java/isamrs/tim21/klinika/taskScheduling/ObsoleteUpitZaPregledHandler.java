@@ -11,8 +11,6 @@ import isamrs.tim21.klinika.domain.Pregled;
 import isamrs.tim21.klinika.domain.Lekar;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Date;
-
 @Component
 public class ObsoleteUpitZaPregledHandler {
 

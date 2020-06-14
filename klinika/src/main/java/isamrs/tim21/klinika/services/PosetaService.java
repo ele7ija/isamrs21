@@ -148,7 +148,7 @@ public class PosetaService {
 			// TODO KREIRANJE PREGLEDA
 		}
 		
-		if (pregled.getPoseta() != null) {
+		if (null != pregled.getPoseta()) {
 			return null;
 		}
 		// dobavi korisnika
@@ -241,6 +241,8 @@ public class PosetaService {
 		//tada treba samo opis pregleda izmeniti  
 		if( null == posetaDTO.getVisina()){
 			Poseta poseta = posetaRepository.findById(posetaDTO.getPosetaId()).orElse(null);
+			if( null == poseta) 
+				return null;
 			poseta.setOpis(posetaDTO.getOpis());
 			posetaRepository.save(poseta);
 			ZdravstveniKarton k = poseta.getZdravstveniKarton();
@@ -253,7 +255,9 @@ public class PosetaService {
 		}
 		else{
 			//update poseta
-		 	Poseta poseta = posetaRepository.findById(posetaDTO.getPosetaId()).orElse(null);
+			 Poseta poseta = posetaRepository.findById(posetaDTO.getPosetaId()).orElse(null);
+			 if( null == poseta) 
+			 	return null;
 			poseta.setBolest(posetaDTO.getBolest());
 			poseta.setLekovi(posetaDTO.getLekovi());
 			poseta.setOpis(posetaDTO.getOpis());

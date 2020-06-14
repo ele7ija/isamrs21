@@ -15,7 +15,7 @@ public class ZdravstveniKartonService {
 	public void izbrisiPosetu(Poseta poseta) {
         ZdravstveniKarton zk = zdravstveniKartonRepository.findById(poseta.getZdravstveniKarton().getId()).get();
         for (Poseta p : zk.getPosete()) {
-            if (p.getId() == poseta.getId()) {
+            if (p.getId().equals(poseta.getId())) {
                 zk.getPosete().remove(p);
                 break;
             }

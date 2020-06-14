@@ -29,6 +29,8 @@ public List<Recept> findAllRecepti() {
 
 public Recept overiRecept(ReceptDTO receptDTO) {
   Recept recept = receptRepository.findById(receptDTO.getId()).orElse(null);
+  if(null == recept) 
+    return recept;
   recept.setOveren(receptDTO.getOveren());
   recept.setMedicinskaSestra(receptDTO.getMedicinskaSestra());
   return receptRepository.save(recept);

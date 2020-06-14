@@ -123,7 +123,7 @@ public class PregledService {
 		if(p == null)
 			throw new EntityNotFoundException("Pregled");
 
-		if(version != p.getVersion()) //kako je pregled dobavljen exclusive lock-om, smemo rucnoporediti verzije
+		if(!version.equals(p.getVersion())) //kako je pregled dobavljen exclusive lock-om, smemo rucnoporediti verzije
 			throw new BusinessLogicException("Greška: Verzija pregleda je zastarela.");
 		
 		if(posetaRepository.findByIdPregleda(idPregleda) != null)
@@ -189,7 +189,7 @@ public class PregledService {
 		Moguce je da se neki pregled izbrise, al to nece narusiti konzistentnost podataka
 		*/
 		for(Pregled p : sala.getPregledi()){
-			if(p.getId() == pregled.getId())
+			if(p.getId().equals(pregled.getId()))
 				continue;
 			if(p.intersects(pregled)){
 				return false;
@@ -205,14 +205,14 @@ public class PregledService {
 		for(Lekar lekar : pregled.getDodatniLekari()){
 			//ista logika kao u validateOsoblje
 			for(Pregled p : lekar.getPregledi()){
-				if(p.getId() == pregled.getId())
+				if(p.getId().equals(pregled.getId()))
 					continue;
 				if(p.intersects(pregled)){
 					return false;
 				}
 			}
 			for(Pregled p : lekar.getDodatneOperacije()){
-				if(p.getId() == pregled.getId())
+				if(p.getId().equals(pregled.getId()))
 					continue;
 				if(p.intersects(pregled)){
 					return false;
@@ -242,7 +242,7 @@ public class PregledService {
 		Moguce je da se neki pregled izbrise, al to nece narusiti konzistentnost podataka
 		*/
 		for(Pregled p : lekar.getPregledi()){
-			if(p.getId() == pregled.getId())
+			if(p.getId().equals(pregled.getId()))
 				continue;
 			if(p.intersects(pregled)){
 				return false;
@@ -251,7 +251,7 @@ public class PregledService {
 
 		//isto sto vazi za preglede ovog lekara, vazi i za dodatne operacije
 		for(Pregled p : lekar.getDodatneOperacije()){
-			if(p.getId() == pregled.getId())
+			if(p.getId().equals(pregled.getId()))
 				continue;
 			if(p.intersects(pregled)){
 				return false;

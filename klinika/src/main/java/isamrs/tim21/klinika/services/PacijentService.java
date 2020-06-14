@@ -75,7 +75,7 @@ public class PacijentService {
 		for(Pregled pregled : lekar.getPregledi()){
 			if(pregled.getPoseta() == null)
 				continue;
-			if(pregled.getPoseta().getZdravstveniKarton().getPacijent().getId() == idPacijenta)
+			if(idPacijenta.equals(pregled.getPoseta().getZdravstveniKarton().getPacijent().getId()))
 				return true;
 		}
 		return false;
