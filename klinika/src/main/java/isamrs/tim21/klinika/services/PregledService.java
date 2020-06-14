@@ -61,7 +61,7 @@ public class PregledService {
 	public CustomResponse<Pregled> add(Klinika klinika, Pregled pregled) throws EntityNotFoundException{
 		pregled.setId(null);
 		pregled.setKlinika(klinika);
-		pregled.setUpiti(new ArrayList<UpitZaPregled>());
+		pregled.setUpiti(new ArrayList<>());
 		
 		/*
 		U cilju sprecavanja metode za uklanjanje specijalnosti lekara da se izvrsava konkurentno sa ovom metodom nad 
@@ -70,7 +70,7 @@ public class PregledService {
 		istim lekarom). Medjutim, kako treba i spreciti da se konkurentno dodaju dva pregleda kod istog lekara, lekar se ipak 
 		dobavlja sa exclusive lock-om. To ce spreciti vise transakcija za dodavanje pregleda kod istog lekara da rade u paraleli.
 		*/
-		Lekar lekar = (Lekar)osobljeRepository.findLekarByIdKlinikeAndByIdPessimisticWrite(klinika.getId(), pregled.getLekar().getId());
+		Lekar lekar = osobljeRepository.findLekarByIdKlinikeAndByIdPessimisticWrite(klinika.getId(), pregled.getLekar().getId());
 		if(lekar == null)
 			throw new EntityNotFoundException("Lekar");
 		pregled.setLekar(lekar);
@@ -99,12 +99,12 @@ public class PregledService {
 			Za dodatne lekare vazi isti rezon kao i za lekara
 		*/
 		for(int i = 0; i < pregled.getDodatniLekari().size(); i++){
-			Lekar l = (Lekar)osobljeRepository.findLekarByIdKlinikeAndByIdPessimisticWrite(klinika.getId(), pregled.getDodatniLekari().get(i).getId());
+			Lekar l = osobljeRepository.findLekarByIdKlinikeAndByIdPessimisticWrite(klinika.getId(), pregled.getDodatniLekari().get(i).getId());
 			if(l == null)
 				throw new EntityNotFoundException("Lekar");
 			pregled.getDodatniLekari().set(i, l);
 		}
-		return validateAll(klinika, pregled);
+		return validateAll(pregled);
 	}
 	
 	@Transactional(readOnly=false, isolation = Isolation.READ_COMMITTED)
@@ -144,11 +144,10 @@ public class PregledService {
 		pregledRepository.save(p); //nece inkrementirati verziju?
 		
 		pregledRepository.delete(p);
-		return new ResponseEntity<CustomResponse<Boolean>>(
-				new CustomResponse<Boolean>(true, true, "OK"), HttpStatus.OK);
+		return new ResponseEntity<>(new CustomResponse<>(true, true, "OK"), HttpStatus.OK);
 	}
 	
-	private CustomResponse<Pregled> validateAll(Klinika klinika, Pregled pregled) throws BusinessLogicException{
+	private CustomResponse<Pregled> validateAll(Pregled pregled) throws BusinessLogicException{
 		/*
 			Ova metoda se poziva iz add(klinika, Pregled) metode koja je vec zakljucala odgovarajucim lock-om sve entitete
 			koje pregled referencira.
@@ -158,26 +157,26 @@ public class PregledService {
 		/* Da li su svi entiteti unutar iste klinike kao i pregled koji se dodaje? ODRADJENO UNUTAR OSTALIH METODA*/
 
 		/* Da li je trazena sala zauzeta i da li uopste postoji? */
-		if(!validateSala(klinika, pregled))
+		if(!validateSala(pregled))
 			throw new BusinessLogicException("Greška: Tražena sala nije slobodna za uneti vremenski interval trajanja pregleda");
 		
 		/* Da li je lekar slobodan u to vreme? */
 		/* Da li je lekar specijalizovan za dati tip pregleda? */
 		/* Da li je lekar na odustvu u datom terminu pregleda? */
-		if(!validateOsoblje(klinika, pregled))
+		if(!validateOsoblje(pregled))
 			throw new BusinessLogicException("Greska: Lekar ne moze da izvrsi ovaj pregled. "
 			+ "Proverite da li je lekar zauzet u datom vremenskom intervalu, da li je uopste specijalizovan za dati tip pregleda i da li je na odsustvu.");
 		
 		/*
 		 * Da li su svi dodatni lekari slobodni u datom terminu
 		 */
-		if(pregled.getTipPregleda().getVrsta() == VrstaTipaPregleda.operacija && !validateDodatnoOsoblje(klinika, pregled))
+		if(pregled.getTipPregleda().getVrsta() == VrstaTipaPregleda.operacija && !validateDodatnoOsoblje(pregled))
 			throw new BusinessLogicException("Greska: Neki od dodatnihlekara nije slobodan u datom terminu pregleda");
 		
-		return new CustomResponse<Pregled>(pregledRepository.save(pregled), true, "OK"); 
+		return new CustomResponse<>(pregledRepository.save(pregled), true, "OK"); 
 	}
 	
-	private boolean validateSala(Klinika klinika, Pregled pregled) {
+	private boolean validateSala(Pregled pregled) {
 		/*
 			Sala je vec zakljucana exclusive lock-om i dobavljena u radnu memoriju
 		*/
@@ -198,7 +197,7 @@ public class PregledService {
 		return true;
 	}
 
-	private boolean validateDodatnoOsoblje(Klinika klinika, Pregled pregled){
+	private boolean validateDodatnoOsoblje(Pregled pregled){
 		/*
 			Svaki lekar je vec zakljucan exclusive lock-om i dobavljen u radnu memoriju
 		*/
@@ -230,7 +229,7 @@ public class PregledService {
 		return true;
 	}
 	
-	private boolean validateOsoblje(Klinika klinika, Pregled pregled) {
+	private boolean validateOsoblje(Pregled pregled) {
 		/*
 			Lekar je vec zakljucan exclusive lock-om i dobavljen u radnu memoriju
 		*/
@@ -279,7 +278,7 @@ public class PregledService {
 	public List<Pregled> findSlobodni(Long idKlinike) {
 		Klinika k = klinikaRepository.getOne(idKlinike);
 		List<Pregled> retval = pregledRepository.findByKlinikaAndPosetaIsNull(k);
-		List<Pregled> r = new ArrayList<Pregled>();
+		List<Pregled> r = new ArrayList<>();
 		for (Pregled p : retval) {
 			boolean flag = false;
 			for (UpitZaPregled u : p.getUpiti()) {
@@ -305,7 +304,7 @@ public class PregledService {
 		if(k == null)
 			throw new EntityNotFoundException("Klinika");
 		List<Pregled> retval = pregledRepository.findAllByIdKlinike(idKlinike);
-		List<Pregled> r = new ArrayList<Pregled>();
+		List<Pregled> r = new ArrayList<>();
 		for (Pregled p : retval) {
 			if(p.getPoseta() != null) //ako postoji poseta, znaci da je pacijent potvrdio rezervaciju
 				r.add(p);
@@ -337,7 +336,7 @@ public class PregledService {
 			throw new EntityNotFoundException("Klinika");
 		else{
 			CustomResponse<Pregled> customResponse = add(klinika, pregled);
-			return new ResponseEntity<CustomResponse<Pregled>>(customResponse, HttpStatus.OK);
+			return new ResponseEntity<>(customResponse, HttpStatus.OK);
 		}
 	}
 

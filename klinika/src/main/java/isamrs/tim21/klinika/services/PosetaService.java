@@ -88,7 +88,7 @@ public class PosetaService {
 		posetaRepository.save(p);
 		pregledRepository.save(pregled);
 		if (zk.getPosete() == null) {
-			zk.setPosete(new ArrayList<Poseta>());
+			zk.setPosete(new ArrayList<>());
 		}
 		zk.getPosete().add(p);
 		zdravstveniKartonRepository.save(zk);
@@ -132,7 +132,7 @@ public class PosetaService {
 		posetaRepository.save(p);
 		pregledRepository.save(pregled);
 		if (zk.getPosete() == null) {
-			zk.setPosete(new ArrayList<Poseta>());
+			zk.setPosete(new ArrayList<>());
 		}
 		zk.getPosete().add(p);
 		return p;
@@ -145,7 +145,7 @@ public class PosetaService {
 			pregled = u.getUnapredDefinisaniPregled();
 		}
 		else {
-			// TODO KREIRANJE PREGLEDA
+			// KREIRANJE PREGLEDA - nece se nikad desiti?
 		}
 		
 		if (null != pregled.getPoseta()) {
@@ -179,7 +179,7 @@ public class PosetaService {
 		posetaRepository.save(p);
 		pregledRepository.save(pregled);
 		if (zk.getPosete() == null) {
-			zk.setPosete(new ArrayList<Poseta>());
+			zk.setPosete(new ArrayList<>());
 		}
 		zk.getPosete().add(p);
 		return p;
@@ -203,7 +203,7 @@ public class PosetaService {
 			zk = zdravstveniKartonRepository.findById(pacijent.getId()).get();
 		}
 		if (zk.getPosete() == null) {
-			zk.setPosete(new ArrayList<Poseta>());
+			zk.setPosete(new ArrayList<>());
 		}
 		return zk.getPosete();
 	}
@@ -224,9 +224,9 @@ public class PosetaService {
 			zk = zdravstveniKartonRepository.findById(pacijent.getId()).get();
 		}
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		List<Poseta> nerPosete = new ArrayList<Poseta>();
+		List<Poseta> nerPosete = new ArrayList<>();
 		if (zk.getPosete() == null) {
-			zk.setPosete(new ArrayList<Poseta>());
+			zk.setPosete(new ArrayList<>());
 		}
 		for (Poseta p : zk.getPosete()) {
 			if (p.getPregled().getPocetakPregleda().after(timestamp)) {

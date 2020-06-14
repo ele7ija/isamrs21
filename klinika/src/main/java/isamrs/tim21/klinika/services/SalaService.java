@@ -52,7 +52,7 @@ public class SalaService {
 			throw new BusinessLogicException("Greška: Ne možete obrisati salu za koju postoji pregled");
 	
 		salaRepository.delete(sala); //ovde moze da dodje do nepoklapanja verzija usled optimistickog zakljucavanja
-		return new CustomResponse<Boolean>(true, true, "OK");
+		return new CustomResponse<>(true, true, "OK");
 	}
 
 	@Transactional(readOnly=true, isolation = Isolation.READ_COMMITTED)
@@ -72,9 +72,9 @@ public class SalaService {
 		else{
 			salaToAdd.setKlinika(klinika);
 			salaToAdd.setId(null);
-			salaToAdd.setPregledi(new ArrayList<Pregled>());
+			salaToAdd.setPregledi(new ArrayList<>());
 			Sala retval = salaRepository.save(salaToAdd);
-			return new ResponseEntity<Sala>(retval, HttpStatus.OK);
+			return new ResponseEntity<>(retval, HttpStatus.OK);
 		}
 	}
 
@@ -97,9 +97,7 @@ public class SalaService {
 			salaToChange.setPregledi(sala.getPregledi());
 
 			Sala retval = salaRepository.save(salaToChange); 
-			return new ResponseEntity<CustomResponse<Sala>>(
-					new CustomResponse<Sala>(retval, true, "OK."),
-					HttpStatus.OK);	
+			return new ResponseEntity<>(new CustomResponse<>(retval, true, "OK."), HttpStatus.OK);
 		}
 	}
 }

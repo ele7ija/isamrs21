@@ -83,7 +83,7 @@ public class PacijentService {
 
 	public CustomResponse<Pacijent> izmeni(PacijentIzmenaDTO p) {
 		// sifra
-		Pacijent retval = (Pacijent) pacijentRepository.findByEmail(p.getPacijent().getEmail());
+		Pacijent retval = pacijentRepository.findByEmail(p.getPacijent().getEmail());
 		// retval.setIme(sestra.getSestra().getIme());
 		// retval.setPrezime(sestra.getSestra().getPrezime());
 		if(!p.getPacijent().getSifra().equals(retval.getSifra())){
@@ -98,7 +98,7 @@ public class PacijentService {
 		retval.setPrezime(p.getPacijent().getPrezime());
 
 		retval = pacijentRepository.save(retval);
-		return new CustomResponse<Pacijent>(retval, true, "Profil je izmenjen.");
+		return new CustomResponse<>(retval, true, "Profil je izmenjen.");
 	}
 	
 }

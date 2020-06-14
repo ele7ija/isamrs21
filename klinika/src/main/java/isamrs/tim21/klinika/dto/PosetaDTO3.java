@@ -14,7 +14,9 @@ public class PosetaDTO3 {
   private Integer visina;
   private Integer tezina;
 
-  public PosetaDTO3(){}
+  public PosetaDTO3(){
+    //default constructor
+  }
 
   public PosetaDTO3(
     String opis, Long posetaId, Sifarnik selectedDijagnoza, List<Sifarnik> selectedLekovi,

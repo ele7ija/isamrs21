@@ -30,7 +30,7 @@ public class ZahtevZaRegistracijuService {
   public CustomResponse<ZahtevZaRegistraciju> kreiraj(ZahtevZaRegistraciju z) {
     z.setPacijent((Pacijent) korisniciRepository.findById(z.getPacijent().getId()).get());
     zahtevRepo.save(z);
-    return new CustomResponse<ZahtevZaRegistraciju>(z, true, "Zahtev kreiran");
+    return new CustomResponse<>(z, true, "Zahtev kreiran");
   }
 
   @Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)

@@ -39,7 +39,7 @@ public class ZahtevZaRegistracijuController {
   public ResponseEntity<CustomResponse<ZahtevZaRegistraciju>> podnesi(
     @RequestBody ZahtevZaRegistraciju zahtev
   ) {
-    return new ResponseEntity<CustomResponse<ZahtevZaRegistraciju>>(zahtevService.kreiraj(zahtev), HttpStatus.OK);
+    return new ResponseEntity<>(zahtevService.kreiraj(zahtev), HttpStatus.OK);
   }
   
 
@@ -67,7 +67,6 @@ public class ZahtevZaRegistracijuController {
 
   @GetMapping ("/registruj/{id}")
   public String registrujKorisnika(@PathVariable Long id) {
-    String s = zahtevService.registrujKorisnika(id);
-    return s;
+    return zahtevService.registrujKorisnika(id);
   }
 }
