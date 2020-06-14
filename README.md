@@ -1,5 +1,6 @@
 # Klinike
 Projekat tima 21 iz predmeta ISA i MRS - letnji semestar 2020.
+Link ka aplikaciji: https://klinike.herokuapp.com/
 
 ### Autori:
 |     Ime i prezime    	|   Indeks   	| github      	|
