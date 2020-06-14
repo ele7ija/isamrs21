@@ -103,7 +103,7 @@ public class UpitZaPregledeService {
 			upit.setOdobren(false);
 			upit = upitZaPregledRepository.save(upit);
 			//ne bacamo exception kako se transakcija ne bi rollback-ovala
-			return new CustomResponse<UpitZaPregled>(upit, false, "Obavestenje: Ovaj pregled je vec rezervisan, te je iz tog razloga upit ipak odbijen.");
+			return new CustomResponse<>(upit, false, "Obavestenje: Ovaj pregled je vec rezervisan, te je iz tog razloga upit ipak odbijen.");
 		}
 
 		//ukoliko pregled vec ima odobren upit, admin nije smeo da odobri ovaj upit
@@ -117,12 +117,12 @@ public class UpitZaPregledeService {
 				upit.setOdobren(false);
 				upit = upitZaPregledRepository.save(upit);
 				//ne bacamo exception kako se transakcija ne bi rollback-ovala
-				return new CustomResponse<UpitZaPregled>(upit, false, "Obavestenje: Ovaj pregled je vec rezervisan, te je iz tog razloga upit ipak odbijen.");
+				return new CustomResponse<>(upit, false, "Obavestenje: Ovaj pregled je vec rezervisan, te je iz tog razloga upit ipak odbijen.");
 			}
 			if(drugiUpit.getOdobren() && !drugiUpit.getPacijentObradio()){
 				upit.setAdminObradio(false);
 				upit.setOdobren(false);
-				upit = upitZaPregledRepository.save(upit);
+				upitZaPregledRepository.save(upit);
 				//e sad ipak treba otkazati transakciju, baci exception
 				throw new BusinessLogicException("Obavestenje: Ovaj pregled je vec odobren. Mocicete da odobrite ovaj pregled samo u slucaju da pacijent kojem je ovaj pregled odobren ipak odluci da ne potvrdi rezervaciju.");
 			}
@@ -137,7 +137,7 @@ public class UpitZaPregledeService {
 		mailService.upitOdobren(upit, false);
 		mailService.obavestiLekara(upit, upit.getLekar(), true, false);
 		
-		return new CustomResponse<UpitZaPregled>(upit, true, "OK.");
+		return new CustomResponse<>(upit, true, "OK.");
 	}
 
 	@Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
@@ -162,71 +162,9 @@ public class UpitZaPregledeService {
 		//slanje mejla pacijentu
 		mailService.upitOdbijen(upit);
 
-		return new CustomResponse<UpitZaPregled>(upit, true, "OK.");
+		return new CustomResponse<>(upit, true, "OK.");
 	}
 
-	/*@Transactional
-	public ResponseEntity<CustomResponse<UpitZaPregled>> obradiAdmin(UpitZaPregled u) throws Exception{
-		UpitZaPregled upit = upitZaPregledRepository.findById(u.getId()).get();
-		if(upit == null){
-			return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-					new CustomResponse<UpitZaPregled>(null, false, "Greska: Trazeni upit nije pronadjen."),
-					HttpStatus.NOT_FOUND
-			);
-		}
-		if(upit.getVersion() != u.getVersion()){
-			throw new Exception();
-		}
-		upit.setAdminObradio(true);
-		upit.setOdobren(u.getOdobren());
-		//validacije radis samo ako je admin odobrio ovaj upit
-		if(upit.getOdobren()){
-			Pregled p = pregledService.get(upit.getKlinika().getId(), u.getUnapredDefinisaniPregled().getId());
-			//ukoliko pregled ima posetu, admin nije smeo da odobri upit u
-			if(p.getPoseta() != null){
-				upit.setOdobren(false);
-				upit = upitZaPregledRepository.save(upit);
-				return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-						new CustomResponse<UpitZaPregled>(upit, false, "Obavestenje: Ovaj pregled je vec rezervisan, te je iz tog razloga upit ipak odbijen."),
-						HttpStatus.OK
-				);
-			}
-			//ukoliko pregled vec ima odobren upit, admin nije smeo da odobri u
-			for(UpitZaPregled drugiUpit: p.getUpiti()){
-				if(drugiUpit.getId() == upit.getId())
-					continue;
-				if(drugiUpit.getOdobren() && drugiUpit.getPotvrdjen()){
-					upit.setOdobren(false);
-					upit = upitZaPregledRepository.save(upit);
-					return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-							new CustomResponse<UpitZaPregled>(upit, false, "Obavestenje: Ovaj pregled je vec rezervisan, te je iz tog razloga upit ipak odbijen."),
-							HttpStatus.OK
-					);
-				}
-				if(drugiUpit.getOdobren() && !drugiUpit.getPacijentObradio()){
-					upit.setAdminObradio(false);
-					upit.setOdobren(false);
-					upit = upitZaPregledRepository.save(upit);
-					return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-							new CustomResponse<UpitZaPregled>(upit, false, "Obavestenje: Ovaj pregled je vec odobren. Mocicete da odobrite ovaj pregled samo u slucaju da pacijent kojem je ovaj pregled odobren ipak odluci da ne potvrdi rezervaciju."),
-							HttpStatus.OK
-					);
-				}
-			}
-		}
-		upit = upitZaPregledRepository.save(upit);
-		if (upit.getOdobren()) {
-			mailService.upitOdobren(upit, false);
-			mailService.obavestiLekara(upit, upit.getLekar(), true, false);
-		}
-		else{
-			mailService.upitOdbijen(upit);
-		}
-		return new ResponseEntity<CustomResponse<UpitZaPregled>>(
-				new CustomResponse<UpitZaPregled>(upit, true, "OK."),
-				HttpStatus.OK
-		);
-	}*/
 
 	@Transactional(readOnly=false, isolation = Isolation.READ_COMMITTED)
 	public CustomResponse<Boolean> delete(Long idUpita, Long version) throws EntityNotFoundException, BusinessLogicException{
@@ -247,7 +185,7 @@ public class UpitZaPregledeService {
 			upToDelete.setId(idUpita);
 			upToDelete.setVersion(version);
 			upitZaPregledRepository.delete(upToDelete);
-			retval = new CustomResponse<Boolean>(true, true, "OK.");
+			retval = new CustomResponse<>(true, true, "OK.");
 		}
 		return retval;
 	}
@@ -271,7 +209,7 @@ public class UpitZaPregledeService {
 			// TODO provera vezije
 		}
 		catch(NoSuchElementException e) {
-			return new CustomResponse<UpitZaPregled>(null, false, "Klinika ne postoji.");
+			return new CustomResponse<>(null, false, "Klinika ne postoji.");
 		}
 		try {
 			u2.setTipPregleda(tipPregledaRepository.findById(u.getTipPregleda()).get());
@@ -280,7 +218,7 @@ public class UpitZaPregledeService {
 			}
 		}
 		catch(NoSuchElementException e) {
-			return new CustomResponse<UpitZaPregled>(null, false, "Tip pregleda ne postoji.");
+			return new CustomResponse<>(null, false, "Tip pregleda ne postoji.");
 		}		
 		try {
 			u2.setLekar((Lekar) korisniciRepository.findById(u.getLekar()).get());
@@ -289,13 +227,13 @@ public class UpitZaPregledeService {
 			}		
 		}
 		catch(NoSuchElementException e) {
-			return new CustomResponse<UpitZaPregled>(null, false, "Lekar ne postoji.");
+			return new CustomResponse<>(null, false, "Lekar ne postoji.");
 		}
 		try {
 			u2.setPacijent((Pacijent) korisniciRepository.findByEmail(u.getPacijent()));
 		}
 		catch(NoSuchElementException e) {
-			return new CustomResponse<UpitZaPregled>(null, false, "Pacijent ne postoji.");
+			return new CustomResponse<>(null, false, "Pacijent ne postoji.");
 		}
 		try {
 			// Upit je nastao na osnovu unapred def pregleda
@@ -309,28 +247,28 @@ public class UpitZaPregledeService {
 			}
 		}
 		catch(NoSuchElementException e) {
-			return new CustomResponse<UpitZaPregled>(null, false, "Pregled ne postoji.");
+			return new CustomResponse<>(null, false, "Pregled ne postoji.");
 		}		
 		u2.setAdminObradio(false);
 		u2.setPacijentObradio(false);
 		u2.setOdobren(false);
 		u2.setPotvrdjen(false);
 		upitZaPregledRepository.save(u2);
-		return new CustomResponse<UpitZaPregled>(u2, true, "Uspešno kreiran upit");
+		return new CustomResponse<>(u2, true, "Uspešno kreiran upit");
 	}
 
 	@Transactional(readOnly=true)
 	public CustomResponse<List<UpitZaPregled>> pronadjiNeodobreneNeodradjene(String email)
 		throws Exception {
 		List<UpitZaPregled> l = upitZaPregledRepository.findNeodobreniNeodradjeniByEmail(email);
-		return new CustomResponse<List<UpitZaPregled>>(l, true, "Uspešno pronađeni upiti.");
+		return new CustomResponse<>(l, true, "Uspešno pronađeni upiti.");
 	}
 
 	@Transactional(readOnly=true)
 	public CustomResponse<List<UpitZaPregled>> pronadjiNeodobreneOdradjene(String email)
 		throws Exception {
 		List<UpitZaPregled> l = upitZaPregledRepository.findNeodobreniOdradjeniByEmail(email);
-		return new CustomResponse<List<UpitZaPregled>>(l, true, "Uspešno pronađeni upiti.");
+		return new CustomResponse<>(l, true, "Uspešno pronađeni upiti.");
 	}
 
 	@Transactional(readOnly=false)
@@ -346,10 +284,10 @@ public class UpitZaPregledeService {
 				u.getIzmenjeniPregled().setPacijentObradio(true);
 			}
 			upitZaPregledRepository.save(u);
-			return new CustomResponse<UpitZaPregled>(u, true, "Upit uspešno obrađen.");
+			return new CustomResponse<>(u, true, "Upit uspešno obrađen.");
 		}
 		catch (NoSuchElementException e) {
-			return new CustomResponse<UpitZaPregled>(null, false, "Upit ne postoji.");
+			return new CustomResponse<>(null, false, "Upit ne postoji.");
 		}
 	}
 
@@ -357,21 +295,21 @@ public class UpitZaPregledeService {
 	public CustomResponse<List<UpitZaPregled>> pronadjiNeodobrene()
 		throws Exception {
 		List<UpitZaPregled> l = upitZaPregledRepository.findNeodobreni();
-		return new CustomResponse<List<UpitZaPregled>>(l, true, "Uspešno pronađeni upiti.");
+		return new CustomResponse<>(l, true, "Uspešno pronađeni upiti.");
 	}
 
 	@Transactional(readOnly=true)
 	public CustomResponse<List<UpitZaPregled>> pronadjiNepotvrdjene(String email)
 		throws Exception {
 		List<UpitZaPregled> l = upitZaPregledRepository.findNepotvrdjeniByEmail(email);
-		return new CustomResponse<List<UpitZaPregled>>(l, true, "Uspešno pronađeni upiti.");
+		return new CustomResponse<>(l, true, "Uspešno pronađeni upiti.");
 	}
 
 	@Transactional(readOnly=true)
 	public CustomResponse<List<UpitZaPregled>> pronadjiNepotvrdjene()
 		throws Exception {
 		List<UpitZaPregled> l = upitZaPregledRepository.findNepotvrdjeni();
-		return new CustomResponse<List<UpitZaPregled>>(l, true, "Uspešno pronađeni upiti.");
+		return new CustomResponse<>(l, true, "Uspešno pronađeni upiti.");
 	}
 
 	@Transactional(readOnly=false)
@@ -386,10 +324,10 @@ public class UpitZaPregledeService {
 			upitZaPregledRepository.save(u);
 			Poseta p = posetaService.kreirajNovuPosetu(u);
 			mailService.potvrdaRezervacije(p);
-			return new CustomResponse<UpitZaPregled>(u, true, "Upit je potvrđen.");
+			return new CustomResponse<>(u, true, "Upit je potvrđen.");
 		}
 		catch (NoSuchElementException e){
-			return new CustomResponse<UpitZaPregled>(null, false, "Upit ne postoji.");
+			return new CustomResponse<>(null, false, "Upit ne postoji.");
 		}
 	}
 
@@ -407,10 +345,10 @@ public class UpitZaPregledeService {
 			for(Lekar lekar : u.getUnapredDefinisaniPregled().getDodatniLekari()){
 				mailService.odustajanjeOdRezervacije(u, lekar);
 			}
-			return new CustomResponse<UpitZaPregled>(u, true, "Upit je izbrisan.");
+			return new CustomResponse<>(u, true, "Upit je izbrisan.");
 		}
 		catch (NoSuchElementException e){
-			return new CustomResponse<UpitZaPregled>(null, false, "Upit ne postoji.");
+			return new CustomResponse<>(null, false, "Upit ne postoji.");
 		}
 	}
 
@@ -465,7 +403,6 @@ public class UpitZaPregledeService {
 		upit.setAdminObradio(true);
 		
 		if(upitZaPregledToChange.differsFrom(upit)){
-			System.out.println("Pravljenje novog upita");
 			//UPIT ZA PREGLED JE IZMENJEN, PRAVI NOVI UPIT ZA PREGLED
 			upitZaPregledToChange.setId(null);
 			upitZaPregledToChange.setVersion(null);
@@ -478,7 +415,6 @@ public class UpitZaPregledeService {
 			pregled.getUpiti().add(upit);
 			pregledRepository.save(pregled);
 		}else{
-			System.out.println("ostajanje pri starom upitu");
 			upit = upitZaPregledRepository.save(upit);
 			pregled.getUpiti().add(upit);
 			pregledRepository.save(pregled);
@@ -496,7 +432,7 @@ public class UpitZaPregledeService {
 			mailService.obavestiLekara(toSend, l, false, izmenjen);
 		}
 		
-		return new CustomResponse<UpitZaPregled>(upit, true, "OK");
+		return new CustomResponse<>(upit, true, "OK");
 	}
 
 	@Transactional(readOnly=false, isolation = Isolation.READ_COMMITTED)
@@ -511,7 +447,7 @@ public class UpitZaPregledeService {
 		upit.setOdobren(false);
 		upit = upitZaPregledRepository.save(upit);
 		mailService.upitOdbijen(upit); //obavesti pacijenta na mail da je upit odbijen
-		return new CustomResponse<UpitZaPregled>(upit, true, "OK");
+		return new CustomResponse<>(upit, true, "OK");
 	}
 
 	public void izbrisiPosetu(Poseta poseta) {

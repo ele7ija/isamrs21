@@ -15,6 +15,7 @@ import isamrs.tim21.klinika.domain.ZahtevZaGodisnji;
 import isamrs.tim21.klinika.domain.ZahtevZaRegistraciju;
 import isamrs.tim21.klinika.dto.ZahtevZaRegistracijuDTO;
 import isamrs.tim21.klinika.repository.ZahtevZaRegistracijuRepository;
+import isamrs.tim21.klinika.repository.KorisniciRepository;
 import org.springframework.scheduling.annotation.Async;
 
 @Service
@@ -23,13 +24,16 @@ public class MailService {
   ZahtevZaRegistracijuRepository zahtevRepo;
   
   @Autowired
+  KorisniciRepository korisniciRepo;
+
+  @Autowired
   private JavaMailSender javaMailSender;
 
   @Autowired
   Environment environment;
 
-
-  public void prihvatiZahtev(ZahtevZaRegistracijuDTO zahtevDTO) throws Exception{
+  @Async
+  public void prihvatiZahtev(ZahtevZaRegistracijuDTO zahtevDTO){
     String subject;
     String text;
     String poruka;
@@ -48,7 +52,8 @@ public class MailService {
     javaMailSender.send(mailToSend);
   }
 
-	public void odbijZahtev(ZahtevZaRegistracijuDTO zahtevDTO) throws Exception{
+  @Async
+	public void odbijZahtev(ZahtevZaRegistracijuDTO zahtevDTO) {
     String subject;
     String text;
     String poruka;
@@ -62,6 +67,8 @@ public class MailService {
     mailToSend.setText(text);
     mailToSend.setSubject(subject);
     javaMailSender.send(mailToSend);
+
+    korisniciRepo.deleteById(zahtev.getPacijent().getId());
   }
   
   public String generateText(Pacijent pacijent, String poruka){

@@ -56,13 +56,11 @@ public class TipPregledaService {
 		if(!pregledRepository.findByIdTipaPregleda(idTipaPregleda).isEmpty())
 			throw new BusinessLogicException("Greška: Ne možete obrisati tip pregleda za koji postoji pregled");
 		
-		if(tipPregleda.getLekari().size() != 0)
+		if(!tipPregleda.getLekari().isEmpty())
 		throw new BusinessLogicException("Greška: Ne možete obrisati tip pregleda za koji postoji specijalizacija lekara.");
 
 		tipPregledaRepository.delete(tipPregleda);
-		return new ResponseEntity<CustomResponse<Boolean>>(
-			new CustomResponse<Boolean>(true, true, "OK"),
-			HttpStatus.OK);
+		return new ResponseEntity<>(new CustomResponse<>(true, true, "OK"), HttpStatus.OK);
 	}
 
 	@Transactional(readOnly=true, isolation=Isolation.READ_COMMITTED)
@@ -83,7 +81,7 @@ public class TipPregledaService {
 		else{
 			tipPregledaToAdd.setKlinika(klinika);
 			tipPregledaToAdd.setId(null);
-			tipPregledaToAdd.setLekari(new ArrayList<Lekar>());
+			tipPregledaToAdd.setLekari(new ArrayList<>());
 
 			//pessimistic read kako bi uveli shared lock nad cenovnikom i sprecili konkurentno brisanje cenovnika
 			Cenovnik cenovnik = cenovnikRepository.findByIdKlinikeAndIdCenovnikaPessimisticRead(idKlinike, tipPregledaToAdd.getCenovnik().getId());
@@ -93,7 +91,7 @@ public class TipPregledaService {
 			}
 			cenovnik.getTipoviPregleda().add(tipPregledaToAdd);
 			tipPregledaToAdd.setCenovnik(cenovnik);
-			return new ResponseEntity<TipPregleda>(tipPregledaRepository.save(tipPregledaToAdd), HttpStatus.OK);
+			return new ResponseEntity<>(tipPregledaRepository.save(tipPregledaToAdd), HttpStatus.OK);
 		}
 	}
 
@@ -120,9 +118,7 @@ public class TipPregledaService {
 			tipPregledaToChange.setLekari(tipPregleda.getLekari());
 			
 			TipPregleda retval = tipPregledaRepository.save(tipPregledaToChange);
-			return new ResponseEntity<CustomResponse<TipPregleda>>(
-					new CustomResponse<TipPregleda>(retval, true, "OK."),
-					HttpStatus.OK);		
+			return new ResponseEntity<>(new CustomResponse<>(retval, true, "OK."), HttpStatus.OK);		
 		}
 	}
 	

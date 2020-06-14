@@ -4,7 +4,9 @@ public class PosetaDTO {
 	private Long pregledId;
 	private String opis;
 	
-	public PosetaDTO(){}
+	public PosetaDTO(){
+		//default constructor
+	}
 
 	public Long getPregledId() {
 		return pregledId;
