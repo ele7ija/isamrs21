@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import isamrs.tim21.klinika.domain.TipPregleda;
 import isamrs.tim21.klinika.dto.CustomResponse;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import isamrs.tim21.klinika.services.TipPregledaService;
 
 @RestController

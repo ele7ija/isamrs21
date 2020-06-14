@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import isamrs.tim21.klinika.domain.Klinika;
 import isamrs.tim21.klinika.domain.Lekar;
-import isamrs.tim21.klinika.domain.MedicinskoOsoblje;
 import isamrs.tim21.klinika.domain.Ocena;
 import isamrs.tim21.klinika.domain.Pacijent;
 import isamrs.tim21.klinika.repository.KlinikaRepository;

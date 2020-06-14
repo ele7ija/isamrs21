@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -16,7 +14,6 @@ import isamrs.tim21.klinika.domain.Lekar;
 import isamrs.tim21.klinika.domain.Pacijent;
 import isamrs.tim21.klinika.domain.Poseta;
 import isamrs.tim21.klinika.domain.Pregled;
-import isamrs.tim21.klinika.domain.Sala;
 import isamrs.tim21.klinika.domain.TipPregleda;
 import isamrs.tim21.klinika.domain.UpitZaPregled;
 import isamrs.tim21.klinika.dto.CustomResponse;
