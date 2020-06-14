@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -77,7 +75,7 @@ public class OsobljeService {
 			Lekar retval = (Lekar)osobljeRepository.save(osobljeToSave);
 
 			Lekar l = (Lekar)osobljeToSave;
-			List<TipPregleda> tipoviPregleda = new ArrayList<TipPregleda>();
+			List<TipPregleda> tipoviPregleda = new ArrayList<>();
 
 			/*
 				za svaki tip pregleda se radi upit u bazu koji ce biti neuspesan ako neka od torki vec ima postavljen exclusive lock
@@ -97,8 +95,7 @@ public class OsobljeService {
 			authority = authorityRepository.findByName("medicinska-sestra");
 			osobljeToSave.getAuthorities().add(authority);
 			osobljeToSave.getRadniKalendar().setMedicinskoOsoblje(osobljeToSave);
-			MedicinskoOsoblje retval = osobljeRepository.save(osobljeToSave);
-			return retval;
+			return osobljeRepository.save(osobljeToSave);
 		}
 	}
 
@@ -115,7 +112,7 @@ public class OsobljeService {
 		
 		Lekar lekar = (Lekar) osoblje;
 		//poredjenje verzija je bezbedno raditi ovako jer smo uzeli exclusive lock
-		if(version != lekar.getVersion()){
+		if(!version.equals(lekar.getVersion())){
 			throw new BusinessLogicException("Greška. Vaš podatak ima zastarelu verziju. Osvežite stranicu.");
 		}
 		int brojSpecijalizacija = lekar.getBrojSpecijalizacija();
@@ -129,7 +126,7 @@ public class OsobljeService {
 				throw new EntityNotFoundException("Tip pregleda");
 			
 			for(TipPregleda tp : lekar.getTipovi_pregleda()){
-				if(tp.getId() == tipPregleda.getId())
+				if(tp.getId().equals(tipPregleda.getId()))
 					throw new BusinessLogicException("Greska: Tip pregleda vec postoji kao specijalnost lekara. Osvezite stranicu.");
 			}
 
@@ -187,12 +184,12 @@ public class OsobljeService {
 		if(osobaToDelete == null){
 			throw new EntityNotFoundException("Medicinska osoba");
 		}
-		if(osobaToDelete.getVersion() != version)
+		if(!version.equals(osobaToDelete.getVersion()))
 				throw new BusinessLogicException("Greška. Vaš podatak ima zastarelu verziju. Osvežite stranicu.");
 		if(osobaToDelete instanceof MedicinskaSestra){
 			MedicinskaSestra sestra = (MedicinskaSestra) osobaToDelete;
 			osobljeRepository.delete(sestra);
-			return new CustomResponse<Boolean>(true, true, "OK.");
+			return new CustomResponse<>(true, true, "OK.");
 		}
 		else{
 			if(!pregledRepository.findByIdLekara(idOsoblja).isEmpty()){
@@ -209,7 +206,7 @@ public class OsobljeService {
 				tp.getLekari().remove(lekar); //mora posto je tip pregleda vlasnik veze
 			}
 			osobljeRepository.delete(lekar);
-			return new CustomResponse<Boolean>(true, true, "OK.");
+			return new CustomResponse<>(true, true, "OK.");
 		}
 		
 	}
@@ -229,7 +226,7 @@ public class OsobljeService {
 		if(klinika == null)
 			throw new EntityNotFoundException("Klinika");
 		List<Lekar> lekari = osobljeRepository.findAllLekariByIdKlinike(idKlinike);
-		return new CustomResponse<List<Lekar>>(lekari, true, "Lekari pronađeni.");
+		return new CustomResponse<>(lekari, true, "Lekari pronađeni.");
 	}
 
 	@Transactional(readOnly=false, isolation = Isolation.READ_COMMITTED)

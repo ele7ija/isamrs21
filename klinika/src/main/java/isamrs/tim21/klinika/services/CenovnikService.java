@@ -58,7 +58,7 @@ public class CenovnikService {
 			//POSTAVI JOS JEDNOM SVE PARAMETRE NA BEKU
 			cenovnikToAdd.setKlinika(klinika);
 			cenovnikToAdd.setId(null);
-			cenovnikToAdd.setTipoviPregleda(new ArrayList<TipPregleda>());
+			cenovnikToAdd.setTipoviPregleda(new ArrayList<>());
 			cenovnikToAdd.setDatumKreiranja(new Date());
 			return cenovnikRepository.save(cenovnikToAdd);
 		}
@@ -78,8 +78,7 @@ public class CenovnikService {
 				throw new EntityNotFoundException("Cenovnik");
 			cenovnikToChange.setTipoviPregleda(cenovnik.getTipoviPregleda()); //potencijalni dirty read sprecen sa READ_COMMITTED
 			cenovnik = cenovnikRepository.save(cenovnikToChange); //moze doci do nepoklapanja verzije i do OptimisticLockException-a
-			return new ResponseEntity<CustomResponse<Cenovnik>>(
-					new CustomResponse<Cenovnik>(cenovnik, true, "OK."), HttpStatus.OK);
+			return new ResponseEntity<>(new CustomResponse<>(cenovnik, true, "OK."), HttpStatus.OK);
 		}
 	}
 
@@ -102,16 +101,16 @@ public class CenovnikService {
 		}
 
 		//kako je cenovnik zakljucan u pessimistic write rezimu, mozemo mu rucno porediti verzije
-		if(cenovnik.getVersion() != version)
+		if(!version.equals(cenovnik.getVersion()))
 			throw new BusinessLogicException("Greska. Vas podatak ima zastarelu verziju. Osvezite stranicu.");
 
-		if(tipPregledaRepository.findByIdCenovnika(idCenovnika).size() != 0){
+		if(!tipPregledaRepository.findByIdCenovnika(idCenovnika).isEmpty()){
 			throw new BusinessLogicException("Greska. Ne mozete obrisati cenovnik za koji postoje definisani tipovi pregleda");
 		}
 
 		cenovnikRepository.delete(cenovnik);
-		return new ResponseEntity<CustomResponse<Boolean>>(
-				new CustomResponse<Boolean>(true, true, "OK."),
+		return new ResponseEntity<>(
+				new CustomResponse<>(true, true, "OK."),
 				HttpStatus.OK);
 	}
 }

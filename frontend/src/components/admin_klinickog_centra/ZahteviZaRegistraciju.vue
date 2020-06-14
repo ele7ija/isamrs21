@@ -3,7 +3,7 @@
 
   <v-data-table
     :headers="headers"
-    :items="getAll"
+    :items="_getAll"
     :search="search"
     class="elevation-1" 
     >
@@ -51,10 +51,10 @@
   
   <!-- snackbarovi -->
   <v-snackbar
-  :timeout=0
-  v-model="mailSending">
-    Slanje mejla je u toku
-
+    :timeout=0
+    v-model="obradaKrenula"
+  >
+    Obrada zahteva je u toku
     <v-progress-circular
     indeterminate
     color="info"
@@ -62,29 +62,16 @@
   </v-snackbar>
 
   <v-snackbar
-  :timeout=4000
-  v-model="mailSent"
-  color="success">
-    Mejl je uspešno poslat
-
+    :timeout=4000
+    v-model="obradaZavrsena"
+    :color="color"
+  >
+    {{text}}
     <v-btn
-    outlined
-    small
-    @click="mailSent = false">
-    Zatvori
-    </v-btn>
-  </v-snackbar>
-  
-  <v-snackbar
-  :timeout=4000
-  v-model="mailNotSent"
-  color="error">
-    Mejl nije uspešno poslat
-
-    <v-btn
-    outlined
-    small
-    @click="mailNotSent = false">
+      outlined
+      small
+      @click="obradaZavrsena = false"
+    >
     Zatvori
     </v-btn>
   </v-snackbar>
@@ -154,6 +141,11 @@ export default {
   name: "ZahteviZaRegistraciju",
   data: function (){
     return {
+      color: null,
+      text: null,
+      obradaKrenula: false,
+      obradaZavrsena: false,
+
       search: '',
       dialogOnPrihvati: false,
       dialogOnOdbij: false,
@@ -213,12 +205,18 @@ export default {
   computed: {
     ...mapGetters(
       {
-        getAll: 'zahteviZaRegistraciju/getAllZahtevi',
-        getMailSending: 'zahteviZaRegistraciju/getMailSending',
-        getMailSent: 'zahteviZaRegistraciju/getMailSent',
-        getMailNotSent: 'zahteviZaRegistraciju/getMailNotSent',
+        getAll: 'zahteviZaRegistraciju/getAllZahtevi'
       }
     ),
+
+    _getAll(){
+      if(!this.getAll)
+        return [];
+      else{
+        return this.getAll.filter(x => !x.odobren);
+      }
+    },
+
     punoIme: function(){
       return this.selectedPacijent.ime + ' ' + this.selectedPacijent.prezime;
     },
@@ -270,8 +268,22 @@ export default {
       this.dialogOnPrihvati = false;
       this.zahtev.id = this.selectedPacijent.id;
       this.zahtev.datumOdobrenja = new Date();
-      this.zahtev.prihvacen = true;
-      this.prihvatiZahtev(this.zahtev);
+      this.zahtev.odobren = true;
+      this.obradaKrenula = true;
+      this.prihvatiZahtev(this.zahtev).then(
+        (message) => {
+          this.obradaKrenula = false;
+          this.text = message;
+          this.color = "#66BB6A";
+          this.obradaZavrsena = true;
+        },
+        (message) => {
+          this.obradaKrenula = false;
+          this.text = message;
+          this.color = "#EF5350";
+          this.obradaZavrsena = true;
+        },
+      );
     },
     odbij (){
       //zatvori dijalog
@@ -279,8 +291,22 @@ export default {
       //posalji objekat na bek
       this.zahtev.id = this.selectedPacijent.id;
       this.zahtev.datumOdobrenja = new Date();
-      this.zahtev.prihvacen = false;
-      this.odbijZahtev(this.zahtev);
+      this.zahtev.odobren = false;
+      this.obradaKrenula = true;
+      this.odbijZahtev(this.zahtev).then(
+        (message) => {
+          this.obradaKrenula = false;
+          this.text = message;
+          this.color = "#66BB6A";
+          this.obradaZavrsena = true;
+        },
+        (message) => {
+          this.obradaKrenula = false;
+          this.text = message;
+          this.color = "#EF5350";
+          this.obradaZavrsena = true;
+        },
+      );
     },
   }
 }

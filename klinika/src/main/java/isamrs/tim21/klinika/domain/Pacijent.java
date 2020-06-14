@@ -1,6 +1,5 @@
 package isamrs.tim21.klinika.domain;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -8,17 +7,14 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import isamrs.tim21.klinika.dto.PacijentDTO;
 import isamrs.tim21.klinika.jsonSerialize.IdentityListSerializer;
-import isamrs.tim21.klinika.jsonSerialize.IdentitySerializer;
 
 @Entity
 @DiscriminatorValue(value="PA")

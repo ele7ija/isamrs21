@@ -22,15 +22,16 @@ public class ReceptService {
     return receptRepository.save(recept);
   }
 
-public List<Recept> findAllRecepti() {
-  List<Recept> recepti =  receptRepository.findAll();
-	return recepti;
-}
+  public List<Recept> findAllRecepti() {
+    return receptRepository.findAll();
+  }
 
-public Recept overiRecept(ReceptDTO receptDTO) {
-  Recept recept = receptRepository.findById(receptDTO.getId()).orElse(null);
-  recept.setOveren(receptDTO.getOveren());
-  recept.setMedicinskaSestra(receptDTO.getMedicinskaSestra());
-  return receptRepository.save(recept);
-}  
+  public Recept overiRecept(ReceptDTO receptDTO) {
+    Recept recept = receptRepository.findById(receptDTO.getId()).orElse(null);
+    if(null == recept) 
+      return recept;
+    recept.setOveren(receptDTO.getOveren());
+    recept.setMedicinskaSestra(receptDTO.getMedicinskaSestra());
+    return receptRepository.save(recept);
+  }  
 }

@@ -37,7 +37,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 	private AuthenticationManager authenticationManager;
 
 	// Funkcija koja na osnovu username-a iz baze vraca objekat User-a
-	/** TODO Nemam pojma zasto bas mora username, radio sam preko emaila */
+	/*Nemam pojma zasto bas mora username, radio sam preko emaila */
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		Korisnik user = userRepository.findByEmail(email);

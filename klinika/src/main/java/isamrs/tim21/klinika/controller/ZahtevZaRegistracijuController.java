@@ -39,45 +39,34 @@ public class ZahtevZaRegistracijuController {
   public ResponseEntity<CustomResponse<ZahtevZaRegistraciju>> podnesi(
     @RequestBody ZahtevZaRegistraciju zahtev
   ) {
-    return new ResponseEntity<CustomResponse<ZahtevZaRegistraciju>>(zahtevService.kreiraj(zahtev), HttpStatus.OK);
+    return new ResponseEntity<>(zahtevService.kreiraj(zahtev), HttpStatus.OK);
   }
   
 
   @PostMapping("/odbij")
   @PreAuthorize("hasAuthority('admin-klinickog-centra')")
-  public ResponseEntity<ZahtevZaRegistraciju>  odbijZahtev(
+  public ResponseEntity<CustomResponse<ZahtevZaRegistraciju>> odbijZahtev(
     @RequestBody ZahtevZaRegistracijuDTO zahtevZaRegistracijuDTO){
-    //prvo posalji mejl. nokon slanja mejla obrisi zahtev iz baze
-    //slanje mejla
-    try{
-      mailService.odbijZahtev(zahtevZaRegistracijuDTO);
-      //brisanje zahteva jedino ako je mejl uspesno poslat
-      ZahtevZaRegistraciju retval = zahtevService.delete(zahtevZaRegistracijuDTO);
-      return new ResponseEntity<>(retval, HttpStatus.OK);
-    }
-    catch(Exception e){
-      throw new SendMailException("slanje mejla nije uspelo");
-    }
+    ZahtevZaRegistraciju retval = zahtevService.delete(zahtevZaRegistracijuDTO);
+    mailService.odbijZahtev(zahtevZaRegistracijuDTO);
+    return new ResponseEntity<>(
+      new CustomResponse<>(retval, true, "OK"),
+      HttpStatus.OK);
   }
 
   @PostMapping("/prihvati")
   @PreAuthorize("hasAuthority('admin-klinickog-centra')")
-  public ResponseEntity<ZahtevZaRegistraciju> prihvatiZahtev(
-  @RequestBody ZahtevZaRegistracijuDTO zahtevZaRegistracijuDTO){
-    try{
-      mailService.prihvatiZahtev(zahtevZaRegistracijuDTO);
-      //update zahteva jedino ako je mejl uspesno poslat
-      ZahtevZaRegistraciju retval = zahtevService.update(zahtevZaRegistracijuDTO);
-      return new ResponseEntity<>(retval, HttpStatus.OK);
-    }
-    catch(Exception e){
-      throw new SendMailException("slanje mejla nije uspelo");
-    }
+  public ResponseEntity<CustomResponse<ZahtevZaRegistraciju>> prihvatiZahtev(
+  @RequestBody ZahtevZaRegistracijuDTO zahtevZaRegistracijuDTO) throws Exception {
+    ZahtevZaRegistraciju retval = zahtevService.update(zahtevZaRegistracijuDTO);
+    mailService.prihvatiZahtev(zahtevZaRegistracijuDTO);
+    return new ResponseEntity<>(
+      new CustomResponse<>(retval, true, "OK"),
+      HttpStatus.OK);
   }
 
   @GetMapping ("/registruj/{id}")
   public String registrujKorisnika(@PathVariable Long id) {
-    String s = zahtevService.registrujKorisnika(id);
-    return s;
+    return zahtevService.registrujKorisnika(id);
   }
 }

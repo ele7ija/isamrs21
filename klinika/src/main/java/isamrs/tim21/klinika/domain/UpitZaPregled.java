@@ -262,7 +262,7 @@ public class UpitZaPregled implements IdentitySerializable {
 
 	public boolean differsFrom(UpitZaPregled upit) {
 		//jedine dve stvari koje se menjaju na frontu usled dodele sale upitu za pregled(kraj pregleda se menja ako se menja i pocetak)
-		if(lekar.getId() != upit.getLekar().getId()){
+		if( !lekar.getId().equals(upit.getLekar().getId())){
 			return true;
 		}
 		if(!pocetakPregleda.equals(upit.getPocetakPregleda())){

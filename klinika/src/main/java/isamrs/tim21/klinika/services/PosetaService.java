@@ -88,7 +88,7 @@ public class PosetaService {
 		posetaRepository.save(p);
 		pregledRepository.save(pregled);
 		if (zk.getPosete() == null) {
-			zk.setPosete(new ArrayList<Poseta>());
+			zk.setPosete(new ArrayList<>());
 		}
 		zk.getPosete().add(p);
 		zdravstveniKartonRepository.save(zk);
@@ -132,7 +132,7 @@ public class PosetaService {
 		posetaRepository.save(p);
 		pregledRepository.save(pregled);
 		if (zk.getPosete() == null) {
-			zk.setPosete(new ArrayList<Poseta>());
+			zk.setPosete(new ArrayList<>());
 		}
 		zk.getPosete().add(p);
 		return p;
@@ -145,10 +145,10 @@ public class PosetaService {
 			pregled = u.getUnapredDefinisaniPregled();
 		}
 		else {
-			// TODO KREIRANJE PREGLEDA
+			// KREIRANJE PREGLEDA - nece se nikad desiti?
 		}
 		
-		if (pregled.getPoseta() != null) {
+		if (null != pregled.getPoseta()) {
 			return null;
 		}
 		// dobavi korisnika
@@ -179,7 +179,7 @@ public class PosetaService {
 		posetaRepository.save(p);
 		pregledRepository.save(pregled);
 		if (zk.getPosete() == null) {
-			zk.setPosete(new ArrayList<Poseta>());
+			zk.setPosete(new ArrayList<>());
 		}
 		zk.getPosete().add(p);
 		return p;
@@ -203,7 +203,7 @@ public class PosetaService {
 			zk = zdravstveniKartonRepository.findById(pacijent.getId()).get();
 		}
 		if (zk.getPosete() == null) {
-			zk.setPosete(new ArrayList<Poseta>());
+			zk.setPosete(new ArrayList<>());
 		}
 		return zk.getPosete();
 	}
@@ -224,9 +224,9 @@ public class PosetaService {
 			zk = zdravstveniKartonRepository.findById(pacijent.getId()).get();
 		}
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		List<Poseta> nerPosete = new ArrayList<Poseta>();
+		List<Poseta> nerPosete = new ArrayList<>();
 		if (zk.getPosete() == null) {
-			zk.setPosete(new ArrayList<Poseta>());
+			zk.setPosete(new ArrayList<>());
 		}
 		for (Poseta p : zk.getPosete()) {
 			if (p.getPregled().getPocetakPregleda().after(timestamp)) {
@@ -241,6 +241,8 @@ public class PosetaService {
 		//tada treba samo opis pregleda izmeniti  
 		if( null == posetaDTO.getVisina()){
 			Poseta poseta = posetaRepository.findById(posetaDTO.getPosetaId()).orElse(null);
+			if( null == poseta) 
+				return null;
 			poseta.setOpis(posetaDTO.getOpis());
 			posetaRepository.save(poseta);
 			ZdravstveniKarton k = poseta.getZdravstveniKarton();
@@ -253,7 +255,9 @@ public class PosetaService {
 		}
 		else{
 			//update poseta
-		 	Poseta poseta = posetaRepository.findById(posetaDTO.getPosetaId()).orElse(null);
+			 Poseta poseta = posetaRepository.findById(posetaDTO.getPosetaId()).orElse(null);
+			 if( null == poseta) 
+			 	return null;
 			poseta.setBolest(posetaDTO.getBolest());
 			poseta.setLekovi(posetaDTO.getLekovi());
 			poseta.setOpis(posetaDTO.getOpis());
