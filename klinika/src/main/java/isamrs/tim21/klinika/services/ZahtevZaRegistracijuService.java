@@ -11,6 +11,8 @@ import isamrs.tim21.klinika.domain.Pacijent;
 import isamrs.tim21.klinika.domain.ZahtevZaRegistraciju;
 import isamrs.tim21.klinika.dto.CustomResponse;
 import isamrs.tim21.klinika.dto.ZahtevZaRegistracijuDTO;
+import isamrs.tim21.klinika.exceptions.BusinessLogicException;
+import isamrs.tim21.klinika.exceptions.EntityNotFoundException;
 import isamrs.tim21.klinika.repository.KorisniciRepository;
 import isamrs.tim21.klinika.repository.ZahtevZaRegistracijuRepository;
 
@@ -32,19 +34,27 @@ public class ZahtevZaRegistracijuService {
   }
 
   @Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
-  public ZahtevZaRegistraciju delete(ZahtevZaRegistracijuDTO zahtevZaRegistracijuDTO) throws Exception{
+  public ZahtevZaRegistraciju delete(ZahtevZaRegistracijuDTO zahtevZaRegistracijuDTO) throws EntityNotFoundException, BusinessLogicException{
     ZahtevZaRegistraciju zahtevZaRegistraciju = 
       zahtevRepo.findById(zahtevZaRegistracijuDTO.getId()).orElse(null);
+    if(zahtevZaRegistraciju == null)
+      throw new EntityNotFoundException("Zahtev za registraciju");
+    if(zahtevZaRegistraciju.getOdobren())
+      throw new BusinessLogicException("Zahtev je već odobren");
     zahtevRepo.delete(zahtevZaRegistraciju);
     return zahtevZaRegistraciju;
   }
 
   @Transactional(readOnly = false, isolation = Isolation.READ_COMMITTED)
-  public ZahtevZaRegistraciju update(ZahtevZaRegistracijuDTO zahtevZaRegistracijuDTO) throws Exception{
-    ZahtevZaRegistraciju zahtevZaRegistraciju = 
-    zahtevRepo.findById(zahtevZaRegistracijuDTO.getId()).orElse(null);    
+  public ZahtevZaRegistraciju update(ZahtevZaRegistracijuDTO zahtevZaRegistracijuDTO) throws EntityNotFoundException, BusinessLogicException{
+    ZahtevZaRegistraciju zahtevZaRegistraciju = zahtevRepo.findById(zahtevZaRegistracijuDTO.getId()).orElse(null);
+    if(zahtevZaRegistraciju == null)
+      throw new EntityNotFoundException("Zahtev za registraciju");
+    if(zahtevZaRegistraciju.getOdobren())
+      throw new BusinessLogicException("Zahtev je već odobren");
     zahtevZaRegistraciju.setDatumOdobrenja(zahtevZaRegistracijuDTO.getDatumOdobrenja());
     zahtevZaRegistraciju.setOdobren(zahtevZaRegistracijuDTO.getOdobren());
+    zahtevZaRegistraciju.getPacijent().setEnabled(true); //posto u deployovanoj aplikaciji ne radi mejl, odmah enable-uj pacijenta
     zahtevRepo.save(zahtevZaRegistraciju);
     return zahtevZaRegistraciju;
   }
