@@ -50,7 +50,7 @@ public class TipPregledaService {
 			throw new EntityNotFoundException("Tip pregleda");
 
 		//kako je tip pregleda zakljucan u pessimistic write rezimu, mozemo mu rucno porediti verzije
-		if(tipPregleda.getVersion() != version)
+		if(!version.equals(tipPregleda.getVersion()))
 			throw new BusinessLogicException("Greška. Vaš podatak ima zastarelu verziju. Osvežite stranicu.");
 
 		if(!pregledRepository.findByIdTipaPregleda(idTipaPregleda).isEmpty())

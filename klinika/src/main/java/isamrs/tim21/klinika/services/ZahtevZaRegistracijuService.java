@@ -43,6 +43,8 @@ public class ZahtevZaRegistracijuService {
   public ZahtevZaRegistraciju update(ZahtevZaRegistracijuDTO zahtevZaRegistracijuDTO) throws Exception{
     ZahtevZaRegistraciju zahtevZaRegistraciju = 
     zahtevRepo.findById(zahtevZaRegistracijuDTO.getId()).orElse(null);    
+    if(null==zahtevZaRegistraciju)
+      return null;
     zahtevZaRegistraciju.setDatumOdobrenja(zahtevZaRegistracijuDTO.getDatumOdobrenja());
     zahtevZaRegistraciju.setOdobren(zahtevZaRegistracijuDTO.getOdobren());
     zahtevRepo.save(zahtevZaRegistraciju);

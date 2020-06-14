@@ -111,7 +111,7 @@ public class UpitZaPregledeService {
 
 		//ukoliko pregled vec ima odobren upit, admin nije smeo da odobri ovaj upit
 		for(UpitZaPregled drugiUpit: p.getUpiti()){
-			if(drugiUpit.getId() == upit.getId())
+			if(drugiUpit.getId().equals(upit.getId()))
 				continue;
 
 			//ovaj if je redundantan jer bi za ovaj pregled onda postojala poseta, al aj nek ostane
@@ -278,7 +278,7 @@ public class UpitZaPregledeService {
 		}
 		try {
 			u2.setTipPregleda(tipPregledaRepository.findById(u.getTipPregleda()).get());
-			if (u2.getTipPregleda().getVersion() != u.getTipPregledaVerzija()) {
+			if (!u2.getTipPregleda().getVersion().equals(u.getTipPregledaVerzija())) {
 				throw new ObjectOptimisticLockingFailureException(TipPregleda.class, u2.getTipPregleda());
 			}
 		}
@@ -287,7 +287,7 @@ public class UpitZaPregledeService {
 		}		
 		try {
 			u2.setLekar((Lekar) korisniciRepository.findById(u.getLekar()).get());
-			if (u2.getLekar().getVersion() != u.getLekarVerzija()) {
+			if (!u2.getLekar().getVersion().equals(u.getLekarVerzija())) {
 				throw new ObjectOptimisticLockingFailureException(Lekar.class, u2.getLekar());
 			}		
 		}
@@ -306,7 +306,7 @@ public class UpitZaPregledeService {
 				Pregled pregled = pregledRepository.findById(u.getPregled()).get();
 				u2.setUnapredDefinisaniPregled(pregled);
 				u2.setSala(pregled.getSala());
-				if (u2.getUnapredDefinisaniPregled().getVersion() != u.getPregledVerzija()) {
+				if (!u2.getUnapredDefinisaniPregled().getVersion().equals(u.getPregledVerzija())) {
 					throw new ObjectOptimisticLockingFailureException(Pregled.class, u2.getUnapredDefinisaniPregled());
 				}
 			}
@@ -381,7 +381,7 @@ public class UpitZaPregledeService {
 	public CustomResponse<UpitZaPregled> izmeniPotvrdi(Long id, Long verzija) throws Exception {
 		try {
 			UpitZaPregled u = upitZaPregledRepository.findById(id).get();
-			if (u.getVersion() != verzija) {
+			if (!verzija.equals(u.getVersion())) {
 				throw new ObjectOptimisticLockingFailureException(UpitZaPregled.class, u);
 			}
 			u.setPotvrdjen(true);
@@ -400,7 +400,7 @@ public class UpitZaPregledeService {
 	public CustomResponse<UpitZaPregled> izmeniOdustani(Long id, Long verzija) throws Exception {
 		try {
 			UpitZaPregled u = upitZaPregledRepository.findById(id).get();
-			if (u.getVersion() != verzija) {
+			if (!verzija.equals(u.getVersion())) {
 				throw new ObjectOptimisticLockingFailureException(UpitZaPregled.class, u);
 			}
 			u.setPotvrdjen(false);

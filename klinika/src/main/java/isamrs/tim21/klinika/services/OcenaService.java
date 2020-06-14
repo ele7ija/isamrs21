@@ -70,7 +70,7 @@ public class OcenaService {
             // izbrisi pacijentovu ocenu za tog lekara
             for (Ocena oc : p.getOcene()) {
                 if (oc.getLekar() != null) {
-                    if (oc.getLekar().getId()==le.getId()) {
+                    if (oc.getLekar().getId().equals(le.getId())) {
                         p.getOcene().remove(oc);
                         ocenaRepository.delete(oc);
                         p.getOcene().add(o);

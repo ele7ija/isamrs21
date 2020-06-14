@@ -29,7 +29,7 @@ public class MailService {
   Environment environment;
 
 
-  public void prihvatiZahtev(ZahtevZaRegistracijuDTO zahtevDTO){
+  public void prihvatiZahtev(ZahtevZaRegistracijuDTO zahtevDTO) throws Exception{
     String subject;
     String text;
     String poruka;
@@ -48,7 +48,7 @@ public class MailService {
     javaMailSender.send(mailToSend);
   }
 
-	public void odbijZahtev(ZahtevZaRegistracijuDTO zahtevDTO) {
+	public void odbijZahtev(ZahtevZaRegistracijuDTO zahtevDTO) throws Exception{
     String subject;
     String text;
     String poruka;
