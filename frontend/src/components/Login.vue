@@ -30,12 +30,12 @@
               v-model="password" 
               prepend-icon="lock" 
               :rules="inputRules"
-              @keydown.enter="loginuj({
+              @keydown.enter="myLogin({
                 username: email, 
                 password: password})"
               outlined>
             </v-text-field>
-            <v-btn @click="loginuj({
+            <v-btn @click="myLogin({
               username: email, 
               password: password})"
               color='primary'>
@@ -47,6 +47,34 @@
         </v-col>
       </v-row>
     </v-container>
+    <v-snackbar
+      v-model="snackbarErr"
+      :timeout="snackbarTimeout"
+      color="red darken-3"
+    >
+      {{ snackbarText }}
+      <v-btn
+        color="grey darken-3"
+        text
+        @click="snackbarErr = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
+    <v-snackbar
+      v-model="snackbarSucc"
+      :timeout="snackbarTimeout"
+      color="green darken-3"
+    >
+      {{ snackbarText }}
+      <v-btn
+        color="grey darken-3"
+        text
+        @click="snackbarSucc = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
   </div>
 </template>
 
@@ -61,13 +89,27 @@ export default {
         v => (v && v.length > 0) || 'Please fill out this field'
       ],
       email: null,
-      password: null
+      password: null,
+      snackbarErr: false,
+      snackbarSucc: false,
+      snackbarTimeout: 2000,
+      snackbarText: null,
     }
   },
   methods: {
     ...mapActions({
       loginuj: 'korisnici/loginKorisnik'
-    })
+    }),
+    myLogin: function(userObj) {
+      this.loginuj(userObj)
+      .then((message) => {
+        this.snackbarText = message;
+        this.snackbarSucc = true;
+      }, (message) => {
+        this.snackbarText = message;
+        this.snackbarErr = true;
+      })
+    }
   }
 }
 </script>

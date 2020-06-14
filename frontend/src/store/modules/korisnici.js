@@ -38,16 +38,26 @@ const actions = {
   },
   
   async loginKorisnik({commit, dispatch}, korisnik) {
-    let data = await korisnikAPI.loginujKorisnika(korisnik);
-    commit('_setKorisnik', korisnik);
-    commit('setKorisnik', data);
+    return new Promise((resolve, reject) => {
+      korisnikAPI.loginujKorisnika(korisnik).
+      then(async ({data}) => {
+        commit('_setKorisnik', korisnik);
+        commit('setKorisnik', data);
 
-    let data2 = await korisnikAPI.fetchKorisnik(korisnik.username); //username je zapravo email
-    commit('profil/setProfil', data2, {root:true});
-    commit("profil/_setCopy", JSON.parse(JSON.stringify(data2)), {root:true});
+        
+        let data2 = await korisnikAPI.fetchKorisnik(korisnik.username);
+        commit('profil/setProfil', data2, {root:true});
+        commit("profil/_setCopy", JSON.parse(JSON.stringify(data2)), {root:true});
+        resolve("Uspešno ste se ulogovali.");
 
-    dispatch('layout/setLayout', `${data.role}-layout`, {root:true});
-    router.push(`home`);
+        dispatch('layout/setLayout', `${data.role}-layout`, {root:true});
+        router.push(`home`);
+        
+      }, () => {
+        reject("Neuspešan login.");
+      })
+      
+    })
   },
 
   async fetchAllKorisnici({commit}){

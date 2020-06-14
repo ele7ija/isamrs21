@@ -10,12 +10,11 @@ export default {
     return response.data;
   },
 
-  async loginujKorisnika(loginData) {
-    let response = await axios.post(
+  loginujKorisnika(loginData) {
+    return axios.post(
       `${process.env.VUE_APP_BACKEND_ROOT}/auth/login`,
       loginData
     )
-    return response.data;
   },
 
   async fetchAllKorisnici(){
