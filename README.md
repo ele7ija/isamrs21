@@ -29,6 +29,9 @@ Izabrani SUBP za ovaj projekat je MySQL. Slede koraci za njegovo pokretanje:
 
 Pokretanje aplikativnog servera podrazumeva kompajliranje Java koda i njegovo pokretanje u JVM izvršnom okruženju.
 
+- Proveriti da li u .env.production fajlu stoji dobra adresa bekend servera, odnosno:
+> VUE_APP_BACKEND_ROOT=http://localhost:8080
+
 - Preuzeti maven
 - Pozicionirati se na root ovog projekta i izvršiti maven naredbu: 
 > mvn clean install
